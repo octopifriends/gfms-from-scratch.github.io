@@ -1,0 +1,12 @@
+{
+  "hash": "2e1ba63685192755975529458ed2dbf4",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Cheatsheets\"\nsubtitle: \"Quick reference guides for Geospatial AI and Foundation Models\"\njupyter: geoai\nformat: \n    html:\n        toc: true\n        toc-depth: 2\n---\n\n\n\n\n## 🌍 Geospatial Data Fundamentals\n\n- [Working with Rasterio](course-materials/cheatsheets/rasterio_basics.qmd)\n- [Earth Engine Basics](course-materials/cheatsheets/earth_engine_basics.qmd)\n- [Xarray for Multi-dimensional Data](course-materials/cheatsheets/xarray_basics.qmd)\n\n## 🔥 PyTorch for Geospatial AI\n\n- [PyTorch Tensors & GPU Operations](course-materials/cheatsheets/pytorch_tensors.qmd)\n- [TorchGeo Datasets & Transforms](course-materials/cheatsheets/torchgeo_basics.qmd)\n- [Data Loading for Satellite Imagery](course-materials/cheatsheets/dataloader_satellite.qmd)\n\n## 🤗 Foundation Models & HuggingFace\n\n- [Loading Pre-trained Models](course-materials/cheatsheets/loading_models.qmd)\n- [Model Inference & Feature Extraction](course-materials/cheatsheets/model_inference.qmd)\n- [Fine-tuning Strategies](course-materials/cheatsheets/finetuning_basics.qmd)\n\n## 📊 Visualization & Analysis\n\n- [Plotting Satellite Imagery](course-materials/cheatsheets/plotting_satellite.qmd)\n- [Interactive Maps with Folium](course-materials/cheatsheets/folium_basics.qmd)\n- [Geospatial Plotting with Matplotlib](course-materials/cheatsheets/matplotlib_geospatial.qmd)\n\n",
+    "supporting": [
+      "cheatsheets_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

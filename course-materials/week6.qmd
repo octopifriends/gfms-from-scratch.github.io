@@ -1,0 +1,63 @@
+---
+title: "Week 6: Project Initiation and Planning"
+subtitle: "Begin independent project development with structured guidance"
+format: html
+---
+
+## Week 6 Overview
+
+Transition to intensive project development phase with structured planning sessions, technical guidance, and initial implementation milestones.
+
+### Learning Objectives
+- Define clear project scope, objectives, and success criteria
+- Establish technical architecture and implementation roadmap
+- Begin core development with proper project structure
+- Set up reproducible development environments and workflows
+
+### Project Development Framework
+- **Project Definition**: Problem statement, data sources, expected outcomes
+- **Technical Planning**: Architecture design, technology stack, implementation phases
+- **Resource Management**: Computational requirements, data access, timeline planning
+- **Quality Assurance**: Testing strategies, validation approaches, documentation standards
+
+### Activities
+- [ ] Finalize project proposal with detailed specifications
+- [ ] Set up project repository with proper structure and documentation
+- [ ] Implement core data loading and preprocessing pipeline
+- [ ] Establish development workflow and version control practices
+- [ ] Begin initial model experiments and baseline implementations
+
+### Individual Consultation Sessions
+**Structured Guidance (9am-11am)**:
+- One-on-one project planning meetings with instructor
+- Technical architecture review and feedback
+- Resource identification and access setup
+- Timeline validation and milestone definition
+
+**Development Time (11am-12pm)**:
+- Independent implementation work
+- Peer collaboration and knowledge sharing
+- Technical problem-solving and debugging
+- Progress documentation and repository setup
+
+### **Major Deliverable**
+**Project Proposal and Initial Implementation** (Due: End of Week 6)
+- **Written Proposal** (2-3 pages): Problem statement, data sources, methodology, timeline
+- **Repository Setup**: Structured codebase with documentation, environment setup
+- **Initial Pipeline**: Working data loading and basic preprocessing functionality
+- **Baseline Results**: Initial experiments or proof-of-concept implementation
+
+### Technical Infrastructure
+- Project repository structure and best practices
+- Reproducible environment setup (conda, Docker, requirements)
+- Data management and version control strategies
+- Computational resource allocation and optimization
+
+### Resources
+- Project proposal templates and examples
+- Repository structure guidelines
+- UCSB AI Sandbox resource allocation
+- Technical consultation scheduling system
+
+### Next Week Preview
+Week 7 will focus on intensive development with regular progress check-ins and technical workshops.

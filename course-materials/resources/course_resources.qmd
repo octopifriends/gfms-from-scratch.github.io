@@ -1,0 +1,81 @@
+---
+title: "GeoAI Course Resources"
+description: "Mapped books, tutorials, and online resources for a graduate research seminar on GeoAI"
+author: "Kelly Caylor"
+date: "2025-08-06"
+format: html
+---
+
+## 🌍 Essential Background and Foundational Resources
+
+### 📘 Books and Key Overviews
+- **Handbook of Geospatial Artificial Intelligence** (Gao, Hu, Li, 2023) – Comprehensive reference with 30+ topics, code examples, datasets.
+- **Deep Learning for the Earth Sciences** (Camps-Valls, Tuia, Zhu, 2021) – Earth data meets deep learning; ideal for understanding EO models.
+- **GeoAI and Human Geography** (Xiao Huang, 2025) – Connects GeoAI with environmental and human systems.
+
+### 📄 Review Articles
+- **Boutayeb et al., 2024** – A comprehensive survey of GeoAI methods and applications.
+
+---
+
+## Week-by-Week Resources
+
+### Week 1: Introduction to Geospatial Foundation Models
+- 🌐 **Development Seed Blog (2024)**: [Using Foundation Models for Earth Observation](https://developmentseed.org/blog/2024/11/15/geoai-foundation-models/)
+- 🚀 **NASA/IBM Release**: [Prithvi HLS Foundation Model](https://www.earthdata.nasa.gov/news/geoai-foundation-model)
+- ☁️ **AWS ML Blog (2025)**: [Deploying GeoFMs on AWS](https://aws.amazon.com/blogs/machine-learning/revolutionizing-earth-observation-with-foundation-models/)
+
+### Week 2: Working with Geospatial Data
+- 📚 **Book**: *Learning Geospatial Analysis with Python (4th ed., 2023)*
+- 🧰 **TorchGeo Docs**: [https://pytorch.org/geo](https://pytorch.org/geo)
+- 🌍 **OpenGeoAI Toolkit**: [https://github.com/opengeos/geoai](https://github.com/opengeos/geoai)
+
+### Week 3: Loading & Using Foundation Models
+- 🤗 **Hugging Face Prithvi Models**: [https://huggingface.co/ibm-nasa-geospatial](https://huggingface.co/ibm-nasa-geospatial)
+- 📓 **Demo Notebooks**: Available on Hugging Face model cards.
+- 🧪 **AWS GeoFM Deployment Examples**: Code and pipelines via GitHub.
+- 🧠 **IEEE GRSS Blog**: [Self-Supervised Geospatial Backbones](https://grss-ieee.org/blog/2023/04/self-supervised-backbones/)
+
+### Week 4: Multi-modal & Generative Models
+- 🛰️ **Sensor Fusion via TorchGeo**: Stack Sentinel-1/2 & others.
+- 🌐 **Presto, Clay, DOFA Models**: Explained in DevSeed & AWS blogs.
+- 🧪 **DiffusionSat Example**: [Medium Tutorial on Generating EO Images](https://medium.com/@karray/diffusion-models-for-remote-sensing-part-5-abc123)
+
+### Week 5: Model Adaptation & Evaluation
+- 🔌 **Adapters for GeoFM**: Explained via Development Seed blog.
+- 📊 **Evaluation Metrics**: IoU, mAP, F1 from Boutayeb et al. (2024) + SpaceNet.
+- 📁 **Radiant Earth MLHub**: [https://mlhub.earth](https://mlhub.earth) – Public geospatial ML datasets and benchmarks.
+
+---
+
+## Interactive Sessions
+
+### 1️⃣ PyTorch & TorchGeo Fundamentals
+- TorchGeo docs & sample loaders (CRS, tile sampling, multispectral).
+
+### 2️⃣ Loading & Using Foundation Models
+- Hugging Face GeoFM models (Prithvi, Clay) and notebook demos.
+
+### 3️⃣ Multi-modal & Sensor Fusion
+- DOFA & Clay examples; stacking Sentinel data with TorchGeo.
+
+### 4️⃣ Model Adaptation & Evaluation
+- Fine-tuning using TerraTorch and evaluation on public datasets.
+
+### 5️⃣ Scalable Analysis & Deployment
+- 📚 *Geospatial Data Analytics on AWS* (2023)
+- ☁️ AWS SageMaker + GeoFM repo (scalable inference)
+
+---
+
+## 📦 General Tools & Repos
+- 🔧 **OpenGeoAI**: [https://github.com/opengeos/geoai](https://github.com/opengeos/geoai)
+- 🛰️ **IBM/NASA TerraTorch**: [https://github.com/ibm/terrapytorch](https://github.com/ibm/terrapytorch)
+- 📍 **Radiant MLHub Datasets**: [https://mlhub.earth](https://mlhub.earth)
+- 🧪 **SpaceNet Challenges**: [https://spacenet.ai/challenges/](https://spacenet.ai/challenges/)
+
+---
+
+## 🧭 Deployment and Project Resources
+
+- 🔧 **Flask/Streamlit for D

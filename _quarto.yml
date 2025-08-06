@@ -1,0 +1,130 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+    - "*.qmd"
+    - "*.ipynb"
+    - "!nbs/**"
+    - "!installation/**"
+
+website:
+  navbar:
+    title: "GEOG 288KC"
+    right:
+      - text: 🏠 home
+        href: index.qmd
+      - text: 📋 syllabus
+        href: Syllabus.md
+      - text: 🗓️ weekly materials
+        menu: 
+          - text: 1️⃣ Week 1 - Introduction to GFMs
+            href: course-materials/week1.qmd
+          - text: 2️⃣ Week 2 - Working with Geospatial Data
+            href: course-materials/week2.qmd
+          - text: 3️⃣ Week 3 - Loading & Using Foundation Models
+            href: course-materials/week3.qmd
+          - text: 4️⃣ Week 4 - Multi-modal & Generative Models
+            href: course-materials/week4.qmd
+          - text: 5️⃣ Week 5 - Model Adaptation & Evaluation
+            href: course-materials/week5.qmd
+          - text: 6️⃣ Week 6 - Project Initiation & Planning
+            href: course-materials/week6.qmd
+          - text: 7️⃣ Week 7 - Core Development & Implementation
+            href: course-materials/week7.qmd
+          - text: 8️⃣ Week 8 - Advanced Development & Optimization
+            href: course-materials/week8.qmd
+          - text: 9️⃣ Week 9 - Project Workshops & Synthesis
+            href: course-materials/week9.qmd
+          - text: 🎯 Week 10 - Final Presentations
+            href: course-materials/week10.qmd
+      - text: 💻 interactive sessions
+        menu:
+          - text: Session 1 - 🔥 PyTorch & TorchGeo Fundamentals
+            href: course-materials/interactive-sessions/session1_pytorch_torchgeo.qmd
+          - text: Session 2 - 🤗 Loading & Using Foundation Models
+            href: course-materials/interactive-sessions/session2_foundation_models.qmd
+          - text: Session 3 - 📐 Multi-modal & Sensor Fusion
+            href: course-materials/interactive-sessions/session3_multimodal.qmd
+          - text: Session 4 - 🔧 Model Adaptation & Evaluation
+            href: course-materials/interactive-sessions/session4_adaptation.qmd
+          - text: Session 5 - ☁️ Scalable Analysis & Deployment
+            href: course-materials/interactive-sessions/session5_deployment.qmd
+      - text: 🎓 lectures
+        menu:
+          - text: Lecture 1 - 🧠 Foundation Model Architectures
+            href: course-materials/lectures/lecture1_architectures.qmd
+          - text: Lecture 2 - 🌍 Geospatial Data & Remote Sensing
+            href: course-materials/lectures/lecture2_geospatial_data.qmd
+          - text: Lecture 3 - 🔧 Fine-tuning Strategies
+            href: course-materials/lectures/lecture3_finetuning.qmd
+          - text: Lecture 4 - 📐 Multi-modal Learning
+            href: course-materials/lectures/lecture4_multimodal.qmd
+          - text: Lecture 5 - 🔍 Model Evaluation & Validation
+            href: course-materials/lectures/lecture5_evaluation.qmd
+          - text: Lecture 6 - ☁️ Cloud & Scalable Computing
+            href: course-materials/lectures/lecture6_cloud_computing.qmd
+      - text: 📁 projects
+        menu:
+          - text: 📝 Project Application Template
+            href: course-materials/projects/project-application-template.qmd
+          - text: 📋 Project Proposal Template
+            href: course-materials/projects/project-proposal-template.qmd
+          - text: 🚀 MVP Presentation Template
+            href: course-materials/projects/mvp-template.qmd
+      - text: 👀 cheatsheets
+        href: cheatsheets.qmd
+      - text: 📚 resources
+        menu:
+          - text: 🌍 Earth Engine Documentation
+            href: https://developers.google.com/earth-engine
+            target: _blank
+          - text: 🔥 PyTorch Documentation
+            href: https://pytorch.org/docs/
+            target: _blank
+          - text: 🗺️ TorchGeo Documentation
+            href: https://torchgeo.readthedocs.io/
+            target: _blank
+          - text: 🤗 HuggingFace Documentation
+            href: https://huggingface.co/docs
+            target: _blank
+          - text: 🌐 Prithvi Foundation Model
+            href: https://github.com/NASA-IMPACT/Prithvi-100M
+            target: _blank
+          - text: 🛰️ SatMAE Model
+            href: https://github.com/microsoft/SatMAE
+            target: _blank
+          - text: 🧠 UCSB AI Sandbox
+            href: https://ai-sandbox.ucsb.edu
+            target: _blank
+          - text: 📊 MLflow Documentation
+            href: https://mlflow.org/docs/
+            target: _blank
+          - text: ⚡ FastAPI Documentation
+            href: https://fastapi.tiangolo.com/
+            target: _blank
+          - text: 📈 Weights & Biases
+            href: https://docs.wandb.ai/
+            target: _blank
+      - icon: github
+        href: https://github.com/kellycaylor/geoAI
+        target: _blank
+  page-footer:
+    background: dark
+    right: This website is built with [{{< fa brands github title="the github octocat logo" >}}](https://github.com/kellycaylor/geoAI) and [Quarto](https://quarto.org/)
+    left: |
+      <img src="/images/anna.png" alt="Course instructors" width="250"/>
+
+format:
+  html:
+    theme: meds-website-styles.scss
+    toc: true
+    title-block-banner: true
+    page-layout: full
+    code-fold: true
+    code-tools: true
+    jupyter: geoai
+
+execute:
+  freeze: auto
+
+editor: source

@@ -1,0 +1,69 @@
+---
+title: "Week 9: Project Workshops and Synthesis"
+subtitle: "Final project development and course concept integration"
+format: html
+---
+
+## Week 9 Overview
+
+Dedicated time for final project development with structured workshops to synthesize course concepts and prepare for final presentations.
+
+### Learning Objectives
+- Integrate all course concepts into cohesive final projects
+- Refine project implementations based on feedback and testing
+- Prepare comprehensive project documentation and presentations
+- Synthesize lessons learned and identify future research directions
+
+### Structure
+**Workshop Sessions (9am-11am)**:
+- Project refinement and polishing workshop
+- Presentation preparation and storytelling techniques
+- Technical documentation and reproducibility best practices
+- Synthesis discussion: Challenges and opportunities in GeoAI
+
+**Individual Work Time (11am-12pm)**:
+- Final implementation and testing
+- Documentation completion
+- Presentation materials preparation
+- Peer review and feedback sessions
+
+### Activities
+- [ ] Complete final project implementation and testing
+- [ ] Prepare comprehensive project documentation
+- [ ] Create presentation materials and demo recordings
+- [ ] Conduct peer code reviews and provide feedback
+- [ ] Synthesize key learnings and identify future work
+
+### Documentation Requirements
+- **Technical Documentation**: Code repository, installation instructions, usage examples
+- **Project Report**: Problem statement, methodology, results, discussion
+- **Presentation Materials**: Slides, demo video, live demonstration
+- **Reproducibility Package**: Data, code, environment specifications
+
+### Synthesis Topics
+- **Technical Challenges**: Common pitfalls, lessons learned, best practices
+- **Research Opportunities**: Identified gaps, future directions, open problems
+- **Real-world Applications**: Deployment considerations, user needs, impact assessment
+- **Ethical Considerations**: Bias, fairness, environmental impact, data privacy
+
+### Optional Lab Sessions (2pm-5pm)
+Extended support for:
+- Final debugging and optimization
+- Advanced visualization and result analysis
+- Presentation rehearsals and feedback
+- Repository organization and documentation
+
+### Peer Review Process
+- Code review partnerships for quality assurance
+- Practice presentations with constructive feedback
+- Cross-project learning and knowledge sharing
+- Collaborative problem-solving for technical challenges
+
+### Resources
+- Project documentation templates
+- Presentation guidelines and rubrics
+- Code review checklists
+- Final project submission requirements
+
+### Next Week Preview
+Week 10 will feature final project presentations and discussion of future directions in geospatial foundation models.

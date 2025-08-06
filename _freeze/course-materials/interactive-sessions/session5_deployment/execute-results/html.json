@@ -1,0 +1,12 @@
+{
+  "hash": "737bac7519f835a720356854beb30915",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Session 5: Scalable Analysis & Deployment\"\nsubtitle: \"Production pipelines and model serving\"\njupyter: geoai\nformat: html\n---\n\n\n\n\nInteractive session content coming soon...\n\n",
+    "supporting": [
+      "session5_deployment_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

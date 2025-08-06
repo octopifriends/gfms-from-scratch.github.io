@@ -1,0 +1,35 @@
+---
+title: "Week 0: Getting Started"
+subtitle: "Setting up for geospatial AI in the UCSB AI Sandbox + Project Applications"
+format: html
+---
+
+## Week 0 Overview
+
+Welcome to GEOG 288KC: Geospatial Foundation Models and Applications! This week focuses on getting everyone set up with the computational environment and submitting project applications.
+
+### Learning Objectives
+- Set up access to UCSB AI Sandbox
+- Understand course structure and expectations
+- Submit project application with research interest area
+- Review prerequisite knowledge areas
+
+### Key Activities
+- [ ] Complete UCSB AI Sandbox setup and account access
+- [ ] Submit project application describing experience and research interests
+- [ ] Review course syllabus and deliverable timeline
+- [ ] Set up development environment (Python, PyTorch, Earth Engine access)
+
+### Resources
+- [UCSB AI Sandbox Documentation](https://ai-sandbox.ucsb.edu)
+- [Project Application Form](https://forms.gle/Q1iDp2kuZuX1avMPA)
+- Course GitHub Repository
+
+### Deliverable
+**Project Application** (Due: End of Week 0)
+- 1-paragraph summary of past experience with remote sensing, geospatial data, and ML
+- Description of application interest area for Geospatial Foundation Models
+- Any existing fine-tuning data or project ideas
+
+### Next Week Preview
+Week 1 will introduce the fundamentals of geospatial foundation models and their applications in remote sensing and environmental monitoring.

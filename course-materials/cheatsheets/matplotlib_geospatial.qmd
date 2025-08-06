@@ -1,0 +1,8 @@
+---
+title: "Geospatial Plotting with Matplotlib"
+subtitle: "Advanced plotting for geospatial data"
+jupyter: geoai
+format: html
+---
+
+Cheatsheet content coming soon...

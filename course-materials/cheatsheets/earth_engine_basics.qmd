@@ -1,0 +1,8 @@
+---
+title: "Earth Engine Basics"
+subtitle: "Working with Google Earth Engine"
+jupyter: geoai
+format: html
+---
+
+Cheatsheet content coming soon...

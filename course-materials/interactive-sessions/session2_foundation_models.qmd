@@ -1,0 +1,8 @@
+---
+title: "Session 2: Loading & Using Foundation Models"
+subtitle: "Working with pre-trained geospatial models"
+jupyter: geoai
+format: html
+---
+
+Interactive session content coming soon...

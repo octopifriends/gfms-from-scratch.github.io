@@ -1,0 +1,44 @@
+---
+title: "Week 2: Working with Geospatial Data and Model Outputs"
+subtitle: "Data handling, preprocessing, and interpreting foundation model results"
+format: html
+---
+
+## Week 2 Overview
+
+This week focuses on the practical aspects of working with geospatial data and understanding outputs from pre-trained foundation models.
+
+### Learning Objectives
+- Master geospatial data formats and preprocessing pipelines
+- Understand foundation model input requirements and output interpretations
+- Learn to work with multi-spectral and multi-temporal data
+- Develop skills in data visualization and analysis workflows
+
+### Key Topics
+- **Data Formats**: GeoTIFF, NetCDF, Zarr, Cloud Optimized GeoTIFF (COG)
+- **Preprocessing Pipelines**: Normalization, tiling, temporal alignment, cloud masking
+- **Model I/O**: Input preparation, batch processing, output post-processing
+- **Visualization**: Interactive maps, time series plots, embedding spaces
+
+### Activities
+- [ ] Hands-on data preprocessing workshop
+- [ ] Working with satellite imagery from different sensors (Landsat, Sentinel, MODIS)
+- [ ] Extracting and visualizing embeddings from pre-trained models
+- [ ] Building data loading pipelines with TorchGeo
+
+### Technical Skills
+- GDAL and rasterio for geospatial data handling
+- xarray for multi-dimensional data analysis
+- TorchGeo for PyTorch-based geospatial workflows
+- Earth Engine for large-scale data access
+
+### Lab Session
+Building an end-to-end pipeline from raw satellite data to foundation model inference
+
+### Resources
+- [TorchGeo Documentation](https://torchgeo.readthedocs.io/)
+- [Earth Engine Python API](https://developers.google.com/earth-engine/tutorials/tutorial_py_01)
+- Cloud Optimized GeoTIFF specification
+
+### Next Week Preview
+Week 3 will cover fine-tuning foundation models for specific applications and developing initial project proposals.

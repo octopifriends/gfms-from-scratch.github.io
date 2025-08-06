@@ -1,0 +1,12 @@
+{
+  "hash": "d17df8c4ff9caff534ecf3f64dfbc084",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Geospatial Plotting with Matplotlib\"\nsubtitle: \"Advanced plotting for geospatial data\"\njupyter: geoai\nformat: html\n---\n\n\n\n\nCheatsheet content coming soon...\n\n",
+    "supporting": [
+      "matplotlib_geospatial_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

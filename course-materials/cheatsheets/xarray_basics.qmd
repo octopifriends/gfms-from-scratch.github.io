@@ -1,0 +1,8 @@
+---
+title: "Xarray for Multi-dimensional Data"
+subtitle: "Handling NetCDF and multi-dimensional arrays"
+jupyter: geoai
+format: html
+---
+
+Cheatsheet content coming soon...

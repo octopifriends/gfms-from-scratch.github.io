@@ -1,0 +1,8 @@
+---
+title: "Session 3: Multi-modal & Sensor Fusion"
+subtitle: "Combining different data sources and modalities"
+jupyter: geoai
+format: html
+---
+
+Interactive session content coming soon...

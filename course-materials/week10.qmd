@@ -1,0 +1,82 @@
+---
+title: "Week 10: Final Presentations"
+subtitle: "Project demonstrations and discussion of future directions"
+format: html
+---
+
+## Week 10 Overview
+
+The culminating week of the course featuring final project presentations, demonstrations, and forward-looking discussions about the future of geospatial foundation models.
+
+### Learning Objectives
+- Present completed projects with professional-quality demonstrations
+- Evaluate and provide constructive feedback on peer projects
+- Identify connections between different project approaches and applications
+- Envision future developments in geospatial foundation models
+
+### Presentation Structure
+**Session 1 (9am-10:30am)**: Project Presentations Group A
+- 5-6 presentations, 10-15 minutes each including Q&A
+- Live demonstrations and technical deep-dives
+- Peer evaluation and feedback forms
+
+**Break (10:30am-10:45am)**
+
+**Session 2 (10:45am-12pm)**: Project Presentations Group B + Synthesis
+- 5-6 presentations, 10-15 minutes each including Q&A
+- Course synthesis and future directions discussion
+- Celebration and reflection on learning journey
+
+### **Major Deliverable**
+**Final Presentation** (Week 10)
+Each presentation should include:
+- **Problem and Motivation** (2-3 minutes): Clear problem statement and significance
+- **Technical Approach** (3-4 minutes): Methodology, model architecture, key innovations
+- **Live Demonstration** (4-5 minutes): Working system with real examples
+- **Results and Impact** (2-3 minutes): Quantitative results, validation, broader implications
+- **Reflection and Future Work** (1-2 minutes): Lessons learned, next steps
+- **Q&A Session** (3-5 minutes): Peer questions and discussion
+
+### Presentation Evaluation Criteria
+- **Technical Quality**: Implementation completeness, methodology soundness
+- **Innovation**: Novel approaches, creative problem-solving, technical depth
+- **Communication**: Clarity, organization, visual aids, demonstration quality
+- **Impact**: Practical significance, broader applications, contribution to field
+
+### Synthesis Discussion Topics
+- **Emerging Trends**: Latest developments in foundation model architectures
+- **Application Domains**: Unexplored areas and promising applications
+- **Technical Challenges**: Scalability, interpretability, robustness
+- **Societal Impact**: Environmental monitoring, disaster response, climate science
+- **Future Research**: Open problems, collaboration opportunities
+
+### Optional Outcomes
+**Hugging Face/GitHub Submission**:
+- Students may optionally submit polished projects to public repositories
+- Opportunity for broader visibility and community engagement
+- Instructor support for preparing submission-quality documentation
+
+**Conference/Workshop Submissions**:
+- Guidance on adapting projects for academic conferences
+- Identification of relevant venues and submission opportunities
+- Support for preparing extended abstracts or full papers
+
+### Final Deliverables Due
+- **Project Repository**: Complete, documented codebase with examples
+- **Final Report**: Comprehensive technical document (5-10 pages)
+- **Presentation Materials**: Slides and any supporting materials
+- **Peer Evaluations**: Constructive feedback on all peer presentations
+
+### Course Reflection
+- Individual reflection essays on key learnings and growth
+- Course feedback and suggestions for future iterations
+- Identification of personal next steps and continued learning goals
+
+### Resources
+- Presentation templates and guidelines
+- Project submission checklists
+- Conference and journal venue lists
+- Networking and collaboration opportunities
+
+### Celebration
+Recognition of outstanding projects and contributions to course community!

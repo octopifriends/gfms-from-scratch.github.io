@@ -1,0 +1,52 @@
+---
+title: "Week 3: Fine-tuning Foundation Models"
+subtitle: "Model adaptation and early project ideation"
+format: html
+---
+
+## Week 3 Overview
+
+This week covers techniques for fine-tuning geospatial foundation models for specific applications, along with developing concrete project proposals.
+
+### Learning Objectives
+- Understand different fine-tuning strategies for foundation models
+- Learn parameter-efficient fine-tuning techniques (LoRA, adapters)
+- Develop skills in transfer learning for geospatial applications
+- Formulate detailed project proposals with clear objectives
+
+### Key Topics
+- **Fine-tuning Strategies**: Full fine-tuning vs. parameter-efficient methods
+- **Transfer Learning**: Domain adaptation, few-shot learning, zero-shot capabilities
+- **Model Architecture Modifications**: Adding task-specific heads, multi-task learning
+- **Training Considerations**: Data requirements, computational resources, evaluation metrics
+
+### Activities
+- [ ] Hands-on fine-tuning workshop with sample datasets
+- [ ] Project ideation sessions and feasibility discussions
+- [ ] Technical review of project proposals
+- [ ] Group feedback and refinement sessions
+
+### Technical Skills
+- Implementing LoRA and adapter-based fine-tuning
+- Setting up training pipelines with PyTorch Lightning
+- Model evaluation and validation strategies
+- Managing computational resources in UCSB AI Sandbox
+
+### Lab Session
+Fine-tuning a pre-trained model for land cover classification
+
+### **Major Deliverable**
+**Project Proposal** (Due: End of Week 3)
+- Clear problem statement and research objectives
+- Dataset description and availability assessment
+- Technical approach and model selection rationale
+- Timeline and milestone planning
+- Feasibility analysis and risk mitigation
+
+### Resources
+- [LoRA Implementation Examples](https://github.com/microsoft/LoRA)
+- Parameter-Efficient Fine-Tuning survey paper
+- PyTorch Lightning documentation
+
+### Next Week Preview
+Week 4 will explore multi-modal and generative models for remote sensing applications.

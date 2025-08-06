@@ -1,0 +1,37 @@
+---
+title: "Week 1: Introduction to Geospatial Foundation Models"
+subtitle: "Understanding GFMs and their applications in remote sensing"
+format: html
+---
+
+## Week 1 Overview
+
+This week introduces the fundamental concepts of geospatial foundation models (GFMs) and explores their revolutionary applications in remote sensing and environmental monitoring.
+
+### Learning Objectives
+- Understand what geospatial foundation models are and how they differ from traditional ML approaches
+- Explore key architectures and training approaches for GFMs
+- Examine real-world applications and case studies
+- Review the current landscape of available models and platforms
+
+### Key Topics
+- **Foundation Model Fundamentals**: Self-supervised learning, masked autoencoders, transformer architectures
+- **Geospatial Adaptations**: Handling multi-spectral data, spatial relationships, temporal sequences
+- **Available Models**: Prithvi, SatMAE, GeoFM, and other state-of-the-art models
+- **Application Domains**: Land cover classification, change detection, crop monitoring, disaster response
+
+### Activities
+- [ ] Interactive demo with pre-trained geospatial foundation models
+- [ ] Hands-on exploration of model architectures
+- [ ] Discussion of project ideas and feasibility
+
+### Resources
+- [Prithvi Foundation Model](https://github.com/NASA-IMPACT/Prithvi-100M)
+- [SatMAE Paper and Implementation](https://arxiv.org/abs/2207.08051)
+- Reading: "Foundation Models for Earth Observation" survey paper
+
+### Lab Session
+Introduction to working with pre-trained GFMs using HuggingFace and PyTorch
+
+### Next Week Preview
+Week 2 will dive into working with geospatial data formats and understanding pre-trained model outputs.

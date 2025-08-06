@@ -1,0 +1,12 @@
+{
+  "hash": "c7b03058ba353b44e413af88929f203b",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Lecture: Coming Soon\"\njupyter: geoai\nformat: html\n---\n\n\n\n\nLecture content coming soon...\n\n",
+    "supporting": [
+      "lecture1_architectures_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

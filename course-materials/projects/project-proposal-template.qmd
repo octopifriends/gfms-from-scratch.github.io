@@ -1,0 +1,120 @@
+---
+title: "Project Proposal Template"
+subtitle: "GEOG 288KC: Geospatial Foundation Models and Applications"
+format: html
+---
+
+## Project Proposal (Due: Week 3)
+
+**Student Name**: [Your Name]  
+**Project Title**: [Descriptive Project Title]  
+**Date**: [Submission Date]
+
+### Problem Statement and Objectives
+
+**Problem Description** (3-4 sentences):
+- [Clearly describe the problem you're addressing]
+- [Why is this problem important? What is the broader significance?]
+- [What are the current limitations or gaps in existing approaches?]
+
+**Research Objectives** (2-3 bullet points):
+- [Specific, measurable goals for your project]
+- [What specific outcomes will you deliver?]
+
+### Dataset Description
+
+**Primary Dataset(s)**:
+- **Source**: [e.g., Landsat, Sentinel, MODIS, custom dataset]
+- **Spatial Coverage**: [Geographic extent]
+- **Temporal Coverage**: [Time period]
+- **Resolution**: [Spatial and temporal resolution]
+- **Size**: [Approximate data volume]
+
+**Ground Truth/Labels** (if applicable):
+- [Description of labeled data for training/validation]
+- [Source and quality of labels]
+
+**Data Availability Assessment**:
+- [x] Data is readily accessible
+- [ ] Data requires special access/permissions
+- [ ] Data needs to be collected/generated
+- [ ] Alternative data sources identified
+
+### Technical Approach
+
+**Foundation Model Selection**:
+- **Primary Model**: [e.g., Prithvi, SatMAE, custom architecture]
+- **Justification**: [Why is this model appropriate for your problem?]
+- **Baseline Comparisons**: [What will you compare against?]
+
+**Methodology Overview** (4-5 sentences):
+- [High-level description of your approach]
+- [Key technical components and workflow]
+- [How will you adapt/fine-tune the foundation model?]
+
+**Key Technical Components**:
+- [ ] Data preprocessing pipeline
+- [ ] Model fine-tuning/adaptation
+- [ ] Evaluation framework
+- [ ] Visualization/interpretation tools
+- [ ] Scalable inference pipeline
+
+### Timeline and Milestones
+
+**Week 4-5**: [Specific goals and deliverables]
+**Week 6**: [Specific goals and deliverables]  
+**Week 7 (MVP)**: [What will your MVP demonstration include?]
+**Week 8-9**: [Final implementation goals]
+**Week 10**: [Final presentation preparation]
+
+### Evaluation Strategy
+
+**Performance Metrics**:
+- [How will you measure success? Specific metrics]
+- [Quantitative measures: accuracy, F1, IoU, etc.]
+- [Qualitative measures: interpretability, usability, etc.]
+
+**Validation Approach**:
+- [Cross-validation strategy]
+- [Train/validation/test splits]
+- [Spatial/temporal validation considerations]
+
+### Feasibility Analysis
+
+**Technical Risks and Mitigation**:
+- **Risk 1**: [Description] → **Mitigation**: [How you'll address it]
+- **Risk 2**: [Description] → **Mitigation**: [How you'll address it]
+
+**Resource Requirements**:
+- **Computational**: [GPU hours, memory requirements, storage]
+- **Data**: [Download time, storage space, preprocessing time]
+- **Time**: [Realistic assessment of scope given 10-week timeframe]
+
+**Backup Plans**:
+- [What will you do if primary approach doesn't work?]
+- [How can you ensure you have a working system for final presentation?]
+
+### Expected Outcomes
+
+**Primary Deliverables**:
+- [What specific outputs will your project produce?]
+- [Code repository, trained models, analysis results, etc.]
+
+**Potential Impact**:
+- [How could this work be used in practice?]
+- [What are the broader implications of success?]
+
+**Future Work**:
+- [How could this project be extended beyond the course?]
+- [What are the next logical steps?]
+
+### Resources and References
+
+**Key Literature** (3-5 papers):
+- [List relevant papers that inform your approach]
+
+**Software/Tools**:
+- [List key libraries, platforms, tools you'll use]
+
+**Additional Resources**:
+- [Any other resources, datasets, collaborations, etc.]

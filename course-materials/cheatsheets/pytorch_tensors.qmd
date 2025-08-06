@@ -1,0 +1,188 @@
+---
+title: "PyTorch Tensors & GPU Operations"
+subtitle: "Essential tensor operations for geospatial AI"
+jupyter: geoai
+format: html
+---
+
+## Creating Tensors
+
+### Basic tensor creation
+```{python}
+import torch
+import numpy as np
+
+# From Python lists
+tensor_from_list = torch.tensor([[1, 2], [3, 4]])
+print(f"From list: {tensor_from_list}")
+
+# From NumPy arrays
+numpy_array = np.array([[1, 2], [3, 4]])
+tensor_from_numpy = torch.from_numpy(numpy_array)
+print(f"From numpy: {tensor_from_numpy}")
+
+# Common initialization patterns
+zeros_tensor = torch.zeros(3, 3)
+ones_tensor = torch.ones(2, 4)
+random_tensor = torch.randn(2, 3)  # Normal distribution
+
+print(f"Zeros: {zeros_tensor}")
+print(f"Random: {random_tensor}")
+```
+
+### Tensor Properties
+```{python}
+# Check tensor properties
+sample_tensor = torch.randn(3, 4, 5)
+
+print(f"Shape: {sample_tensor.shape}")
+print(f"Size: {sample_tensor.size()}")
+print(f"Data type: {sample_tensor.dtype}")
+print(f"Device: {sample_tensor.device}")
+print(f"Number of dimensions: {sample_tensor.ndim}")
+print(f"Total elements: {sample_tensor.numel()}")
+```
+
+## GPU Operations
+
+### Check GPU availability
+```{python}
+# Check if CUDA is available
+cuda_available = torch.cuda.is_available()
+print(f"CUDA available: {cuda_available}")
+
+if cuda_available:
+    gpu_count = torch.cuda.device_count()
+    gpu_name = torch.cuda.get_device_name(0)
+    print(f"Number of GPUs: {gpu_count}")
+    print(f"GPU name: {gpu_name}")
+else:
+    print("Running on CPU")
+```
+
+### Moving tensors to GPU
+```{python}
+# Create a tensor
+cpu_tensor = torch.randn(3, 3)
+print(f"Original device: {cpu_tensor.device}")
+
+# Move to GPU if available
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+gpu_tensor = cpu_tensor.to(device)
+print(f"After moving to device: {gpu_tensor.device}")
+
+# Alternative methods
+if torch.cuda.is_available():
+    # Method 2: .cuda() method
+    gpu_tensor2 = cpu_tensor.cuda()
+    print(f"Using .cuda(): {gpu_tensor2.device}")
+    
+    # Method 3: Create directly on GPU
+    direct_gpu = torch.randn(3, 3, device='cuda')
+    print(f"Created on GPU: {direct_gpu.device}")
+```
+
+## Basic Tensor Operations
+
+### Mathematical operations
+```{python}
+# Create sample tensors
+a = torch.randn(3, 3)
+b = torch.randn(3, 3)
+
+# Element-wise operations
+addition = a + b
+subtraction = a - b  
+multiplication = a * b
+division = a / b
+
+print(f"Addition shape: {addition.shape}")
+print(f"Subtraction mean: {subtraction.mean():.3f}")
+
+# Matrix operations
+matmul = torch.matmul(a, b)  # Matrix multiplication
+transpose = a.t()  # Transpose
+
+print(f"Matrix multiplication shape: {matmul.shape}")
+print(f"Transpose shape: {transpose.shape}")
+```
+
+### Useful tensor methods
+```{python}
+# Statistical operations
+data = torch.randn(4, 5)
+
+print(f"Mean: {data.mean():.3f}")
+print(f"Standard deviation: {data.std():.3f}")
+print(f"Min: {data.min():.3f}")
+print(f"Max: {data.max():.3f}")
+
+# Reshaping
+reshaped = data.view(2, 10)  # Reshape to 2x10
+flattened = data.flatten()   # Flatten to 1D
+
+print(f"Original shape: {data.shape}")
+print(f"Reshaped: {reshaped.shape}")
+print(f"Flattened: {flattened.shape}")
+```
+
+## Memory Management
+
+### GPU memory monitoring
+```{python}
+if torch.cuda.is_available():
+    # Check current memory usage
+    allocated = torch.cuda.memory_allocated() / (1024**2)  # Convert to MB
+    reserved = torch.cuda.memory_reserved() / (1024**2)
+    
+    print(f"GPU memory allocated: {allocated:.1f} MB")
+    print(f"GPU memory reserved: {reserved:.1f} MB")
+    
+    # Clear cache
+    torch.cuda.empty_cache()
+    print("GPU cache cleared")
+else:
+    print("GPU memory monitoring not available (running on CPU)")
+```
+
+### Best practices
+```{python}
+# Use context managers for temporary operations
+def memory_efficient_operation():
+    with torch.no_grad():  # Disable gradient computation
+        large_tensor = torch.randn(1000, 1000)
+        result = large_tensor.mean()
+        return result
+
+result = memory_efficient_operation()
+print(f"Result: {result:.3f}")
+
+# The large_tensor is automatically garbage collected
+```
+
+## Converting Between Formats
+
+### PyTorch ↔ NumPy
+```{python}
+# PyTorch to NumPy
+torch_tensor = torch.randn(2, 3)
+numpy_array = torch_tensor.numpy()  # Only works on CPU tensors
+
+print(f"PyTorch tensor: {torch_tensor}")
+print(f"NumPy array: {numpy_array}")
+
+# NumPy to PyTorch
+new_torch = torch.from_numpy(numpy_array)
+print(f"Back to PyTorch: {new_torch}")
+```
+
+### Handling GPU tensors
+```{python}
+if torch.cuda.is_available():
+    # GPU tensor must be moved to CPU first
+    gpu_tensor = torch.randn(2, 3).cuda()
+    cpu_numpy = gpu_tensor.cpu().numpy()
+    print(f"GPU tensor converted to NumPy: {cpu_numpy.shape}")
+else:
+    print("GPU conversion example not available (running on CPU)")
+```

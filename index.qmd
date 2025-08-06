@@ -1,0 +1,73 @@
+---
+title: "Geospatial Foundation Models and Applications"
+subtitle: "Master of Environmental Data Science (MEDS)"
+description: "Fall 2025"
+title-block-banner: false
+toc: false
+---
+
+![](images/geoai-banner.png){width=70% fig-align="center" alt="Geospatial AI visualization"}
+
+::: {.gray-text .center-text}
+*Advancing environmental monitoring through AI*
+:::
+
+## Course Description
+
+This project-driven seminar introduces students to state-of-the-art geospatial foundation models (GFMs) for remote sensing and environmental monitoring. Through a mix of lecture, discussion, and hands-on labs, students will explore frontier techniques in geospatial AI—including self-supervised learning, masked autoencoders, multimodal sensor fusion, and scalable inference pipelines—while developing their own applied project.
+
+The goal of GEOG 288KC (Geospatial Foundation Models and Applications) is to equip students with cutting-edge skills in applying foundation models to environmental challenges. By the end of the course, students should be able to:
+
+- Understand and apply state-of-the-art geospatial foundation models for environmental monitoring
+
+- Fine-tune and adapt large-scale models for specific remote sensing applications
+
+- Build scalable processing pipelines using Earth Engine, TorchGeo, and cloud computing platforms
+
+- Create interactive applications and APIs for model deployment and visualization
+
+- Evaluate and interpret foundation model outputs using robust validation frameworks
+
+- Collaborate on applied research projects and communicate results to diverse audiences
+
+## Getting Started with the UCSB AI Sandbox
+
+[Here](installation/UCSB_AI_SANDBOX_SETUP.md) are detailed instructions for setting up your environment on the UCSB AI Sandbox, including foundation model installation and GPU optimization.
+
+## Teaching Team
+
+<br>
+
+::: {.grid}
+::: {.g-col-12 .g-col-md-4}
+
+::: {.center-text .body-text-l}
+**Instructor**
+:::
+
+![](images/kelly.png){width=45% fig-align="center"}
+
+::: {.center-text}
+[**Kelly Caylor**]{.teal-text}  
+**Email:** [caylor@ucsb.edu](mailto::caylor@ucsb.edu)  
+**Learn more:** [Bren profile](https://bren.ucsb.edu/people/kelly-caylor)  
+:::
+
+:::
+
+::: {.g-col-12 .g-col-md-4}
+
+::: {.center-text .body-text-l}
+**TA**
+:::
+
+![](images/anna.png){width=45% fig-align="center"}
+
+::: {.center-text}
+[**Anna Boser**]{.teal-text}  
+**Email:** [annaboser@ucsb.edu](mailto::annaboser@ucsb.edu)   
+**Learn more:** [Bren profile](https://bren.ucsb.edu/people/anna-boser)
+:::
+
+:::
+:::

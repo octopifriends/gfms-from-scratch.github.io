@@ -1,0 +1,8 @@
+---
+title: "Session 5: Scalable Analysis & Deployment"
+subtitle: "Production pipelines and model serving"
+jupyter: geoai
+format: html
+---
+
+Interactive session content coming soon...

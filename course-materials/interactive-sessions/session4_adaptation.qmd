@@ -1,0 +1,8 @@
+---
+title: "Session 4: Model Adaptation & Evaluation"
+subtitle: "Fine-tuning strategies and comprehensive evaluation"
+jupyter: geoai
+format: html
+---
+
+Interactive session content coming soon...

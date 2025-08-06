@@ -1,0 +1,44 @@
+---
+title: "Week 4: Multi-modal and Generative Models"
+subtitle: "Advanced architectures for remote sensing applications"
+format: html
+---
+
+## Week 4 Overview
+
+Explore cutting-edge multi-modal and generative approaches in geospatial foundation models, including sensor fusion and synthetic data generation.
+
+### Learning Objectives
+- Understand multi-modal fusion techniques for different satellite sensors
+- Explore generative models for geospatial applications
+- Learn about vision-language models for remote sensing
+- Investigate synthetic data generation and augmentation strategies
+
+### Key Topics
+- **Multi-modal Architectures**: Sensor fusion, cross-modal attention, joint embeddings
+- **Generative Models**: GANs, VAEs, diffusion models for satellite imagery
+- **Vision-Language Models**: CLIP-based approaches, remote sensing captioning
+- **Synthetic Data**: Data augmentation, domain adaptation, privacy preservation
+
+### Activities
+- [ ] Multi-sensor fusion workshop (optical + SAR + LiDAR)
+- [ ] Experiment with generative models for data augmentation
+- [ ] Explore vision-language models for scene understanding
+- [ ] Project progress check-ins and technical consultations
+
+### Technical Skills
+- Implementing multi-modal fusion architectures
+- Working with generative adversarial networks
+- Using pre-trained vision-language models
+- Evaluating synthetic vs. real data quality
+
+### Lab Session
+Building a multi-modal classifier combining Sentinel-1 and Sentinel-2 data
+
+### Resources
+- [CLIP for Remote Sensing](https://github.com/microsoft/RemoteCLIP)
+- Multi-modal learning in Earth observation survey
+- Generative models for geospatial data tutorial
+
+### Next Week Preview
+Week 5 provides dedicated time for semi-independent project work with optional proposal workshops.
