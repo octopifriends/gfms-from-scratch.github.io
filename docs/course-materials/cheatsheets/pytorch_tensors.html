@@ -73,6 +73,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/quarto-contrib/fontawesome6-1.2.0/all.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/fontawesome6-1.2.0/latex-fontsize.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -126,7 +128,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">🏠 home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../Syllabus.md"> 
+    <a class="nav-link" href="../../Syllabus.html"> 
 <span class="menu-text">📋 syllabus</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -381,7 +383,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="creating-tensors">Creating Tensors</h2>
 <section id="basic-tensor-creation" class="level3">
 <h3 class="anchored" data-anchor-id="basic-tensor-creation">Basic tensor creation</h3>
-<div id="4e5f3cbb" class="cell" data-execution_count="1">
+<div id="f0cf9379" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
@@ -412,14 +414,14 @@ From numpy: tensor([[1, 2],
 Zeros: tensor([[0., 0., 0.],
         [0., 0., 0.],
         [0., 0., 0.]])
-Random: tensor([[ 0.8308, -1.3461,  1.1544],
-        [ 0.4209,  0.1841, -1.6572]])</code></pre>
+Random: tensor([[ 0.7016,  0.0190,  0.9809],
+        [-0.8297, -0.5010,  1.3637]])</code></pre>
 </div>
 </div>
 </section>
 <section id="tensor-properties" class="level3">
 <h3 class="anchored" data-anchor-id="tensor-properties">Tensor Properties</h3>
-<div id="53188f9c" class="cell" data-execution_count="2">
+<div id="06ca2202" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check tensor properties</span></span>
@@ -447,7 +449,7 @@ Total elements: 60</code></pre>
 <h2 class="anchored" data-anchor-id="gpu-operations">GPU Operations</h2>
 <section id="check-gpu-availability" class="level3">
 <h3 class="anchored" data-anchor-id="check-gpu-availability">Check GPU availability</h3>
-<div id="70f8c857" class="cell" data-execution_count="3">
+<div id="ee502acf" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if CUDA is available</span></span>
@@ -470,7 +472,7 @@ Running on CPU</code></pre>
 </section>
 <section id="moving-tensors-to-gpu" class="level3">
 <h3 class="anchored" data-anchor-id="moving-tensors-to-gpu">Moving tensors to GPU</h3>
-<div id="8049fca3" class="cell" data-execution_count="4">
+<div id="867abaf7" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a tensor</span></span>
@@ -503,7 +505,7 @@ After moving to device: cpu</code></pre>
 <h2 class="anchored" data-anchor-id="basic-tensor-operations">Basic Tensor Operations</h2>
 <section id="mathematical-operations" class="level3">
 <h3 class="anchored" data-anchor-id="mathematical-operations">Mathematical operations</h3>
-<div id="007c6596" class="cell" data-execution_count="5">
+<div id="b8f89337" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create sample tensors</span></span>
@@ -528,7 +530,7 @@ After moving to device: cpu</code></pre>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Addition shape: torch.Size([3, 3])
-Subtraction mean: -0.533
+Subtraction mean: -0.073
 Matrix multiplication shape: torch.Size([3, 3])
 Transpose shape: torch.Size([3, 3])</code></pre>
 </div>
@@ -536,7 +538,7 @@ Transpose shape: torch.Size([3, 3])</code></pre>
 </section>
 <section id="useful-tensor-methods" class="level3">
 <h3 class="anchored" data-anchor-id="useful-tensor-methods">Useful tensor methods</h3>
-<div id="75b520e1" class="cell" data-execution_count="6">
+<div id="00080df0" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Statistical operations</span></span>
@@ -556,10 +558,10 @@ Transpose shape: torch.Size([3, 3])</code></pre>
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Flattened: </span><span class="sc">{</span>flattened<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Mean: 0.419
-Standard deviation: 1.160
-Min: -1.793
-Max: 2.824
+<pre><code>Mean: -0.380
+Standard deviation: 1.090
+Min: -2.545
+Max: 1.585
 Original shape: torch.Size([4, 5])
 Reshaped: torch.Size([2, 10])
 Flattened: torch.Size([20])</code></pre>
@@ -571,7 +573,7 @@ Flattened: torch.Size([20])</code></pre>
 <h2 class="anchored" data-anchor-id="memory-management">Memory Management</h2>
 <section id="gpu-memory-monitoring" class="level3">
 <h3 class="anchored" data-anchor-id="gpu-memory-monitoring">GPU memory monitoring</h3>
-<div id="30e545e9" class="cell" data-execution_count="7">
+<div id="e7a8ddd3" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> torch.cuda.is_available():</span>
@@ -595,7 +597,7 @@ Flattened: torch.Size([20])</code></pre>
 </section>
 <section id="best-practices" class="level3">
 <h3 class="anchored" data-anchor-id="best-practices">Best practices</h3>
-<div id="1a4fd533" class="cell" data-execution_count="8">
+<div id="aa2f1bca" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use context managers for temporary operations</span></span>
@@ -611,7 +613,7 @@ Flattened: torch.Size([20])</code></pre>
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co"># The large_tensor is automatically garbage collected</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Result: -0.000</code></pre>
+<pre><code>Result: -0.001</code></pre>
 </div>
 </div>
 </section>
@@ -620,7 +622,7 @@ Flattened: torch.Size([20])</code></pre>
 <h2 class="anchored" data-anchor-id="converting-between-formats">Converting Between Formats</h2>
 <section id="pytorch-numpy" class="level3">
 <h3 class="anchored" data-anchor-id="pytorch-numpy">PyTorch ↔︎ NumPy</h3>
-<div id="b0b7ad91" class="cell" data-execution_count="9">
+<div id="97ad8a9b" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PyTorch to NumPy</span></span>
@@ -635,18 +637,18 @@ Flattened: torch.Size([20])</code></pre>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Back to PyTorch: </span><span class="sc">{</span>new_torch<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>PyTorch tensor: tensor([[-1.4137, -0.5492,  1.2005],
-        [-0.6122,  0.3187, -0.8853]])
-NumPy array: [[-1.4137164  -0.54921     1.2005402 ]
- [-0.6122091   0.31872866 -0.8852541 ]]
-Back to PyTorch: tensor([[-1.4137, -0.5492,  1.2005],
-        [-0.6122,  0.3187, -0.8853]])</code></pre>
+<pre><code>PyTorch tensor: tensor([[-1.9366,  0.4574, -0.2636],
+        [ 0.3120,  0.1357, -1.4863]])
+NumPy array: [[-1.9365865   0.45741966 -0.26364863]
+ [ 0.31196123  0.13574891 -1.4862579 ]]
+Back to PyTorch: tensor([[-1.9366,  0.4574, -0.2636],
+        [ 0.3120,  0.1357, -1.4863]])</code></pre>
 </div>
 </div>
 </section>
 <section id="handling-gpu-tensors" class="level3">
 <h3 class="anchored" data-anchor-id="handling-gpu-tensors">Handling GPU tensors</h3>
-<div id="46f5498c" class="cell" data-execution_count="10">
+<div id="fc379a17" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> torch.cuda.is_available():</span>
@@ -1334,13 +1336,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p><img src="../../images/anna.png" alt="Course instructors" width="250"></p>
+<p><img src="../../images/geog-logo.png" alt="The Department of Geography logo" width="250"></p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
     <div class="nav-footer-right">
-<p>This website is built with <a href="https://github.com/kellycaylor/geoAI">{{&lt; fa brands github "the github octocat logo" &gt;}}</a> and <a href="https://quarto.org/">Quarto</a></p>
+<p>This website is built with <a href="https://github.com/environmental-data-science/geog-288kc-geospatial-foundation-models"><i class="fa-brands fa-github" title="the github octocat logo" aria-label="github"></i></a> and <a href="https://quarto.org/">Quarto</a></p>
 </div>
   </div>
 </footer>

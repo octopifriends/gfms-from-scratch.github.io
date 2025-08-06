@@ -2,7 +2,7 @@
   "hash": "31e102df80c666580355573512bea092",
   "result": {
     "engine": "jupyter",
-    "markdown": "---\ntitle: \"Fine-tuning Strategies\"\nsubtitle: \"Basic fine-tuning approaches\"\njupyter: geoai\nformat: html\n---\n\n\n\n\nCheatsheet content coming soon...\n\n",
+    "markdown": "---\ntitle: \"Fine-tuning Strategies\"\nsubtitle: \"Basic fine-tuning approaches\"\njupyter: geoai\nformat: html\n---\n\n\nCheatsheet content coming soon...\n\n",
     "supporting": [
       "finetuning_basics_files"
     ],

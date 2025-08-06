@@ -73,6 +73,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/quarto-contrib/fontawesome6-1.2.0/all.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/fontawesome6-1.2.0/latex-fontsize.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -126,7 +128,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">🏠 home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../Syllabus.md"> 
+    <a class="nav-link" href="../../Syllabus.html"> 
 <span class="menu-text">📋 syllabus</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -364,7 +366,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>Effective visualization is crucial for understanding satellite imagery and geospatial data. This cheatsheet covers essential plotting techniques.</p>
-<div id="b0469f7e" class="cell" data-execution_count="1">
+<div id="10548f7e" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -382,7 +384,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="creating-sample-satellite-data" class="level2">
 <h2 class="anchored" data-anchor-id="creating-sample-satellite-data">Creating Sample Satellite Data</h2>
-<div id="f2ae74d4" class="cell" data-execution_count="2">
+<div id="1062ed1d" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_sample_satellite_scene(size<span class="op">=</span><span class="dv">256</span>):</span>
@@ -430,7 +432,7 @@ Data ranges - Red: 0-255</code></pre>
 </section>
 <section id="single-band-visualization" class="level2">
 <h2 class="anchored" data-anchor-id="single-band-visualization">Single Band Visualization</h2>
-<div id="46c7d070" class="cell" data-execution_count="3">
+<div id="68d2f1ba" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">10</span>))</span>
@@ -461,7 +463,7 @@ Data ranges - Red: 0-255</code></pre>
 </section>
 <section id="rgb-composite-images" class="level2">
 <h2 class="anchored" data-anchor-id="rgb-composite-images">RGB Composite Images</h2>
-<div id="5f76971a" class="cell" data-execution_count="4">
+<div id="be6c1588" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_rgb_composite(r, g, b, enhance<span class="op">=</span><span class="va">True</span>):</span>
@@ -513,7 +515,7 @@ Clipping input data to the valid range for imshow with RGB data ([0..1] for floa
 </section>
 <section id="spectral-indices-visualization" class="level2">
 <h2 class="anchored" data-anchor-id="spectral-indices-visualization">Spectral Indices Visualization</h2>
-<div id="0dd459d7" class="cell" data-execution_count="5">
+<div id="347977c6" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate NDVI</span></span>
@@ -565,13 +567,13 @@ Clipping input data to the valid range for imshow with RGB data ([0..1] for floa
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>NDVI range: -1.000 to 1.000
-NDVI mean: 0.122</code></pre>
+NDVI mean: 0.123</code></pre>
 </div>
 </div>
 </section>
 <section id="custom-colormaps-and-classification" class="level2">
 <h2 class="anchored" data-anchor-id="custom-colormaps-and-classification">Custom Colormaps and Classification</h2>
-<div id="d7462ee9" class="cell" data-execution_count="6">
+<div id="3b689aff" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create land cover classification</span></span>
@@ -645,7 +647,7 @@ NDVI mean: 0.122</code></pre>
 </section>
 <section id="advanced-visualization-techniques" class="level2">
 <h2 class="anchored" data-anchor-id="advanced-visualization-techniques">Advanced Visualization Techniques</h2>
-<div id="a4ec7072" class="cell" data-execution_count="7">
+<div id="c6a814c3" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Multi-scale visualization</span></span>
@@ -704,8 +706,8 @@ NDVI mean: 0.122</code></pre>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [37.0..255.0].
-Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [37.0..255.0].</code></pre>
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [42.0..255.0].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [42.0..255.0].</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
@@ -718,7 +720,7 @@ Clipping input data to the valid range for imshow with RGB data ([0..1] for floa
 </section>
 <section id="time-series-visualization" class="level2">
 <h2 class="anchored" data-anchor-id="time-series-visualization">Time Series Visualization</h2>
-<div id="74614d52" class="cell" data-execution_count="8">
+<div id="d925dec0" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate time series of NDVI</span></span>
@@ -788,9 +790,9 @@ Clipping input data to the valid range for imshow with RGB data ([0..1] for floa
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>NDVI Statistics by Land Cover:
-Forest - Mean: 0.407, Std: 0.202
-Cropland - Mean: 0.420, Std: 0.166
-Urban - Mean: 0.271, Std: 0.067</code></pre>
+Forest - Mean: 0.416, Std: 0.203
+Cropland - Mean: 0.420, Std: 0.162
+Urban - Mean: 0.273, Std: 0.064</code></pre>
 </div>
 </div>
 </section>
@@ -1655,13 +1657,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p><img src="../../images/anna.png" alt="Course instructors" width="250"></p>
+<p><img src="../../images/geog-logo.png" alt="The Department of Geography logo" width="250"></p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
     <div class="nav-footer-right">
-<p>This website is built with <a href="https://github.com/kellycaylor/geoAI">{{&lt; fa brands github "the github octocat logo" &gt;}}</a> and <a href="https://quarto.org/">Quarto</a></p>
+<p>This website is built with <a href="https://github.com/environmental-data-science/geog-288kc-geospatial-foundation-models"><i class="fa-brands fa-github" title="the github octocat logo" aria-label="github"></i></a> and <a href="https://quarto.org/">Quarto</a></p>
 </div>
   </div>
 </footer>

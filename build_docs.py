@@ -3,6 +3,7 @@
 GEOG 288KC Documentation Build Script
 This script builds the Quarto website and prepares it for GitHub Pages deployment
 Supports incremental builds by default (only changed files) with --full option for complete rebuild
+The --full flag also clears Quarto cache and freeze files to ensure a completely fresh build
 """
 
 import os
@@ -90,14 +91,14 @@ def get_all_buildable_files():
     # Get all .qmd files (excluding patterns from _quarto.yml)
     for qmd_file in Path(".").rglob("*.qmd"):
         # Skip files in excluded directories
-        if "nbs/" in str(qmd_file) or "extra_files/" in str(qmd_file):
+        if "nbs/" in str(qmd_file) or "installation/" in str(qmd_file):
             continue
         all_files.append(str(qmd_file))
     
     # Get all .ipynb files (excluding patterns from _quarto.yml)
     for ipynb_file in Path(".").rglob("*.ipynb"):
         # Skip files in excluded directories
-        if "nbs/" in str(ipynb_file) or "extra_files/" in str(ipynb_file):
+        if "nbs/" in str(ipynb_file) or "installation/" in str(ipynb_file):
             continue
         all_files.append(str(ipynb_file))
     
@@ -192,6 +193,60 @@ def clean_docs():
     # Ensure docs directory exists
     docs_path.mkdir(exist_ok=True)
     print("   Created docs/ directory")
+
+def clear_quarto_cache():
+    """Clear Quarto freeze files and caches for a fresh full build."""
+    print("🗑️  Clearing Quarto cache and freeze files...")
+    
+    total_removed = 0
+    cache_items_removed = []
+    
+    # Clear _freeze directory (contains cached execution results)
+    freeze_path = Path("_freeze")
+    if freeze_path.exists() and freeze_path.is_dir():
+        shutil.rmtree(freeze_path)
+        total_removed += 1
+        cache_items_removed.append("_freeze/ (cached execution results)")
+        print("   Removed _freeze/ directory")
+    
+    # Clear .quarto directory (contains Quarto cache)
+    quarto_cache_path = Path(".quarto")
+    if quarto_cache_path.exists() and quarto_cache_path.is_dir():
+        shutil.rmtree(quarto_cache_path)
+        total_removed += 1
+        cache_items_removed.append(".quarto/ (Quarto cache)")
+        print("   Removed .quarto/ directory")
+    
+    # Clear any .quarto directories in subdirectories
+    for quarto_dir in Path(".").rglob(".quarto"):
+        if quarto_dir.is_dir():
+            # Skip if it's in excluded directories
+            if "nbs/" in str(quarto_dir) or "installation/" in str(quarto_dir) or "example_course/" in str(quarto_dir):
+                continue
+            shutil.rmtree(quarto_dir)
+            total_removed += 1
+            cache_items_removed.append(f"{quarto_dir} (subdirectory cache)")
+            print(f"   Removed {quarto_dir}")
+    
+    # Clear Jupyter checkpoints
+    for checkpoint_dir in Path(".").rglob(".ipynb_checkpoints"):
+        if checkpoint_dir.is_dir():
+            # Skip if it's in excluded directories
+            if "nbs/" in str(checkpoint_dir) or "installation/" in str(checkpoint_dir) or "example_course/" in str(checkpoint_dir):
+                continue
+            shutil.rmtree(checkpoint_dir)
+            total_removed += 1
+            cache_items_removed.append(f"{checkpoint_dir} (Jupyter checkpoints)")
+            print(f"   Removed {checkpoint_dir}")
+    
+    if total_removed > 0:
+        print(f"   ✅ Cleared {total_removed} cache/freeze items:")
+        for item in cache_items_removed:
+            print(f"      - {item}")
+    else:
+        print("   ✅ No cache or freeze files found to clear")
+    
+    print("   🔄 Fresh build environment prepared")
 
 def clean_intermediate_files():
     """Remove all HTML and other intermediate files from course_materials directories."""
@@ -368,7 +423,7 @@ def verify_build():
 def parse_arguments():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Build EDS 217 documentation with incremental build support"
+        description="Build GEOG 288KC documentation with incremental build support"
     )
     parser.add_argument(
         "--serve", "-s",
@@ -378,7 +433,7 @@ def parse_arguments():
     parser.add_argument(
         "--full", "-f",
         action="store_true",
-        help="Force full rebuild of all files (default: incremental build)"
+        help="Force full rebuild of all files and clear Quarto cache/freeze files (default: incremental build)"
     )
     parser.add_argument(
         "--clean", "-c",
@@ -420,13 +475,17 @@ def main():
         return
     
     if args.full:
-        print("🚀 Starting EDS 217 documentation build (FULL BUILD)...")
+        print("🚀 Starting GEOG 288KC documentation build (FULL BUILD)...")
     else:
-        print("🚀 Starting EDS 217 documentation build (incremental)...")
+        print("🚀 Starting GEOG 288KC documentation build (incremental)...")
     
     try:
         activate_conda_environment()
         check_prerequisites()
+        
+        # Clear Quarto caches and freeze files for full builds
+        if args.full:
+            clear_quarto_cache()
         
         files_to_build = None
         if not args.full:

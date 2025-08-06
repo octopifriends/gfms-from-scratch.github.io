@@ -7,10 +7,11 @@ project:
     - "*.ipynb"
     - "!nbs/**"
     - "!installation/**"
+    - "!example_course/**"
 
 website:
   navbar:
-    title: "GEOG 288KC"
+    title: "GEOG<br>288KC"
     right:
       - text: 🏠 home
         href: index.qmd
@@ -123,6 +124,9 @@ format:
     code-fold: true
     code-tools: true
     jupyter: geoai
+
+filters:
+  - fontawesome
 
 execute:
   freeze: auto

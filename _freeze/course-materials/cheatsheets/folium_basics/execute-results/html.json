@@ -2,7 +2,7 @@
   "hash": "8ab7a6029c522efe604421add2a3c301",
   "result": {
     "engine": "jupyter",
-    "markdown": "---\ntitle: \"Interactive Maps with Folium\"\nsubtitle: \"Creating interactive web maps\"\njupyter: geoai\nformat: html\n---\n\n\n\n\nCheatsheet content coming soon...\n\n",
+    "markdown": "---\ntitle: \"Interactive Maps with Folium\"\nsubtitle: \"Creating interactive web maps\"\njupyter: geoai\nformat: html\n---\n\n\nCheatsheet content coming soon...\n\n",
     "supporting": [
       "folium_basics_files"
     ],

@@ -2,7 +2,7 @@
   "hash": "be185c04dbba18d096050ddb961ce0ba",
   "result": {
     "engine": "jupyter",
-    "markdown": "---\ntitle: \"Session 1: PyTorch & TorchGeo Fundamentals\"\nsubtitle: \"Foundation of geospatial ML workflows\"\njupyter: geoai\nformat: html\n---\n\n\n\n\nInteractive session content coming soon...\n\n",
+    "markdown": "---\ntitle: \"Session 1: PyTorch & TorchGeo Fundamentals\"\nsubtitle: \"Foundation of geospatial ML workflows\"\njupyter: geoai\nformat: html\n---\n\n\nInteractive session content coming soon...\n\n",
     "supporting": [
       "session1_pytorch_torchgeo_files"
     ],

@@ -2,7 +2,7 @@
   "hash": "f00e437442db8693eefec2d8a8f99148",
   "result": {
     "engine": "jupyter",
-    "markdown": "---\ntitle: \"Session 3: Multi-modal & Sensor Fusion\"\nsubtitle: \"Combining different data sources and modalities\"\njupyter: geoai\nformat: html\n---\n\n\n\n\nInteractive session content coming soon...\n\n",
+    "markdown": "---\ntitle: \"Session 3: Multi-modal & Sensor Fusion\"\nsubtitle: \"Combining different data sources and modalities\"\njupyter: geoai\nformat: html\n---\n\n\nInteractive session content coming soon...\n\n",
     "supporting": [
       "session3_multimodal_files"
     ],

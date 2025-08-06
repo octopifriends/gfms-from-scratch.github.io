@@ -127,3 +127,25 @@ h2 {
   border-color: $green;
 }
 
+// responsive navbar title styling with hard-coded line break
+.navbar-brand {
+  font-weight: 700 !important;
+  overflow: visible !important;
+  flex-shrink: 0 !important;
+  min-width: fit-content !important;
+  line-height: 1.1 !important;
+  padding-top: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
+  text-align: center !important;
+}
+
+// ensure navbar title doesn't get crushed on narrow screens
+.navbar-nav {
+  flex-wrap: wrap !important;
+}
+
+// ensure the line break renders properly in HTML
+.navbar-brand br {
+  display: block !important;
+}
+

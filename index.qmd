@@ -1,6 +1,6 @@
 ---
 title: "Geospatial Foundation Models and Applications"
-subtitle: "Master of Environmental Data Science (MEDS)"
+subtitle: "Department of Geography"
 description: "Fall 2025"
 title-block-banner: false
 toc: false

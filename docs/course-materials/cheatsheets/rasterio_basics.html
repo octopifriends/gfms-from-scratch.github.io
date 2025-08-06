@@ -73,6 +73,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/quarto-contrib/fontawesome6-1.2.0/all.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/fontawesome6-1.2.0/latex-fontsize.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -126,7 +128,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">🏠 home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../Syllabus.md"> 
+    <a class="nav-link" href="../../Syllabus.html"> 
 <span class="menu-text">📋 syllabus</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -385,7 +387,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-to-rasterio" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-rasterio">Introduction to Rasterio</h2>
 <p>Rasterio is the essential Python library for reading and writing geospatial raster data.</p>
-<div id="c8608b7c" class="cell" data-execution_count="1">
+<div id="ba6532f1" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
@@ -402,7 +404,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="creating-sample-data" class="level2">
 <h2 class="anchored" data-anchor-id="creating-sample-data">Creating Sample Data</h2>
 <p>Since we may not have actual satellite imagery files, let’s create some sample raster data:</p>
-<div id="37fe21d0" class="cell" data-execution_count="2">
+<div id="33dbfc60" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create sample raster data</span></span>
@@ -437,7 +439,7 @@ Data range: 7 to 254</code></pre>
 <h2 class="anchored" data-anchor-id="working-with-raster-arrays">Working with Raster Arrays</h2>
 <section id="basic-array-operations" class="level3">
 <h3 class="anchored" data-anchor-id="basic-array-operations">Basic array operations</h3>
-<div id="99728b17" class="cell" data-execution_count="3">
+<div id="a27915db" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic statistics</span></span>
@@ -478,7 +480,7 @@ Unique values: 182</code></pre>
 </section>
 <section id="array-masking-and-filtering" class="level3">
 <h3 class="anchored" data-anchor-id="array-masking-and-filtering">Array masking and filtering</h3>
-<div id="066b825b" class="cell" data-execution_count="4">
+<div id="58e9121a" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create masks</span></span>
@@ -526,7 +528,7 @@ Pixels with low values (&lt;50): 76</code></pre>
 <h2 class="anchored" data-anchor-id="raster-metadata-and-transforms">Raster Metadata and Transforms</h2>
 <section id="understanding-geospatial-transforms" class="level3">
 <h3 class="anchored" data-anchor-id="understanding-geospatial-transforms">Understanding geospatial transforms</h3>
-<div id="16934cd9" class="cell" data-execution_count="5">
+<div id="5dec6e73" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rasterio.transform <span class="im">import</span> from_bounds</span>
@@ -561,7 +563,7 @@ Center pixel (50, 50) -&gt; Geographic: (-117.47, 37.48)</code></pre>
 </section>
 <section id="creating-profiles-for-writing-rasters" class="level3">
 <h3 class="anchored" data-anchor-id="creating-profiles-for-writing-rasters">Creating profiles for writing rasters</h3>
-<div id="d518b515" class="cell" data-execution_count="6">
+<div id="d71b35c3" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a profile for writing raster data</span></span>
@@ -600,7 +602,7 @@ Center pixel (50, 50) -&gt; Geographic: (-117.47, 37.48)</code></pre>
 <h2 class="anchored" data-anchor-id="multi-band-operations">Multi-band Operations</h2>
 <section id="working-with-multi-band-data" class="level3">
 <h3 class="anchored" data-anchor-id="working-with-multi-band-data">Working with multi-band data</h3>
-<div id="bdb7bc14" class="cell" data-execution_count="7">
+<div id="66f8fe0a" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create multi-band sample data (RGB-like)</span></span>
@@ -636,7 +638,7 @@ Shape format: (bands, height, width)</code></pre>
 </section>
 <section id="visualizing-multi-band-data" class="level3">
 <h3 class="anchored" data-anchor-id="visualizing-multi-band-data">Visualizing multi-band data</h3>
-<div id="f2c5d15d" class="cell" data-execution_count="8">
+<div id="b95e3bd2" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))</span>
@@ -669,7 +671,7 @@ Shape format: (bands, height, width)</code></pre>
 <h2 class="anchored" data-anchor-id="band-math-and-indices">Band Math and Indices</h2>
 <section id="calculate-vegetation-index-ndvi-like" class="level3">
 <h3 class="anchored" data-anchor-id="calculate-vegetation-index-ndvi-like">Calculate vegetation index (NDVI-like)</h3>
-<div id="e0c4ba82" class="cell" data-execution_count="9">
+<div id="9398921f" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate NIR and Red bands</span></span>
@@ -721,7 +723,7 @@ NDVI mean: 0.353</code></pre>
 <h2 class="anchored" data-anchor-id="resampling-and-reprojection-concepts">Resampling and Reprojection Concepts</h2>
 <section id="understanding-resampling-methods" class="level3">
 <h3 class="anchored" data-anchor-id="understanding-resampling-methods">Understanding resampling methods</h3>
-<div id="0361d811" class="cell" data-execution_count="10">
+<div id="0bc508b9" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> ndimage</span>
@@ -775,7 +777,7 @@ Upsampled size: (200, 200)</code></pre>
 <h2 class="anchored" data-anchor-id="common-rasterio-patterns">Common Rasterio Patterns</h2>
 <section id="working-with-windows-and-blocks" class="level3">
 <h3 class="anchored" data-anchor-id="working-with-windows-and-blocks">Working with windows and blocks</h3>
-<div id="748a1928" class="cell" data-execution_count="11">
+<div id="a0bebc40" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate processing large rasters in blocks</span></span>
@@ -1659,13 +1661,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p><img src="../../images/anna.png" alt="Course instructors" width="250"></p>
+<p><img src="../../images/geog-logo.png" alt="The Department of Geography logo" width="250"></p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
     <div class="nav-footer-right">
-<p>This website is built with <a href="https://github.com/kellycaylor/geoAI">{{&lt; fa brands github "the github octocat logo" &gt;}}</a> and <a href="https://quarto.org/">Quarto</a></p>
+<p>This website is built with <a href="https://github.com/environmental-data-science/geog-288kc-geospatial-foundation-models"><i class="fa-brands fa-github" title="the github octocat logo" aria-label="github"></i></a> and <a href="https://quarto.org/">Quarto</a></p>
 </div>
   </div>
 </footer>

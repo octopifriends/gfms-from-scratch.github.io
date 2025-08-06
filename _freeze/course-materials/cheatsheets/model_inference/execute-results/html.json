@@ -2,7 +2,7 @@
   "hash": "da7065b97cd0df6e7c625e7781f1b3a1",
   "result": {
     "engine": "jupyter",
-    "markdown": "---\ntitle: \"Model Inference & Feature Extraction\"\nsubtitle: \"Running inference and extracting features\"\njupyter: geoai\nformat: html\n---\n\n\n\n\nCheatsheet content coming soon...\n\n",
+    "markdown": "---\ntitle: \"Model Inference & Feature Extraction\"\nsubtitle: \"Running inference and extracting features\"\njupyter: geoai\nformat: html\n---\n\n\nCheatsheet content coming soon...\n\n",
     "supporting": [
       "model_inference_files"
     ],
