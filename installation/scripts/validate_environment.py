@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Environment Validation Script for GEOG 288KC
-Comprehensive testing of the geoAI-gpu environment and foundation models
+Comprehensive testing of the geoAI environment and foundation models
 """
 
 import sys
@@ -71,12 +71,12 @@ class EnvironmentValidator:
         print_info("Checking conda environment...")
         
         env_name = os.environ.get('CONDA_DEFAULT_ENV')
-        if env_name == 'geoAI-gpu':
+        if env_name == 'geoAI':
             print_success(f"Running in {env_name} environment")
             self.results['tests']['conda_env'] = {'status': 'pass', 'environment': env_name}
             return True
         else:
-            print_error(f"Expected 'geoAI-gpu' environment, found: {env_name}")
+            print_error(f"Expected 'geoAI' environment, found: {env_name}")
             self.results['tests']['conda_env'] = {'status': 'fail', 'environment': env_name}
             return False
 
@@ -362,7 +362,7 @@ class EnvironmentValidator:
                 return True
             else:
                 print_error("geoAI Jupyter kernel not found")
-                print_info("Run: python -m ipykernel install --user --name geoAI-gpu")
+                print_info("Run: python -m ipykernel install --user --name geoai --display-name 'GeoAI'")
                 self.results['tests']['jupyter_kernel'] = {'status': 'fail', 'error': 'kernel_not_found'}
                 return False
                 

@@ -310,21 +310,21 @@
   {
     "objectID": "course-materials/interactive-sessions/session5_deployment.html",
     "href": "course-materials/interactive-sessions/session5_deployment.html",
-    "title": "Session 5: Scalable Analysis & Deployment",
+    "title": "Interactive Session 5",
     "section": "",
     "text": "Interactive session content coming soon…"
   },
   {
     "objectID": "course-materials/interactive-sessions/session3_multimodal.html",
     "href": "course-materials/interactive-sessions/session3_multimodal.html",
-    "title": "Session 3: Multi-modal & Sensor Fusion",
+    "title": "Interactive Session 3",
     "section": "",
     "text": "Interactive session content coming soon…"
   },
   {
     "objectID": "course-materials/interactive-sessions/session1_pytorch_torchgeo.html",
     "href": "course-materials/interactive-sessions/session1_pytorch_torchgeo.html",
-    "title": "Session 1: PyTorch & TorchGeo Fundamentals",
+    "title": "Interactive Session 1",
     "section": "",
     "text": "Interactive session content coming soon…"
   },
@@ -443,14 +443,14 @@
   {
     "objectID": "course-materials/interactive-sessions/session2_foundation_models.html",
     "href": "course-materials/interactive-sessions/session2_foundation_models.html",
-    "title": "Session 2: Loading & Using Foundation Models",
+    "title": "Interactive Session 2",
     "section": "",
     "text": "Interactive session content coming soon…"
   },
   {
     "objectID": "course-materials/interactive-sessions/session4_adaptation.html",
     "href": "course-materials/interactive-sessions/session4_adaptation.html",
-    "title": "Session 4: Model Adaptation & Evaluation",
+    "title": "Interactive Session 4",
     "section": "",
     "text": "Interactive session content coming soon…"
   },
@@ -635,5 +635,68 @@
     "title": "PyTorch Tensors & GPU Operations",
     "section": "Converting Between Formats",
     "text": "Converting Between Formats\n\nPyTorch ↔︎ NumPy\n\n\nCode\n# PyTorch to NumPy\ntorch_tensor = torch.randn(2, 3)\nnumpy_array = torch_tensor.numpy()  # Only works on CPU tensors\n\nprint(f\"PyTorch tensor: {torch_tensor}\")\nprint(f\"NumPy array: {numpy_array}\")\n\n# NumPy to PyTorch\nnew_torch = torch.from_numpy(numpy_array)\nprint(f\"Back to PyTorch: {new_torch}\")\n\n\nPyTorch tensor: tensor([[-1.9366,  0.4574, -0.2636],\n        [ 0.3120,  0.1357, -1.4863]])\nNumPy array: [[-1.9365865   0.45741966 -0.26364863]\n [ 0.31196123  0.13574891 -1.4862579 ]]\nBack to PyTorch: tensor([[-1.9366,  0.4574, -0.2636],\n        [ 0.3120,  0.1357, -1.4863]])\n\n\n\n\nHandling GPU tensors\n\n\nCode\nif torch.cuda.is_available():\n    # GPU tensor must be moved to CPU first\n    gpu_tensor = torch.randn(2, 3).cuda()\n    cpu_numpy = gpu_tensor.cpu().numpy()\n    print(f\"GPU tensor converted to NumPy: {cpu_numpy.shape}\")\nelse:\n    print(\"GPU conversion example not available (running on CPU)\")\n\n\nGPU conversion example not available (running on CPU)"
+  },
+  {
+    "objectID": "course-materials/examples/resnet.html",
+    "href": "course-materials/examples/resnet.html",
+    "title": "Visualizing Residual Learning and Convergence",
+    "section": "",
+    "text": "This notebook demonstrates the core insight behind Residual Networks (ResNets) by comparing them to a traditional plain CNN of similar depth. You will:\n\nVisualize how residual connections transform intermediate representations\nCompare training loss and accuracy curves\nAnalyze gradient flow to see why ResNets enable deeper models to train effectively"
+  },
+  {
+    "objectID": "course-materials/examples/resnet.html#overview",
+    "href": "course-materials/examples/resnet.html#overview",
+    "title": "Visualizing Residual Learning and Convergence",
+    "section": "",
+    "text": "This notebook demonstrates the core insight behind Residual Networks (ResNets) by comparing them to a traditional plain CNN of similar depth. You will:\n\nVisualize how residual connections transform intermediate representations\nCompare training loss and accuracy curves\nAnalyze gradient flow to see why ResNets enable deeper models to train effectively"
+  },
+  {
+    "objectID": "course-materials/examples/resnet.html#setup-and-imports",
+    "href": "course-materials/examples/resnet.html#setup-and-imports",
+    "title": "Visualizing Residual Learning and Convergence",
+    "section": "📦 Setup and Imports",
+    "text": "📦 Setup and Imports\nimport torch\nimport torch.nn as nn\nimport torch.nn.functional as F\nimport torchvision\nimport torchvision.transforms as transforms\nfrom torch.utils.data import DataLoader\nimport matplotlib.pyplot as plt\nimport numpy as np\nfrom tqdm import tqdm"
+  },
+  {
+    "objectID": "course-materials/examples/resnet.html#define-plain-cnn-and-resnet-like-cnn",
+    "href": "course-materials/examples/resnet.html#define-plain-cnn-and-resnet-like-cnn",
+    "title": "Visualizing Residual Learning and Convergence",
+    "section": "📊 Define Plain CNN and ResNet-like CNN",
+    "text": "📊 Define Plain CNN and ResNet-like CNN\nclass PlainBlock(nn.Module):\n    def __init__(self, in_channels, out_channels, stride=1):\n        super().__init__()\n        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1)\n        self.bn1 = nn.BatchNorm2d(out_channels)\n        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)\n        self.bn2 = nn.BatchNorm2d(out_channels)\n\n    def forward(self, x):\n        out = F.relu(self.bn1(self.conv1(x)))\n        out = self.bn2(self.conv2(out))\n        return F.relu(out)\n\nclass ResBlock(nn.Module):\n    def __init__(self, in_channels, out_channels, stride=1):\n        super().__init__()\n        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1)\n        self.bn1 = nn.BatchNorm2d(out_channels)\n        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)\n        self.bn2 = nn.BatchNorm2d(out_channels)\n        self.shortcut = nn.Sequential()\n        if stride != 1 or in_channels != out_channels:\n            self.shortcut = nn.Sequential(\n                nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride),\n                nn.BatchNorm2d(out_channels)\n            )\n\n    def forward(self, x):\n        identity = x\n        out = F.relu(self.bn1(self.conv1(x)))\n        out = self.bn2(self.conv2(out))\n        out += self.shortcut(identity)\n        return F.relu(out)\n\nclass PlainCNN(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.block1 = PlainBlock(3, 16)\n        self.block2 = PlainBlock(16, 32, stride=2)\n        self.pool = nn.AdaptiveAvgPool2d((1, 1))\n        self.fc = nn.Linear(32, 10)\n\n    def forward(self, x):\n        x = self.block1(x)\n        x = self.block2(x)\n        x = self.pool(x).view(x.size(0), -1)\n        return self.fc(x)\n\nclass ResNetMini(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.block1 = ResBlock(3, 16)\n        self.block2 = ResBlock(16, 32, stride=2)\n        self.pool = nn.AdaptiveAvgPool2d((1, 1))\n        self.fc = nn.Linear(32, 10)\n\n    def forward(self, x):\n        x = self.block1(x)\n        x = self.block2(x)\n        x = self.pool(x).view(x.size(0), -1)\n        return self.fc(x)"
+  },
+  {
+    "objectID": "course-materials/examples/resnet.html#load-cifar-10-data",
+    "href": "course-materials/examples/resnet.html#load-cifar-10-data",
+    "title": "Visualizing Residual Learning and Convergence",
+    "section": "🖼️ Load CIFAR-10 Data",
+    "text": "🖼️ Load CIFAR-10 Data\ntransform = transforms.Compose([\n    transforms.ToTensor(),\n    transforms.Normalize((0.5,), (0.5,))\n])\n\ntrain_data = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)\ntest_data = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)\n\ntrain_loader = DataLoader(train_data, batch_size=128, shuffle=True, num_workers=2)\ntest_loader = DataLoader(test_data, batch_size=128, shuffle=False, num_workers=2)"
+  },
+  {
+    "objectID": "course-materials/examples/resnet.html#training-loop-and-gradient-tracking",
+    "href": "course-materials/examples/resnet.html#training-loop-and-gradient-tracking",
+    "title": "Visualizing Residual Learning and Convergence",
+    "section": "🚀 Training Loop and Gradient Tracking",
+    "text": "🚀 Training Loop and Gradient Tracking\ndef train_model(model, name, epochs=10):\n    device = torch.device(\"cuda\" if torch.cuda.is_available() else \"cpu\")\n    model = model.to(device)\n    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)\n    criterion = nn.CrossEntropyLoss()\n\n    train_loss = []\n    train_gradients = []\n\n    for epoch in range(epochs):\n        model.train()\n        running_loss = 0\n        grad_norm = 0\n        for inputs, targets in tqdm(train_loader, desc=f\"{name} Epoch {epoch+1}\"):\n            inputs, targets = inputs.to(device), targets.to(device)\n            optimizer.zero_grad()\n            outputs = model(inputs)\n            loss = criterion(outputs, targets)\n            loss.backward()\n\n            total_norm = 0\n            for p in model.parameters():\n                if p.grad is not None:\n                    param_norm = p.grad.data.norm(2)\n                    total_norm += param_norm.item() ** 2\n            grad_norm += total_norm ** 0.5\n\n            optimizer.step()\n            running_loss += loss.item()\n\n        train_loss.append(running_loss / len(train_loader))\n        train_gradients.append(grad_norm / len(train_loader))\n\n    return train_loss, train_gradients"
+  },
+  {
+    "objectID": "course-materials/examples/resnet.html#train-and-compare",
+    "href": "course-materials/examples/resnet.html#train-and-compare",
+    "title": "Visualizing Residual Learning and Convergence",
+    "section": "📈 Train and Compare",
+    "text": "📈 Train and Compare\nplain_model = PlainCNN()\nresnet_model = ResNetMini()\n\nplain_loss, plain_grads = train_model(plain_model, \"PlainCNN\")\nresnet_loss, resnet_grads = train_model(resnet_model, \"ResNetMini\")"
+  },
+  {
+    "objectID": "course-materials/examples/resnet.html#plot-training-loss-and-gradient-flow",
+    "href": "course-materials/examples/resnet.html#plot-training-loss-and-gradient-flow",
+    "title": "Visualizing Residual Learning and Convergence",
+    "section": "📊 Plot Training Loss and Gradient Flow",
+    "text": "📊 Plot Training Loss and Gradient Flow\nplt.figure(figsize=(14,5))\n\nplt.subplot(1,2,1)\nplt.plot(plain_loss, label=\"PlainCNN\")\nplt.plot(resnet_loss, label=\"ResNetMini\")\nplt.title(\"Training Loss\")\nplt.xlabel(\"Epoch\")\nplt.ylabel(\"Loss\")\nplt.legend()\n\nplt.subplot(1,2,2)\nplt.plot(plain_grads, label=\"PlainCNN\")\nplt.plot(resnet_grads, label=\"ResNetMini\")\nplt.title(\"Gradient Norm per Epoch\")\nplt.xlabel(\"Epoch\")\nplt.ylabel(\"Average Gradient Norm\")\nplt.legend()\n\nplt.suptitle(\"Residual Connections Help Optimize Deeper Networks\")\nplt.tight_layout()\nplt.show()"
+  },
+  {
+    "objectID": "course-materials/examples/resnet.html#conclusion",
+    "href": "course-materials/examples/resnet.html#conclusion",
+    "title": "Visualizing Residual Learning and Convergence",
+    "section": "✅ Conclusion",
+    "text": "✅ Conclusion\nThis notebook demonstrates that residual connections help preserve gradient flow, allowing deeper networks to train faster and more reliably. Even though our example was relatively shallow (2 blocks), the benefits in convergence and stability are clear."
   }
 ]

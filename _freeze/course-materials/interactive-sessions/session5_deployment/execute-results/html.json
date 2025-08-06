@@ -1,8 +1,8 @@
 {
-  "hash": "737bac7519f835a720356854beb30915",
+  "hash": "8d0c992d5bd9c47644280ac85b5b1399",
   "result": {
     "engine": "jupyter",
-    "markdown": "---\ntitle: \"Session 5: Scalable Analysis & Deployment\"\nsubtitle: \"Production pipelines and model serving\"\njupyter: geoai\nformat: html\n---\n\n\nInteractive session content coming soon...\n\n",
+    "markdown": "---\ntitle: \"Interactive Session 5\"\nsubtitle: \"☁️ Scalable Analysis & Deployment\"\neditor_options: \n  chunk_output_type: console\njupyter: geoai\nformat:\n  html:\n    toc: true\n    toc-depth: 3\n    code-fold: true\n---\n\n\nInteractive session content coming soon...\n\n",
     "supporting": [
       "session5_deployment_files"
     ],

@@ -71,6 +71,8 @@ ehthumbs.db
 /.quarto/
 _site/
 .quarto/
+_freeze/
+*_files/
 
 # Data files (add specific patterns as needed)
 *.h5
@@ -94,6 +96,8 @@ temp/
 # Documentation build
 docs/_site/
 docs/.quarto/
+docs/_freeze/
+*_cache/
 
 # Cloud credentials
 *credentials*.json

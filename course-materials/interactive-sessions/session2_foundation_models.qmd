@@ -1,8 +1,14 @@
 ---
-title: "Session 2: Loading & Using Foundation Models"
-subtitle: "Working with pre-trained geospatial models"
+title: "Interactive Session 2"
+subtitle: "🤗 Loading & Using Foundation Models"
+editor_options: 
+  chunk_output_type: console
 jupyter: geoai
-format: html
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
 ---
 
 Interactive session content coming soon...

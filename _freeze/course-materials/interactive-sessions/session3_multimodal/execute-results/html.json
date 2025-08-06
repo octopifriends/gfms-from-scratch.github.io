@@ -1,8 +1,8 @@
 {
-  "hash": "f00e437442db8693eefec2d8a8f99148",
+  "hash": "d0f3c42a29e23243de81544cb915d21f",
   "result": {
     "engine": "jupyter",
-    "markdown": "---\ntitle: \"Session 3: Multi-modal & Sensor Fusion\"\nsubtitle: \"Combining different data sources and modalities\"\njupyter: geoai\nformat: html\n---\n\n\nInteractive session content coming soon...\n\n",
+    "markdown": "---\ntitle: \"Interactive Session 3\"\nsubtitle: \"📐 Multi-modal & Sensor Fusion\"\neditor_options: \n  chunk_output_type: console\njupyter: geoai\nformat:\n  html:\n    toc: true\n    toc-depth: 3\n    code-fold: true\n---\n\n\nInteractive session content coming soon...\n\n",
     "supporting": [
       "session3_multimodal_files"
     ],

@@ -21,7 +21,7 @@ cd geoAI
 bash scripts/setup_ai_sandbox.sh
 
 # Activate the environment
-conda activate geoAI-gpu
+conda activate geoAI
 
 # Validate installation
 python scripts/validate_environment.py
@@ -67,13 +67,13 @@ cd geoAI
 conda env create -f environment-gpu.yml
 
 # Activate the environment
-conda activate geoAI-gpu
+conda activate geoAI
 
 # Install additional packages via pip
 pip install -r requirements-gpu.txt
 
 # Install Jupyter kernel
-python -m ipykernel install --user --name geoAI-gpu --display-name "Python (geoAI-GPU)"
+python -m ipykernel install --user --name geoai --display-name "GeoAI"
 ```
 
 ### Step 3: Install Foundation Models

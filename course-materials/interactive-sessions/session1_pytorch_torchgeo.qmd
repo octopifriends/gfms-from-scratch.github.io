@@ -1,8 +1,14 @@
 ---
-title: "Session 1: PyTorch & TorchGeo Fundamentals"
-subtitle: "Foundation of geospatial ML workflows"
+title: "Interactive Session 1"
+subtitle: "🔥 PyTorch & TorchGeo Fundamentals"
+editor_options: 
+  chunk_output_type: console
 jupyter: geoai
-format: html
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
 ---
 
 Interactive session content coming soon...

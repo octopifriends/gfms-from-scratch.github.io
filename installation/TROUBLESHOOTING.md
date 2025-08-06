@@ -36,8 +36,8 @@ conda clean --all
 conda env create -f installation/environment-gpu.yml
 
 # If still failing, create minimal environment first
-conda create -n geoAI-gpu python=3.11 -y
-conda activate geoAI-gpu
+conda create -n geoAI python=3.11 -y
+conda activate geoAI
 conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia -y
 pip install -r installation/requirements-gpu.txt
 ```
@@ -70,7 +70,7 @@ python -c "import torch; print(torch.version.cuda)"
 
 ```bash
 # Reinstall PyTorch with correct CUDA version
-conda activate geoAI-gpu
+conda activate geoAI
 
 # For CUDA 11.8
 conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia --force-reinstall
@@ -201,8 +201,8 @@ pip install memory_profiler
 
 ```bash
 # Reinstall kernel
-conda activate geoAI-gpu
-python -m ipykernel install --user --name geoAI-gpu --display-name "Python (geoAI-GPU)"
+conda activate geoAI
+python -m ipykernel install --user --name geoai --display-name "GeoAI"
 
 # List available kernels
 jupyter kernelspec list
@@ -211,7 +211,7 @@ jupyter kernelspec list
 jupyter kernelspec uninstall old-kernel-name
 
 # Test kernel
-jupyter console --kernel=geoAI-gpu
+jupyter console --kernel=geoai
 ```
 
 **Quarto Integration:**
@@ -234,7 +234,7 @@ quarto render test.qmd --execute
 
 ```bash
 # Check if package is installed
-conda activate geoAI-gpu
+conda activate geoAI
 python -c "import torchgeo; print(torchgeo.__version__)"
 
 # Check package location
@@ -256,7 +256,7 @@ conda env export > current_env.yml
 # Review for version conflicts
 
 # Clean install if necessary
-conda activate geoAI-gpu
+conda activate geoAI
 pip install --no-deps --force-reinstall package_name
 ```
 
@@ -351,11 +351,11 @@ conda install -c conda-forge package_name
 ```bash
 # Create fresh environment
 conda deactivate
-conda env remove -n geoAI-gpu
+conda env remove -n geoAI
 conda env create -f installation/environment-gpu.yml
 
 # Or update existing environment
-conda activate geoAI-gpu
+conda activate geoAI
 conda env update -f installation/environment-gpu.yml --prune
 ```
 
@@ -460,7 +460,7 @@ Include the following information:
 
 2. **Fresh installation:**
    ```bash
-   conda env remove -n geoAI-gpu
+   conda env remove -n geoAI
    cd ~/geoAI
    git pull origin main  # Get latest version
    bash installation/scripts/install_foundation_models.sh

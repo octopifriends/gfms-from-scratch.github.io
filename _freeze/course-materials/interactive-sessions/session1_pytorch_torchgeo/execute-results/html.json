@@ -1,8 +1,8 @@
 {
-  "hash": "be185c04dbba18d096050ddb961ce0ba",
+  "hash": "affe4e25912b4dbab72441a302f67074",
   "result": {
     "engine": "jupyter",
-    "markdown": "---\ntitle: \"Session 1: PyTorch & TorchGeo Fundamentals\"\nsubtitle: \"Foundation of geospatial ML workflows\"\njupyter: geoai\nformat: html\n---\n\n\nInteractive session content coming soon...\n\n",
+    "markdown": "---\ntitle: \"Interactive Session 1\"\nsubtitle: \"🔥 PyTorch & TorchGeo Fundamentals\"\neditor_options: \n  chunk_output_type: console\njupyter: geoai\nformat:\n  html:\n    toc: true\n    toc-depth: 3\n    code-fold: true\n---\n\n\n\n\nInteractive session content coming soon...\n\n",
     "supporting": [
       "session1_pytorch_torchgeo_files"
     ],

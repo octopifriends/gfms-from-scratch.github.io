@@ -48,9 +48,9 @@ print_error() {
 check_environment() {
     print_status "Checking environment..."
     
-    if [[ "$CONDA_DEFAULT_ENV" != "geoAI-gpu" ]]; then
-        print_error "Please activate the geoAI-gpu environment first:"
-        print_error "conda activate geoAI-gpu"
+    if [[ "$CONDA_DEFAULT_ENV" != "geoAI" ]]; then
+        print_error "Please activate the geoAI environment first:"
+        print_error "conda activate geoAI"
         exit 1
     fi
     
@@ -352,7 +352,7 @@ from datetime import datetime
 # Create model registry
 registry = {
     "created": datetime.now().isoformat(),
-    "environment": "geoAI-gpu",
+    "environment": "geoAI",
     "models": {
         "prithvi": {
             "path": "$MODELS_DIR/prithvi/Prithvi-100M",

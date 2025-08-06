@@ -1,8 +1,14 @@
 ---
-title: "Session 4: Model Adaptation & Evaluation"
-subtitle: "Fine-tuning strategies and comprehensive evaluation"
+title: "Interactive Session 4"
+subtitle: "🔧 Model Adaptation & Evaluation"
+editor_options: 
+  chunk_output_type: console
 jupyter: geoai
-format: html
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
 ---
 
 Interactive session content coming soon...

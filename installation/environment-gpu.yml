@@ -1,4 +1,4 @@
-name: geoAI-gpu
+name: geoAI
 channels:
   - pytorch
   - nvidia

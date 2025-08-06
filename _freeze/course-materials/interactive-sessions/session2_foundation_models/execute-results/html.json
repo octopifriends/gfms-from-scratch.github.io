@@ -1,8 +1,8 @@
 {
-  "hash": "00e4dd6c99efe289b843fd7ff7dcdb45",
+  "hash": "e3a3651c876a2b63fa00f7d07437a863",
   "result": {
     "engine": "jupyter",
-    "markdown": "---\ntitle: \"Session 2: Loading & Using Foundation Models\"\nsubtitle: \"Working with pre-trained geospatial models\"\njupyter: geoai\nformat: html\n---\n\n\nInteractive session content coming soon...\n\n",
+    "markdown": "---\ntitle: \"Interactive Session 2\"\nsubtitle: \"🤗 Loading & Using Foundation Models\"\neditor_options: \n  chunk_output_type: console\njupyter: geoai\nformat:\n  html:\n    toc: true\n    toc-depth: 3\n    code-fold: true\n---\n\n\nInteractive session content coming soon...\n\n",
     "supporting": [
       "session2_foundation_models_files"
     ],
