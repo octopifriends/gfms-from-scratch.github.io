@@ -6,7 +6,7 @@ title-block-banner: false
 toc: false
 ---
 
-![](images/geoai-banner.png){width=70% fig-align="center" alt="Geospatial AI visualization"}
+![](images/geoai-banner.png){height=5in fig-align="center" alt="Geospatial AI visualization"}
 
 ::: {.gray-text .center-text}
 *Advancing environmental monitoring through AI*
@@ -63,9 +63,10 @@ The goal of GEOG 288KC (Geospatial Foundation Models and Applications) is to equ
 
 ![](images/anna.png){width=45% fig-align="center"}
 
+
 ::: {.center-text}
 [**Anna Boser**]{.teal-text}  
-**Email:** [annaboser@ucsb.edu](mailto::annaboser@ucsb.edu)   
+**Email:** [anaboser@ucsb.edu](mailto::annaboser@ucsb.edu)   
 **Learn more:** [Bren profile](https://bren.ucsb.edu/people/anna-boser)
 :::
 

@@ -24,33 +24,93 @@ def test_import(package_name, display_name=None):
         return False
 
 def test_gpu_support():
-    """Test GPU support"""
+    """Test GPU support across platforms"""
     print("\n🧪 Testing GPU Support:")
     print("-" * 30)
     
     try:
         import torch
-        print(f"PyTorch version: {torch.__version__}")
+        import platform
         
-        if torch.backends.mps.is_available():
+        system = platform.system()
+        print(f"PyTorch version: {torch.__version__}")
+        print(f"Platform: {system}")
+        
+        gpu_available = False
+        device_used = None
+        
+        # Test CUDA (Linux/Windows with NVIDIA)
+        if torch.cuda.is_available():
+            print("✅ CUDA available")
+            cuda_count = torch.cuda.device_count()
+            cuda_name = torch.cuda.get_device_name(0)
+            print(f"   GPU: {cuda_name}")
+            print(f"   Devices: {cuda_count}")
+            
+            # Test CUDA operations
+            device = torch.device('cuda')
+            x = torch.randn(100, 100, device=device)
+            y = torch.randn(100, 100, device=device)
+            z = torch.mm(x, y)
+            
+            print(f"✅ CUDA tensor operations: SUCCESS")
+            print(f"   Device: {z.device}")
+            gpu_available = True
+            device_used = "CUDA"
+            
+        # Test MPS (Mac with Apple Silicon)  
+        elif torch.backends.mps.is_available():
             print("✅ MPS (Metal Performance Shaders) available")
             
-            # Test basic operations
+            # Test MPS operations
             device = torch.device('mps')
             x = torch.randn(100, 100, device=device)
             y = torch.randn(100, 100, device=device)
             z = torch.mm(x, y)
             
-            print(f"✅ GPU tensor operations: SUCCESS")
+            print(f"✅ MPS tensor operations: SUCCESS")
             print(f"   Device: {z.device}")
-            return True
+            gpu_available = True
+            device_used = "MPS"
+            
         else:
-            print("⚠️  MPS not available - using CPU only")
-            print("   This could be due to:")
-            print("   - Non-Apple Silicon Mac")
-            print("   - macOS < 12.3")
-            print("   - PyTorch version doesn't support MPS")
-            return False
+            print("⚠️  No GPU acceleration available - using CPU only")
+            
+            # Provide platform-specific guidance
+            if system == "Darwin":
+                print("   Possible reasons (Mac):")
+                print("   - Intel Mac (limited GPU support)")
+                print("   - macOS < 12.3 (MPS requires 12.3+)")
+                print("   - PyTorch version doesn't support MPS")
+            elif system == "Linux":
+                print("   Possible reasons (Linux):")
+                print("   - No NVIDIA GPU")
+                print("   - NVIDIA drivers not installed")
+                print("   - PyTorch without CUDA support")
+                print("   💡 Install: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121")
+            elif system == "Windows":
+                print("   Possible reasons (Windows):")
+                print("   - No NVIDIA GPU")
+                print("   - CUDA toolkit not installed")
+                print("   - PyTorch CPU-only version")
+            
+            # Test CPU operations
+            device = torch.device('cpu')
+            x = torch.randn(100, 100, device=device)
+            y = torch.randn(100, 100, device=device)
+            z = torch.mm(x, y)
+            print(f"✅ CPU tensor operations: SUCCESS")
+            device_used = "CPU"
+            
+        print(f"\n🎯 Recommended usage:")
+        if gpu_available:
+            print(f"   device = torch.device('{device.type}')")
+        else:
+            print("   device = torch.device('cpu')")
+        print("   model = model.to(device)")
+        print("   data = data.to(device)")
+            
+        return gpu_available
             
     except Exception as e:
         print(f"❌ GPU test failed: {e}")

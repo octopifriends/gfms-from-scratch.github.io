@@ -3,6 +3,7 @@ project:
   output-dir: docs
   render:
     - "*.qmd"
+    - "Syllabus.md"
     - "*.ipynb"
     - "!nbs/**"
     - "!installation/**"
@@ -14,7 +15,7 @@ website:
       - text: 🏠 home
         href: index.qmd
       - text: 📋 syllabus
-        href: Syllabus.md
+        href: Syllabus.html
       - text: 🗓️ weekly materials
         menu: 
           - text: 1️⃣ Week 1 - Introduction to GFMs
@@ -110,10 +111,9 @@ website:
         target: _blank
   page-footer:
     background: dark
-    right: This website is built with [{{< fa brands github title="the github octocat logo" >}}](https://github.com/kellycaylor/geoAI) and [Quarto](https://quarto.org/)
+    right: This website is built with [{{< fa brands github title="the github octocat logo" >}}](https://github.com/environmental-data-science/geog-288kc-geospatial-foundation-models) and [Quarto](https://quarto.org/)
     left: |
-      <img src="/images/anna.png" alt="Course instructors" width="250"/>
-
+      <img src="/images/geog-logo.png" alt="The Department of Geography logo" width="250"/>
 format:
   html:
     theme: meds-website-styles.scss
