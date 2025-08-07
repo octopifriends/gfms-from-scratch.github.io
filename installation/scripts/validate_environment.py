@@ -97,7 +97,12 @@ class EnvironmentValidator:
         
         for package, min_version in core_packages:
             try:
-                module = importlib.import_module(package.replace('-', '_'))
+                # Special handling for scikit-learn which imports as sklearn
+                if package == 'scikit-learn':
+                    import sklearn
+                    module = sklearn
+                else:
+                    module = importlib.import_module(package.replace('-', '_'))
                 version = getattr(module, '__version__', 'unknown')
                 print_success(f"{package}: {version}")
                 package_results[package] = {'status': 'pass', 'version': version}
@@ -121,8 +126,13 @@ class EnvironmentValidator:
             torch_version = torch.__version__
             print_success(f"PyTorch: {torch_version}")
             
-            # Check CUDA availability
+            # Check GPU availability (CUDA or MPS)
+            gpu_available = False
+            gpu_device = None
+            gpu_info = {}
+            
             if torch.cuda.is_available():
+                # NVIDIA CUDA
                 gpu_count = torch.cuda.device_count()
                 gpu_name = torch.cuda.get_device_name(0)
                 cuda_version = torch.version.cuda
@@ -130,19 +140,37 @@ class EnvironmentValidator:
                 print_success(f"CUDA: {cuda_version}")
                 print_success(f"GPUs available: {gpu_count}")
                 print_success(f"Primary GPU: {gpu_name}")
+                gpu_device = 'cuda'
+                gpu_available = True
+                gpu_info = {
+                    'type': 'cuda',
+                    'cuda_version': cuda_version,
+                    'gpu_count': gpu_count,
+                    'gpu_name': gpu_name
+                }
                 
+            elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+                # Apple Metal Performance Shaders (MPS)
+                print_success("MPS (Apple Metal): Available")
+                print_success("Apple Silicon GPU acceleration enabled")
+                gpu_device = 'mps'
+                gpu_available = True
+                gpu_info = {
+                    'type': 'mps',
+                    'description': 'Apple Metal Performance Shaders'
+                }
+                
+            if gpu_available:
                 # Test GPU tensor operations
                 try:
-                    x = torch.randn(1000, 1000, device='cuda')
+                    x = torch.randn(1000, 1000, device=gpu_device)
                     y = torch.mm(x, x.t())
-                    print_success("GPU tensor operations: Working")
+                    print_success(f"GPU tensor operations ({gpu_device}): Working")
                     
                     self.results['tests']['pytorch_gpu'] = {
                         'status': 'pass',
                         'torch_version': torch_version,
-                        'cuda_version': cuda_version,
-                        'gpu_count': gpu_count,
-                        'gpu_name': gpu_name
+                        **gpu_info
                     }
                     return True
                     
@@ -151,15 +179,16 @@ class EnvironmentValidator:
                     self.results['tests']['pytorch_gpu'] = {
                         'status': 'partial',
                         'error': str(e),
-                        'torch_version': torch_version
+                        'torch_version': torch_version,
+                        **gpu_info
                     }
                     return False
                     
             else:
-                print_error("CUDA not available")
+                print_error("No GPU acceleration available (CUDA or MPS)")
                 self.results['tests']['pytorch_gpu'] = {
                     'status': 'fail',
-                    'error': 'cuda_not_available',
+                    'error': 'no_gpu_available',
                     'torch_version': torch_version
                 }
                 return False
@@ -256,6 +285,11 @@ class EnvironmentValidator:
             if "not authenticated" in error_msg.lower():
                 print_error("Earth Engine: Not authenticated")
                 print_info("Run: earthengine authenticate")
+            elif "not signed up" in error_msg.lower() or "not registered" in error_msg.lower():
+                print_error("Earth Engine: Account not registered for Earth Engine access")
+                print_info("Visit: https://signup.earthengine.google.com/")
+                print_info("Apply for access using your institutional Google account")
+                print_info("Note: Approval can take 1-7 days for new users")
             else:
                 print_error(f"Earth Engine error: {error_msg}")
                 
@@ -328,7 +362,7 @@ class EnvironmentValidator:
             from transformers import AutoModel
             
             # Try to load a small model for testing
-            model_name = "microsoft/DinoV2-small"  # Small model for testing
+            model_name = "distilbert-base-uncased"  # Small, reliable model for testing
             
             print_info(f"Loading {model_name} for testing...")
             model = AutoModel.from_pretrained(model_name)
@@ -419,9 +453,9 @@ class EnvironmentValidator:
         print_header("VALIDATION SUMMARY")
         
         total_tests = len(self.results['tests'])
-        passed_tests = len([t for t in self.results['tests'].values() if t['status'] == 'pass'])
-        failed_tests = len([t for t in self.results['tests'].values() if t['status'] == 'fail'])
-        partial_tests = len([t for t in self.results['tests'].values() if t['status'] == 'partial'])
+        passed_tests = len([t for t in self.results['tests'].values() if t.get('status') == 'pass'])
+        failed_tests = len([t for t in self.results['tests'].values() if t.get('status') == 'fail'])
+        partial_tests = len([t for t in self.results['tests'].values() if t.get('status') == 'partial'])
         
         print(f"\n{Colors.BOLD}Total Tests: {total_tests}{Colors.END}")
         print(f"{Colors.GREEN}✅ Passed: {passed_tests}{Colors.END}")
@@ -436,7 +470,7 @@ class EnvironmentValidator:
         print(f"\n{Colors.BOLD}Recommendations:{Colors.END}")
         
         failed_categories = [name for name, result in self.results['tests'].items() 
-                           if result['status'] == 'fail']
+                           if result.get('status') == 'fail']
         
         if failed_categories:
             if 'pytorch_gpu' in failed_categories:

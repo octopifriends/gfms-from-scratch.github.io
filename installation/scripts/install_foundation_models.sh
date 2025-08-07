@@ -79,9 +79,48 @@ setup_directories() {
 check_disk_space() {
     print_status "Checking available disk space..."
     
-    available_gb=$(df -BG "$HOME" | tail -1 | awk '{print $4}' | sed 's/G//')
+    # Cross-platform disk space check
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS - df uses different flags and output format
+        available_space=$(df -h "$HOME" | tail -1 | awk '{print $4}')
+        
+        # Parse size with unit (e.g., "18Gi", "1.2Ti", "500Mi")
+        if [[ "$available_space" == *"Ti" ]]; then
+            # Convert TB to GB (remove 'Ti' and multiply by 1024)
+            available_gb=$(echo "$available_space" | sed 's/Ti//' | awk '{printf "%.0f", $1 * 1024}')
+        elif [[ "$available_space" == *"Gi" ]]; then
+            # Already in GB (remove 'Gi')
+            available_gb=$(echo "$available_space" | sed 's/Gi//' | awk '{printf "%.0f", $1}')
+        elif [[ "$available_space" == *"Mi" ]]; then
+            # Convert MB to GB (remove 'Mi' and divide by 1024)
+            available_gb=$(echo "$available_space" | sed 's/Mi//' | awk '{printf "%.0f", $1 / 1024}')
+        elif [[ "$available_space" == *"G" ]]; then
+            # Handle 'G' without 'i' (remove 'G')
+            available_gb=$(echo "$available_space" | sed 's/G//' | awk '{printf "%.0f", $1}')
+        elif [[ "$available_space" == *"T" ]]; then
+            # Handle 'T' without 'i' (remove 'T' and multiply by 1024)
+            available_gb=$(echo "$available_space" | sed 's/T//' | awk '{printf "%.0f", $1 * 1024}')
+        elif [[ "$available_space" == *"M" ]]; then
+            # Handle 'M' without 'i' (remove 'M' and divide by 1024)
+            available_gb=$(echo "$available_space" | sed 's/M//' | awk '{printf "%.0f", $1 / 1024}')
+        else
+            # Fallback: try to extract just the number
+            available_gb=$(echo "$available_space" | sed 's/[^0-9.]//g' | awk '{printf "%.0f", $1}')
+        fi
+    else
+        # Linux - use -BG for GB output
+        available_gb=$(df -BG "$HOME" | tail -1 | awk '{print $4}' | sed 's/G//')
+    fi
     
-    if [[ $available_gb -lt 50 ]]; then
+    # Ensure we have a valid number
+    if ! [[ "$available_gb" =~ ^[0-9]+$ ]]; then
+        print_warning "Could not determine disk space automatically"
+        print_warning "Foundation models require ~30-50GB. Do you want to continue? (y/N)"
+        read -r response
+        if [[ ! "$response" =~ ^[Yy]$ ]]; then
+            exit 1
+        fi
+    elif [[ $available_gb -lt 50 ]]; then
         print_warning "Low disk space: ${available_gb}GB available"
         print_warning "Foundation models require ~30-50GB. Continue? (y/N)"
         read -r response

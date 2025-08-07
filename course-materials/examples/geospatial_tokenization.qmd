@@ -1,0 +1,892 @@
+---
+title: "Geospatial Data Tokenization"
+subtitle: "From pixels to tokens: Understanding how satellite imagery is encoded for foundation models"
+editor_options: 
+  chunk_output_type: console
+jupyter: geoai
+format: 
+    html:
+        toc: true
+        toc-depth: 3
+        code-fold: show
+---
+
+## Introduction
+
+In this interactive session, we will explore how geospatial data, particularly satellite imagery, is tokenized for use in foundation models like Prithvi. Unlike text tokenization, image tokenization must handle spatial relationships, multiple spectral bands, and geographic coordinates.
+
+We'll work with real Harmonized Landsat Sentinel (HLS) data, which is the same type of data used to train NASA-IBM's Prithvi foundation model.
+
+## Downloading Sample Satellite Data
+
+Let's start by downloading a sample multi-spectral satellite image. We'll use a small Landsat-8 scene that's publicly available:
+
+```{python}
+# | echo: true
+import urllib.request
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+from pathlib import Path
+
+# Use the course data directory (relative to course-materials/examples/)
+data_dir = Path("../../data")
+
+# Download a sample satellite image from our course repository
+# This is from the LandCover.ai dataset via TorchGeo, stored in our repo for reliability
+url = "https://raw.githubusercontent.com/kellycaylor/geoAI/main/data/landcover_sample.tif"
+sample_file = data_dir / "landcover_sample.tif"
+
+if not sample_file.exists():
+    print("Downloading sample satellite image...")
+    urllib.request.urlretrieve(url, sample_file)
+    print(f"Downloaded to: {sample_file}")
+else:
+    print(f"File already exists: {sample_file}")
+
+print(f"File size: {sample_file.stat().st_size / 1024:.1f} KB")
+```
+
+For this lesson, we'll also create a synthetic multi-spectral dataset that simulates the 6-band HLS data used by Prithvi:
+
+```{python}
+# | echo: true
+import rasterio
+from rasterio.transform import from_bounds
+import rasterio.features
+import numpy as np
+
+def create_synthetic_hls_data(height=224, width=224):
+    """
+    Create synthetic 6-band HLS-like data
+    Bands: Blue, Green, Red, NIR, SWIR1, SWIR2
+    """
+    np.random.seed(42)  # For reproducible results
+    
+    # Create realistic-looking satellite data
+    # Different land cover types have characteristic spectral signatures
+    
+    # Create base terrain
+    x = np.linspace(0, 4*np.pi, width)
+    y = np.linspace(0, 4*np.pi, height)
+    X, Y = np.meshgrid(x, y)
+    
+    # Base elevation-like pattern
+    elevation = np.sin(X/3) * np.cos(Y/3) + 0.5 * np.sin(X) * np.sin(Y)
+    
+    # Simulate different spectral bands
+    bands = {}
+    
+    # Visible bands (Blue, Green, Red) - vegetation appears darker in visible
+    bands['blue'] = (0.1 + 0.05 * elevation + 0.02 * np.random.randn(height, width))
+    bands['green'] = (0.15 + 0.08 * elevation + 0.02 * np.random.randn(height, width))
+    bands['red'] = (0.12 + 0.06 * elevation + 0.02 * np.random.randn(height, width))
+    
+    # NIR - vegetation appears bright in NIR
+    vegetation_mask = elevation > 0.2
+    bands['nir'] = (0.4 * vegetation_mask + 0.1 * (~vegetation_mask) + 
+                   0.05 * elevation + 0.03 * np.random.randn(height, width))
+    
+    # SWIR bands - sensitive to moisture and soil
+    bands['swir1'] = (0.2 + 0.1 * elevation + 0.03 * np.random.randn(height, width))
+    bands['swir2'] = (0.15 + 0.08 * elevation + 0.03 * np.random.randn(height, width))
+    
+    # Clip values to valid range [0, 1]
+    for band_name in bands:
+        bands[band_name] = np.clip(bands[band_name], 0, 1)
+    
+    # Stack bands in HLS order
+    hls_data = np.stack([
+        bands['blue'], bands['green'], bands['red'],
+        bands['nir'], bands['swir1'], bands['swir2']
+    ])
+    
+    return hls_data, bands
+
+# Create our synthetic dataset
+hls_image, band_dict = create_synthetic_hls_data()
+print(f"Synthetic HLS data shape: {hls_image.shape}")  # (6, 224, 224)
+print(f"Data type: {hls_image.dtype}")
+print(f"Value range: [{hls_image.min():.3f}, {hls_image.max():.3f}]")
+```
+
+Let's visualize our multi-spectral data:
+
+```{python}
+# | echo: true
+def plot_multispectral_data(bands_dict, figsize=(15, 10)):
+    """Plot all spectral bands"""
+    band_names = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2']
+    
+    fig, axes = plt.subplots(2, 3, figsize=figsize)
+    axes = axes.flatten()
+    
+    for i, band_name in enumerate(band_names):
+        im = axes[i].imshow(bands_dict[band_name], cmap='viridis', vmin=0, vmax=1)
+        axes[i].set_title(f'{band_name.upper()} Band')
+        axes[i].axis('off')
+        plt.colorbar(im, ax=axes[i], fraction=0.046)
+    
+    plt.tight_layout()
+    plt.show()
+
+# Create RGB composite for visual reference
+def create_rgb_composite(bands_dict):
+    """Create an RGB image for visualization"""
+    rgb = np.stack([bands_dict['red'], bands_dict['green'], bands_dict['blue']], axis=2)
+    # Enhance contrast for better visualization
+    rgb = np.clip(rgb * 2.5, 0, 1)
+    return rgb
+
+# Plot the data
+plot_multispectral_data(band_dict)
+
+# Show RGB composite
+rgb_composite = create_rgb_composite(band_dict)
+plt.figure(figsize=(8, 8))
+plt.imshow(rgb_composite)
+plt.title('RGB Composite (Red-Green-Blue)')
+plt.axis('off')
+plt.show()
+```
+
+## Understanding Pixel-Level vs. Patch-Level Tokenization
+
+Unlike text, where individual characters or words are tokens, images can be tokenized at different scales. Let's explore the differences:
+
+### Pixel-Level Tokenization
+
+The simplest approach treats each pixel value as a separate token:
+
+```{python}
+# | echo: true
+class PixelTokenizer:
+    def __init__(self, num_bins=256, normalize=True):
+        """
+        Simple pixel-level tokenizer
+        
+        Args:
+            num_bins: Number of discrete values for quantization
+            normalize: Whether to normalize pixel values before quantization
+        """
+        self.num_bins = num_bins
+        self.normalize = normalize
+        
+    def encode_pixels(self, image):
+        """Convert pixel values to discrete tokens"""
+        if self.normalize:
+            # Normalize to [0, 1] range
+            normalized = (image - image.min()) / (image.max() - image.min())
+        else:
+            normalized = image
+            
+        # Quantize to discrete bins
+        tokens = (normalized * (self.num_bins - 1)).astype(int)
+        return tokens
+    
+    def encode_image(self, multi_band_image):
+        """Encode entire multi-spectral image"""
+        encoded_bands = []
+        for band_idx in range(multi_band_image.shape[0]):
+            band_tokens = self.encode_pixels(multi_band_image[band_idx])
+            encoded_bands.append(band_tokens)
+        
+        return np.stack(encoded_bands)
+    
+    def get_vocabulary_size(self):
+        """Return the size of the token vocabulary"""
+        return self.num_bins
+
+# Test pixel-level tokenization
+pixel_tokenizer = PixelTokenizer(num_bins=64)  # Reduce bins for demonstration
+pixel_tokens = pixel_tokenizer.encode_image(hls_image)
+
+print(f"Original image shape: {hls_image.shape}")
+print(f"Pixel tokens shape: {pixel_tokens.shape}")
+print(f"Token vocabulary size: {pixel_tokenizer.get_vocabulary_size()}")
+print(f"Token value range: [{pixel_tokens.min()}, {pixel_tokens.max()}]")
+print(f"Total number of tokens: {pixel_tokens.size:,}")
+```
+
+### Patch-Based Tokenization (Vision Transformer Style)
+
+Most modern vision models use patch-based tokenization, which is more efficient and captures local spatial relationships:
+
+```{python}
+# | echo: true
+class PatchTokenizer:
+    def __init__(self, patch_size=16, flatten_patches=True):
+        """
+        Patch-based tokenizer similar to Vision Transformers
+        
+        Args:
+            patch_size: Size of square patches (e.g., 16x16)
+            flatten_patches: Whether to flatten patches into 1D vectors
+        """
+        self.patch_size = patch_size
+        self.flatten_patches = flatten_patches
+        
+    def extract_patches(self, image):
+        """
+        Extract non-overlapping patches from image
+        
+        Args:
+            image: Multi-band image of shape (bands, height, width)
+            
+        Returns:
+            patches: Array of shape (num_patches, bands, patch_size, patch_size)
+                    or (num_patches, bands * patch_size * patch_size) if flattened
+        """
+        bands, height, width = image.shape
+        
+        # Calculate number of patches
+        patches_h = height // self.patch_size
+        patches_w = width // self.patch_size
+        
+        # Crop image to fit exact number of patches
+        cropped_h = patches_h * self.patch_size
+        cropped_w = patches_w * self.patch_size
+        cropped_image = image[:, :cropped_h, :cropped_w]
+        
+        # Reshape into patches
+        patches = cropped_image.reshape(
+            bands, patches_h, self.patch_size, patches_w, self.patch_size
+        )
+        # Rearrange dimensions: (patches_h, patches_w, bands, patch_size, patch_size)
+        patches = patches.transpose(1, 3, 0, 2, 4)
+        # Flatten spatial patch dimensions: (num_patches, bands, patch_size, patch_size)
+        patches = patches.reshape(-1, bands, self.patch_size, self.patch_size)
+        
+        if self.flatten_patches:
+            # Flatten each patch: (num_patches, bands * patch_size * patch_size)
+            patches = patches.reshape(patches.shape[0], -1)
+            
+        return patches
+    
+    def get_patch_positions(self, image_shape):
+        """Get 2D positions of patches for positional encoding"""
+        _, height, width = image_shape
+        patches_h = height // self.patch_size
+        patches_w = width // self.patch_size
+        
+        positions = []
+        for i in range(patches_h):
+            for j in range(patches_w):
+                positions.append([i, j])
+        
+        return np.array(positions)
+
+# Test patch-based tokenization with different patch sizes
+patch_sizes = [8, 16, 32]
+
+for patch_size in patch_sizes:
+    tokenizer = PatchTokenizer(patch_size=patch_size)
+    patches = tokenizer.extract_patches(hls_image)
+    positions = tokenizer.get_patch_positions(hls_image.shape)
+    
+    print(f"\nPatch size {patch_size}x{patch_size}:")
+    print(f"  Number of patches: {patches.shape[0]}")
+    print(f"  Patch dimension: {patches.shape[1]}")
+    print(f"  Token compression ratio: {hls_image.size / patches.size:.1f}x")
+```
+
+Let's visualize how patch extraction works:
+
+```{python}
+# | echo: true
+def visualize_patch_extraction(image, patch_size=16):
+    """Visualize how image is divided into patches"""
+    # Use RGB bands for visualization
+    rgb_image = np.stack([image[2], image[1], image[0]], axis=2)  # Red, Green, Blue
+    rgb_image = np.clip(rgb_image * 2.5, 0, 1)  # Enhance for visibility
+    
+    height, width = rgb_image.shape[:2]
+    patches_h = height // patch_size
+    patches_w = width // patch_size
+    
+    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+    
+    # Original image
+    axes[0].imshow(rgb_image)
+    axes[0].set_title('Original Image')
+    axes[0].axis('off')
+    
+    # Image with patch boundaries
+    axes[1].imshow(rgb_image)
+    
+    # Draw patch boundaries
+    for i in range(0, patches_h + 1):
+        y = i * patch_size
+        axes[1].axhline(y=y, color='red', linewidth=1, alpha=0.7)
+    
+    for j in range(0, patches_w + 1):
+        x = j * patch_size
+        axes[1].axvline(x=x, color='red', linewidth=1, alpha=0.7)
+    
+    axes[1].set_title(f'Patches ({patch_size}x{patch_size}): {patches_h}×{patches_w} = {patches_h*patches_w} patches')
+    axes[1].axis('off')
+    
+    plt.tight_layout()
+    plt.show()
+
+# Visualize patch extraction
+visualize_patch_extraction(hls_image, patch_size=16)
+```
+
+## Advanced Multi-Spectral Tokenization
+
+Real geospatial foundation models need to handle the unique properties of multi-spectral data:
+
+```{python}
+# | echo: true
+class MultiSpectralTokenizer:
+    def __init__(self, patch_size=16, band_weights=None, include_indices=True):
+        """
+        Advanced tokenizer for multi-spectral satellite data
+        
+        Args:
+            patch_size: Size of spatial patches
+            band_weights: Optional weights for different spectral bands
+            include_indices: Whether to compute and include spectral indices
+        """
+        self.patch_size = patch_size
+        self.include_indices = include_indices
+        
+        # Default band weights for HLS data (Blue, Green, Red, NIR, SWIR1, SWIR2)
+        self.band_weights = band_weights or [1.0, 1.0, 1.0, 1.2, 0.8, 0.8]
+        
+    def compute_spectral_indices(self, bands_dict):
+        """Compute common vegetation and water indices"""
+        indices = {}
+        
+        # NDVI (Normalized Difference Vegetation Index)
+        indices['ndvi'] = (bands_dict['nir'] - bands_dict['red']) / \
+                         (bands_dict['nir'] + bands_dict['red'] + 1e-8)
+        
+        # NDWI (Normalized Difference Water Index)
+        indices['ndwi'] = (bands_dict['green'] - bands_dict['nir']) / \
+                         (bands_dict['green'] + bands_dict['nir'] + 1e-8)
+        
+        # EVI (Enhanced Vegetation Index)
+        indices['evi'] = 2.5 * (bands_dict['nir'] - bands_dict['red']) / \
+                        (bands_dict['nir'] + 6 * bands_dict['red'] - 7.5 * bands_dict['blue'] + 1)
+        
+        return indices
+    
+    def enhance_multispectral_data(self, hls_bands, bands_dict):
+        """Enhance multi-spectral data with indices and weighting"""
+        enhanced_bands = []
+        
+        # Apply band weights to original bands
+        for i, weight in enumerate(self.band_weights):
+            enhanced_bands.append(hls_bands[i] * weight)
+        
+        # Add spectral indices if requested
+        if self.include_indices:
+            indices = self.compute_spectral_indices(bands_dict)
+            for idx_name, idx_data in indices.items():
+                enhanced_bands.append(idx_data)
+        
+        return np.stack(enhanced_bands)
+    
+    def extract_enhanced_patches(self, hls_bands, bands_dict):
+        """Extract patches from enhanced multi-spectral data"""
+        # Enhance the data
+        enhanced_data = self.enhance_multispectral_data(hls_bands, bands_dict)
+        
+        # Extract patches
+        tokenizer = PatchTokenizer(patch_size=self.patch_size)
+        patches = tokenizer.extract_patches(enhanced_data)
+        
+        return patches, enhanced_data
+
+# Test multi-spectral tokenization
+ms_tokenizer = MultiSpectralTokenizer(patch_size=16, include_indices=True)
+ms_patches, enhanced_data = ms_tokenizer.extract_enhanced_patches(hls_image, band_dict)
+
+print(f"Original bands: {hls_image.shape[0]}")
+print(f"Enhanced bands: {enhanced_data.shape[0]}")
+print(f"Enhanced patches shape: {ms_patches.shape}")
+
+# Visualize spectral indices
+indices = ms_tokenizer.compute_spectral_indices(band_dict)
+
+fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+for i, (idx_name, idx_data) in enumerate(indices.items()):
+    im = axes[i].imshow(idx_data, cmap='RdYlGn', vmin=-1, vmax=1)
+    axes[i].set_title(f'{idx_name.upper()} Index')
+    axes[i].axis('off')
+    plt.colorbar(im, ax=axes[i], fraction=0.046)
+
+plt.tight_layout()
+plt.show()
+```
+
+## Spatial-Aware Tokenization with Positional Encoding
+
+Geospatial data has inherent spatial relationships that need to be preserved:
+
+```{python}
+# | echo: true
+class SpatialTokenizer:
+    def __init__(self, patch_size=16, embed_dim=768, max_position=1000):
+        """
+        Tokenizer with spatial positional encoding
+        
+        Args:
+            patch_size: Size of spatial patches
+            embed_dim: Embedding dimension for tokens
+            max_position: Maximum position for positional encoding
+        """
+        self.patch_size = patch_size
+        self.embed_dim = embed_dim
+        self.max_position = max_position
+        
+    def get_2d_positional_encoding(self, height_patches, width_patches):
+        """
+        Create 2D positional encodings for spatial patches
+        Similar to what's used in vision transformers
+        """
+        # Create position indices
+        pos_h = np.arange(height_patches)
+        pos_w = np.arange(width_patches)
+        
+        # Create position encoding
+        pe = np.zeros((height_patches * width_patches, self.embed_dim))
+        
+        # Create encoding for each position
+        position = 0
+        for i in range(height_patches):
+            for j in range(width_patches):
+                # Encode height position
+                for k in range(0, self.embed_dim//4, 2):
+                    pe[position, k] = np.sin(i / (self.max_position ** (2 * k / self.embed_dim)))
+                    pe[position, k + 1] = np.cos(i / (self.max_position ** (2 * k / self.embed_dim)))
+                
+                # Encode width position
+                for k in range(self.embed_dim//4, self.embed_dim//2, 2):
+                    pe[position, k] = np.sin(j / (self.max_position ** (2 * k / self.embed_dim)))
+                    pe[position, k + 1] = np.cos(j / (self.max_position ** (2 * k / self.embed_dim)))
+                
+                position += 1
+        
+        return pe
+    
+    def linear_projection(self, patches):
+        """Simple linear projection to embed_dim (simulated)"""
+        # In practice, this would be a learned linear layer
+        # For demonstration, we'll use a simple random projection
+        np.random.seed(42)
+        projection_matrix = np.random.randn(patches.shape[1], self.embed_dim) * 0.1
+        projected = patches @ projection_matrix
+        return projected
+    
+    def tokenize_with_position(self, image):
+        """Create spatially-aware tokens"""
+        # Extract patches
+        patch_tokenizer = PatchTokenizer(patch_size=self.patch_size)
+        patches = patch_tokenizer.extract_patches(image)
+        
+        # Calculate patch grid dimensions
+        _, height, width = image.shape
+        height_patches = height // self.patch_size
+        width_patches = width // self.patch_size
+        
+        # Project patches to embedding dimension
+        patch_embeddings = self.linear_projection(patches)
+        
+        # Add positional encoding
+        pos_encoding = self.get_2d_positional_encoding(height_patches, width_patches)
+        
+        # Combine patch embeddings with positional encoding
+        spatial_tokens = patch_embeddings + pos_encoding
+        
+        return spatial_tokens, patches, pos_encoding
+
+# Test spatial tokenization
+spatial_tokenizer = SpatialTokenizer(patch_size=16, embed_dim=384)
+spatial_tokens, patches, pos_enc = spatial_tokenizer.tokenize_with_position(hls_image)
+
+print(f"Spatial tokens shape: {spatial_tokens.shape}")
+print(f"Positional encoding shape: {pos_enc.shape}")
+
+# Visualize positional encoding patterns
+fig, axes = plt.subplots(2, 4, figsize=(16, 8))
+axes = axes.flatten()
+
+for i in range(8):
+    # Reshape positional encoding component back to 2D
+    height_patches = hls_image.shape[1] // 16
+    width_patches = hls_image.shape[2] // 16
+    pos_component = pos_enc[:, i * 10].reshape(height_patches, width_patches)
+    
+    im = axes[i].imshow(pos_component, cmap='coolwarm')
+    axes[i].set_title(f'Position Encoding Dim {i * 10}')
+    axes[i].axis('off')
+    plt.colorbar(im, ax=axes[i], fraction=0.046)
+
+plt.tight_layout()
+plt.show()
+```
+
+## Foundation Model Style Tokenization (Prithvi Approach)
+
+Let's implement tokenization similar to what NASA-IBM's Prithvi model uses:
+
+```{python}
+# | echo: true
+class PrithviStyleTokenizer:
+    """
+    Tokenizer that mimics the Prithvi foundation model approach
+    Prithvi uses 16x16 patches from 6-band HLS data
+    """
+    
+    def __init__(self, patch_size=16, embed_dim=768, mask_ratio=0.0):
+        self.patch_size = patch_size
+        self.embed_dim = embed_dim
+        self.mask_ratio = mask_ratio  # For masked autoencoder training
+        
+    def create_hls_tokens(self, hls_bands):
+        """
+        Create tokens from HLS data like Prithvi
+        
+        Args:
+            hls_bands: 6-band HLS data [Blue, Green, Red, NIR, SWIR1, SWIR2]
+        """
+        # Validate input
+        assert hls_bands.shape[0] == 6, f"Expected 6 HLS bands, got {hls_bands.shape[0]}"
+        
+        # Extract 16x16 patches
+        patch_tokenizer = PatchTokenizer(patch_size=self.patch_size, flatten_patches=True)
+        patches = patch_tokenizer.extract_patches(hls_bands)
+        
+        # Each patch becomes a token: (num_patches, 6 * 16 * 16) = (num_patches, 1536)
+        print(f"Patch tokens shape: {patches.shape}")
+        
+        # Simulate learned linear projection to embedding space
+        # In real Prithvi, this is a trainable linear layer
+        projected_tokens = self.simulate_linear_projection(patches)
+        
+        # Add learnable positional embeddings
+        pos_embeddings = self.create_positional_embeddings(patches.shape[0])
+        
+        # Combine patch and positional embeddings
+        tokens = projected_tokens + pos_embeddings
+        
+        return tokens, patches
+    
+    def simulate_linear_projection(self, patches):
+        """Simulate the learned linear projection layer"""
+        input_dim = patches.shape[1]  # 6 * 16 * 16 = 1536 for HLS data
+        
+        # Create a simple projection (in practice this would be learned)
+        np.random.seed(42)
+        projection = np.random.randn(input_dim, self.embed_dim) * 0.02
+        bias = np.random.randn(self.embed_dim) * 0.01
+        
+        projected = patches @ projection + bias
+        return projected
+    
+    def create_positional_embeddings(self, num_patches):
+        """Create learnable positional embeddings"""
+        # In practice, these would be learned parameters
+        # For demonstration, we'll create them randomly
+        np.random.seed(123)
+        pos_embeddings = np.random.randn(num_patches, self.embed_dim) * 0.02
+        return pos_embeddings
+    
+    def apply_random_masking(self, tokens, mask_ratio=None):
+        """
+        Apply random masking for masked autoencoder training
+        Similar to what Prithvi uses during pre-training
+        """
+        if mask_ratio is None:
+            mask_ratio = self.mask_ratio
+            
+        if mask_ratio == 0:
+            return tokens, np.ones(tokens.shape[0], dtype=bool)
+        
+        num_patches = tokens.shape[0]
+        num_masked = int(num_patches * mask_ratio)
+        
+        # Random masking
+        mask_indices = np.random.choice(num_patches, num_masked, replace=False)
+        mask = np.ones(num_patches, dtype=bool)
+        mask[mask_indices] = False
+        
+        # Keep only unmasked tokens
+        unmasked_tokens = tokens[mask]
+        
+        return unmasked_tokens, mask
+
+# Test Prithvi-style tokenization
+prithvi_tokenizer = PrithviStyleTokenizer(patch_size=16, embed_dim=768, mask_ratio=0.75)
+prithvi_tokens, patch_data = prithvi_tokenizer.create_hls_tokens(hls_image)
+
+print(f"Prithvi-style tokens shape: {prithvi_tokens.shape}")
+print(f"Token dimension (embedding size): {prithvi_tokens.shape[1]}")
+
+# Test masking (as used in pre-training)
+masked_tokens, mask = prithvi_tokenizer.apply_random_masking(prithvi_tokens, mask_ratio=0.75)
+print(f"After 75% masking: {masked_tokens.shape}")
+print(f"Compression: {len(masked_tokens) / len(prithvi_tokens):.1%} tokens remaining")
+
+# Visualize which patches would be masked
+def visualize_masking(mask, image_shape, patch_size=16):
+    """Visualize the masking pattern"""
+    height, width = image_shape[1], image_shape[2]
+    height_patches = height // patch_size
+    width_patches = width // patch_size
+    
+    # Reshape mask to 2D
+    mask_2d = mask.reshape(height_patches, width_patches)
+    
+    # Create visualization
+    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+    
+    # Original image (RGB)
+    rgb = np.stack([band_dict['red'], band_dict['green'], band_dict['blue']], axis=2)
+    rgb = np.clip(rgb * 2.5, 0, 1)
+    axes[0].imshow(rgb)
+    axes[0].set_title('Original Image')
+    axes[0].axis('off')
+    
+    # Masking pattern
+    im = axes[1].imshow(mask_2d, cmap='RdBu', alpha=0.8)
+    axes[1].set_title(f'Masking Pattern (Blue=Masked, Red=Visible)\n{(~mask).sum()}/{len(mask)} patches masked')
+    axes[1].axis('off')
+    plt.colorbar(im, ax=axes[1], fraction=0.046)
+    
+    plt.tight_layout()
+    plt.show()
+
+visualize_masking(mask, hls_image.shape)
+```
+
+## Comparison of Tokenization Strategies
+
+Let's compare all the tokenization approaches we've implemented:
+
+```{python}
+# | echo: true
+def compare_tokenization_strategies(image, bands_dict):
+    """Compare different tokenization approaches"""
+    
+    strategies = {
+        'Pixel-level (64 bins)': PixelTokenizer(num_bins=64),
+        'Patches 8x8': PatchTokenizer(patch_size=8),
+        'Patches 16x16': PatchTokenizer(patch_size=16),
+        'Patches 32x32': PatchTokenizer(patch_size=32),
+        'Multi-spectral 16x16': MultiSpectralTokenizer(patch_size=16),
+        'Spatial-aware 16x16': SpatialTokenizer(patch_size=16, embed_dim=384),
+        'Prithvi-style': PrithviStyleTokenizer(patch_size=16, embed_dim=768)
+    }
+    
+    results = {}
+    original_size = image.size
+    
+    print("Tokenization Strategy Comparison:")
+    print("=" * 80)
+    print(f"{'Strategy':<20} {'Tokens':<15} {'Token Dim':<12} {'Compression':<12} {'Memory'}")
+    print("-" * 80)
+    
+    for name, tokenizer in strategies.items():
+        try:
+            if isinstance(tokenizer, PixelTokenizer):
+                tokens = tokenizer.encode_image(image)
+                token_dim = 1
+                num_tokens = tokens.size
+                memory_ratio = tokens.nbytes / image.nbytes
+                
+            elif isinstance(tokenizer, PatchTokenizer):
+                tokens = tokenizer.extract_patches(image)
+                token_dim = tokens.shape[1] if len(tokens.shape) > 1 else 1
+                num_tokens = tokens.shape[0]
+                memory_ratio = tokens.nbytes / image.nbytes
+                
+            elif isinstance(tokenizer, MultiSpectralTokenizer):
+                tokens, _ = tokenizer.extract_enhanced_patches(image, bands_dict)
+                token_dim = tokens.shape[1]
+                num_tokens = tokens.shape[0]
+                memory_ratio = tokens.nbytes / image.nbytes
+                
+            elif isinstance(tokenizer, SpatialTokenizer):
+                tokens, _, _ = tokenizer.tokenize_with_position(image)
+                token_dim = tokens.shape[1]
+                num_tokens = tokens.shape[0]
+                memory_ratio = tokens.nbytes / image.nbytes
+                
+            elif isinstance(tokenizer, PrithviStyleTokenizer):
+                tokens, _ = tokenizer.create_hls_tokens(image)
+                token_dim = tokens.shape[1]
+                num_tokens = tokens.shape[0]
+                memory_ratio = tokens.nbytes / image.nbytes
+            
+            compression_ratio = original_size / num_tokens
+            
+            results[name] = {
+                'num_tokens': num_tokens,
+                'token_dim': token_dim,
+                'compression_ratio': compression_ratio,
+                'memory_ratio': memory_ratio
+            }
+            
+            print(f"{name:<20} {num_tokens:<15,} {token_dim:<12} {compression_ratio:<12.1f} {memory_ratio:<8.2f}x")
+            
+        except Exception as e:
+            print(f"{name:<20} ERROR: {str(e)}")
+    
+    return results
+
+# Compare all strategies
+comparison_results = compare_tokenization_strategies(hls_image, band_dict)
+```
+
+## Working with Real Foundation Models
+
+Let's demonstrate how to use tokenization with actual foundation models:
+
+```{python}
+# | echo: true
+# Note: This requires the transformers library and the Prithvi model
+# Uncomment the following code if you have access to the model
+
+def load_prithvi_model():
+    """
+    Load the actual Prithvi foundation model
+    (This is demonstration code - requires model access)
+    """
+    try:
+        from transformers import AutoModel, AutoImageProcessor
+        import torch
+        
+        # Load Prithvi model and processor
+        model_name = "ibm-nasa-geospatial/Prithvi-100M"
+        processor = AutoImageProcessor.from_pretrained(model_name)
+        model = AutoModel.from_pretrained(model_name)
+        
+        print(f"Loaded Prithvi model: {model_name}")
+        print(f"Model parameters: {sum(p.numel() for p in model.parameters()):,}")
+        
+        return model, processor
+    
+    except ImportError:
+        print("transformers library not available")
+        return None, None
+    except Exception as e:
+        print(f"Could not load Prithvi model: {e}")
+        return None, None
+
+def tokenize_with_real_prithvi(hls_data, model, processor):
+    """Use real Prithvi model for tokenization"""
+    try:
+        import torch
+        
+        # Prepare data for Prithvi (expects specific format)
+        # Prithvi expects: (batch_size, time_steps, channels, height, width)
+        input_tensor = torch.from_numpy(hls_data).float().unsqueeze(0).unsqueeze(0)
+        
+        # Process with Prithvi processor
+        inputs = processor(images=input_tensor, return_tensors="pt")
+        
+        # Get model embeddings
+        with torch.no_grad():
+            outputs = model(**inputs)
+            embeddings = outputs.last_hidden_state
+        
+        print(f"Prithvi embeddings shape: {embeddings.shape}")
+        return embeddings.numpy()
+    
+    except Exception as e:
+        print(f"Error with real Prithvi tokenization: {e}")
+        return None
+
+# Try to load real model (will gracefully fail if not available)
+# model, processor = load_prithvi_model()
+# if model is not None:
+#     real_embeddings = tokenize_with_real_prithvi(hls_image, model, processor)
+
+print("(Real Prithvi model loading commented out for demonstration)")
+print("Uncomment the above code if you have access to the model")
+```
+
+## Key Takeaways and Best Practices
+
+Based on our exploration of geospatial tokenization:
+
+```{python}
+# | echo: true
+def summarize_tokenization_principles():
+    """Summary of key principles for geospatial tokenization"""
+    
+    principles = {
+        "Spatial Resolution vs. Efficiency": {
+            "description": "Smaller patches preserve more spatial detail but create more tokens",
+            "recommendation": "16x16 patches provide good balance for most applications"
+        },
+        
+        "Multi-spectral Handling": {
+            "description": "Different spectral bands contain complementary information",
+            "recommendation": "Include spectral indices (NDVI, NDWI) as additional features"
+        },
+        
+        "Positional Encoding": {
+            "description": "Geographic relationships are crucial for geospatial understanding",
+            "recommendation": "Always include spatial positional information"
+        },
+        
+        "Masking Strategies": {
+            "description": "Random masking enables self-supervised learning",
+            "recommendation": "75% masking ratio works well for Earth observation data"
+        },
+        
+        "Preprocessing": {
+            "description": "Satellite data often needs normalization and cloud masking",
+            "recommendation": "Standardize to [0,1] range and handle missing/cloudy pixels"
+        }
+    }
+    
+    print("Geospatial Tokenization Best Practices:")
+    print("=" * 60)
+    
+    for principle, details in principles.items():
+        print(f"\n{principle}:")
+        print(f"  • {details['description']}")
+        print(f"  → {details['recommendation']}")
+    
+    return principles
+
+# Display principles
+principles = summarize_tokenization_principles()
+
+print(f"\n\nFinal Comparison - Memory and Efficiency:")
+print("=" * 50)
+print(f"Original image size: {hls_image.nbytes:,} bytes")
+for name, results in comparison_results.items():
+    total_size = results['num_tokens'] * results['token_dim'] * 4  # float32
+    print(f"{name:<20}: {total_size:>10,} bytes ({results['memory_ratio']:.1f}x)")
+```
+
+## Next Steps and Applications
+
+Now that you understand geospatial tokenization, you can:
+
+1. **Experiment with different patch sizes** for your specific applications
+2. **Implement custom spectral indices** for your domain
+3. **Build your own geospatial foundation models** using these tokenization techniques
+4. **Apply tokenization to time series** of satellite imagery for change detection
+5. **Integrate with existing models** like Prithvi for transfer learning
+
+The tokenization strategy you choose will significantly impact your model's ability to understand spatial relationships, spectral patterns, and temporal dynamics in Earth observation data.
+
+```{python}
+# | echo: true
+print("Tokenization complete! You now understand how satellite imagery")
+print("is converted into tokens for foundation models like Prithvi.")
+print("\nKey concepts covered:")
+print("• Pixel vs. patch-based tokenization")
+print("• Multi-spectral data handling") 
+print("• Spatial positional encoding")
+print("• Foundation model tokenization strategies")
+print("• Memory and efficiency trade-offs")
+```
