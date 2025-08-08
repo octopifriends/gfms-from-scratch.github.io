@@ -1,52 +1,50 @@
 ---
-title: "Week 3: Fine-tuning Foundation Models"
-subtitle: "Model adaptation and early project ideation"
+title: "Foundation Building"
+subtitle: "Week 3: Complete GFM Architecture"
 format: html
 ---
 
 ## Week 3 Overview
 
-This week covers techniques for fine-tuning geospatial foundation models for specific applications, along with developing concrete project proposals.
+
+
+This week assembles a complete Vision Transformer architecture adapted for geospatial foundation models, integrating data pipelines and attention mechanisms.
 
 ### Learning Objectives
-- Understand different fine-tuning strategies for foundation models
-- Learn parameter-efficient fine-tuning techniques (LoRA, adapters)
-- Develop skills in transfer learning for geospatial applications
-- Formulate detailed project proposals with clear objectives
+- Assemble complete Vision Transformer architecture
+- Handle multi-spectral input processing
+- Implement memory-efficient designs
+- Validate architecture through testing
 
 ### Key Topics
-- **Fine-tuning Strategies**: Full fine-tuning vs. parameter-efficient methods
-- **Transfer Learning**: Domain adaptation, few-shot learning, zero-shot capabilities
-- **Model Architecture Modifications**: Adding task-specific heads, multi-task learning
-- **Training Considerations**: Data requirements, computational resources, evaluation metrics
+- **Transformer Encoder Blocks**: Layer normalization and residual connections
+- **Multi-spectral Input Embedding**: Handling different numbers of spectral bands
+- **Architecture Testing**: Forward pass validation and gradient checking
+- **Memory Optimization**: Efficient attention and activation checkpointing
+- **Model Scaling**: Understanding parameter count and computational requirements
 
 ### Activities
-- [ ] Hands-on fine-tuning workshop with sample datasets
-- [ ] Project ideation sessions and feasibility discussions
-- [ ] Technical review of project proposals
-- [ ] Group feedback and refinement sessions
+- [ ] Build complete transformer encoder architecture
+- [ ] Implement multi-spectral input processing
+- [ ] Test architecture with sample geospatial data
+- [ ] Optimize memory usage and computational efficiency
 
 ### Technical Skills
-- Implementing LoRA and adapter-based fine-tuning
-- Setting up training pipelines with PyTorch Lightning
-- Model evaluation and validation strategies
-- Managing computational resources in UCSB AI Sandbox
+- PyTorch module composition and inheritance
+- Memory profiling and optimization
+- Architecture validation and testing
+- Understanding model complexity and scaling
 
-### Lab Session
-Fine-tuning a pre-trained model for land cover classification
+### Interactive Session
+[Session 3: Complete GFM Architecture](interactive-sessions/session3_architecture.qmd) - Collaborative architecture decisions: Debating design choices and testing empirically
 
-### **Major Deliverable**
-**Project Proposal** (Due: End of Week 3)
-- Clear problem statement and research objectives
-- Dataset description and availability assessment
-- Technical approach and model selection rationale
-- Timeline and milestone planning
-- Feasibility analysis and risk mitigation
+### **Week 3 Deliverable**
+Working GFM architecture (~10M parameters) capable of processing multi-spectral satellite imagery
 
 ### Resources
-- [LoRA Implementation Examples](https://github.com/microsoft/LoRA)
-- Parameter-Efficient Fine-Tuning survey paper
-- PyTorch Lightning documentation
+- Vision Transformer architecture details
+- Efficient transformer implementations
+- Memory optimization techniques for large models
 
 ### Next Week Preview
-Week 4 will explore multi-modal and generative models for remote sensing applications.
+Week 4 begins Stage 2 with masked autoencoder pretraining implementation.

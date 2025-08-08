@@ -1,37 +1,42 @@
 ---
-title: "Week 1: Introduction to Geospatial Foundation Models"
-subtitle: "Understanding GFMs and their applications in remote sensing"
+title: "Foundation Building"
+subtitle: "Week 1: Geospatial Data Foundations"
 format: html
 ---
 
 ## Week 1 Overview
 
-This week introduces the fundamental concepts of geospatial foundation models (GFMs) and explores their revolutionary applications in remote sensing and environmental monitoring.
+This week establishes the foundation for building geospatial foundation models by mastering data preparation and preprocessing pipelines.
 
 ### Learning Objectives
-- Understand what geospatial foundation models are and how they differ from traditional ML approaches
-- Explore key architectures and training approaches for GFMs
-- Examine real-world applications and case studies
-- Review the current landscape of available models and platforms
+- Understand geospatial data as foundation model input
+- Implement robust data preprocessing pipelines
+- Handle missing data (clouds, gaps) effectively
+- Create temporal sequences from satellite imagery
 
 ### Key Topics
-- **Foundation Model Fundamentals**: Self-supervised learning, masked autoencoders, transformer architectures
-- **Geospatial Adaptations**: Handling multi-spectral data, spatial relationships, temporal sequences
-- **Available Models**: Prithvi, SatMAE, GeoFM, and other state-of-the-art models
-- **Application Domains**: Land cover classification, change detection, crop monitoring, disaster response
+- **Geospatial Tokenization**: Convert satellite imagery to model-ready tokens
+- **Multi-spectral Data**: Properties and preprocessing of different bands
+- **Cloud Masking**: Strategies for handling missing data
+- **Temporal Sequences**: Building time series from satellite imagery
+- **Data Loaders**: Efficient batch processing for training
 
 ### Activities
-- [ ] Interactive demo with pre-trained geospatial foundation models
-- [ ] Hands-on exploration of model architectures
-- [ ] Discussion of project ideas and feasibility
+- [ ] Build complete geospatial tokenization pipeline
+- [ ] Implement cloud masking and missing data strategies
+- [ ] Create temporal sequence datasets
+- [ ] Optimize data loading for large-scale training
 
 ### Resources
-- [Prithvi Foundation Model](https://github.com/NASA-IMPACT/Prithvi-100M)
-- [SatMAE Paper and Implementation](https://arxiv.org/abs/2207.08051)
-- Reading: "Foundation Models for Earth Observation" survey paper
+- Multi-spectral satellite data properties
+- Cloud masking algorithms and implementations
+- PyTorch data loading best practices
 
-### Lab Session
-Introduction to working with pre-trained GFMs using HuggingFace and PyTorch
+### Interactive Session
+[Session 1: Geospatial Data Foundations](interactive-sessions/session1_data_foundations.qmd) - Hands-on implementation of geospatial data preprocessing pipeline
+
+### **Week 1 Deliverable**
+Complete geospatial data pipeline capable of processing satellite imagery for foundation model training
 
 ### Next Week Preview
-Week 2 will dive into working with geospatial data formats and understanding pre-trained model outputs.
+Week 2 will implement spatial-temporal attention mechanisms from scratch.

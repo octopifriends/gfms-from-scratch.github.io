@@ -1,50 +1,45 @@
 ---
-title: "Week 7: Core Development and Implementation"
-subtitle: "Intensive project development with technical workshops and peer collaboration"
+title: "System Training"
+subtitle: "Week 7: Integration with Existing Models"
 format: html
 ---
 
 ## Week 7 Overview
 
-Intensive development week focused on implementing core project functionality with structured technical workshops, peer collaboration, and regular progress check-ins.
+
+
+This week integrates with existing foundation models and compares custom implementations against state-of-the-art.
 
 ### Learning Objectives
-- Implement core model training, fine-tuning, or inference workflows
-- Establish robust evaluation and validation methodologies
-- Build scalable data processing and analysis pipelines
-- Create preliminary results and validate technical approaches
+- Load and use pretrained foundation models
+- Compare custom vs. state-of-the-art models
+- Understand when to build vs. use existing models
+- Implement model ensembling
 
-### Development Focus Areas
-- **Model Implementation**: Training loops, fine-tuning strategies, inference optimization
-- **Data Workflows**: Efficient processing, feature engineering, quality validation
-- **Evaluation Frameworks**: Metrics implementation, validation strategies, result analysis
-- **System Integration**: Component interaction, error handling, performance monitoring
+### Key Topics
+- **Loading Prithvi and SatMAE**: Working with pretrained weights
+- **Architecture Compatibility**: Adapting existing models to new data
+- **Performance Comparison**: Custom models vs. state-of-the-art
+- **Transfer Learning**: Strategies for model adaptation
+- **Model Selection**: Criteria for choosing when to build vs. use
 
 ### Activities
-- [ ] Implement core model functionality (training/fine-tuning/inference)
-- [ ] Complete data preprocessing and feature engineering pipeline
-- [ ] Establish evaluation methodology and initial validation results
-- [ ] Create visualization and result analysis workflows
-- [ ] Conduct technical code review and optimization
+- [ ] Load and configure Prithvi and SatMAE models
+- [ ] Adapt architectures for compatibility with course data
+- [ ] Compare performance against custom models
+- [ ] Implement transfer learning strategies
+- [ ] Create model selection framework
 
-### Workshop Sessions
-**Technical Workshops (9am-10:30am)**:
-- **Monday/Wednesday**: Advanced debugging and optimization strategies
-- **Tuesday/Thursday**: Model evaluation and validation techniques
-- All sessions include peer code reviews and collaborative problem-solving
+### Interactive Session
+[Session 7: Integration with Existing Models](interactive-sessions/session7_pretrained_integration.qmd) - Working with Prithvi, SatMAE, and performance comparison
 
-**Development Time (10:30am-12pm)**:
-- Independent implementation work with instructor availability
-- Small group collaboration and knowledge sharing
-- Technical consultation and troubleshooting sessions
-- Progress documentation and milestone tracking
+### Development Focus
+- Independent implementation with instructor feedback
+- Small-group collaboration and knowledge sharing
+- Troubleshooting sessions and milestone tracking
 
-### **Major Deliverable**
-**Working System Demonstration** (Due: End of Week 7)
-- **Live Demo** (5-7 minutes): Functional system with real examples
-- **Technical Documentation**: Code structure, key design decisions, performance characteristics
-- **Validation Results**: Preliminary performance metrics and analysis
-- **Progress Report**: Completed milestones, current challenges, revised timeline
+### **Week 7 Deliverable**
+Integrated system using multiple models with performance comparison and model selection guidelines
 
 ### Technical Infrastructure
 - **Development Best Practices**: Code organization, testing frameworks, documentation

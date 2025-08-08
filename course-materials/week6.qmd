@@ -1,51 +1,40 @@
 ---
-title: "Week 6: Project Initiation and Planning"
-subtitle: "Begin independent project development with structured guidance"
+title: "System Training"
+subtitle: "Week 6: Model Evaluation & Analysis"
 format: html
 ---
 
 ## Week 6 Overview
 
-Transition to intensive project development phase with structured planning sessions, technical guidance, and initial implementation milestones.
+
+
+This week evaluates representation quality, assesses reconstruction performance, and compares against baselines.
 
 ### Learning Objectives
-- Define clear project scope, objectives, and success criteria
-- Establish technical architecture and implementation roadmap
-- Begin core development with proper project structure
-- Set up reproducible development environments and workflows
+- Evaluate representation quality
+- Assess reconstruction performance
+- Compare against baselines
+- Understand learned features
 
-### Project Development Framework
-- **Project Definition**: Problem statement, data sources, expected outcomes
-- **Technical Planning**: Architecture design, technology stack, implementation phases
-- **Resource Management**: Computational requirements, data access, timeline planning
-- **Quality Assurance**: Testing strategies, validation approaches, documentation standards
+### Key Topics
+- **Embedding Visualization**: t-SNE, UMAP for learned representations
+- **Reconstruction Quality**: Assessment metrics and visual analysis
+- **Linear Probing**: Evaluation of learned features for downstream tasks
+- **Feature Interpretation**: Understanding what the model has learned
+- **Ablation Studies**: Component importance analysis
 
 ### Activities
-- [ ] Finalize project proposal with detailed specifications
-- [ ] Set up project repository with proper structure and documentation
-- [ ] Implement core data loading and preprocessing pipeline
-- [ ] Establish development workflow and version control practices
-- [ ] Begin initial model experiments and baseline implementations
+- [ ] Generate and visualize learned embeddings
+- [ ] Evaluate reconstruction quality on test data
+- [ ] Implement linear probing for classification tasks
+- [ ] Analyze learned attention patterns and features
+- [ ] Compare against random initialization baselines
 
-### Individual Consultation Sessions
-**Structured Guidance (9am-11am)**:
-- One-on-one project planning meetings with instructor
-- Technical architecture review and feedback
-- Resource identification and access setup
-- Timeline validation and milestone definition
+### Interactive Session
+[Session 6: Model Evaluation & Analysis](interactive-sessions/session6_evaluation.qmd) - Comprehensive evaluation with embedding visualization and performance analysis
 
-**Development Time (11am-12pm)**:
-- Independent implementation work
-- Peer collaboration and knowledge sharing
-- Technical problem-solving and debugging
-- Progress documentation and repository setup
-
-### **Major Deliverable**
-**Project Proposal and Initial Implementation** (Due: End of Week 6)
-- **Written Proposal** (2-3 pages): Problem statement, data sources, methodology, timeline
-- **Repository Setup**: Structured codebase with documentation, environment setup
-- **Initial Pipeline**: Working data loading and basic preprocessing functionality
-- **Baseline Results**: Initial experiments or proof-of-concept implementation
+### **Week 6 Deliverable**
+Comprehensive evaluation report with embedding visualizations, reconstruction analysis, and baseline comparisons
 
 ### Technical Infrastructure
 - Project repository structure and best practices

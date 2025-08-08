@@ -1,52 +1,42 @@
 ---
-title: "Week 9: Project Workshops and Synthesis"
-subtitle: "Final project development and course concept integration"
+title: "Real-World Application"
+subtitle: "Week 9: Model Implementation & Deployment"
 format: html
 ---
 
 ## Week 9 Overview
 
-Dedicated time for final project development with structured workshops to synthesize course concepts and prepare for final presentations.
+
+
+This week deploys models for production use, optimizes for inference, and builds user-friendly interfaces.
 
 ### Learning Objectives
-- Integrate all course concepts into cohesive final projects
-- Refine project implementations based on feedback and testing
-- Prepare comprehensive project documentation and presentations
-- Synthesize lessons learned and identify future research directions
+- Deploy models for production use
+- Optimize models for inference
+- Build user-friendly interfaces
+- Document model capabilities
 
-### Structure
-**Workshop Sessions (9am-11am)**:
-- Project refinement and polishing workshop
-- Presentation preparation and storytelling techniques
-- Technical documentation and reproducibility best practices
-- Synthesis discussion: Challenges and opportunities in GeoAI
-
-**Individual Work Time (11am-12pm)**:
-- Final implementation and testing
-- Documentation completion
-- Presentation materials preparation
-- Peer review and feedback sessions
+### Key Topics
+- **Model Optimization**: Quantization and optimization for inference
+- **API Development**: Building inference APIs with FastAPI
+- **User Interface**: Creation of interactive web interfaces
+- **Model Documentation**: Model cards and capability documentation
+- **Performance Benchmarking**: Speed and accuracy analysis
 
 ### Activities
-- [ ] Complete final project implementation and testing
-- [ ] Prepare comprehensive project documentation
-- [ ] Create presentation materials and demo recordings
-- [ ] Conduct peer code reviews and provide feedback
-- [ ] Synthesize key learnings and identify future work
+- [ ] Optimize model for efficient inference
+- [ ] Build deployment API with documentation
+- [ ] Create user interface for model interaction
+- [ ] Write comprehensive model cards
+- [ ] Benchmark performance and document capabilities
 
-### Documentation Requirements
-- **Technical Documentation**: Code repository, installation instructions, usage examples
-- **Project Report**: Problem statement, methodology, results, discussion
-- **Presentation Materials**: Slides, demo video, live demonstration
-- **Reproducibility Package**: Data, code, environment specifications
+### **Week 9 Deliverable**
+Deployable model with documentation: API, user interface, model card, and performance benchmarks
 
-### Synthesis Topics
-- **Technical Challenges**: Common pitfalls, lessons learned, best practices
-- **Research Opportunities**: Identified gaps, future directions, open problems
-- **Real-world Applications**: Deployment considerations, user needs, impact assessment
-- **Ethical Considerations**: Bias, fairness, environmental impact, data privacy
+### Interactive Session
+[Session 9: Model Implementation & Deployment](interactive-sessions/session9_deployment.qmd) - Real-time deployment challenges with live APIs and immediate feedback
 
-### Optional Lab Sessions (2pm-5pm)
+### Optional Lab Support
 Extended support for:
 - Final debugging and optimization
 - Advanced visualization and result analysis

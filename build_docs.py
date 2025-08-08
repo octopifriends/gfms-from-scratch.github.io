@@ -15,6 +15,26 @@ import time
 import glob
 from pathlib import Path
 
+# Directories/files excluded by Quarto (_quarto.yml render settings)
+# Keep this in sync with _quarto.yml 'render' excludes
+EXCLUDED_DIR_SNIPPETS = [
+    "nbs/",
+    "installation/",
+    "example_course/",
+    "LLMs-from-scratch/",
+]
+
+def is_excluded_path(path_str: str) -> bool:
+    """Return True if the given path string should be excluded from rendering."""
+    normalized = path_str.replace("\\", "/")
+    return any(snippet in normalized for snippet in EXCLUDED_DIR_SNIPPETS)
+
+def is_buildable_file(path_str: str) -> bool:
+    """Return True if file has a buildable extension and is not in an excluded path."""
+    if not (path_str.endswith(".qmd") or path_str.endswith(".ipynb")):
+        return False
+    return not is_excluded_path(path_str)
+
 def run_command(command, description):
     """Run a shell command and handle errors."""
     print(f"🔨 {description}...")
@@ -44,7 +64,7 @@ def get_changed_files():
         
         changed_files = []
         for file_path in result.stdout.strip().split('\n'):
-            if file_path and (file_path.endswith('.qmd') or file_path.endswith('.ipynb')):
+            if file_path and is_buildable_file(file_path):
                 # Check if file still exists (wasn't deleted)
                 if Path(file_path).exists():
                     changed_files.append(file_path)
@@ -56,7 +76,7 @@ def get_changed_files():
         )
         
         for file_path in result.stdout.strip().split('\n'):
-            if file_path and (file_path.endswith('.qmd') or file_path.endswith('.ipynb')):
+            if file_path and is_buildable_file(file_path):
                 if Path(file_path).exists() and file_path not in changed_files:
                     changed_files.append(file_path)
         
@@ -68,7 +88,7 @@ def get_changed_files():
             )
             
             for file_path in result.stdout.strip().split('\n'):
-                if file_path and (file_path.endswith('.qmd') or file_path.endswith('.ipynb')):
+                if file_path and is_buildable_file(file_path):
                     if Path(file_path).exists():
                         changed_files.append(file_path)
         
@@ -88,19 +108,19 @@ def get_all_buildable_files():
     """Get all .qmd and .ipynb files that should be built according to _quarto.yml."""
     all_files = []
     
-    # Get all .qmd files (excluding patterns from _quarto.yml)
+    # Get all .qmd files (respecting _quarto.yml excludes)
     for qmd_file in Path(".").rglob("*.qmd"):
-        # Skip files in excluded directories
-        if "nbs/" in str(qmd_file) or "installation/" in str(qmd_file):
+        path_str = str(qmd_file)
+        if is_excluded_path(path_str):
             continue
-        all_files.append(str(qmd_file))
+        all_files.append(path_str)
     
-    # Get all .ipynb files (excluding patterns from _quarto.yml)
+    # Get all .ipynb files (respecting _quarto.yml excludes)
     for ipynb_file in Path(".").rglob("*.ipynb"):
-        # Skip files in excluded directories
-        if "nbs/" in str(ipynb_file) or "installation/" in str(ipynb_file):
+        path_str = str(ipynb_file)
+        if is_excluded_path(path_str):
             continue
-        all_files.append(str(ipynb_file))
+        all_files.append(path_str)
     
     return all_files
 
@@ -221,7 +241,8 @@ def clear_quarto_cache():
     for quarto_dir in Path(".").rglob(".quarto"):
         if quarto_dir.is_dir():
             # Skip if it's in excluded directories
-            if "nbs/" in str(quarto_dir) or "installation/" in str(quarto_dir) or "example_course/" in str(quarto_dir):
+            if ("nbs/" in str(quarto_dir) or "installation/" in str(quarto_dir)
+                or "example_course/" in str(quarto_dir) or "LLMs-from-scratch/" in str(quarto_dir)):
                 continue
             shutil.rmtree(quarto_dir)
             total_removed += 1
@@ -232,7 +253,8 @@ def clear_quarto_cache():
     for checkpoint_dir in Path(".").rglob(".ipynb_checkpoints"):
         if checkpoint_dir.is_dir():
             # Skip if it's in excluded directories
-            if "nbs/" in str(checkpoint_dir) or "installation/" in str(checkpoint_dir) or "example_course/" in str(checkpoint_dir):
+            if ("nbs/" in str(checkpoint_dir) or "installation/" in str(checkpoint_dir)
+                or "example_course/" in str(checkpoint_dir) or "LLMs-from-scratch/" in str(checkpoint_dir)):
                 continue
             shutil.rmtree(checkpoint_dir)
             total_removed += 1

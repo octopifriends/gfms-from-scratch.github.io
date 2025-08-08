@@ -49,6 +49,8 @@ geoAI/
 ├── 📝 nbs/                        # Additional notebooks (not built)
 │
 ├── 🔨 build_docs.py               # Website build script
+├── 📑 CONTRIBUTING.md             # Contribution rules and workflow
+├── ✍️ AUTHORING_GUIDE.md          # Best practices for writing course materials
 ├── ⚙️ _quarto.yml                 # Website configuration
 ├── 🌍 index.qmd                   # Course homepage
 ├── 📋 Syllabus.md                 # Course syllabus
@@ -80,6 +82,12 @@ python build_docs.py --serve
 # 6. Commit and push changes to update website
 ```
 
+### Author & Contributor Resources
+
+- Contribution guidelines: see `CONTRIBUTING.md`
+- Authoring best practices (interactive sessions, cheatsheets, lessons): see `AUTHORING_GUIDE.md`
+- Build rules follow `_quarto.yml` (render excludes: `nbs/`, `installation/`, internal docs)
+
 ### For GRIT IT Support: AI Sandbox Setup
 
 ```bash
@@ -106,55 +114,6 @@ python installation/scripts/test_gpu_setup.py
 2. **Request AI Sandbox Access**: Follow instructions in Week 0 materials
 3. **Complete Environment Setup**: Use provided installation scripts
 4. **Submit Project Application**: Via course website form
-
-## 💻 Technical Requirements
-
-### AI Sandbox Specifications
-- **GPU**: NVIDIA A100/H100 (recommended) or V100 (minimum)
-- **RAM**: 32GB+ system memory
-- **Storage**: 100GB+ for models and datasets
-- **CUDA**: 11.8 or 12.1 
-- **Python**: 3.11 with conda/mamba
-
-### Foundation Models Included
-- **Prithvi-100M**: NASA-IBM Earth observation foundation model (~2GB)
-- **SatMAE**: Microsoft satellite masked autoencoder (~1GB)
-- **CLIP**: OpenAI vision-language models (~1GB each)
-- **Additional Models**: Domain-specific geospatial models (~5GB total)
-
-### Key Software Packages
-- **PyTorch 2.1+**: GPU-accelerated deep learning
-- **TorchGeo**: Geospatial machine learning library
-- **HuggingFace**: Foundation model access and fine-tuning
-- **Earth Engine**: Large-scale satellite data analysis
-- **GDAL/Rasterio**: Geospatial data processing
-
-## 📚 Course Overview
-
-### Learning Objectives
-Students will master:
-- **Foundation Model Theory**: Understanding of self-supervised learning and transformer architectures
-- **Geospatial Applications**: Fine-tuning models for Earth observation tasks
-- **Scalable Pipelines**: Cloud-based analysis using Earth Engine and distributed computing
-- **Model Deployment**: Building APIs and interactive applications
-- **Project Development**: Applied research with real-world geospatial problems
-
-### Assessment Structure
-- **Pass/Fail**: Based on attendance, participation, and deliverable submission
-- **Project Application** (Week 0): Research interest and background
-- **Project Proposal** (Week 3): Detailed technical plan
-- **Initial MVP** (Week 7): Working prototype demonstration
-- **Final Presentation** (Week 10): Complete project showcase
-
-### Weekly Schedule
-| Week | Topic | Focus |
-|------|-------|-------|
-| 0 | Getting Started | AI Sandbox setup, project applications |
-| 1-2 | Foundation Models | Theory, data handling, model outputs |
-| 3-4 | Fine-tuning & Multi-modal | Adaptation techniques, generative models |
-| 5-6 | Project Development | Independent work, evaluation strategies |
-| 7-8 | Scalable Deployment | Cloud pipelines, APIs, applications |
-| 9-10 | Synthesis & Presentations | Project completion, final demonstrations |
 
 ## 🔧 Development Workflow
 
@@ -236,26 +195,6 @@ df -h
 - **Code Examples**: MIT License
 - **Foundation Models**: Subject to individual model licenses (see installation scripts)
 - **Student Projects**: Owned by students, optional public sharing encouraged
-
-## 🚨 Important Notes
-
-### For IT Support
-- **Resource Intensive**: Foundation models require significant GPU memory and storage
-- **Network Bandwidth**: Initial setup involves ~15-20GB of downloads
-- **User Authentication**: Students need HuggingFace accounts for model access
-- **Monitoring**: GPU usage monitoring recommended during peak course periods
-
-### For Instructors
-- **Model Updates**: Foundation models evolve rapidly; review quarterly
-- **Student Diversity**: Expect varying technical backgrounds; provide multiple entry points
-- **Project Scope**: Help students balance ambition with 10-week timeline constraints
-- **Resource Allocation**: Coordinate with GRIT for peak usage periods
-
-### For Students
-- **Early Setup**: Begin AI Sandbox setup immediately after enrollment
-- **Regular Backups**: Save work frequently; use version control
-- **Resource Awareness**: Be mindful of GPU usage during shared access periods
-- **Academic Integrity**: Properly cite model sources and collaborations
 
 ---
 

@@ -1,44 +1,50 @@
 ---
-title: "Week 4: Multi-modal and Generative Models"
-subtitle: "Advanced architectures for remote sensing applications"
+title: "System Training"
+subtitle: "Week 4: Pretraining Implementation"
 format: html
 ---
 
 ## Week 4 Overview
 
-Explore cutting-edge multi-modal and generative approaches in geospatial foundation models, including sensor fusion and synthetic data generation.
+
+
+This week implements masked autoencoder pretraining for geospatial foundation models, setting up the complete training pipeline.
 
 ### Learning Objectives
-- Understand multi-modal fusion techniques for different satellite sensors
-- Explore generative models for geospatial applications
-- Learn about vision-language models for remote sensing
-- Investigate synthetic data generation and augmentation strategies
+- Implement masked autoencoder objective
+- Set up distributed training pipeline
+- Monitor training progress effectively
+- Handle large-scale geospatial datasets
 
 ### Key Topics
-- **Multi-modal Architectures**: Sensor fusion, cross-modal attention, joint embeddings
-- **Generative Models**: GANs, VAEs, diffusion models for satellite imagery
-- **Vision-Language Models**: CLIP-based approaches, remote sensing captioning
-- **Synthetic Data**: Data augmentation, domain adaptation, privacy preservation
+- **Masked Patch Reconstruction**: Prithvi-style self-supervised learning
+- **Training Data Preparation**: Augmentation and batch creation
+- **Loss Functions**: Reconstruction loss for masked patches
+- **Distributed Training**: Multi-GPU setup and synchronization
+- **Monitoring and Logging**: Training metrics and visualization
 
 ### Activities
-- [ ] Multi-sensor fusion workshop (optical + SAR + LiDAR)
-- [ ] Experiment with generative models for data augmentation
-- [ ] Explore vision-language models for scene understanding
-- [ ] Project progress check-ins and technical consultations
+- [ ] Implement masked autoencoder training objective
+- [ ] Set up distributed training infrastructure
+- [ ] Create training data augmentation pipeline
+- [ ] Build monitoring and logging system
 
 ### Technical Skills
-- Implementing multi-modal fusion architectures
-- Working with generative adversarial networks
-- Using pre-trained vision-language models
-- Evaluating synthetic vs. real data quality
+- Self-supervised learning implementation
+- Distributed training with PyTorch Lightning
+- Training monitoring and debugging
+- Large-scale data handling
 
-### Lab Session
-Building a multi-modal classifier combining Sentinel-1 and Sentinel-2 data
+### Interactive Session
+[Session 4: Pretraining Implementation](interactive-sessions/session4_pretraining.qmd) - Launch first pretraining run with real satellite data
+
+### **Week 4 Deliverable**
+Active pretraining pipeline with monitoring and checkpointing
 
 ### Resources
-- [CLIP for Remote Sensing](https://github.com/microsoft/RemoteCLIP)
-- Multi-modal learning in Earth observation survey
-- Generative models for geospatial data tutorial
+- Masked Autoencoder (MAE) paper and implementation
+- Prithvi training methodology
+- Distributed training best practices
 
 ### Next Week Preview
-Week 5 provides dedicated time for semi-independent project work with optional proposal workshops.
+Week 5 will optimize the training loop for stability and efficiency.

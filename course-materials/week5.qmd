@@ -1,50 +1,50 @@
 ---
-title: "Week 5: Model Adaptation and Evaluation"
-subtitle: "Efficient fine-tuning and comprehensive evaluation strategies"
+title: "System Training"
+subtitle: "Week 5: Training Loop Optimization"
 format: html
 ---
 
 ## Week 5 Overview
 
-Focus on advanced model adaptation techniques and robust evaluation methodologies for geospatial foundation models.
+
+
+This week optimizes training for stability and efficiency, handling geospatial-specific training challenges.
 
 ### Learning Objectives
-- Master efficient fine-tuning techniques for large models
-- Design comprehensive evaluation frameworks
-- Understand model interpretability and explainability methods
-- Learn best practices for model validation in geospatial contexts
+- Optimize training for stability and efficiency
+- Handle geospatial-specific training challenges
+- Implement advanced optimization techniques
+- Debug training issues
 
 ### Key Topics
-- **Efficient Fine-tuning**: QLoRA, AdaLoRA, prompt tuning, in-context learning
-- **Evaluation Strategies**: Cross-validation, spatial validation, temporal validation
-- **Interpretability**: Attention visualization, feature attribution, saliency maps
-- **Robustness Testing**: Out-of-distribution performance, adversarial examples
+- **Learning Rate Scheduling**: Warm-up, cosine annealing, adaptive strategies
+- **Gradient Management**: Clipping, accumulation, normalization
+- **Mixed Precision Training**: Automatic mixed precision (AMP) implementation
+- **Missing Data Handling**: Training with cloud-contaminated patches
+- **Training Stability**: Convergence analysis and debugging
 
 ### Activities
-- [ ] Implement advanced fine-tuning techniques for computational efficiency
-- [ ] Design evaluation protocols specific to geospatial applications
-- [ ] Apply interpretability methods to understand model decisions
-- [ ] Conduct robustness analysis and failure mode investigation
+- [ ] Implement advanced learning rate schedulers
+- [ ] Add gradient clipping and accumulation
+- [ ] Enable mixed precision training
+- [ ] Debug training instabilities and convergence issues
 
 ### Technical Skills
-- QLoRA implementation for memory-efficient fine-tuning
-- Spatial cross-validation techniques
-- GradCAM and attention visualization for satellite imagery
-- Statistical significance testing for model comparisons
+- Advanced PyTorch optimization
+- Training stability analysis
+- Performance profiling and optimization
+- Systematic debugging of training issues
 
-### Interactive Session 5
-Comprehensive model evaluation workshop: from metrics to interpretability
+### Interactive Session
+[Session 5: Training Loop Optimization](interactive-sessions/session5_training_loop.qmd) - Performance archaeology: Investigating training curves and optimization dynamics
 
-### Evaluation Framework Components
-- **Performance Metrics**: Accuracy, F1, IoU, spatial consistency
-- **Validation Strategies**: Leave-one-region-out, temporal splits
-- **Interpretability Analysis**: Feature importance, decision boundaries
-- **Robustness Assessment**: Domain shift, seasonal variations, sensor differences
+### **Week 5 Deliverable**
+Optimized training loop with monitoring and stability guarantees
 
 ### Resources
-- [QLoRA Paper and Implementation](https://arxiv.org/abs/2305.14314)
-- Spatial validation techniques for Earth observation
-- Model interpretability tools and libraries
+- Training stability best practices
+- Mixed precision training guides
+- Optimization theory for deep learning
 
 ### Next Week Preview
-Week 6 will cover scalable analysis pipelines using Earth Engine, TorchGeo, and cloud tools for production deployment.
+Week 6 will evaluate model performance and analyze learned representations.

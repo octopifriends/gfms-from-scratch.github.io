@@ -1,5 +1,5 @@
 ---
-title: "Geospatial Foundation Models and Applications"
+title: "Building Geospatial Foundation Models"
 subtitle: "Department of Geography"
 description: "Fall 2025"
 title-block-banner: false
@@ -8,31 +8,50 @@ toc: false
 
 ![](images/geoai-banner.png){height=5in fig-align="center" alt="Geospatial AI visualization"}
 
+
 ::: {.gray-text .center-text}
 *Advancing environmental monitoring through AI*
 :::
 
 ## Course Description
 
-This project-driven seminar introduces students to state-of-the-art geospatial foundation models (GFMs) for remote sensing and environmental monitoring. Through a mix of lecture, discussion, and hands-on labs, students will explore frontier techniques in geospatial AI—including self-supervised learning, masked autoencoders, multimodal sensor fusion, and scalable inference pipelines—while developing their own applied project.
+This project-driven seminar teaches students to build geospatial foundation models (GFMs) from scratch. Students implement every layer of the pipeline—from data pipelines and tokenization through attention mechanisms, full architectures, pretraining, evaluation, and deployment—culminating in a working end-to-end GFM tailored to a chosen geospatial application.
 
-The goal of GEOG 288KC (Geospatial Foundation Models and Applications) is to equip students with cutting-edge skills in applying foundation models to environmental challenges. By the end of the course, students should be able to:
+By the end of the course, students will be able to:
 
-- Understand and apply state-of-the-art geospatial foundation models for environmental monitoring
-
-- Fine-tune and adapt large-scale models for specific remote sensing applications
-
-- Build scalable processing pipelines using Earth Engine, TorchGeo, and cloud computing platforms
-
-- Create interactive applications and APIs for model deployment and visualization
-
-- Evaluate and interpret foundation model outputs using robust validation frameworks
-
-- Collaborate on applied research projects and communicate results to diverse audiences
+- Design and implement geospatial data pipelines for multi-spectral, spatial, and temporal data
+- Build attention mechanisms and assemble transformer-based architectures for geospatial inputs
+- Pretrain using masked autoencoding and evaluate learned representations
+- Fine-tune models for specific Earth observation tasks
+- Deploy models via APIs and interactive interfaces with honest performance analysis
 
 ## Getting Started with the UCSB AI Sandbox
 
 [Here](installation/UCSB_AI_SANDBOX_SETUP.md) are detailed instructions for setting up your environment on the UCSB AI Sandbox, including foundation model installation and GPU optimization.
+
+![](images/LLM_workflow.png){fig-align="center" alt="Three stages and nine steps workflow for building GFMs"}
+
+## Course Structure: 3 Stages, 9 Steps
+
+### 🏗️ Stage 1: Build GFM Architecture (Weeks 1-3)
+- Week 1: Geospatial Data Foundations (data pipelines, tokenization, loaders)
+- Week 2: Spatial-Temporal Attention Mechanisms (from-scratch implementation)
+- Week 3: Complete GFM Architecture (Vision Transformer for geospatial)
+
+### 🚀 Stage 2: Train a Foundation Model (Weeks 4-7)
+- Week 4: Pretraining Implementation (masked autoencoder)
+- Week 5: Training Loop Optimization (stability, efficiency, mixed precision)
+- Week 6: Model Evaluation & Analysis (embeddings, probing, reconstructions)
+- Week 7: Integration with Existing Models (Prithvi, SatMAE)
+
+### 🎯 Stage 3: Apply & Deploy (Weeks 8-10)
+- Week 8: Task-Specific Fine-tuning (efficient strategies, few-shot)
+- Week 9: Model Implementation & Deployment (APIs, UI, benchmarking)
+- Week 10: Project Presentations & Synthesis
+
+Quick links:
+- Weekly materials: see navbar → 🗓️ weekly materials
+- Interactive sessions: see navbar → 💻 interactive sessions
 
 ## Teaching Team
 

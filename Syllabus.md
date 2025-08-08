@@ -1,4 +1,4 @@
-## **GEOG 288KC: Geospatial Foundation Models and Applications**
+## **GEOG 288KC: Building Geospatial Foundation Models**
 
 **Fall 2025**  
 **Fridays 9am-12pm \+ optional lab office hours Fridays 2pm-5pm**
@@ -7,7 +7,7 @@
 
 ### **Course Overview**
 
-This course introduces students to state-of-the-art geospatial foundation models (GFMs) for remote sensing and environmental monitoring. Through a mix of lecture, discussion, and hands-on labs, students will explore frontier techniques in geospatial AI—including self-supervised learning, masked autoencoders, multimodal sensor fusion, and scalable inference pipelines—while developing their own applied project.
+This course teaches students to build geospatial foundation models (GFMs) from scratch for remote sensing and environmental monitoring. Following the framework from "Build a Large Language Model (From Scratch)" by Sebastian Raschka, students will implement every component of the foundation model pipeline—from geospatial tokenization and attention mechanisms to training loops and deployment—while developing their own working foundation model for a chosen geospatial application.
 
 ---
 
@@ -21,39 +21,51 @@ This course introduces students to state-of-the-art geospatial foundation models
 
 ### **Applications**
 
-To apply, students should submit a paragraph at the [form link](https://forms.gle/Q1iDp2kuZuX1avMPA) below describing their past experience with remote sensing, geospatial data, and ML, as well as their interest in Geospatial Foundation Models. They should also describe their application of interest. The more clearly defined the potential project goal and any existing fine-tuning data the better, though students will also have the opportunity to refine their ideas throughout the course as we learn more about GeoFMs and what they are capable of. 
+To apply, students should submit a paragraph at the [form link](https://forms.gle/Q1iDp2kuZuX1avMPA) below describing their past experience with remote sensing, geospatial data, and ML, as well as their interest in building (not just using) Geospatial Foundation Models. They should describe a specific geospatial problem they want to solve by building a custom foundation model. The more clearly defined the target application and any existing datasets the better, though students will refine their approach as they learn to build complete GFM pipelines. 
 
 [https://forms.gle/Q1iDp2kuZuX1avMPA](https://forms.gle/Q1iDp2kuZuX1avMPA)
 
 ### ---
 
-### **Tentative weekly Topics**
+### **Course Structure: 3 Stages, 9 Steps**
 
-* Week 0: Getting set up for geospatial AI in the UCSB AI Sandbox \+ Project Applications  
-* Week 1: Introduction to geospatial foundation models and their applications  
-  Week 2: Working with geospatial data and pretrained model outputs  
-* Week 3: Fine-tuning foundation models and early project ideation \+ Project Proposals  
-* Week 4: Multi-modal and generative models for remote sensing  
-* Week 5: Semi-independent project work and optional proposal workshops  
-* Week 6: Model adaptation, efficient fine-tuning, and evaluation strategies  
-* Week 7: Scalable analysis pipelines using Earth Engine, TorchGeo, and cloud tools \+ Initial MVPs  
-* Week 8: Building lightweight APIs and applications for model inference and visualization  
-* Week 9: Project workshops and synthesis  
-* Week 10: Final project presentations and discussion of future directions
+Following Raschka's framework for building foundation models:
+
+#### **🏗️ Stage 1: Build GFM Architecture (Weeks 1-3)**
+* **Week 1**: Geospatial Data Foundations *(Step 1: Data preparation and sampling)*
+* **Week 2**: Spatial-Temporal Attention Mechanisms *(Step 2: Attention mechanism)*  
+* **Week 3**: Complete GFM Architecture *(Step 3: LLM Architecture)*
+
+#### **🚀 Stage 2: Training a Foundation Model (Weeks 4-7)**
+* **Week 4**: Pretraining Implementation *(Step 4: Pretraining)*
+* **Week 5**: Training Loop Optimization *(Step 5: Training loop)*
+* **Week 6**: Model Evaluation & Analysis *(Step 6: Model evaluation)*
+* **Week 7**: Integration with Existing Models *(Step 7: Load pretrained weights)*
+
+#### **🎯 Stage 3: Model Application (Weeks 8-10)**
+* **Week 8**: Task-Specific Fine-tuning *(Step 8: Fine-tuning)*
+* **Week 9**: Model Implementation & Deployment *(Step 9: Model implementation)*
+* **Week 10**: Project Presentations & Future Directions *(Integration and synthesis)*
 
 ---
 
 ### **Deliverables**
 
-* **Project Application** (Week 0): 1-paragraph summary of past experience and application interest area
+**Stage 1: Architecture (Weeks 1-3)**
+* **Week 1**: Geospatial data pipeline with tokenization strategy
+* **Week 3**: Working GFM architecture (~10M parameters)
 
-* **Project Proposal** (Week 3): brief plan \+ feasibility check
+**Stage 2: Training (Weeks 4-7)**
+* **Week 4**: Active pretraining pipeline with monitoring
+* **Week 6**: Comprehensive model evaluation report
+* **Week 7**: Integration with existing models (Prithvi comparison)
 
-* **Initial MVP** (Week 7\)**:** First implementation of project workflow and tests/examples
+**Stage 3: Application (Weeks 8-10)**
+* **Week 8**: Fine-tuned model for specific geospatial task
+* **Week 9**: Deployable model with API and documentation
+* **Week 10**: Final presentation of complete GFM pipeline (15 min demo + Q&A)
 
-* **Final Presentation** (Week 10): 10–15 min demo \+ reflection
-
-* **Optional**: Submit your project to Hugging Face or GitHub for broader visibility
+**Optional**: Submit our foundation model to Hugging Face for broader visibility
 
 ---
 

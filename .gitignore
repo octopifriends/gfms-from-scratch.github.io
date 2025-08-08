@@ -1,5 +1,6 @@
 # Example course materials (template only)
 example_course/
+LLMS-from-scratch/
 
 # Python
 __pycache__/

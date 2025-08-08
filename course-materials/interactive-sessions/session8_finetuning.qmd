@@ -1,6 +1,6 @@
 ---
-title: "Interactive Session 4"
-subtitle: "🔧 Model Adaptation & Evaluation"
+title: "Week 8 Interactive Session: Task-Specific Fine-tuning"
+subtitle: "Efficient fine-tuning strategies for geospatial applications"
 editor_options: 
   chunk_output_type: console
 jupyter: geoai

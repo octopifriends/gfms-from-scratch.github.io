@@ -1,6 +1,6 @@
 ---
-title: "Interactive Session 2"
-subtitle: "🤗 Loading & Using Foundation Models"
+title: "Week 10 Interactive Session: Project Presentations & Synthesis"
+subtitle: "Showcase complete foundation model pipelines"
 editor_options: 
   chunk_output_type: console
 jupyter: geoai

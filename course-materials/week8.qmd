@@ -1,51 +1,46 @@
 ---
-title: "Week 8: Advanced Development and Optimization"
-subtitle: "System refinement, scalability improvements, and performance optimization"
+title: "Real-World Application"
+subtitle: "Week 8: Task-Specific Fine-tuning"
 format: html
 ---
 
 ## Week 8 Overview
 
-Focus on refining project implementations, improving system performance, and preparing robust, scalable solutions with comprehensive evaluation and documentation.
+
+
+This week adapts foundation models for specific tasks using efficient fine-tuning strategies.
 
 ### Learning Objectives
-- Optimize system performance and computational efficiency
-- Implement advanced features and functionality enhancements
-- Establish comprehensive evaluation and robustness testing
-- Prepare systems for deployment and scaling considerations
+- Adapt foundation models for specific tasks
+- Implement efficient fine-tuning strategies
+- Handle limited labeled data
+- Evaluate task performance
 
-### Development Focus Areas
-- **Performance Optimization**: Memory usage, computational efficiency, GPU utilization
-- **Advanced Features**: Enhanced functionality, user interface improvements, automation
-- **Scalability**: Distributed processing, cloud integration, resource management
-- **Robustness**: Error handling, edge case management, system reliability
+### Key Topics
+- **Full Fine-tuning vs. Parameter-efficient**: LoRA and adapter strategies
+- **Few-shot Learning**: Working with limited labeled data
+- **Task-specific Data**: Preparation and augmentation strategies
+- **Multi-task Learning**: Joint training for multiple objectives
+- **Fine-tuning Evaluation**: Task-specific performance metrics
 
 ### Activities
-- [ ] Implement performance optimizations and efficiency improvements
-- [ ] Add advanced features and enhanced functionality
-- [ ] Conduct comprehensive testing and validation across scenarios
-- [ ] Prepare deployment configurations and scaling strategies
-- [ ] Create user documentation and system guides
+- [ ] Implement LoRA and adapter-based fine-tuning
+- [ ] Prepare task-specific datasets
+- [ ] Compare full vs. parameter-efficient fine-tuning
+- [ ] Evaluate few-shot learning capabilities
+- [ ] Optimize for limited data scenarios
 
-### Workshop Sessions
-**Optimization Workshops (9am-10:30am)**:
-- **Monday**: Performance profiling and computational optimization
-- **Tuesday**: Advanced feature development and system enhancement
-- **Wednesday**: Deployment strategies and scalability planning
-- **Thursday**: Comprehensive evaluation and validation techniques
+### Interactive Session
+[Session 8: Task-Specific Fine-tuning](interactive-sessions/session8_finetuning.qmd) - Efficient fine-tuning strategies and performance optimization
 
-**Development Time (10:30am-12pm)**:
-- Independent optimization and feature development work
-- System testing and validation across multiple scenarios
-- Documentation preparation and user guide creation
+### Development Focus
+- Optimization and feature development work
+- System testing and validation across scenarios
+- Documentation and user guide creation
 - Final debugging and system refinement
 
-### **Major Deliverable**
-**Comprehensive System Demo** (Due: End of Week 8)
-- **Advanced Demo** (7-10 minutes): Full system functionality with edge cases
-- **Performance Analysis**: Efficiency metrics, scalability assessment, resource usage
-- **Feature Showcase**: Advanced capabilities and enhanced functionality
-- **Deployment Documentation**: Installation guides, configuration instructions, user manuals
+### **Week 8 Deliverable**
+Fine-tuned model for chosen application with performance analysis and comparison
 
 ### Optimization Strategies
 - **Computational Efficiency**: Algorithm optimization, parallel processing, memory management

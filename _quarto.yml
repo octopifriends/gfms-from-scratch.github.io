@@ -8,6 +8,9 @@ project:
     - "!nbs/**"
     - "!installation/**"
     - "!example_course/**"
+    - "!LLMs-from-scratch/**"
+    - "!COURSE_*.md"
+    - "!*_PLAN.md"
 
 website:
   navbar:
@@ -19,38 +22,54 @@ website:
         href: Syllabus.html
       - text: 🗓️ weekly materials
         menu: 
-          - text: 1️⃣ Week 1 - Introduction to GFMs
+          - text: "🏗️ Stage 1: Foundation Building"
+          - text: 1️⃣ Week 1 - Geospatial Data Foundations
             href: course-materials/week1.qmd
-          - text: 2️⃣ Week 2 - Working with Geospatial Data
+          - text: 2️⃣ Week 2 - Spatial-Temporal Attention Mechanisms
             href: course-materials/week2.qmd
-          - text: 3️⃣ Week 3 - Loading & Using Foundation Models
+          - text: 3️⃣ Week 3 - Complete GFM Architecture
             href: course-materials/week3.qmd
-          - text: 4️⃣ Week 4 - Multi-modal & Generative Models
+          - text: "🚀 Stage 2: System Training"
+          - text: 4️⃣ Week 4 - Pretraining Implementation
             href: course-materials/week4.qmd
-          - text: 5️⃣ Week 5 - Model Adaptation & Evaluation
+          - text: 5️⃣ Week 5 - Training Loop Optimization
             href: course-materials/week5.qmd
-          - text: 6️⃣ Week 6 - Project Initiation & Planning
+          - text: 6️⃣ Week 6 - Model Evaluation & Analysis
             href: course-materials/week6.qmd
-          - text: 7️⃣ Week 7 - Core Development & Implementation
+          - text: 7️⃣ Week 7 - Integration with Existing Models
             href: course-materials/week7.qmd
-          - text: 8️⃣ Week 8 - Advanced Development & Optimization
+          - text: "🎯 Stage 3: Real-World Application"
+          - text: 8️⃣ Week 8 - Task-Specific Fine-tuning
             href: course-materials/week8.qmd
-          - text: 9️⃣ Week 9 - Project Workshops & Synthesis
+          - text: 9️⃣ Week 9 - Model Implementation & Deployment
             href: course-materials/week9.qmd
-          - text: 🎯 Week 10 - Final Presentations
+          - text: 🎯 Week 10 - Project Presentations & Synthesis
             href: course-materials/week10.qmd
       - text: 💻 interactive sessions
         menu:
-          - text: Session 1 - 🔥 PyTorch & TorchGeo Fundamentals
-            href: course-materials/interactive-sessions/session1_pytorch_torchgeo.qmd
-          - text: Session 2 - 🤗 Loading & Using Foundation Models
-            href: course-materials/interactive-sessions/session2_foundation_models.qmd
-          - text: Session 3 - 📐 Multi-modal & Sensor Fusion
-            href: course-materials/interactive-sessions/session3_multimodal.qmd
-          - text: Session 4 - 🔧 Model Adaptation & Evaluation
-            href: course-materials/interactive-sessions/session4_adaptation.qmd
-          - text: Session 5 - ☁️ Scalable Analysis & Deployment
-            href: course-materials/interactive-sessions/session5_deployment.qmd
+          - text: "🏗️ Stage 1: Foundation Building"
+          - text: Session 1 - 📊 Geospatial Data Foundations
+            href: course-materials/interactive-sessions/session1_data_foundations.qmd
+          - text: Session 2 - 🧠 Spatial-Temporal Attention Mechanisms
+            href: course-materials/interactive-sessions/session2_attention_mechanisms.qmd
+          - text: Session 3 - 🏗️ Complete GFM Architecture
+            href: course-materials/interactive-sessions/session3_architecture.qmd
+          - text: "🚀 Stage 2: System Training"
+          - text: Session 4 - 🔥 Pretraining Implementation
+            href: course-materials/interactive-sessions/session4_pretraining.qmd
+          - text: Session 5 - ⚙️ Training Loop Optimization
+            href: course-materials/interactive-sessions/session5_training_loop.qmd
+          - text: Session 6 - 📈 Model Evaluation & Analysis
+            href: course-materials/interactive-sessions/session6_evaluation.qmd
+          - text: Session 7 - 🤝 Integration with Existing Models
+            href: course-materials/interactive-sessions/session7_pretrained_integration.qmd
+          - text: "🎯 Stage 3: Real-World Application"
+          - text: Session 8 - 🔧 Task-Specific Fine-tuning
+            href: course-materials/interactive-sessions/session8_finetuning.qmd
+          - text: Session 9 - ☁️ Model Implementation & Deployment
+            href: course-materials/interactive-sessions/session9_deployment.qmd
+          - text: Session 10 - 🎯 Project Presentations & Synthesis
+            href: course-materials/interactive-sessions/session10_presentations.qmd
       - text: 🎓 lectures
         menu:
           - text: Lecture 1 - 🧠 Foundation Model Architectures

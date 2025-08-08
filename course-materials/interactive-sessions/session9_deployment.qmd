@@ -1,6 +1,6 @@
 ---
-title: "Interactive Session 1"
-subtitle: "🔥 PyTorch & TorchGeo Fundamentals"
+title: "Week 9 Interactive Session: Model Implementation & Deployment"
+subtitle: "Deploying geospatial foundation models for production use"
 editor_options: 
   chunk_output_type: console
 jupyter: geoai

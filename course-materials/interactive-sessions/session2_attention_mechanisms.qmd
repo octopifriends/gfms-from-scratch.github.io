@@ -1,6 +1,6 @@
 ---
-title: "Interactive Session 5"
-subtitle: "☁️ Scalable Analysis & Deployment"
+title: "Week 2 Interactive Session: Spatial-Temporal Attention Mechanisms"
+subtitle: "Building attention mechanisms from scratch for geospatial data"
 editor_options: 
   chunk_output_type: console
 jupyter: geoai
