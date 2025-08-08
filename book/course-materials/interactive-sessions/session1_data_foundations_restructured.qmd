@@ -1,0 +1,826 @@
+---
+title: "Building a GeoTIFF to Embeddings Pipeline"
+subtitle: "From raw satellite data to model-ready tensors"
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+---
+
+## Introduction
+
+Today we're building a complete pipeline that transforms raw satellite imagery into model-ready embeddings. This mirrors how Large Language Models process text: **raw text → tokens → embeddings**. Our geospatial version: **raw GeoTIFF → patches → embeddings**.
+
+## Learning Objectives
+
+By building this pipeline, you will:
+- **Implement** GeoTIFF loading and preprocessing functions
+- **Create** patch extraction with spatial metadata
+- **Build** tensor normalization and encoding functions  
+- **Construct** a PyTorch DataLoader for model training
+- **Connect** to a simple embedding layer to verify end-to-end functionality
+
+## Session Roadmap
+
+```{mermaid}
+flowchart TD
+    A["Setup & GeoTIFF Loading"] --> B["Geo Preprocessing Functions"]
+    B --> C["Patch Extraction with Metadata"] 
+    C --> D["Tensor Operations & Normalization"]
+    D --> E["DataLoader Construction"]
+    E --> F["Embedding Layer Integration"]
+    F --> G["End-to-End Pipeline Test"]
+```
+
+## Setting Up
+
+Let's establish our development environment and define the core constants we'll use throughout.
+
+### Imports and Configuration
+
+```{python}
+import os
+import random
+from pathlib import Path
+import numpy as np
+import torch
+import torch.nn as nn
+from torch.utils.data import Dataset, DataLoader
+import rasterio as rio
+import matplotlib.pyplot as plt
+from typing import Tuple, Dict, Any
+
+# Set seeds for reproducibility
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
+torch.manual_seed(SEED)
+
+# Pipeline constants
+PATCH_SIZE = 64
+STRIDE = 32  # 50% overlap
+BATCH_SIZE = 8
+EMBEDDING_DIM = 256
+
+print(f"✓ Environment setup complete")
+print(f"✓ Patch size: {PATCH_SIZE}x{PATCH_SIZE}")
+print(f"✓ Stride: {STRIDE} (overlap: {(PATCH_SIZE-STRIDE)/PATCH_SIZE*100:.0f}%)")
+```
+
+### Data Preparation
+
+```{python}
+# Set up data paths
+DATA_DIR = Path("../../data")
+DATA_DIR.mkdir(exist_ok=True)
+SAMPLE_PATH = DATA_DIR / "landcover_sample.tif"
+
+# Download sample if missing
+if not SAMPLE_PATH.exists():
+    import urllib.request
+    url = "https://raw.githubusercontent.com/kellycaylor/geoAI/main/data/landcover_sample.tif"
+    print("📥 Downloading sample data...")
+    urllib.request.urlretrieve(url, SAMPLE_PATH)
+
+print(f"✓ Data ready: {SAMPLE_PATH.name}")
+print(f"✓ File size: {SAMPLE_PATH.stat().st_size / 1024:.1f} KB")
+```
+
+---
+
+## Step 1: GeoTIFF Loading and Inspection
+
+**Goal**: Build a function that loads and extracts essential information from any GeoTIFF.
+
+### 🛠️ Build It: GeoTIFF Loader Function
+
+Your task: Complete this function to load a GeoTIFF and return both the data and metadata.
+
+```{python}
+def load_geotiff(file_path: Path) -> Tuple[np.ndarray, Dict[str, Any]]:
+    """
+    Load a GeoTIFF and extract data + metadata.
+    
+    Returns:
+        data: (bands, height, width) array
+        metadata: dict with CRS, transform, resolution, etc.
+    """
+    with rio.open(file_path) as src:
+        # TODO: Load the data array
+        data = src.read()  # YOUR CODE: Load raster data
+        
+        # TODO: Extract metadata
+        metadata = {
+            'crs': src.crs,  # YOUR CODE: Get coordinate reference system
+            'transform': src.transform,  # YOUR CODE: Get geospatial transform
+            'shape': data.shape,  # YOUR CODE: Get array dimensions
+            'dtype': data.dtype,  # YOUR CODE: Get data type
+            'resolution': src.res,  # YOUR CODE: Get pixel resolution
+            'bounds': src.bounds,  # YOUR CODE: Get spatial bounds
+        }
+    
+    return data, metadata
+
+# Test your function
+data, metadata = load_geotiff(SAMPLE_PATH)
+print(f"✓ Loaded shape: {data.shape}")
+print(f"✓ Data type: {metadata['dtype']}")
+print(f"✓ Resolution: {metadata['resolution']}")
+print(f"✓ CRS: {metadata['crs']}")
+```
+
+### 🔍 Verify It: Inspect Your Data
+
+```{python}
+# Examine the data you loaded
+bands, height, width = data.shape
+print(f"Image dimensions: {height}×{width} pixels")
+print(f"Number of bands: {bands}")
+print(f"Value ranges per band:")
+for i, band in enumerate(data):
+    print(f"  Band {i+1}: {band.min():.0f} to {band.max():.0f}")
+
+# Quick visualization
+fig, axes = plt.subplots(1, bands, figsize=(12, 4))
+if bands == 1:
+    axes = [axes]
+
+for i, band in enumerate(data):
+    axes[i].imshow(band, cmap='viridis')
+    axes[i].set_title(f'Band {i+1}')
+    axes[i].axis('off')
+
+plt.suptitle('Raw Satellite Bands')
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Step 2: Geo Preprocessing Functions
+
+**Goal**: Build preprocessing functions that operate on the full image before patch extraction.
+
+### 🛠️ Build It: Normalization Functions
+
+We'll create two normalization functions that can work with either **local statistics** (calculated from the input data) or **global statistics** (pre-computed from a training dataset). Global statistics ensure consistent normalization across different image tiles and are crucial for foundation model training.
+
+**Why use global statistics?** When training on multiple images, each tile might have different value ranges. Using global statistics ensures that the same pixel value represents the same relative intensity across all training data.
+
+#### Min-Max Normalization Function
+
+```{python}
+def minmax_normalize(data: np.ndarray, 
+                    global_min: np.ndarray = None, 
+                    global_max: np.ndarray = None) -> tuple[np.ndarray, dict]:
+    """
+    Min-max normalize spectral bands to [0,1] range.
+    
+    Args:
+        data: (bands, height, width) array
+        global_min: Optional (bands,) array of global minimums per band
+        global_max: Optional (bands,) array of global maximums per band
+    
+    Returns:
+        normalized: (bands, height, width) array with values in [0,1]
+        stats: Dictionary containing the min/max values used
+    """
+    bands, height, width = data.shape
+    normalized = np.zeros_like(data, dtype=np.float32)
+    
+    # Use global stats if provided, otherwise calculate from data
+    if global_min is None or global_max is None:
+        # Calculate per-band statistics from this data
+        mins = np.array([data[i].min() for i in range(bands)])
+        maxs = np.array([data[i].max() for i in range(bands)])
+        stats_source = "local (calculated from input)"
+    else:
+        # Use provided global statistics
+        mins = global_min
+        maxs = global_max
+        stats_source = "global (provided)"
+    
+    # Apply normalization per band
+    for i in range(bands):
+        band_range = maxs[i] - mins[i]
+        if band_range > 0:  # Avoid division by zero
+            normalized[i] = (data[i] - mins[i]) / band_range
+        else:
+            normalized[i] = 0  # Handle constant bands
+    
+    # Package statistics for inspection
+    stats = {
+        'source': stats_source,
+        'mins': mins,
+        'maxs': maxs,
+        'output_range': (normalized.min(), normalized.max())
+    }
+    
+    return normalized, stats
+```
+
+#### Z-Score Normalization Function
+
+```{python}
+def zscore_normalize(data: np.ndarray,
+                    global_mean: np.ndarray = None,
+                    global_std: np.ndarray = None) -> tuple[np.ndarray, dict]:
+    """
+    Z-score normalize spectral bands to mean=0, std=1.
+    
+    Args:
+        data: (bands, height, width) array
+        global_mean: Optional (bands,) array of global means per band
+        global_std: Optional (bands,) array of global standard deviations per band
+    
+    Returns:
+        normalized: (bands, height, width) standardized array
+        stats: Dictionary containing the mean/std values used
+    """
+    bands, height, width = data.shape
+    normalized = np.zeros_like(data, dtype=np.float32)
+    
+    # Use global stats if provided, otherwise calculate from data
+    if global_mean is None or global_std is None:
+        # Calculate per-band statistics from this data
+        means = np.array([data[i].mean() for i in range(bands)])
+        stds = np.array([data[i].std() for i in range(bands)])
+        stats_source = "local (calculated from input)"
+    else:
+        # Use provided global statistics
+        means = global_mean
+        stds = global_std
+        stats_source = "global (provided)"
+    
+    # Apply normalization per band
+    for i in range(bands):
+        if stds[i] > 0:  # Avoid division by zero
+            normalized[i] = (data[i] - means[i]) / stds[i]
+        else:
+            normalized[i] = 0  # Handle constant bands
+    
+    # Package statistics for inspection
+    stats = {
+        'source': stats_source,
+        'means': means,
+        'stds': stds,
+        'output_mean': normalized.mean(),
+        'output_std': normalized.std()
+    }
+    
+    return normalized, stats
+
+print("✓ Normalization functions created")
+print("  - minmax_normalize: scales to [0,1] range")
+print("  - zscore_normalize: standardizes to mean=0, std=1")
+```
+
+#### Test Both Functions with Local Statistics
+
+```{python}
+# Test min-max normalization with local statistics
+minmax_data, minmax_stats = minmax_normalize(data)
+print("📊 Min-Max Normalization (local stats):")
+print(f"  Source: {minmax_stats['source']}")
+print(f"  Original range: {data.min():.0f} to {data.max():.0f}")
+print(f"  Normalized range: {minmax_stats['output_range'][0]:.3f} to {minmax_stats['output_range'][1]:.3f}")
+print(f"  Per-band mins: {minmax_stats['mins']}")
+print(f"  Per-band maxs: {minmax_stats['maxs']}")
+
+print()
+
+# Test z-score normalization with local statistics  
+zscore_data, zscore_stats = zscore_normalize(data)
+print("📊 Z-Score Normalization (local stats):")
+print(f"  Source: {zscore_stats['source']}")
+print(f"  Output mean: {zscore_stats['output_mean']:.6f}")
+print(f"  Output std: {zscore_stats['output_std']:.6f}")
+print(f"  Per-band means: {zscore_stats['means']}")
+print(f"  Per-band stds: {zscore_stats['stds']}")
+```
+
+#### Test with Global Statistics
+
+```{python}
+# Simulate global statistics from a larger dataset
+# In practice, these would be pre-computed from your entire training corpus
+global_mins = np.array([100, 150, 200])  # Example global minimums per band
+global_maxs = np.array([1500, 2000, 2500])  # Example global maximums per band
+global_means = np.array([800, 1200, 1600])  # Example global means per band
+global_stds = np.array([300, 400, 500])  # Example global standard deviations per band
+
+print("🌍 Testing with Global Statistics:")
+print(f"  Global mins: {global_mins}")
+print(f"  Global maxs: {global_maxs}")
+print(f"  Global means: {global_means}")
+print(f"  Global stds: {global_stds}")
+
+print()
+
+# Test with global statistics
+minmax_global, minmax_global_stats = minmax_normalize(data, global_mins, global_maxs)
+zscore_global, zscore_global_stats = zscore_normalize(data, global_means, global_stds)
+
+print("📊 Min-Max with Global Stats:")
+print(f"  Source: {minmax_global_stats['source']}")
+print(f"  Output range: {minmax_global_stats['output_range'][0]:.3f} to {minmax_global_stats['output_range'][1]:.3f}")
+
+print()
+
+print("📊 Z-Score with Global Stats:")
+print(f"  Source: {zscore_global_stats['source']}")
+print(f"  Output mean: {zscore_global_stats['output_mean']:.3f}")
+print(f"  Output std: {zscore_global_stats['output_std']:.3f}")
+```
+
+**What to notice:** When using global statistics, the output ranges and distributions differ from local normalization. This is expected and ensures consistency across different image tiles in your dataset.
+
+### 🛠️ Build It: Spatial Cropping Function
+
+```{python}
+def crop_to_patches(data: np.ndarray, patch_size: int, stride: int) -> np.ndarray:
+    """
+    Crop image to dimensions that allow complete patch extraction.
+    
+    Args:
+        data: (bands, height, width) array
+        patch_size: size of patches to extract
+        stride: step size between patches
+        
+    Returns:
+        cropped: (bands, new_height, new_width) array
+    """
+    bands, height, width = data.shape
+    
+    # TODO: Calculate how many complete patches fit
+    patches_h = (height - patch_size) // stride + 1
+    patches_w = (width - patch_size) // stride + 1
+    
+    # TODO: Calculate the required dimensions
+    new_height = (patches_h - 1) * stride + patch_size
+    new_width = (patches_w - 1) * stride + patch_size
+    
+    # TODO: Crop the data
+    cropped = data[:, :new_height, :new_width]
+    
+    print(f"✓ Cropped from {height}×{width} to {new_height}×{new_width}")
+    print(f"✓ Will generate {patches_h}×{patches_w} = {patches_h*patches_w} patches")
+    
+    return cropped
+
+# Test your cropping function
+cropped_data = crop_to_patches(data, 8, STRIDE)
+```
+
+---
+
+## Step 3: Patch Extraction with Metadata
+
+**Goal**: Extract patches while preserving spatial context information.
+
+### 🛠️ Build It: Patch Extraction Function
+
+```{python}
+def extract_patches_with_metadata(
+    data: np.ndarray, 
+    transform,
+    patch_size: int, 
+    stride: int
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Extract patches with their spatial coordinates.
+    
+    Args:
+        data: (bands, height, width) normalized array
+        transform: rasterio transform object
+        patch_size: size of patches
+        stride: step between patches
+        
+    Returns:
+        patches: (n_patches, bands, patch_size, patch_size) array
+        coordinates: (n_patches, 4) array of [min_x, min_y, max_x, max_y]
+    """
+    bands, height, width = data.shape
+    patches = []
+    coordinates = []
+    
+    # TODO: Iterate through patch positions
+    for row in range(0, height - patch_size + 1, stride):
+        for col in range(0, width - patch_size + 1, stride):
+            # TODO: Extract patch from all bands
+            patch = data[:, row:row+patch_size, col:col+patch_size]
+            patches.append(patch)
+            
+            # TODO: Calculate real-world coordinates using transform
+            min_x, max_y = transform * (col, row)  # Top-left
+            max_x, min_y = transform * (col + patch_size, row + patch_size)  # Bottom-right
+            coordinates.append([min_x, min_y, max_x, max_y])
+    
+    patches = np.array(patches)
+    coordinates = np.array(coordinates)
+    
+    print(f"✓ Extracted {len(patches)} patches")
+    print(f"✓ Patch shape: {patches.shape}")
+    print(f"✓ Coordinate shape: {coordinates.shape}")
+    
+    return patches, coordinates
+
+# Test your patch extraction
+patches, coords = extract_patches_with_metadata(
+    data, metadata['transform'], 8, 4
+)
+
+# Visualize a few patches
+fig, axes = plt.subplots(2, 4, figsize=(12, 6))
+for i in range(8):
+    row, col = i // 4, i % 4
+    # Show first band of each patch
+    axes[row, col].imshow(patches[i, 0], cmap='viridis')
+    axes[row, col].set_title(f'Patch {i}')
+    axes[row, col].axis('off')
+
+plt.suptitle('Sample Extracted Patches (Band 1)')
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Step 4: Tensor Operations & Metadata Encoding
+
+**Goal**: Convert numpy arrays to PyTorch tensors and encode metadata.
+
+### 🛠️ Build It: Metadata Encoder
+
+```{python}
+def encode_metadata(coordinates: np.ndarray) -> np.ndarray:
+    """
+    Encode spatial metadata as features.
+    
+    Args:
+        coordinates: (n_patches, 4) array of [min_x, min_y, max_x, max_y]
+        
+    Returns:
+        encoded: (n_patches, n_features) array
+    """
+    # TODO: Calculate spatial features
+    center_x = (coordinates[:, 0] + coordinates[:, 2]) / 2
+    center_y = (coordinates[:, 1] + coordinates[:, 3]) / 2
+    width = coordinates[:, 2] - coordinates[:, 0]
+    height = coordinates[:, 3] - coordinates[:, 1]
+    area = width * height
+    
+    # TODO: Normalize spatial features
+    features = np.column_stack([
+        (center_x - center_x.mean()) / center_x.std(),  # Normalized center X
+        (center_y - center_y.mean()) / center_y.std(),  # Normalized center Y
+        (area - area.mean()) / area.std(),              # Normalized area
+        width / height,                                 # Aspect ratio
+    ])
+    
+    print(f"✓ Encoded metadata shape: {features.shape}")
+    print(f"✓ Feature statistics:")
+    feature_names = ['center_x', 'center_y', 'area', 'aspect_ratio']
+    for i, name in enumerate(feature_names):
+        print(f"  {name}: mean={features[:, i].mean():.3f}, std={features[:, i].std():.3f}")
+    
+    return features.astype(np.float32)
+
+# Test metadata encoding
+encoded_metadata = encode_metadata(coords)
+```
+
+### 🛠️ Build It: Tensor Conversion
+
+```{python}
+def create_tensors(patches: np.ndarray, metadata: np.ndarray) -> Tuple[torch.Tensor, torch.Tensor]:
+    """
+    Convert numpy arrays to PyTorch tensors.
+    
+    Args:
+        patches: (n_patches, bands, height, width) array
+        metadata: (n_patches, n_features) array
+        
+    Returns:
+        patch_tensors: (n_patches, bands, height, width) tensor
+        metadata_tensors: (n_patches, n_features) tensor
+    """
+    # TODO: Convert to tensors with appropriate dtypes
+    patch_tensors = torch.from_numpy(patches).float()
+    metadata_tensors = torch.from_numpy(metadata).float()
+    
+    print(f"✓ Patch tensors: {patch_tensors.shape}, dtype: {patch_tensors.dtype}")
+    print(f"✓ Metadata tensors: {metadata_tensors.shape}, dtype: {metadata_tensors.dtype}")
+    
+    return patch_tensors, metadata_tensors
+
+# Create tensors
+patch_tensors, metadata_tensors = create_tensors(patches, encoded_metadata)
+```
+
+---
+
+## Step 5: DataLoader Construction
+
+**Goal**: Build a PyTorch Dataset and DataLoader for training.
+
+### 🛠️ Build It: Custom Dataset Class
+
+```{python}
+class GeospatialDataset(Dataset):
+    """Dataset for geospatial patches with metadata."""
+    
+    def __init__(self, patch_tensors: torch.Tensor, metadata_tensors: torch.Tensor):
+        """
+        Args:
+            patch_tensors: (n_patches, bands, height, width)
+            metadata_tensors: (n_patches, n_features)
+        """
+        self.patches = patch_tensors
+        self.metadata = metadata_tensors
+        
+        # TODO: Create dummy labels for demonstration (in real use, load from file)
+        self.labels = torch.randint(0, 5, (len(patch_tensors),))  # 5 land cover classes
+        
+    def __len__(self) -> int:
+        """Return number of patches."""
+        return len(self.patches)
+    
+    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """
+        Get a single item.
+        
+        Returns:
+            patch: (bands, height, width) tensor
+            metadata: (n_features,) tensor  
+            label: scalar tensor
+        """
+        return self.patches[idx], self.metadata[idx], self.labels[idx]
+
+# Test your dataset
+dataset = GeospatialDataset(patch_tensors, metadata_tensors)
+print(f"✓ Dataset length: {len(dataset)}")
+
+# Test getting an item
+sample_patch, sample_metadata, sample_label = dataset[0]
+print(f"✓ Sample patch shape: {sample_patch.shape}")
+print(f"✓ Sample metadata shape: {sample_metadata.shape}")
+print(f"✓ Sample label: {sample_label.item()}")
+```
+
+### 🛠️ Build It: DataLoader
+
+```{python}
+# TODO: Create DataLoader with appropriate batch size and shuffling
+dataloader = DataLoader(
+    dataset, 
+    batch_size=BATCH_SIZE, 
+    shuffle=True,
+    num_workers=0,  # Set to 0 for compatibility
+    pin_memory=True if torch.cuda.is_available() else False
+)
+
+print(f"✓ DataLoader created with batch size {BATCH_SIZE}")
+print(f"✓ Number of batches: {len(dataloader)}")
+
+# Test the DataLoader
+for batch_idx, (patches, metadata, labels) in enumerate(dataloader):
+    print(f"✓ Batch {batch_idx}:")
+    print(f"  Patches: {patches.shape}")
+    print(f"  Metadata: {metadata.shape}")
+    print(f"  Labels: {labels.shape}")
+    if batch_idx == 1:  # Show first two batches
+        break
+```
+
+---
+
+## Step 6: Embedding Layer Integration
+
+**Goal**: Connect to a simple embedding layer to verify end-to-end functionality.
+
+### 🛠️ Build It: Simple GFM Embedding Layer
+
+```{python}
+class SimpleGFMEmbedding(nn.Module):
+    """Simple embedding layer for geospatial patches."""
+    
+    def __init__(self, input_channels: int, metadata_features: int, embed_dim: int):
+        super().__init__()
+        
+        # TODO: Build patch encoder (simple CNN)
+        self.patch_encoder = nn.Sequential(
+            nn.Conv2d(input_channels, 32, kernel_size=8, stride=4),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=4, stride=2), 
+            nn.ReLU(),
+            nn.AdaptiveAvgPool2d(1),
+            nn.Flatten(),
+        )
+        
+        # TODO: Build metadata encoder
+        self.metadata_encoder = nn.Sequential(
+            nn.Linear(metadata_features, 32),
+            nn.ReLU(),
+            nn.Linear(32, 32),
+        )
+        
+        # TODO: Build fusion layer
+        # Calculate patch encoder output size
+        with torch.no_grad():
+            dummy_patch = torch.randn(1, input_channels, PATCH_SIZE, PATCH_SIZE)
+            patch_feat_size = self.patch_encoder(dummy_patch).shape[1]
+        
+        self.fusion = nn.Sequential(
+            nn.Linear(patch_feat_size + 32, embed_dim),
+            nn.ReLU(),
+            nn.Linear(embed_dim, embed_dim),
+        )
+        
+    def forward(self, patches: torch.Tensor, metadata: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            patches: (batch, channels, height, width)
+            metadata: (batch, n_features)
+            
+        Returns:
+            embeddings: (batch, embed_dim)
+        """
+        # TODO: Encode patches and metadata
+        patch_features = self.patch_encoder(patches)
+        metadata_features = self.metadata_encoder(metadata)
+        
+        # TODO: Fuse features
+        combined = torch.cat([patch_features, metadata_features], dim=1)
+        embeddings = self.fusion(combined)
+        
+        return embeddings
+
+# Create and test the model
+model = SimpleGFMEmbedding(
+    input_channels=bands, 
+    metadata_features=encoded_metadata.shape[1], 
+    embed_dim=EMBEDDING_DIM
+)
+
+print(f"✓ Model created")
+print(f"✓ Model parameters: {sum(p.numel() for p in model.parameters()):,}")
+```
+
+---
+
+## Step 7: End-to-End Pipeline Test
+
+**Goal**: Run the complete pipeline and verify everything works together.
+
+### 🛠️ Build It: Complete Pipeline Function
+
+```{python}
+def geotiff_to_embeddings_pipeline(
+    file_path: Path,
+    patch_size: int = 64,
+    stride: int = 32,
+    batch_size: int = 8,
+    embed_dim: int = 256
+) -> torch.Tensor:
+    """
+    Complete pipeline from GeoTIFF to embeddings.
+    
+    Args:
+        file_path: Path to GeoTIFF file
+        patch_size: Size of patches to extract
+        stride: Step between patches  
+        batch_size: Batch size for processing
+        embed_dim: Embedding dimension
+        
+    Returns:
+        all_embeddings: (n_patches, embed_dim) tensor
+    """
+    print("🚀 Starting GeoTIFF → Embeddings Pipeline")
+    
+    # Step 1: Load data
+    print("📁 Loading GeoTIFF...")
+    data, metadata = load_geotiff(file_path)
+    
+    # Step 2: Preprocess
+    print("🔧 Preprocessing...")
+    norm_data = normalize_bands(data, method='minmax')
+    cropped_data = crop_to_patches(norm_data, patch_size, stride)
+    
+    # Step 3: Extract patches
+    print("✂️ Extracting patches...")
+    patches, coords = extract_patches_with_metadata(cropped_data, metadata['transform'], patch_size, stride)
+    
+    # Step 4: Encode metadata
+    print("📊 Encoding metadata...")
+    encoded_meta = encode_metadata(coords)
+    
+    # Step 5: Create tensors
+    print("🔢 Creating tensors...")
+    patch_tensors, meta_tensors = create_tensors(patches, encoded_meta)
+    
+    # Step 6: Create dataset and dataloader
+    print("📦 Creating DataLoader...")
+    dataset = GeospatialDataset(patch_tensors, meta_tensors)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
+    
+    # Step 7: Create model and generate embeddings
+    print("🧠 Generating embeddings...")
+    model = SimpleGFMEmbedding(
+        input_channels=data.shape[0],
+        metadata_features=encoded_meta.shape[1], 
+        embed_dim=embed_dim
+    )
+    model.eval()
+    
+    all_embeddings = []
+    with torch.no_grad():
+        for patches_batch, meta_batch, _ in dataloader:
+            embeddings = model(patches_batch, meta_batch)
+            all_embeddings.append(embeddings)
+    
+    all_embeddings = torch.cat(all_embeddings, dim=0)
+    print(f"✅ Pipeline complete! Generated {len(all_embeddings)} embeddings")
+    
+    return all_embeddings
+
+# Run the complete pipeline
+embeddings = geotiff_to_embeddings_pipeline(SAMPLE_PATH)
+print(f"\n🎉 Final Result:")
+print(f"✓ Embeddings shape: {embeddings.shape}")
+print(f"✓ Embedding statistics:")
+print(f"  Mean: {embeddings.mean().item():.4f}")
+print(f"  Std: {embeddings.std().item():.4f}")
+print(f"  Min: {embeddings.min().item():.4f}")
+print(f"  Max: {embeddings.max().item():.4f}")
+```
+
+### 🔍 Verify It: Pipeline Output Analysis
+
+```{python}
+# Visualize embedding similarities
+print("🔍 Analyzing embedding relationships...")
+
+# Compute pairwise cosine similarities for first 10 embeddings
+from torch.nn.functional import cosine_similarity
+
+sample_embeddings = embeddings[:10]
+similarity_matrix = torch.zeros(10, 10)
+
+for i in range(10):
+    for j in range(10):
+        if i != j:
+            sim = cosine_similarity(sample_embeddings[i:i+1], sample_embeddings[j:j+1])
+            similarity_matrix[i, j] = sim.item()
+
+# Plot similarity matrix
+plt.figure(figsize=(8, 6))
+plt.imshow(similarity_matrix.numpy(), cmap='viridis', vmin=-1, vmax=1)
+plt.colorbar(label='Cosine Similarity')
+plt.title('Embedding Similarity Matrix (First 10 Patches)')
+plt.xlabel('Patch Index')
+plt.ylabel('Patch Index')
+plt.show()
+
+print(f"✓ Average similarity: {similarity_matrix.mean().item():.4f}")
+print(f"✓ Similarity range: {similarity_matrix.min().item():.4f} to {similarity_matrix.max().item():.4f}")
+```
+
+---
+
+## Conclusion
+
+🎉 **Congratulations!** You've successfully built a complete pipeline that transforms raw satellite imagery into model-ready embeddings. 
+
+### What You Built:
+
+1. **GeoTIFF Loader**: Extracts both pixel data and spatial metadata
+2. **Preprocessing Functions**: Normalization and spatial cropping  
+3. **Patch Extractor**: Creates patches while preserving spatial context
+4. **Metadata Encoder**: Transforms coordinates into learned features
+5. **PyTorch Integration**: Dataset, DataLoader, and model components
+6. **Embedding Generator**: Simple CNN that produces vector representations
+
+### Key Insights:
+
+- **Spatial Context Matters**: Each patch carries location information
+- **Preprocessing is Critical**: Normalization ensures stable training  
+- **Modular Design**: Each step can be optimized independently
+- **End-to-End Testing**: Verify the complete pipeline works
+
+### What's Next:
+
+In the following sessions, you'll enhance each component:
+- **Week 2**: Advanced attention mechanisms for spatial relationships
+- **Week 3**: Complete GFM architecture with transformer blocks
+- **Week 4**: Pretraining strategies and masked autoencoding
+
+The pipeline you built today forms the foundation for everything that follows! 🚀
+
+## Resources
+
+- [PyTorch DataLoader Documentation](https://pytorch.org/docs/stable/data.html)
+- [Rasterio User Guide](https://rasterio.readthedocs.io/)
+- [Geospatial Foundation Model Examples](../examples/normalization_comparison.qmd)

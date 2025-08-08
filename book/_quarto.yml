@@ -1,0 +1,127 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+    - "*.qmd"
+    - "Syllabus.md"
+    - "*.ipynb"
+    - "!nbs/**"
+    - "!installation/**"
+    - "!example_course/**"
+    - "!LLMs-from-scratch/**"
+    - "!COURSE_*.md"
+    - "!*_PLAN.md"
+
+website:
+  navbar:
+    title: "Building<br>GFMs"
+    right:
+      - text: 🏠 home
+        href: index.qmd
+      - text: 📋 syllabus
+        href: Syllabus.html
+      - text: 📚 chapters
+        menu: 
+          - text: 1️⃣ Week 1 - Geospatial Data Foundations
+            href: course-materials/week1.qmd
+          - text: 2️⃣ Week 2 - Spatial-Temporal Attention Mechanisms
+            href: course-materials/week2.qmd
+          - text: 3️⃣ Week 3 - Complete GFM Architecture
+            href: course-materials/week3.qmd
+          - text: 4️⃣ Week 4 - Pretraining Implementation
+            href: course-materials/week4.qmd
+          - text: 5️⃣ Week 5 - Training Loop Optimization
+            href: course-materials/week5.qmd
+          - text: 6️⃣ Week 6 - Model Evaluation & Analysis
+            href: course-materials/week6.qmd
+          - text: 7️⃣ Week 7 - Integration with Existing Models
+            href: course-materials/week7.qmd
+          - text: 8️⃣ Week 8 - Task-Specific Fine-tuning
+            href: course-materials/week8.qmd
+          - text: 9️⃣ Week 9 - Model Implementation & Deployment
+            href: course-materials/week9.qmd
+          - text: 🎯 Week 10 - Project Presentations & Synthesis
+            href: course-materials/week10.qmd
+      - text: 💻 interactive sessions
+        menu:
+          - text: Session 1 - 📊 Geospatial Data Foundations
+            href: course-materials/interactive-sessions/session1_data_foundations_restructured.qmd
+          - text: Session 2 - 🧠 Spatial-Temporal Attention Mechanisms
+            href: course-materials/interactive-sessions/session2_attention_mechanisms.qmd
+          - text: Session 3 - 🏗️ Complete GFM Architecture
+            href: course-materials/interactive-sessions/session3_architecture.qmd
+          - text: Session 4 - 🔥 Pretraining Implementation
+            href: course-materials/interactive-sessions/session4_pretraining.qmd
+          - text: Session 5 - ⚙️ Training Loop Optimization
+            href: course-materials/interactive-sessions/session5_training_loop.qmd
+          - text: Session 6 - 📈 Model Evaluation & Analysis
+            href: course-materials/interactive-sessions/session6_evaluation.qmd
+          - text: Session 7 - 🤝 Integration with Existing Models
+            href: course-materials/interactive-sessions/session7_pretrained_integration.qmd
+          - text: Session 8 - 🔧 Task-Specific Fine-tuning
+            href: course-materials/interactive-sessions/session8_finetuning.qmd
+          - text: Session 9 - ☁️ Model Implementation & Deployment
+            href: course-materials/interactive-sessions/session9_deployment.qmd
+          - text: Session 10 - 🎯 Project Presentations & Synthesis
+            href: course-materials/interactive-sessions/session10_presentations.qmd
+      - text: 📖 extras
+        menu:
+          - text: "📚 Reference Materials"
+          - text: Cheatsheets
+            href: cheatsheets.qmd
+          - text: Course Resources
+            href: course-materials/extras/resources/course_resources.qmd
+          - text: "🎯 Practical Examples"
+          - text: Normalization Comparison
+            href: course-materials/extras/examples/normalization_comparison.qmd
+          - text: ResNet Implementation
+            href: course-materials/extras/examples/resnet.qmd
+          - text: Text Encoder
+            href: course-materials/extras/examples/text_encoder.qmd
+          - text: Tiling and Patches
+            href: course-materials/extras/examples/tiling-and-patches.qmd
+          - text: "🎓 Lectures"
+          - text: Foundation Model Architectures
+            href: course-materials/extras/lectures/lecture1_architectures.qmd
+          - text: Geospatial Data & Remote Sensing
+            href: course-materials/extras/lectures/lecture2_geospatial_data.qmd
+          - text: Fine-tuning Strategies
+            href: course-materials/extras/lectures/lecture3_finetuning.qmd
+          - text: Multi-modal Learning
+            href: course-materials/extras/lectures/lecture4_multimodal.qmd
+          - text: Model Evaluation & Validation
+            href: course-materials/extras/lectures/lecture5_evaluation.qmd
+          - text: Cloud & Scalable Computing
+            href: course-materials/extras/lectures/lecture6_cloud_computing.qmd
+          - text: "📁 Project Templates"
+          - text: Project Application Template
+            href: course-materials/extras/projects/project-application-template.qmd
+          - text: Project Proposal Template
+            href: course-materials/extras/projects/project-proposal-template.qmd
+          - text: MVP Presentation Template
+            href: course-materials/extras/projects/mvp-template.qmd
+      - icon: github
+        href: https://github.com/kellycaylor/geoAI
+        target: _blank
+  page-footer:
+    background: dark
+    right: This website is built with [{{< fa brands github title="the github octocat logo" >}}](https://github.com/environmental-data-science/geog-288kc-geospatial-foundation-models) and [Quarto](https://quarto.org/)
+    left: |
+      <img src="images/geog-logo.png" alt="The Department of Geography logo" width="250"/>
+format:
+  html:
+    theme: meds-website-styles.scss
+    toc: true
+    title-block-banner: true
+    page-layout: full
+    code-fold: true
+    code-tools: true
+    jupyter: geoai
+
+filters:
+  - fontawesome
+
+execute:
+  freeze: auto
+
+editor: source

@@ -1,0 +1,125 @@
+---
+title: "Building Geospatial Foundation Models"
+subtitle: "Department of Geography"
+description: "Fall 2025"
+title-block-banner: false
+toc: false
+---
+
+![](images/geoai-banner.png){height=5in fig-align="center" alt="Geospatial AI visualization"}
+
+
+::: {.gray-text .center-text}
+*Advancing environmental monitoring through AI*
+:::
+
+## Course Description
+
+This project-driven seminar teaches students to build geospatial foundation models (GFMs) from scratch. Students implement every layer of the pipeline—from data pipelines and tokenization through attention mechanisms, full architectures, pretraining, evaluation, and deployment—culminating in a working end-to-end GFM tailored to a chosen geospatial application.
+
+By the end of the course, students will be able to:
+
+- Design and implement geospatial data pipelines for multi-spectral, spatial, and temporal data
+- Build attention mechanisms and assemble transformer-based architectures for geospatial inputs
+- Pretrain using masked autoencoding and evaluate learned representations
+- Fine-tune models for specific Earth observation tasks
+- Deploy models via APIs and interactive interfaces with honest performance analysis
+
+## Getting Started with the UCSB AI Sandbox
+
+[Here](../installation/UCSB_AI_SANDBOX_SETUP.md) are detailed instructions for setting up your environment on the UCSB AI Sandbox, including foundation model installation and GPU optimization.
+
+## Course Structure: 3 Stages, 10 Weeks
+
+```{mermaid}
+flowchart TD
+    subgraph Stage1 ["🏗️ Stage 1: Build GFM Architecture"]
+        direction LR
+        W1["📊<br/>Week 1<br/>Data Foundations<br/>Pipelines & Tokenization"] --> W2["🧠<br/>Week 2<br/>Attention Mechanisms<br/>Spatial-Temporal Focus"]
+        W2 --> W3["🏛️<br/>Week 3<br/>Complete Architecture<br/>Vision Transformer"]
+    end
+    
+    subgraph Stage2 ["🚀 Stage 2: Train Foundation Model"]
+        direction LR
+        W4["🎭<br/>Week 4<br/>Pretraining<br/>Masked Autoencoder"] --> W5["⚡<br/>Week 5<br/>Training Optimization<br/>Stability & Efficiency"]
+        W5 --> W6["📈<br/>Week 6<br/>Evaluation & Analysis<br/>Embeddings & Probing"]
+        W6 --> W7["🔗<br/>Week 7<br/>Model Integration<br/>Prithvi, SatMAE"]
+    end
+    
+    subgraph Stage3 ["🎯 Stage 3: Apply & Deploy"]
+        direction LR
+        W8["🎯<br/>Week 8<br/>Fine-tuning<br/>Task-Specific Training"] --> W9["🚀<br/>Week 9<br/>Deployment<br/>APIs & Interfaces"]
+        W9 --> W10["🎤<br/>Week 10<br/>Presentations<br/>Project Synthesis"]
+    end
+    
+    Stage1 --> Stage2
+    Stage2 --> Stage3
+    
+    style Stage1 fill:#e3f2fd
+    style Stage2 fill:#fff3e0  
+    style Stage3 fill:#e8f5e8
+    style W1 fill:#bbdefb
+    style W4 fill:#ffe0b2
+    style W8 fill:#c8e6c8
+```
+
+
+### 🏗️ Stage 1: Build GFM Architecture (Weeks 1-3)
+- Week 1: Geospatial Data Foundations (data pipelines, tokenization, loaders)
+- Week 2: Spatial-Temporal Attention Mechanisms (from-scratch implementation)
+- Week 3: Complete GFM Architecture (Vision Transformer for geospatial)
+
+### 🚀 Stage 2: Train a Foundation Model (Weeks 4-7)
+- Week 4: Pretraining Implementation (masked autoencoder)
+- Week 5: Training Loop Optimization (stability, efficiency, mixed precision)
+- Week 6: Model Evaluation & Analysis (embeddings, probing, reconstructions)
+- Week 7: Integration with Existing Models (Prithvi, SatMAE)
+
+### 🎯 Stage 3: Apply & Deploy (Weeks 8-10)
+- Week 8: Task-Specific Fine-tuning (efficient strategies, few-shot)
+- Week 9: Model Implementation & Deployment (APIs, UI, benchmarking)
+- Week 10: Project Presentations & Synthesis
+
+Quick links:
+
+- Weekly materials: see navbar → 🗓️ weekly materials
+- Interactive sessions: see navbar → 💻 interactive sessions
+
+## Teaching Team
+
+<br>
+
+::: {.grid}
+::: {.g-col-12 .g-col-md-4}
+
+::: {.center-text .body-text-l}
+**Instructor**
+:::
+
+![](images/kelly.png){width=45% fig-align="center"}
+
+::: {.center-text}
+[**Kelly Caylor**]{.teal-text}  
+**Email:** [caylor@ucsb.edu](mailto::caylor@ucsb.edu)  
+**Learn more:** [Bren profile](https://bren.ucsb.edu/people/kelly-caylor)  
+:::
+
+:::
+
+::: {.g-col-12 .g-col-md-4}
+
+::: {.center-text .body-text-l}
+**TA**
+:::
+
+![](images/anna.png){width=45% fig-align="center"}
+
+
+::: {.center-text}
+[**Anna Boser**]{.teal-text}  
+**Email:** [anaboser@ucsb.edu](mailto::annaboser@ucsb.edu)   
+**Learn more:** [Bren profile](https://bren.ucsb.edu/people/anna-boser)
+:::
+
+:::
+:::

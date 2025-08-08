@@ -1,203 +1,129 @@
-# GEOG 288KC: Geospatial Foundation Models and Applications
+# Building Geospatial Foundation Models
 
-**Fall 2025 | UC Santa Barbara**  
-**Instructors:** Kelly Caylor (caylor@ucsb.edu) & Anna Boser (annaboser@ucsb.edu)  
-**Website:** https://kellycaylor.github.io/geoAI
+A complete educational resource and implementation framework for building geospatial foundation models (GFMs) from scratch.
 
-This repository contains the complete course materials, environment setup, and computational infrastructure for GEOG 288KC, a project-driven seminar on state-of-the-art geospatial foundation models for remote sensing and environmental monitoring.
+## 📁 Repository Structure
 
-## 👥 Repository Users
-
-### For **Students**
-- 🌐 **Course Website**: Visit https://kellycaylor.github.io/geoAI for all course content
-- 📝 **Assignments**: Access via website navigation (projects, weekly materials)
-- 💻 **Computing**: Use UCSB AI Sandbox following setup instructions in `installation/`
-
-### For **Instructors** (Kelly Caylor & Anna Boser)
-- 📚 **Course Development**: Edit content in `course-materials/`
-- 🔧 **Website Updates**: Use `python build_docs.py --serve` for local development
-- 📊 **Student Support**: Reference `installation/` for technical troubleshooting
-
-### For **GRIT IT Support**
-- 🖥️ **Environment Setup**: Use `installation/` directory for AI Sandbox configuration
-- 🔧 **Troubleshooting**: See `installation/UCSB_AI_SANDBOX_SETUP.md` for detailed procedures
-- 📞 **Contact**: Instructors available for technical consultation
-
-## 🏗️ Repository Structure
+This repository is organized to support both **educational content** (book materials) and **practical implementation** (GFM code):
 
 ```
 geoAI/
-├── 📚 course-materials/           # Course content (instructors edit here)
-│   ├── week0.qmd - week10.qmd     # Weekly lesson materials
-│   ├── projects/                  # Project templates and deliverables
-│   ├── labs/                      # Hands-on lab sessions
-│   ├── lectures/                  # Formal lecture content
-│   └── resources/                 # Additional course resources
-│
-├── 🔧 installation/               # Environment & model setup (IT support)
-│   ├── UCSB_AI_SANDBOX_SETUP.md  # Comprehensive setup guide
-│   ├── environment-gpu.yml        # Conda environment specification
-│   ├── requirements-gpu.txt       # Additional Python packages
-│   └── scripts/                   # Automated installation scripts
-│       ├── install_foundation_models.sh
-│       ├── validate_environment.py
-│       └── test_gpu_setup.py
-│
-├── 🌐 docs/                       # Generated website (auto-generated)
-├── 📊 data/                       # Course datasets and samples
-├── 🖼️ images/                     # Course imagery and assets
-├── 📝 nbs/                        # Additional notebooks (not built)
-│
-├── 🔨 build_docs.py               # Website build script
-├── 📑 CONTRIBUTING.md             # Contribution rules and workflow
-├── ✍️ AUTHORING_GUIDE.md          # Best practices for writing course materials
-├── ⚙️ _quarto.yml                 # Website configuration
-├── 🌍 index.qmd                   # Course homepage
-├── 📋 Syllabus.md                 # Course syllabus
-├── 🐍 environment.yml             # Basic conda environment
-└── 📄 requirements.txt            # Basic Python requirements
+├── book/                           # 📖 Educational content (course → book)
+│   ├── course-materials/           
+│   │   ├── week*.qmd              # 📚 Main chapters (10 weeks)
+│   │   ├── interactive-sessions/   # 💻 Hands-on tutorials
+│   │   └── extras/                # 📖 Appendix materials
+│   │       ├── cheatsheets/       # 📋 Quick reference guides
+│   │       ├── examples/          # 🎯 Practical examples
+│   │       ├── lectures/          # 🎓 Presentation materials  
+│   │       ├── projects/          # 📁 Project templates
+│   │       └── resources/         # 📚 Additional resources
+│   ├── docs/                      # 🌐 Compiled website
+│   ├── images/                    # 🖼️ Course images
+│   ├── index.qmd                  # 🏠 Homepage
+│   ├── _quarto.yml               # ⚙️ Book configuration
+│   └── build_docs.py             # 🔨 Book building script
+├── geogfm/                        # 🧠 GFM implementation code
+├── data/                          # 📊 Sample datasets
+├── installation/                  # 🔧 Setup & environment
+└── tests/                         # 🧪 Test suite
 ```
 
-## 🚀 Quick Start Guides
+## 🚀 Quick Start
 
-### For Instructors: Course Development
+### For Students/Learners
+
+1. **View the book online**: [Building Geospatial Foundation Models](https://kellycaylor.github.io/geoAI)
+2. **Set up your environment**: Follow the [installation guide](installation/README.md)
+3. **Start with Week 1**: Begin with [geospatial data foundations](book/course-materials/week1.qmd)
+
+### For Developers
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/kellycaylor/geoAI.git
+   cd geoAI
+   ```
+
+2. **Set up the environment**:
+   ```bash
+   conda env create -f environment.yml
+   conda activate geoAI
+   ```
+
+3. **Install GFM package** (development mode):
+   ```bash
+   pip install -e .
+   ```
+
+## 📖 About the Book
+
+This educational resource teaches you to build geospatial foundation models from scratch through a 10-week journey:
+
+### 🏗️ Stage 1: Build Architecture (Weeks 1-3)
+- **Week 1**: Geospatial data foundations
+- **Week 2**: Spatial-temporal attention mechanisms
+- **Week 3**: Complete GFM architecture
+
+### 🚀 Stage 2: Train Models (Weeks 4-7)
+- **Week 4**: Pretraining implementation
+- **Week 5**: Training loop optimization
+- **Week 6**: Model evaluation & analysis
+- **Week 7**: Integration with existing models
+
+### 🎯 Stage 3: Apply & Deploy (Weeks 8-10)
+- **Week 8**: Task-specific fine-tuning
+- **Week 9**: Model deployment
+- **Week 10**: Project presentations
+
+## 🛠️ Building the Book
+
+The book is built using [Quarto](https://quarto.org/). To build locally:
 
 ```bash
-# 1. Clone and setup repository
-git clone https://github.com/kellycaylor/geoAI.git
-cd geoAI
+# Navigate to the book directory
+cd book
 
-# 2. Create development environment
-conda env create -f environment.yml
-conda activate geoAI
-
-# 3. Install additional packages
-pip install -r requirements.txt
-
-# 4. Start local development server
-python build_docs.py --serve
-# Website available at http://localhost:4200
-
-# 5. Edit course materials in course-materials/
-# 6. Commit and push changes to update website
-```
-
-### Author & Contributor Resources
-
-- Contribution guidelines: see `CONTRIBUTING.md`
-- Authoring best practices (interactive sessions, cheatsheets, lessons): see `AUTHORING_GUIDE.md`
-- Build rules follow `_quarto.yml` (render excludes: `nbs/`, `installation/`, internal docs)
-
-### For GRIT IT Support: AI Sandbox Setup
-
-```bash
-# 1. SSH to AI Sandbox
-ssh username@ai-sandbox.ucsb.edu
-
-# 2. Clone course repository
-git clone https://github.com/kellycaylor/geoAI.git
-cd geoAI
-
-# 3. Run automated setup
-bash installation/scripts/install_foundation_models.sh
-
-# 4. Validate installation
-python installation/scripts/validate_environment.py
-
-# 5. Test GPU acceleration
-python installation/scripts/test_gpu_setup.py
-```
-
-### For Students: Getting Started
-
-1. **Access Course Website**: https://kellycaylor.github.io/geoAI
-2. **Request AI Sandbox Access**: Follow instructions in Week 0 materials
-3. **Complete Environment Setup**: Use provided installation scripts
-4. **Submit Project Application**: Via course website form
-
-## 🔧 Development Workflow
-
-### For Instructors
-
-#### Content Updates
-```bash
-# 1. Edit course materials
-vim course-materials/week1.qmd
-
-# 2. Preview changes locally
-python build_docs.py --serve
-
-# 3. Build for production
+# Full build (clears cache)
 python build_docs.py --full
 
-# 4. Commit and push
-git add .
-git commit -m "Update Week 1 content"
-git push origin main
+# Incremental build (faster)
+python build_docs.py
+
+# Build and serve locally
+python build_docs.py --serve
 ```
 
-#### Adding New Models
-```bash
-# 1. Update installation script
-vim installation/scripts/install_foundation_models.sh
+## 🧠 GFM Implementation
 
-# 2. Test installation
-bash installation/scripts/install_foundation_models.sh
+The `geogfm/` package contains:
 
-# 3. Update documentation
-vim installation/UCSB_AI_SANDBOX_SETUP.md
+- **Core architectures**: Vision transformers for geospatial data
+- **Data pipelines**: Efficient loading and preprocessing
+- **Training utilities**: Pretraining, fine-tuning, evaluation
+- **Deployment tools**: API endpoints and inference interfaces
 
-# 4. Create usage examples
-vim course-materials/labs/new_model_example.qmd
-```
+## 🤝 Contributing
 
-### For GRIT Support
+This project welcomes contributions! Whether you're:
 
-#### Environment Maintenance
-```bash
-# Check environment health
-python installation/scripts/validate_environment.py
+- 🐛 **Fixing bugs** in the code or content
+- ✨ **Adding features** to the GFM implementation  
+- 📚 **Improving documentation** or tutorials
+- 🎯 **Creating examples** or use cases
 
-# Update packages
-conda env update -f installation/environment-gpu.yml
-pip install -r installation/requirements-gpu.txt --upgrade
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-# Monitor resource usage
-nvidia-smi
-df -h
-```
+## 📄 License
 
-#### Troubleshooting Common Issues
-1. **CUDA/GPU Issues**: Check `installation/UCSB_AI_SANDBOX_SETUP.md` Section 6
-2. **Model Download Failures**: Verify HuggingFace authentication
-3. **Memory Errors**: Adjust batch sizes in example code
-4. **Earth Engine Authentication**: Re-run `earthengine authenticate`
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📞 Support Contacts
+## 🙏 Acknowledgments
 
-### Course Instructors
-- **Kelly Caylor** (caylor@ucsb.edu): Course lead, technical architecture
-- **Anna Boser** (annaboser@ucsb.edu): Teaching assistant, student support
-
-### Technical Support
-- **UCSB GRIT**: AI Sandbox infrastructure and GPU access
-- **GitHub Issues**: https://github.com/kellycaylor/geoAI/issues
-- **Course Slack**: Real-time technical support during course
-
-### Office Hours
-- **Instructor Office Hours**: By appointment
-- **Technical Lab Sessions**: Fridays 2-5pm (optional)
-- **GRIT Support**: Via ticket system at grit.ucsb.edu
-
-## 📜 License and Usage
-
-- **Course Materials**: Creative Commons Attribution 4.0 International
-- **Code Examples**: MIT License
-- **Foundation Models**: Subject to individual model licenses (see installation scripts)
-- **Student Projects**: Owned by students, optional public sharing encouraged
+- Built with [Quarto](https://quarto.org/) for reproducible publishing
+- Powered by [PyTorch](https://pytorch.org/) and [TorchGeo](https://github.com/microsoft/torchgeo)
+- Inspired by foundation models like [Prithvi](https://github.com/NASA-IMPACT/Prithvi-100M) and [SatMAE](https://github.com/microsoft/SatMAE)
 
 ---
 
-**Repository Maintainers**: Kelly Caylor & Anna Boser  
-**Last Updated**: August 2025  
-**Course Website**: https://kellycaylor.github.io/geoAI
+*This project supports GEOG 288KC: Building Geospatial Foundation Models at UC Santa Barbara.*
