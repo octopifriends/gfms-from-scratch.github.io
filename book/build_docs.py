@@ -206,14 +206,14 @@ def clean_docs():
     print("   Removed any stray HTML files from current directory")
     
     # Clean the docs directory
-    docs_path = Path("docs")
+    docs_path = Path("../docs")
     if docs_path.exists():
         shutil.rmtree(docs_path)
-        print("   Previous build files removed from docs/")
+        print("   Previous build files removed from ../docs/")
     
     # Ensure docs directory exists
     docs_path.mkdir(exist_ok=True)
-    print("   Created docs/ directory")
+    print("   Created ../docs/ directory")
 
 def clear_quarto_cache():
     """Clear Quarto freeze files and caches for a fresh full build."""
@@ -411,22 +411,22 @@ def build_site(files_to_build=None, full_build=False):
 
 def verify_build():
     """Verify the build was successful."""
-    docs_path = Path("docs")
+    docs_path = Path("../docs")
     
     if not docs_path.exists() or not any(docs_path.iterdir()):
-        print("❌ Error: docs directory is empty or doesn't exist after build")
+        print("❌ Error: ../docs directory is empty or doesn't exist after build")
         sys.exit(1)
     
     print("✅ Build completed successfully!")
-    print("📁 Documentation built in docs/ directory")
+    print("📁 Documentation built in ../docs/ directory")
     
     # Count files and get size
     file_count = len(list(docs_path.rglob("*")))
-    size_result = subprocess.run(["du", "-sh", "docs"], capture_output=True, text=True)
+    size_result = subprocess.run(["du", "-sh", "../docs"], capture_output=True, text=True)
     size = size_result.stdout.split()[0] if size_result.returncode == 0 else "unknown"
     
     print("📊 Build summary:")
-    print(f"   - Files in docs/: {file_count}")
+    print(f"   - Files in ../docs/: {file_count}")
     print(f"   - Size: {size}")
     
     # Check critical files
@@ -541,9 +541,9 @@ def main():
             serve_locally()
         else:
             print("📝 Next steps:")
-            print("   1. Review the built site in the docs/ folder")
+            print("   1. Review the built site in the ../docs/ folder")
             print("   2. Commit and push changes to your repository")
-            print("   3. Update GitHub Pages to point to book/docs/ folder")
+            print("   3. Enable GitHub Pages from the docs/ folder in repository settings")
             print("")
             print("🌐 To preview locally, you can run:")
             print("   quarto preview")

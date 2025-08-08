@@ -1,6 +1,6 @@
 project:
   type: website
-  output-dir: docs
+  output-dir: ../docs
   render:
     - "*.qmd"
     - "Syllabus.md"
@@ -42,28 +42,28 @@ website:
             href: course-materials/week9.qmd
           - text: 🎯 Week 10 - Project Presentations & Synthesis
             href: course-materials/week10.qmd
-      - text: 💻 interactive sessions
+      - text: 💻 weekly sessions
         menu:
           - text: Session 1 - 📊 Geospatial Data Foundations
-            href: course-materials/interactive-sessions/session1_data_foundations_restructured.qmd
+            href: course-materials/weekly-sessions/session1_data_foundations_restructured.qmd
           - text: Session 2 - 🧠 Spatial-Temporal Attention Mechanisms
-            href: course-materials/interactive-sessions/session2_attention_mechanisms.qmd
+            href: course-materials/weekly-sessions/session2_attention_mechanisms.qmd
           - text: Session 3 - 🏗️ Complete GFM Architecture
-            href: course-materials/interactive-sessions/session3_architecture.qmd
+            href: course-materials/weekly-sessions/session3_architecture.qmd
           - text: Session 4 - 🔥 Pretraining Implementation
-            href: course-materials/interactive-sessions/session4_pretraining.qmd
+            href: course-materials/weekly-sessions/session4_pretraining.qmd
           - text: Session 5 - ⚙️ Training Loop Optimization
-            href: course-materials/interactive-sessions/session5_training_loop.qmd
+            href: course-materials/weekly-sessions/session5_training_loop.qmd
           - text: Session 6 - 📈 Model Evaluation & Analysis
-            href: course-materials/interactive-sessions/session6_evaluation.qmd
+            href: course-materials/weekly-sessions/session6_evaluation.qmd
           - text: Session 7 - 🤝 Integration with Existing Models
-            href: course-materials/interactive-sessions/session7_pretrained_integration.qmd
+            href: course-materials/weekly-sessions/session7_pretrained_integration.qmd
           - text: Session 8 - 🔧 Task-Specific Fine-tuning
-            href: course-materials/interactive-sessions/session8_finetuning.qmd
+            href: course-materials/weekly-sessions/session8_finetuning.qmd
           - text: Session 9 - ☁️ Model Implementation & Deployment
-            href: course-materials/interactive-sessions/session9_deployment.qmd
+            href: course-materials/weekly-sessions/session9_deployment.qmd
           - text: Session 10 - 🎯 Project Presentations & Synthesis
-            href: course-materials/interactive-sessions/session10_presentations.qmd
+            href: course-materials/weekly-sessions/session10_presentations.qmd
       - text: 📖 extras
         menu:
           - text: "📚 Reference Materials"

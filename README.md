@@ -78,7 +78,7 @@ This educational resource teaches you to build geospatial foundation models from
 
 ## 🛠️ Building the Book
 
-The book is built using [Quarto](https://quarto.org/). To build locally:
+The book is built using [Quarto](https://quarto.org/) and outputs to the repository's `docs/` folder for GitHub Pages hosting.
 
 ```bash
 # Navigate to the book directory
@@ -93,6 +93,18 @@ python build_docs.py
 # Build and serve locally
 python build_docs.py --serve
 ```
+
+### 🌐 GitHub Pages Setup
+
+1. **Build the site**: Run `cd book && python build_docs.py --full`
+2. **Commit and push** the changes (including the `docs/` folder)
+3. **Enable GitHub Pages**: 
+   - Go to repository Settings → Pages
+   - Set source to "Deploy from a branch"
+   - Choose "main" branch and "/docs" folder
+   - Click Save
+
+Your site will be available at `https://yourusername.github.io/geoAI`
 
 ## 🧠 GFM Implementation
 
