@@ -83,6 +83,9 @@ _freeze/
 *.zarr/
 large_datasets/
 
+# Generated data manifests and splits
+data/out/
+
 # Model files and checkpoints
 models/
 *.model

@@ -94,6 +94,60 @@ python build_docs.py
 python build_docs.py --serve
 ```
 
+## 📊 Building Course Datasets
+
+The repository includes a powerful Makefile-based pipeline for creating reproducible satellite datasets from STAC APIs.
+
+### Key Features
+
+- **STAC Integration**: Query Microsoft Planetary Computer and other STAC APIs
+- **Flexible Filtering**: By AOI, date range, cloud cover, and collection type
+- **Stratified Splitting**: Deterministic train/val/test splits with balanced temporal/spatial distribution
+- **Scene Capping**: Optional downsampling to target dataset sizes for course use
+- **Reproducible**: Fixed random seeds ensure consistent results across builds
+
+### Quick Commands
+
+```bash
+# Preview course dataset (120 scenes total)
+make data-course-dryrun COURSE_TARGET=120
+
+# Build course dataset with scene cap
+make data-course COURSE_TARGET=120
+
+# Build full dataset (no scene limit)
+make data-course
+
+# Custom dataset with different parameters
+make data-dryrun AOI=my_area.geojson START=2023-01-01 END=2023-12-31 CLOUD=20
+```
+
+### Configuration Options
+
+The Makefile supports flexible configuration through environment variables:
+
+- `COURSE_TARGET`: Global scene cap (default: 0 = unlimited)
+- `COURSE_AOI`: Area of interest GeoJSON file 
+- `COURSE_START`/`COURSE_END`: Date range
+- `COURSE_CLOUD`: Maximum cloud cover percentage
+- `COURSE_MAX`: Max scenes per AOI
+- `COURSE_COLLS`: Satellite collections (e.g., sentinel-2-l2a)
+- `COURSE_STRATIFY`: Stratification strategy (month, aoi, or both)
+
+### Output Structure
+
+Datasets are built under `data/out/`:
+```
+data/out/
+├── meta/
+│   ├── scenes.parquet          # Complete scene manifest
+│   └── splits/
+│       ├── train_scenes.txt    # Training scene IDs
+│       ├── val_scenes.txt      # Validation scene IDs  
+│       └── test_scenes.txt     # Test scene IDs
+└── CHECKSUMS.md               # File integrity verification
+```
+
 ### 🌐 GitHub Pages Setup
 
 1. **Build the site**: Run `cd book && python build_docs.py --full`

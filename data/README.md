@@ -19,6 +19,42 @@ Course materials reference this data directory using relative paths:
 - From `course-materials/interactive-sessions/`: `../../data/`
 - From root-level notebooks: `./data/`
 
+## STAC Data Pipeline
+
+### `build_from_stac.py`
+
+A flexible script for building reproducible satellite image datasets from STAC APIs (default: Microsoft Planetary Computer).
+
+**Core Features:**
+- Query satellite collections (Sentinel-2, Landsat, etc.) by AOI and time range
+- Apply cloud cover and scene count filters
+- Generate stratified train/val/test splits with deterministic seeding
+- Optional stratified downsampling to target dataset sizes
+- Export scene manifests and asset URLs for downstream processing
+
+**Key Outputs** (under `data/out/`):
+- `meta/scenes.parquet` - Complete scene manifest with metadata
+- `meta/splits/{train,val,test}_scenes.txt` - Scene ID lists for each split
+- `CHECKSUMS.md` - File integrity verification
+
+**Usage Examples:**
+```bash
+# Preview course dataset (120 scenes total)
+make data-course-dryrun COURSE_TARGET=120
+
+# Build course dataset with scene cap
+make data-course COURSE_TARGET=120
+
+# Build full dataset (no scene limit)
+make data-course
+```
+
+**Configuration:**
+- AOIs defined in `aois/` directory (GeoJSON format)
+- Stratification options: by month, AOI, or both
+- Reproducible via fixed random seeds
+- Supports asset URL signing for private STAC catalogs
+
 ## Adding New Data
 
 When adding new datasets:

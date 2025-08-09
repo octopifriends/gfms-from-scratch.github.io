@@ -183,8 +183,26 @@ def stratified_split(df: pd.DataFrame, seed=1337, frac_train=0.70, frac_val=0.15
         ids = grp["scene_id"].unique().tolist()
         rng.shuffle(ids)
         n = len(ids)
-        n_tr = int(n * frac_train)
-        n_val = int(n * frac_val)
+        
+        # More robust allocation that ensures val split gets scenes
+        if n == 1:
+            # Single scene goes to train
+            n_tr, n_val = 1, 0
+        elif n == 2:
+            # Two scenes: one train, one test
+            n_tr, n_val = 1, 0
+        elif n == 3:
+            # Three scenes: two train, one val
+            n_tr, n_val = 2, 1
+        else:
+            # Four or more scenes: use proportional allocation with minimum val=1
+            n_tr = max(1, int(n * frac_train))
+            n_val = max(1, int(n * frac_val))
+            # Ensure we don't exceed total scenes
+            if n_tr + n_val >= n:
+                n_tr = n - 2
+                n_val = 1
+        
         split = {sid: "train" for sid in ids[:n_tr]}
         split.update({sid: "val" for sid in ids[n_tr:n_tr + n_val]})
         split.update({sid: "test" for sid in ids[n_tr + n_val:]})
@@ -246,7 +264,7 @@ def main():
     p.add_argument("--start", required=True, help="YYYY-MM-DD")
     p.add_argument("--end", required=True, help="YYYY-MM-DD")
     p.add_argument("--cloud-cover-max", type=float,
-                   default=None, help="e.g., 20 for <=20% clouds")
+                   default=None, help="e.g., 20 for <=20%% clouds")
     p.add_argument("--max-scenes-per-aoi", type=int, default=50)
     p.add_argument(
         "--target-total-scenes", type=int, default=0,
@@ -257,7 +275,7 @@ def main():
     p.add_argument("--frac-train", type=float, default=0.70)
     p.add_argument("--frac-val", type=float, default=0.15)
     p.add_argument("--stratify", nargs="*", default=[],
-                   help='choose among {"month","aoi"}')
+                   help='choose among "month" and "aoi"')
     # Assets/signing
     p.add_argument("--sign-assets", action="store_true",
                    help="Sign MPC asset URLs (requires planetary-computer)")
