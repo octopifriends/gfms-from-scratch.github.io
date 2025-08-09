@@ -72,7 +72,7 @@ print(f"âœ“ Stride: {STRIDE} (overlap: {(PATCH_SIZE-STRIDE)/PATCH_SIZE*100:.0f}%
 ### Data Preparation
 
 ```{python}
-# Set up data paths - use book/data for sample/test data
+# Set up data paths - use book/data for course sample data
 if "__file__" in globals():
     # From weekly-sessions folder, go up 3 levels to book folder, then to data
     DATA_DIR = Path(__file__).parent.parent.parent / "data"
@@ -872,4 +872,4 @@ The pipeline you built today forms the foundation for everything that follows! ð
 
 - [PyTorch DataLoader Documentation](https://pytorch.org/docs/stable/data.html)
 - [Rasterio User Guide](https://rasterio.readthedocs.io/)
-- [Geospatial Foundation Model Examples](../examples/normalization_comparison.qmd)
+- [Geospatial Foundation Model Examples](../extras/examples/normalization_comparison.qmd)

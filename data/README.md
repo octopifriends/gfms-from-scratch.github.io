@@ -1,23 +1,35 @@
-# Course Data Directory
+# GFM Training Data Directory
 
-This directory contains sample datasets used throughout the GEOG 288KC course materials.
+This directory contains **training datasets and pipeline outputs** for geospatial foundation model (GFM) development.
 
-## Sample Images
+## Purpose
 
-### `landcover_sample.tif`
-- **Source**: [TorchGeo test data](https://github.com/microsoft/torchgeo/blob/main/tests/data/landcoverai/images/M-33-20-D-c-4-2.tif)
-- **Dataset**: LandCover.ai 
-- **Format**: GeoTIFF (RGB satellite imagery)
-- **Size**: ~13KB
-- **Usage**: Introduction to geospatial tokenization (`course-materials/examples/geospatial_tokenization.qmd`)
-- **License**: Same as TorchGeo (MIT License)
+- **Large training datasets** from STAC APIs
+- **Model training data** and preprocessed files
+- **Pipeline outputs** from `build_from_stac.py`
+- **Git-ignored** due to size (typically 100MB+ datasets)
 
-## Usage in Lessons
+## Directory Organization
 
-Course materials reference this data directory using relative paths:
-- From `course-materials/examples/`: `../../data/`
-- From `course-materials/interactive-sessions/`: `../../data/`
-- From root-level notebooks: `./data/`
+```
+data/
+├── aois/                    # Areas of interest (GeoJSON files)
+├── out/                     # STAC pipeline outputs (git-ignored)
+│   ├── meta/
+│   │   ├── scenes.parquet   # Scene manifests
+│   │   └── splits/          # Train/val/test splits
+│   └── CHECKSUMS.md
+└── README.md               # This file
+```
+
+## Course vs Training Data
+
+📁 **`data/`** (this directory) - GFM training data and pipeline outputs  
+📁 **`book/data/`** - Small sample data for course notebooks and examples
+
+**When to use each:**
+- **`data/`** - Python scripts, model training, STAC pipelines
+- **`book/data/`** - Quarto notebooks, course materials, examples
 
 ## STAC Data Pipeline
 
