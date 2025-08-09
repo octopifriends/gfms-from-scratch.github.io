@@ -7,7 +7,7 @@
 
 ### **Course Overview**
 
-This course teaches students to build geospatial foundation models (GFMs) from scratch for remote sensing and environmental monitoring. Following the framework from "Build a Large Language Model (From Scratch)" by Sebastian Raschka, students will implement every component of the foundation model pipeline—from geospatial tokenization and attention mechanisms to training loops and deployment—while developing their own working foundation model for a chosen geospatial application.
+This course teaches students to build geospatial foundation models (GFMs) from scratch for remote sensing and environmental monitoring. Following the framework from "Build a Large Language Model (From Scratch)" by Sebastian Raschka, students will implement every component of the foundation model pipeline—from data geospatial embedding and attention mechanisms to training loops and  deployment—while developing their own working foundation model. We will also download and use frontier GFMs such as Prithvi.
 
 ---
 
@@ -28,8 +28,6 @@ To apply, students should submit a paragraph at the [form link](https://forms.gl
 ### ---
 
 ### **Course Structure: 3 Stages, 9 Steps**
-
-Following Raschka's framework for building foundation models:
 
 #### **🏗️ Stage 1: Build GFM Architecture (Weeks 1-3)**
 * **Week 1**: Geospatial Data Foundations *(Step 1: Data preparation and sampling)*

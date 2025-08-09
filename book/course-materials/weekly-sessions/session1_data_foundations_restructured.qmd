@@ -72,8 +72,22 @@ print(f"✓ Stride: {STRIDE} (overlap: {(PATCH_SIZE-STRIDE)/PATCH_SIZE*100:.0f}%
 ### Data Preparation
 
 ```{python}
-# Set up data paths - use absolute path to ensure we find the data file
-DATA_DIR = Path(__file__).parent.parent.parent.parent / "data" if "__file__" in globals() else Path("../../../data")
+# Set up data paths - use book/data for sample/test data
+if "__file__" in globals():
+    # From weekly-sessions folder, go up 3 levels to book folder, then to data
+    DATA_DIR = Path(__file__).parent.parent.parent / "data"
+else:
+    # Fallback for interactive environments - look for book folder
+    current = Path.cwd()
+    while current.name not in ["book", "geoAI"] and current.parent != current:
+        current = current.parent
+    if current.name == "book":
+        DATA_DIR = current / "data"
+    elif current.name == "geoAI":
+        DATA_DIR = current / "book" / "data"
+    else:
+        DATA_DIR = Path("data")
+
 DATA_DIR.mkdir(exist_ok=True)
 SAMPLE_PATH = DATA_DIR / "landcover_sample.tif"
 
@@ -470,12 +484,21 @@ def encode_metadata(coordinates: np.ndarray) -> np.ndarray:
     height = coordinates[:, 3] - coordinates[:, 1]
     area = width * height
     
-    # TODO: Normalize spatial features
+    # TODO: Normalize spatial features (handle zero std to avoid divide by zero)
+    def safe_normalize(values):
+        """Normalize values, handling zero standard deviation."""
+        mean_val = values.mean()
+        std_val = values.std()
+        if std_val > 0:
+            return (values - mean_val) / std_val
+        else:
+            return np.zeros_like(values)  # All values are the same
+    
     features = np.column_stack([
-        (center_x - center_x.mean()) / center_x.std(),  # Normalized center X
-        (center_y - center_y.mean()) / center_y.std(),  # Normalized center Y
-        (area - area.mean()) / area.std(),              # Normalized area
-        width / height,                                 # Aspect ratio
+        safe_normalize(center_x),     # Normalized center X
+        safe_normalize(center_y),     # Normalized center Y  
+        safe_normalize(area),         # Normalized area (handles constant area)
+        width / height,               # Aspect ratio
     ])
     
     print(f"✓ Encoded metadata shape: {features.shape}")
@@ -605,18 +628,31 @@ for batch_idx, (patches, metadata, labels) in enumerate(dataloader):
 class SimpleGFMEmbedding(nn.Module):
     """Simple embedding layer for geospatial patches."""
     
-    def __init__(self, input_channels: int, metadata_features: int, embed_dim: int):
+    def __init__(self, input_channels: int, metadata_features: int, embed_dim: int, patch_size: int = 64):
         super().__init__()
         
-        # TODO: Build patch encoder (simple CNN)
-        self.patch_encoder = nn.Sequential(
-            nn.Conv2d(input_channels, 32, kernel_size=8, stride=4),
-            nn.ReLU(),
-            nn.Conv2d(32, 64, kernel_size=4, stride=2), 
-            nn.ReLU(),
-            nn.AdaptiveAvgPool2d(1),
-            nn.Flatten(),
-        )
+        # TODO: Build adaptive patch encoder based on patch size
+        if patch_size >= 32:
+            # Larger patches: multi-layer CNN
+            kernel1 = min(8, patch_size // 4)
+            kernel2 = min(4, patch_size // 8)
+            self.patch_encoder = nn.Sequential(
+                nn.Conv2d(input_channels, 32, kernel_size=kernel1, stride=kernel1//2),
+                nn.ReLU(),
+                nn.Conv2d(32, 64, kernel_size=kernel2, stride=kernel2//2), 
+                nn.ReLU(),
+                nn.AdaptiveAvgPool2d(1),
+                nn.Flatten(),
+            )
+        else:
+            # Smaller patches: simpler encoder
+            kernel = min(4, patch_size // 2)
+            self.patch_encoder = nn.Sequential(
+                nn.Conv2d(input_channels, 64, kernel_size=kernel, stride=1),
+                nn.ReLU(),
+                nn.AdaptiveAvgPool2d(1),
+                nn.Flatten(),
+            )
         
         # TODO: Build metadata encoder
         self.metadata_encoder = nn.Sequential(
@@ -628,7 +664,7 @@ class SimpleGFMEmbedding(nn.Module):
         # TODO: Build fusion layer
         # Calculate patch encoder output size
         with torch.no_grad():
-            dummy_patch = torch.randn(1, input_channels, PATCH_SIZE, PATCH_SIZE)
+            dummy_patch = torch.randn(1, input_channels, patch_size, patch_size)
             patch_feat_size = self.patch_encoder(dummy_patch).shape[1]
         
         self.fusion = nn.Sequential(
@@ -660,7 +696,8 @@ class SimpleGFMEmbedding(nn.Module):
 model = SimpleGFMEmbedding(
     input_channels=bands, 
     metadata_features=encoded_metadata.shape[1], 
-    embed_dim=EMBEDDING_DIM
+    embed_dim=EMBEDDING_DIM,
+    patch_size=PATCH_SIZE
 )
 
 print(f"✓ Model created")
@@ -678,8 +715,8 @@ print(f"✓ Model parameters: {sum(p.numel() for p in model.parameters()):,}")
 ```{python}
 def geotiff_to_embeddings_pipeline(
     file_path: Path,
-    patch_size: int = 64,
-    stride: int = 32,
+    patch_size: int = 8,
+    stride: int = 4,
     batch_size: int = 8,
     embed_dim: int = 256
 ) -> torch.Tensor:
@@ -729,7 +766,8 @@ def geotiff_to_embeddings_pipeline(
     model = SimpleGFMEmbedding(
         input_channels=data.shape[0],
         metadata_features=encoded_meta.shape[1], 
-        embed_dim=embed_dim
+        embed_dim=embed_dim,
+        patch_size=patch_size
     )
     model.eval()
     
@@ -778,7 +816,9 @@ if sample_size > 1:
     
     for i in range(sample_size):
         for j in range(sample_size):
-            if i != j:
+            if i == j:
+                similarity_matrix[i, j] = 1.0  # Perfect self-similarity
+            else:
                 sim = cosine_similarity(sample_embeddings[i:i+1], sample_embeddings[j:j+1], dim=1)
                 similarity_matrix[i, j] = sim.item()
     

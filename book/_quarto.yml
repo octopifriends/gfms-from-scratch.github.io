@@ -14,7 +14,7 @@ project:
 
 website:
   navbar:
-    title: "Building<br>GFMs"
+    title: "GEOG 288KC"
     right:
       - text: 🏠 home
         href: index.qmd
@@ -107,7 +107,7 @@ website:
     background: dark
     right: This website is built with [{{< fa brands github title="the github octocat logo" >}}](https://github.com/environmental-data-science/geog-288kc-geospatial-foundation-models) and [Quarto](https://quarto.org/)
     left: |
-      <img src="images/geog-logo.png" alt="The Department of Geography logo" width="250"/>
+      <img src="/images/geog-logo.png" alt="The Department of Geography logo" width="250"/>
 format:
   html:
     theme: meds-website-styles.scss
