@@ -36,7 +36,7 @@ This week implements masked autoencoder pretraining for geospatial foundation mo
 - Large-scale data handling
 
 ### Interactive Session
-[Session 4: Pretraining Implementation](interactive-sessions/session4_pretraining.qmd) - Launch first pretraining run with real satellite data
+[Session 4: Pretraining Implementation](weekly-sessions/session4_pretraining.qmd) - Launch first pretraining run with real satellite data
 
 ### **Week 4 Deliverable**
 Active pretraining pipeline with monitoring and checkpointing

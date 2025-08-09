@@ -4,7 +4,7 @@ subtitle: "LLMs vs. Geospatial Foundation Models (GFMs)"
 jupyter: geoai
 format:
   revealjs:
-    theme: ../../meds-website-styles.scss
+    theme: ../../../meds-website-styles.scss
     slide-number: true
     toc: false
     incremental: true

@@ -36,7 +36,7 @@ This week assembles a complete Vision Transformer architecture adapted for geosp
 - Understanding model complexity and scaling
 
 ### Interactive Session
-[Session 3: Complete GFM Architecture](interactive-sessions/session3_architecture.qmd) - Collaborative architecture decisions: Debating design choices and testing empirically
+[Session 3: Complete GFM Architecture](weekly-sessions/session3_architecture.qmd) - Collaborative architecture decisions: Debating design choices and testing empirically
 
 ### **Week 3 Deliverable**
 Working GFM architecture (~10M parameters) capable of processing multi-spectral satellite imagery

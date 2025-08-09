@@ -91,24 +91,28 @@ We’ll store the sample raster in a local `data/` directory and set a default p
 
 ```{python}
 #| echo: true
-DATA_DIR = Path("../../data"); DATA_DIR.mkdir(exist_ok=True)
+# Use absolute path to ensure we find the data file
+DATA_DIR = Path(__file__).parent.parent.parent.parent / "data" if "__file__" in globals() else Path("../../../data")
+DATA_DIR.mkdir(exist_ok=True)
 DATA_PATH = DATA_DIR / "landcover_sample.tif"
 PATCH_SIZE = 64
 print("DATA_PATH:", DATA_PATH)
+print("DATA_PATH exists:", DATA_PATH.exists())
+print("Current working directory:", Path.cwd())
 print("PATCH_SIZE:", PATCH_SIZE)
 ```
 
 
-If the file is missing, we’ll download a small sample.
+Let's verify the data file exists:
 
 ```{python}
 #| echo: true
-import urllib.request
 if not DATA_PATH.exists():
-    url = "https://raw.githubusercontent.com/kellycaylor/geoAI/main/data/landcover_sample.tif"
-    print("Downloading sample raster…")
-    urllib.request.urlretrieve(url, DATA_PATH)
-print("Exists:", DATA_PATH.exists(), "\nSize (KB):", round(DATA_PATH.stat().st_size/1024,1))
+    raise FileNotFoundError(f"Data file not found at {DATA_PATH}. Please ensure the landcover_sample.tif file is available in the data directory.")
+
+print("✓ Data file found!")
+print(f"  Path: {DATA_PATH}")
+print(f"  Size (KB): {round(DATA_PATH.stat().st_size/1024,1)}")
 ```
 
 ---

@@ -36,7 +36,7 @@ This week optimizes training for stability and efficiency, handling geospatial-s
 - Systematic debugging of training issues
 
 ### Interactive Session
-[Session 5: Training Loop Optimization](interactive-sessions/session5_training_loop.qmd) - Performance archaeology: Investigating training curves and optimization dynamics
+[Session 5: Training Loop Optimization](weekly-sessions/session5_training_loop.qmd) - Performance archaeology: Investigating training curves and optimization dynamics
 
 ### **Week 5 Deliverable**
 Optimized training loop with monitoring and stability guarantees

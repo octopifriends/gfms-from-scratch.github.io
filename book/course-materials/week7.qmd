@@ -31,7 +31,7 @@ This week integrates with existing foundation models and compares custom impleme
 - [ ] Create model selection framework
 
 ### Interactive Session
-[Session 7: Integration with Existing Models](interactive-sessions/session7_pretrained_integration.qmd) - Working with Prithvi, SatMAE, and performance comparison
+[Session 7: Integration with Existing Models](weekly-sessions/session7_pretrained_integration.qmd) - Working with Prithvi, SatMAE, and performance comparison
 
 ### Development Focus
 - Independent implementation with instructor feedback

@@ -72,20 +72,18 @@ print(f"✓ Stride: {STRIDE} (overlap: {(PATCH_SIZE-STRIDE)/PATCH_SIZE*100:.0f}%
 ### Data Preparation
 
 ```{python}
-# Set up data paths
-DATA_DIR = Path("../../data")
+# Set up data paths - use absolute path to ensure we find the data file
+DATA_DIR = Path(__file__).parent.parent.parent.parent / "data" if "__file__" in globals() else Path("../../../data")
 DATA_DIR.mkdir(exist_ok=True)
 SAMPLE_PATH = DATA_DIR / "landcover_sample.tif"
 
-# Download sample if missing
+# Verify data file exists
 if not SAMPLE_PATH.exists():
-    import urllib.request
-    url = "https://raw.githubusercontent.com/kellycaylor/geoAI/main/data/landcover_sample.tif"
-    print("📥 Downloading sample data...")
-    urllib.request.urlretrieve(url, SAMPLE_PATH)
+    raise FileNotFoundError(f"Data file not found at {SAMPLE_PATH}. Please ensure the landcover_sample.tif file is available in the data directory.")
 
 print(f"✓ Data ready: {SAMPLE_PATH.name}")
 print(f"✓ File size: {SAMPLE_PATH.stat().st_size / 1024:.1f} KB")
+print(f"✓ Full path: {SAMPLE_PATH}")
 ```
 
 ---
@@ -706,7 +704,7 @@ def geotiff_to_embeddings_pipeline(
     
     # Step 2: Preprocess
     print("🔧 Preprocessing...")
-    norm_data = normalize_bands(data, method='minmax')
+    norm_data, norm_stats = minmax_normalize(data)
     cropped_data = crop_to_patches(norm_data, patch_size, stride)
     
     # Step 3: Extract patches
@@ -763,29 +761,40 @@ print(f"  Max: {embeddings.max().item():.4f}")
 # Visualize embedding similarities
 print("🔍 Analyzing embedding relationships...")
 
-# Compute pairwise cosine similarities for first 10 embeddings
-from torch.nn.functional import cosine_similarity
+# Check if we have enough embeddings for analysis
+if len(embeddings) < 10:
+    print(f"⚠️ Only {len(embeddings)} embeddings available, using all of them")
+    sample_size = len(embeddings)
+else:
+    print(f"✓ Using first 10 of {len(embeddings)} embeddings for similarity analysis")
+    sample_size = 10
 
-sample_embeddings = embeddings[:10]
-similarity_matrix = torch.zeros(10, 10)
-
-for i in range(10):
-    for j in range(10):
-        if i != j:
-            sim = cosine_similarity(sample_embeddings[i:i+1], sample_embeddings[j:j+1])
-            similarity_matrix[i, j] = sim.item()
-
-# Plot similarity matrix
-plt.figure(figsize=(8, 6))
-plt.imshow(similarity_matrix.numpy(), cmap='viridis', vmin=-1, vmax=1)
-plt.colorbar(label='Cosine Similarity')
-plt.title('Embedding Similarity Matrix (First 10 Patches)')
-plt.xlabel('Patch Index')
-plt.ylabel('Patch Index')
-plt.show()
-
-print(f"✓ Average similarity: {similarity_matrix.mean().item():.4f}")
-print(f"✓ Similarity range: {similarity_matrix.min().item():.4f} to {similarity_matrix.max().item():.4f}")
+if sample_size > 1:
+    # Compute pairwise cosine similarities
+    from torch.nn.functional import cosine_similarity
+    
+    sample_embeddings = embeddings[:sample_size]
+    similarity_matrix = torch.zeros(sample_size, sample_size)
+    
+    for i in range(sample_size):
+        for j in range(sample_size):
+            if i != j:
+                sim = cosine_similarity(sample_embeddings[i:i+1], sample_embeddings[j:j+1], dim=1)
+                similarity_matrix[i, j] = sim.item()
+    
+    # Plot similarity matrix
+    plt.figure(figsize=(8, 6))
+    plt.imshow(similarity_matrix.numpy(), cmap='viridis', vmin=-1, vmax=1)
+    plt.colorbar(label='Cosine Similarity')
+    plt.title(f'Embedding Similarity Matrix (First {sample_size} Patches)')
+    plt.xlabel('Patch Index')
+    plt.ylabel('Patch Index')
+    plt.show()
+    
+    print(f"✓ Average similarity: {similarity_matrix.mean().item():.4f}")
+    print(f"✓ Similarity range: {similarity_matrix.min().item():.4f} to {similarity_matrix.max().item():.4f}")
+else:
+    print("⚠️ Not enough embeddings for similarity analysis")
 ```
 
 ---

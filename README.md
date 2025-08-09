@@ -10,8 +10,8 @@ This repository is organized to support both **educational content** (book mater
 geoAI/
 ├── book/                           # 📖 Educational content (course → book)
 │   ├── course-materials/           
-│   │   ├── week*.qmd              # 📚 Main chapters (10 weeks)
-│   │   ├── interactive-sessions/   # 💻 Hands-on tutorials
+│   │   ├── week*.qmd              # 📚 Chapter overviews (10 weeks)
+│   │   ├── weekly-sessions/       # 💻 Detailed hands-on tutorials
 │   │   └── extras/                # 📖 Appendix materials
 │   │       ├── cheatsheets/       # 📋 Quick reference guides
 │   │       ├── examples/          # 🎯 Practical examples

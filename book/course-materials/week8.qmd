@@ -31,7 +31,7 @@ This week adapts foundation models for specific tasks using efficient fine-tunin
 - [ ] Optimize for limited data scenarios
 
 ### Interactive Session
-[Session 8: Task-Specific Fine-tuning](interactive-sessions/session8_finetuning.qmd) - Efficient fine-tuning strategies and performance optimization
+[Session 8: Task-Specific Fine-tuning](weekly-sessions/session8_finetuning.qmd) - Efficient fine-tuning strategies and performance optimization
 
 ### Development Focus
 - Optimization and feature development work

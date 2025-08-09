@@ -32,7 +32,7 @@ Complete foundation model pipeline with:
 - Documentation and presentation materials
 
 ### Interactive Session
-[Session 10: Project Presentations & Synthesis](interactive-sessions/session10_presentations.qmd) - Present complete foundation model systems and synthesize course learnings
+[Session 10: Project Presentations & Synthesis](weekly-sessions/session10_presentations.qmd) - Present complete foundation model systems and synthesize course learnings
 
 ### Activities
 - [ ] Present complete foundation model systems

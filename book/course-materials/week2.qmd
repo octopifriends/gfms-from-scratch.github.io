@@ -34,7 +34,7 @@ This week implements attention mechanisms from scratch, adapting them specifical
 - Debugging dimension mismatches and training issues
 
 ### Interactive Session
-[Session 2: Spatial-Temporal Attention Mechanisms](interactive-sessions/session2_attention_mechanisms.qmd) - Live coding session: Building attention mechanisms with intentional errors and debugging
+[Session 2: Spatial-Temporal Attention Mechanisms](weekly-sessions/session2_attention_mechanisms.qmd) - Live coding session: Building attention mechanisms with intentional errors and debugging
 
 ### **Week 2 Deliverable**
 Custom attention module for geospatial data with spatial and temporal components

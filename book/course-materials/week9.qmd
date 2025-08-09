@@ -34,7 +34,7 @@ This week deploys models for production use, optimizes for inference, and builds
 Deployable model with documentation: API, user interface, model card, and performance benchmarks
 
 ### Interactive Session
-[Session 9: Model Implementation & Deployment](interactive-sessions/session9_deployment.qmd) - Real-time deployment challenges with live APIs and immediate feedback
+[Session 9: Model Implementation & Deployment](weekly-sessions/session9_deployment.qmd) - Real-time deployment challenges with live APIs and immediate feedback
 
 ### Optional Lab Support
 Extended support for:
