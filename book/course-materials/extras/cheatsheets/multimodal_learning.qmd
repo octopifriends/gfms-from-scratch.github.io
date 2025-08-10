@@ -2,7 +2,9 @@
 title: "Multi-modal Learning"
 subtitle: "Combining different data modalities for enhanced geospatial AI"
 jupyter: geoai
-format: html
+format:
+  html:
+    code-fold: false
 ---
 
 ## Introduction to Multi-modal Learning
@@ -218,8 +220,10 @@ class EarlyFusionModel(nn.Module):
         )
         
         # Early fusion: concatenate features
+        # Image (hidden_dim) + Text (hidden_dim//2) + Tabular (hidden_dim)
+        fusion_input_dim = hidden_dim + hidden_dim//2 + hidden_dim
         self.fusion_layer = nn.Sequential(
-            nn.Linear(hidden_dim * 3, hidden_dim),  # Combined features
+            nn.Linear(fusion_input_dim, hidden_dim),  # Combined features
             nn.ReLU(),
             nn.Dropout(0.3),
             nn.Linear(hidden_dim, num_classes)

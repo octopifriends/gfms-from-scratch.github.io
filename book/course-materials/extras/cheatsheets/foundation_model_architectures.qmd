@@ -2,7 +2,9 @@
 title: "Foundation Model Architectures"
 subtitle: "LLMs vs. Geospatial Foundation Models (GFMs)"
 jupyter: geoai
-format: html
+format:
+  html:
+    code-fold: false
 ---
 
 ## Introduction to Foundation Model Architectures
@@ -173,7 +175,7 @@ def demonstrate_data_preparation():
     
     # Apply atmospheric correction (simplified)
     corrected_patch = satellite_patch.astype(np.float32) / 4095.0
-    corrected_patch[cloud_mask] = np.nan  # Mask cloudy pixels
+    corrected_patch[:, cloud_mask] = np.nan  # Mask cloudy pixels across all bands
     
     print(f"\nSatellite patch shape: {satellite_patch.shape}")
     print(f"Cloud coverage: {cloud_mask.sum() / cloud_mask.size * 100:.1f}%")
@@ -593,17 +595,21 @@ def compare_positional_encodings():
         y_pos = torch.arange(height).unsqueeze(1).repeat(1, width).float()
         x_pos = torch.arange(width).unsqueeze(0).repeat(height, 1).float()
         
-        # Encode positions
-        div_term = torch.exp(torch.arange(0, embed_dim//2, 2).float() * 
-                           -(np.log(10000.0) / (embed_dim//2)))
+        # Simplified 2D positional encoding
+        # Use sinusoidal encoding for y positions in first half of embedding
+        for i in range(embed_dim // 2):
+            if i % 2 == 0:
+                pe[:, :, i] = torch.sin(y_pos / (10000 ** (i / embed_dim)))
+            else:
+                pe[:, :, i] = torch.cos(y_pos / (10000 ** (i / embed_dim)))
         
-        # Y (height) encoding
-        pe[:, :, 0:embed_dim//4:2] = torch.sin(y_pos.unsqueeze(-1) * div_term)
-        pe[:, :, 1:embed_dim//4:2] = torch.cos(y_pos.unsqueeze(-1) * div_term)
-        
-        # X (width) encoding
-        pe[:, :, embed_dim//2:3*embed_dim//4:2] = torch.sin(x_pos.unsqueeze(-1) * div_term)
-        pe[:, :, embed_dim//2+1:3*embed_dim//4:2] = torch.cos(x_pos.unsqueeze(-1) * div_term)
+        # Use sinusoidal encoding for x positions in second half of embedding
+        for i in range(embed_dim // 2, embed_dim):
+            j = i - embed_dim // 2
+            if j % 2 == 0:
+                pe[:, :, i] = torch.sin(x_pos / (10000 ** (j / embed_dim)))
+            else:
+                pe[:, :, i] = torch.cos(x_pos / (10000 ** (j / embed_dim)))
         
         return pe
     

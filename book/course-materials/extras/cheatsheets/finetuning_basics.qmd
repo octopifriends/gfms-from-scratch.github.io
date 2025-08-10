@@ -2,840 +2,431 @@
 title: "Fine-tuning Strategies"
 subtitle: "Basic fine-tuning approaches"
 jupyter: geoai
-format: html
+format:
+  html:
+    code-fold: false
 ---
 
-## Introduction to Fine-tuning
+# Fine-tuning Strategies
 
-Fine-tuning allows adaptation of pre-trained models to specific geospatial tasks by adjusting model parameters on domain-specific data.
+This cheatsheet demonstrates practical fine-tuning techniques for geospatial models using small examples that run quickly.
+
+## Setup and Sample Data
 
 ```{python}
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, Dataset
-import torch.nn.functional as F
+from torch.utils.data import Dataset, DataLoader
 import numpy as np
 import matplotlib.pyplot as plt
-from collections import defaultdict
+
+# Set seeds for reproducibility
+torch.manual_seed(42)
+np.random.seed(42)
 
 print(f"PyTorch version: {torch.__version__}")
-print(f"CUDA available: {torch.cuda.is_available()}")
+print("Quick fine-tuning examples")
 ```
 
-## Basic Fine-tuning Setup
+## Simple Classification Model
 
-### Sample model and dataset
 ```{python}
-class GeospatialModel(nn.Module):
-    """Sample geospatial model for fine-tuning demonstrations"""
+class SimpleGeospatialModel(nn.Module):
+    """Lightweight model for demonstration"""
     
-    def __init__(self, num_channels=3, num_classes=10, pretrained_features=True):
+    def __init__(self, num_bands=6, num_classes=5):
         super().__init__()
         
-        # Feature extractor (pretrained)
+        # Simple CNN backbone
         self.features = nn.Sequential(
-            nn.Conv2d(num_channels, 64, 7, stride=2, padding=3),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(3, stride=2, padding=1),
+            nn.Conv2d(num_bands, 32, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            
+            nn.Conv2d(32, 64, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
             
             nn.Conv2d(64, 128, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(128, 128, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2, stride=2),
-            
-            nn.Conv2d(128, 256, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2, stride=2),
-            
-            nn.AdaptiveAvgPool2d((1, 1))
+            nn.ReLU(),
+            nn.AdaptiveAvgPool2d(4)
         )
         
-        # Classifier head (task-specific)
+        # Classifier head
         self.classifier = nn.Sequential(
-            nn.Dropout(0.5),
-            nn.Linear(256, 128),
-            nn.ReLU(inplace=True),
+            nn.Linear(128 * 4 * 4, 64),
+            nn.ReLU(),
             nn.Dropout(0.3),
-            nn.Linear(128, num_classes)
+            nn.Linear(64, num_classes)
         )
-        
-        # Initialize with "pretrained" weights if specified
-        if pretrained_features:
-            self._initialize_pretrained_weights()
-    
-    def _initialize_pretrained_weights(self):
-        """Simulate loading pretrained weights"""
-        print("Loading pretrained feature weights...")
-        # In practice, you would load actual pretrained weights here
-        # self.features.load_state_dict(pretrained_weights)
     
     def forward(self, x):
-        x = self.features(x)
-        x = torch.flatten(x, 1)
-        x = self.classifier(x)
-        return x
-    
-    def freeze_features(self):
-        """Freeze feature extractor parameters"""
-        for param in self.features.parameters():
-            param.requires_grad = False
-        print("Feature extractor frozen")
-    
-    def unfreeze_features(self):
-        """Unfreeze feature extractor parameters"""
-        for param in self.features.parameters():
-            param.requires_grad = True
-        print("Feature extractor unfrozen")
+        features = self.features(x)
+        features = features.view(features.size(0), -1)
+        return self.classifier(features)
 
-# Create sample dataset
-class SampleGeospatialDataset(Dataset):
-    """Sample dataset for fine-tuning demonstration"""
+# Create model
+model = SimpleGeospatialModel(num_bands=6, num_classes=5)
+print(f"Model parameters: {sum(p.numel() for p in model.parameters()):,}")
+```
+
+## Synthetic Dataset for Fast Training
+
+```{python}
+class SyntheticGeospatialDataset(Dataset):
+    """Synthetic dataset that generates data on-the-fly"""
     
-    def __init__(self, num_samples=1000, num_classes=5, image_size=224):
+    def __init__(self, num_samples=100, size=64, num_bands=6, num_classes=5):
         self.num_samples = num_samples
+        self.size = size
+        self.num_bands = num_bands
         self.num_classes = num_classes
-        self.image_size = image_size
         
-        # Generate synthetic data
-        torch.manual_seed(42)
-        self.images = torch.randn(num_samples, 3, image_size, image_size)
-        self.labels = torch.randint(0, num_classes, (num_samples,))
+        # Fixed seed for consistent synthetic data
+        self.rng = np.random.RandomState(42)
     
     def __len__(self):
         return self.num_samples
     
     def __getitem__(self, idx):
-        return {
-            'image': self.images[idx],
-            'label': self.labels[idx]
-        }
+        # Generate synthetic satellite-like image
+        # Different patterns for different classes
+        class_label = idx % self.num_classes
+        
+        # Create class-specific patterns
+        if class_label == 0:  # Water
+            image = self.rng.normal(0.2, 0.1, (self.num_bands, self.size, self.size))
+        elif class_label == 1:  # Forest
+            image = self.rng.normal(0.4, 0.15, (self.num_bands, self.size, self.size))
+        elif class_label == 2:  # Urban
+            image = self.rng.normal(0.6, 0.2, (self.num_bands, self.size, self.size))
+        elif class_label == 3:  # Agriculture
+            image = self.rng.normal(0.5, 0.12, (self.num_bands, self.size, self.size))
+        else:  # Bare soil
+            image = self.rng.normal(0.7, 0.18, (self.num_bands, self.size, self.size))
+        
+        # Add some spatial structure
+        image = np.clip(image, 0, 1)
+        
+        return torch.FloatTensor(image), torch.LongTensor([class_label])
 
-# Create model and dataset
-model = GeospatialModel(num_channels=3, num_classes=5, pretrained_features=True)
-dataset = SampleGeospatialDataset(num_samples=1000, num_classes=5)
+# Create datasets
+train_dataset = SyntheticGeospatialDataset(num_samples=80, size=64)
+val_dataset = SyntheticGeospatialDataset(num_samples=20, size=64)
 
-# Create train/val split
-train_size = int(0.8 * len(dataset))
-val_size = len(dataset) - train_size
-train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size])
+train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False)
 
-train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+print(f"Training samples: {len(train_dataset)}")
+print(f"Validation samples: {len(val_dataset)}")
 
-print(f"Model created: {sum(p.numel() for p in model.parameters()):,} parameters")
-print(f"Train samples: {len(train_dataset)}, Val samples: {len(val_dataset)}")
+# Show sample
+sample_image, sample_label = train_dataset[0]
+print(f"Sample shape: {sample_image.shape}, Label: {sample_label.item()}")
 ```
 
-## Fine-tuning Strategies
+## Fine-tuning Strategy 1: Full Model Training
 
-### Strategy 1: Freeze backbone, train classifier only
 ```{python}
-def setup_freeze_backbone_training(model, learning_rate=1e-3):
-    """Setup for training only the classifier head"""
-    
-    # Freeze feature extractor
-    model.freeze_features()
-    
-    # Only classifier parameters will be updated
-    trainable_params = [p for p in model.parameters() if p.requires_grad]
-    
-    optimizer = optim.Adam(trainable_params, lr=learning_rate)
-    criterion = nn.CrossEntropyLoss()
-    
-    print(f"Trainable parameters: {sum(p.numel() for p in trainable_params):,}")
-    
-    return optimizer, criterion
-
-def train_epoch(model, dataloader, optimizer, criterion, device='cpu'):
+def train_epoch(model, dataloader, optimizer, criterion):
     """Train for one epoch"""
     model.train()
     total_loss = 0
     correct = 0
     total = 0
     
-    for batch_idx, batch in enumerate(dataloader):
-        images = batch['image'].to(device)
-        labels = batch['label'].to(device)
+    for batch_idx, (data, targets) in enumerate(dataloader):
+        targets = targets.squeeze()
         
         optimizer.zero_grad()
-        outputs = model(images)
-        loss = criterion(outputs, labels)
+        outputs = model(data)
+        loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
         
         total_loss += loss.item()
         _, predicted = outputs.max(1)
-        total += labels.size(0)
-        correct += predicted.eq(labels).sum().item()
-        
-        if batch_idx % 10 == 0:
-            print(f'Batch {batch_idx}/{len(dataloader)}: '
-                  f'Loss: {loss.item():.4f}, '
-                  f'Acc: {100.*correct/total:.2f}%', end='\r')
+        total += targets.size(0)
+        correct += predicted.eq(targets).sum().item()
     
-    avg_loss = total_loss / len(dataloader)
-    accuracy = 100. * correct / total
-    
-    return avg_loss, accuracy
+    return total_loss / len(dataloader), 100. * correct / total
 
-def validate_epoch(model, dataloader, criterion, device='cpu'):
-    """Validate for one epoch"""
+def validate(model, dataloader, criterion):
+    """Validate model"""
     model.eval()
     total_loss = 0
     correct = 0
     total = 0
     
     with torch.no_grad():
-        for batch in dataloader:
-            images = batch['image'].to(device)
-            labels = batch['label'].to(device)
-            
-            outputs = model(images)
-            loss = criterion(outputs, labels)
+        for data, targets in dataloader:
+            targets = targets.squeeze()
+            outputs = model(data)
+            loss = criterion(outputs, targets)
             
             total_loss += loss.item()
             _, predicted = outputs.max(1)
-            total += labels.size(0)
-            correct += predicted.eq(labels).sum().item()
+            total += targets.size(0)
+            correct += predicted.eq(targets).sum().item()
     
-    avg_loss = total_loss / len(dataloader)
-    accuracy = 100. * correct / total
+    return total_loss / len(dataloader), 100. * correct / total
+
+# Setup for full training
+model_full = SimpleGeospatialModel(num_bands=6, num_classes=5)
+optimizer = optim.Adam(model_full.parameters(), lr=0.001)
+criterion = nn.CrossEntropyLoss()
+
+print("=== Full Model Training ===")
+# Quick training (just 3 epochs for demo)
+for epoch in range(3):
+    train_loss, train_acc = train_epoch(model_full, train_loader, optimizer, criterion)
+    val_loss, val_acc = validate(model_full, val_loader, criterion)
     
-    return avg_loss, accuracy
+    print(f"Epoch {epoch+1}: Train Loss: {train_loss:.3f}, Train Acc: {train_acc:.1f}%, "
+          f"Val Loss: {val_loss:.3f}, Val Acc: {val_acc:.1f}%")
+```
 
-# Setup frozen backbone training
-model_frozen = GeospatialModel(num_channels=3, num_classes=5, pretrained_features=True)
-optimizer_frozen, criterion = setup_freeze_backbone_training(model_frozen, learning_rate=1e-3)
+## Fine-tuning Strategy 2: Frozen Feature Extractor
 
-# Train for a few epochs
-print("Training with frozen backbone:")
+```{python}
+# Create a new model with frozen features
+model_frozen = SimpleGeospatialModel(num_bands=6, num_classes=5)
+
+# Freeze feature layers
+for param in model_frozen.features.parameters():
+    param.requires_grad = False
+
+# Count trainable parameters
+trainable_params = sum(p.numel() for p in model_frozen.parameters() if p.requires_grad)
+total_params = sum(p.numel() for p in model_frozen.parameters())
+
+print(f"=== Frozen Features Training ===")
+print(f"Trainable parameters: {trainable_params:,} / {total_params:,}")
+print(f"Frozen: {total_params - trainable_params:,} parameters")
+
+# Only optimize classifier
+optimizer_frozen = optim.Adam(model_frozen.classifier.parameters(), lr=0.001)
+
+# Quick training
 for epoch in range(3):
     train_loss, train_acc = train_epoch(model_frozen, train_loader, optimizer_frozen, criterion)
-    val_loss, val_acc = validate_epoch(model_frozen, val_loader, criterion)
+    val_loss, val_acc = validate(model_frozen, val_loader, criterion)
     
-    print(f'\nEpoch {epoch+1}: Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, '
-          f'Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%')
+    print(f"Epoch {epoch+1}: Train Loss: {train_loss:.3f}, Train Acc: {train_acc:.1f}%, "
+          f"Val Loss: {val_loss:.3f}, Val Acc: {val_acc:.1f}%")
 ```
 
-### Strategy 2: Progressive unfreezing
+## Fine-tuning Strategy 3: Layer-wise Learning Rates
+
 ```{python}
-class ProgressiveUnfreezingTrainer:
-    """Trainer with progressive unfreezing strategy"""
+# Different learning rates for different parts
+def create_layerwise_optimizer(model, base_lr=0.001):
+    """Create optimizer with different learning rates for different layers"""
     
-    def __init__(self, model, train_loader, val_loader, device='cpu'):
-        self.model = model
-        self.train_loader = train_loader
-        self.val_loader = val_loader
-        self.device = device
-        self.criterion = nn.CrossEntropyLoss()
-        
-        # Training history
-        self.history = {
-            'train_loss': [],
-            'train_acc': [],
-            'val_loss': [],
-            'val_acc': [],
-            'phase': []
-        }
-    
-    def get_layer_groups(self):
-        """Define layer groups for progressive unfreezing"""
-        return [
-            self.model.classifier,  # Phase 1: Only classifier
-            self.model.features[-4:],  # Phase 2: + top conv layers
-            self.model.features[-8:],  # Phase 3: + more conv layers
-            self.model.features  # Phase 4: All features
-        ]
-    
-    def freeze_all_except(self, layer_groups):
-        """Freeze all parameters except those in specified layer groups"""
-        
-        # First freeze everything
-        for param in self.model.parameters():
-            param.requires_grad = False
-        
-        # Then unfreeze specified groups
-        trainable_params = []
-        for group in layer_groups:
-            for param in group.parameters():
-                param.requires_grad = True
-                trainable_params.append(param)
-        
-        return trainable_params
-    
-    def train_phase(self, phase_num, epochs=2, base_lr=1e-3):
-        """Train a specific phase"""
-        
-        layer_groups = self.get_layer_groups()
-        active_groups = layer_groups[:phase_num]
-        
-        # Setup optimizer for current phase
-        trainable_params = self.freeze_all_except(active_groups)
-        
-        # Use different learning rates for different phases
-        lr = base_lr * (0.1 ** (phase_num - 1))  # Decrease LR for later phases
-        optimizer = optim.Adam(trainable_params, lr=lr)
-        
-        print(f"\n=== Phase {phase_num} ===")
-        print(f"Learning rate: {lr}")
-        print(f"Trainable parameters: {sum(p.numel() for p in trainable_params):,}")
-        
-        for epoch in range(epochs):
-            # Training
-            train_loss, train_acc = train_epoch(
-                self.model, self.train_loader, optimizer, self.criterion, self.device
-            )
-            
-            # Validation
-            val_loss, val_acc = validate_epoch(
-                self.model, self.val_loader, self.criterion, self.device
-            )
-            
-            # Record history
-            self.history['train_loss'].append(train_loss)
-            self.history['train_acc'].append(train_acc)
-            self.history['val_loss'].append(val_loss)
-            self.history['val_acc'].append(val_acc)
-            self.history['phase'].append(f'Phase_{phase_num}')
-            
-            print(f'Phase {phase_num}, Epoch {epoch+1}: '
-                  f'Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, '
-                  f'Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%')
-    
-    def train_progressive(self, phases=3, epochs_per_phase=2):
-        """Train with progressive unfreezing"""
-        
-        for phase in range(1, phases + 1):
-            self.train_phase(phase, epochs=epochs_per_phase)
-        
-        print("\nProgressive training completed!")
-    
-    def plot_training_history(self):
-        """Plot training history"""
-        
-        epochs = range(1, len(self.history['train_loss']) + 1)
-        phases = self.history['phase']
-        
-        fig, axes = plt.subplots(1, 2, figsize=(15, 5))
-        
-        # Loss plot
-        axes[0].plot(epochs, self.history['train_loss'], 'b-', label='Train Loss')
-        axes[0].plot(epochs, self.history['val_loss'], 'r-', label='Val Loss')
-        axes[0].set_xlabel('Epoch')
-        axes[0].set_ylabel('Loss')
-        axes[0].set_title('Training and Validation Loss')
-        axes[0].legend()
-        axes[0].grid(True, alpha=0.3)
-        
-        # Accuracy plot
-        axes[1].plot(epochs, self.history['train_acc'], 'b-', label='Train Acc')
-        axes[1].plot(epochs, self.history['val_acc'], 'r-', label='Val Acc')
-        axes[1].set_xlabel('Epoch')
-        axes[1].set_ylabel('Accuracy (%)')
-        axes[1].set_title('Training and Validation Accuracy')
-        axes[1].legend()
-        axes[1].grid(True, alpha=0.3)
-        
-        # Add phase boundaries
-        phase_boundaries = []
-        current_phase = None
-        for i, phase in enumerate(phases):
-            if phase != current_phase:
-                if current_phase is not None:
-                    phase_boundaries.append(i)
-                current_phase = phase
-        
-        for boundary in phase_boundaries:
-            axes[0].axvline(x=boundary + 1, color='gray', linestyle='--', alpha=0.5)
-            axes[1].axvline(x=boundary + 1, color='gray', linestyle='--', alpha=0.5)
-        
-        plt.tight_layout()
-        plt.show()
-
-# Create progressive unfreezing trainer
-model_progressive = GeospatialModel(num_channels=3, num_classes=5, pretrained_features=True)
-trainer = ProgressiveUnfreezingTrainer(model_progressive, train_loader, val_loader)
-
-# Run progressive training
-trainer.train_progressive(phases=3, epochs_per_phase=1)
-
-# Plot results
-trainer.plot_training_history()
-```
-
-### Strategy 3: Differential learning rates
-```{python}
-def setup_differential_lr_optimizer(model, base_lr=1e-3, classifier_lr_multiplier=10):
-    """Setup optimizer with different learning rates for different parts"""
-    
-    # Define parameter groups with different learning rates
-    feature_params = []
-    classifier_params = []
-    
-    for name, param in model.named_parameters():
-        if 'classifier' in name:
-            classifier_params.append(param)
-        else:
-            feature_params.append(param)
-    
-    # Create optimizer with parameter groups
-    optimizer = optim.Adam([
-        {'params': feature_params, 'lr': base_lr, 'name': 'features'},
-        {'params': classifier_params, 'lr': base_lr * classifier_lr_multiplier, 'name': 'classifier'}
-    ])
-    
-    print(f"Feature extractor LR: {base_lr}")
-    print(f"Classifier LR: {base_lr * classifier_lr_multiplier}")
-    print(f"Feature parameters: {sum(p.numel() for p in feature_params):,}")
-    print(f"Classifier parameters: {sum(p.numel() for p in classifier_params):,}")
-    
-    return optimizer
-
-# Setup differential learning rate training
-model_diff_lr = GeospatialModel(num_channels=3, num_classes=5, pretrained_features=True)
-model_diff_lr.unfreeze_features()  # Make sure all parameters are trainable
-
-optimizer_diff_lr = setup_differential_lr_optimizer(model_diff_lr, base_lr=1e-4, classifier_lr_multiplier=10)
-criterion = nn.CrossEntropyLoss()
-
-print("\nTraining with differential learning rates:")
-for epoch in range(3):
-    train_loss, train_acc = train_epoch(model_diff_lr, train_loader, optimizer_diff_lr, criterion)
-    val_loss, val_acc = validate_epoch(model_diff_lr, val_loader, criterion)
-    
-    print(f'Epoch {epoch+1}: Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, '
-          f'Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%')
-```
-
-## Advanced Fine-tuning Techniques
-
-### Learning rate scheduling
-```{python}
-class LearningRateScheduler:
-    """Custom learning rate scheduling for fine-tuning"""
-    
-    def __init__(self, optimizer, strategy='cosine', warmup_epochs=0, total_epochs=10):
-        self.optimizer = optimizer
-        self.strategy = strategy
-        self.warmup_epochs = warmup_epochs
-        self.total_epochs = total_epochs
-        self.base_lrs = [group['lr'] for group in optimizer.param_groups]
-        self.current_epoch = 0
-    
-    def step(self):
-        """Update learning rates for current epoch"""
-        
-        if self.current_epoch < self.warmup_epochs:
-            # Warmup phase
-            warmup_factor = (self.current_epoch + 1) / self.warmup_epochs
-            for i, group in enumerate(self.optimizer.param_groups):
-                group['lr'] = self.base_lrs[i] * warmup_factor
-        
-        else:
-            # Main scheduling
-            progress = (self.current_epoch - self.warmup_epochs) / (self.total_epochs - self.warmup_epochs)
-            
-            if self.strategy == 'cosine':
-                lr_multiplier = 0.5 * (1 + np.cos(np.pi * progress))
-            elif self.strategy == 'linear':
-                lr_multiplier = 1 - progress
-            elif self.strategy == 'exponential':
-                lr_multiplier = 0.1 ** progress
-            else:
-                lr_multiplier = 1.0
-            
-            for i, group in enumerate(self.optimizer.param_groups):
-                group['lr'] = self.base_lrs[i] * lr_multiplier
-        
-        self.current_epoch += 1
-    
-    def get_lr(self):
-        """Get current learning rates"""
-        return [group['lr'] for group in self.optimizer.param_groups]
-
-# Example with cosine annealing
-model_scheduled = GeospatialModel(num_channels=3, num_classes=5, pretrained_features=True)
-model_scheduled.unfreeze_features()
-
-optimizer_scheduled = optim.Adam(model_scheduled.parameters(), lr=1e-3)
-scheduler = LearningRateScheduler(optimizer_scheduled, strategy='cosine', warmup_epochs=1, total_epochs=5)
-criterion = nn.CrossEntropyLoss()
-
-print("Training with learning rate scheduling:")
-lr_history = []
-
-for epoch in range(5):
-    current_lr = scheduler.get_lr()
-    lr_history.append(current_lr[0])
-    
-    print(f'Epoch {epoch+1}, LR: {current_lr[0]:.6f}')
-    
-    train_loss, train_acc = train_epoch(model_scheduled, train_loader, optimizer_scheduled, criterion)
-    val_loss, val_acc = validate_epoch(model_scheduled, val_loader, criterion)
-    
-    print(f'  Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, '
-          f'Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%')
-    
-    scheduler.step()
-
-# Plot learning rate schedule
-plt.figure(figsize=(8, 5))
-plt.plot(range(1, len(lr_history) + 1), lr_history, 'b-o')
-plt.xlabel('Epoch')
-plt.ylabel('Learning Rate')
-plt.title('Learning Rate Schedule (Cosine Annealing)')
-plt.grid(True, alpha=0.3)
-plt.show()
-```
-
-### Data augmentation for fine-tuning
-```{python}
-import torchvision.transforms as transforms
-
-class AugmentedGeospatialDataset(Dataset):
-    """Dataset with augmentation for fine-tuning"""
-    
-    def __init__(self, base_dataset, augment=True, strong_augment=False):
-        self.base_dataset = base_dataset
-        self.augment = augment
-        self.strong_augment = strong_augment
-        
-        # Define augmentation strategies
-        if strong_augment:
-            self.transform = transforms.Compose([
-                transforms.RandomResizedCrop(224, scale=(0.6, 1.0)),
-                transforms.RandomHorizontalFlip(p=0.5),
-                transforms.RandomVerticalFlip(p=0.5),
-                transforms.RandomRotation(degrees=45),
-                transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.1),
-                transforms.RandomApply([transforms.GaussianBlur(kernel_size=3)], p=0.2),
-                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-            ])
-        elif augment:
-            self.transform = transforms.Compose([
-                transforms.RandomHorizontalFlip(p=0.5),
-                transforms.RandomVerticalFlip(p=0.5),
-                transforms.RandomRotation(degrees=15),
-                transforms.ColorJitter(brightness=0.2, contrast=0.2),
-                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-            ])
-        else:
-            self.transform = transforms.Compose([
-                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-            ])
-    
-    def __len__(self):
-        return len(self.base_dataset)
-    
-    def __getitem__(self, idx):
-        sample = self.base_dataset[idx]
-        
-        if self.augment or self.strong_augment:
-            # Apply transformations
-            image = self.transform(sample['image'])
-        else:
-            image = self.transform(sample['image'])
-        
-        return {
-            'image': image,
-            'label': sample['label']
-        }
-
-def compare_augmentation_strategies():
-    """Compare different augmentation strategies"""
-    
-    strategies = [
-        ('No Augmentation', False, False),
-        ('Light Augmentation', True, False),
-        ('Strong Augmentation', True, True)
+    params_groups = [
+        {'params': model.features.parameters(), 'lr': base_lr * 0.1},  # Lower LR for features
+        {'params': model.classifier.parameters(), 'lr': base_lr}        # Higher LR for classifier
     ]
     
-    results = {}
+    return optim.Adam(params_groups)
+
+model_layerwise = SimpleGeospatialModel(num_bands=6, num_classes=5)
+optimizer_layerwise = create_layerwise_optimizer(model_layerwise)
+
+print("=== Layerwise Learning Rates ===")
+print("Features: 0.0001, Classifier: 0.001")
+
+# Quick training
+for epoch in range(3):
+    train_loss, train_acc = train_epoch(model_layerwise, train_loader, optimizer_layerwise, criterion)
+    val_loss, val_acc = validate(model_layerwise, val_loader, criterion)
     
-    for strategy_name, augment, strong_augment in strategies:
-        print(f"\nTraining with {strategy_name}:")
-        
-        # Create augmented datasets
-        aug_train_dataset = AugmentedGeospatialDataset(train_dataset, augment=augment, strong_augment=strong_augment)
-        aug_val_dataset = AugmentedGeospatialDataset(val_dataset, augment=False)  # No augmentation for validation
-        
-        aug_train_loader = DataLoader(aug_train_dataset, batch_size=32, shuffle=True)
-        aug_val_loader = DataLoader(aug_val_dataset, batch_size=32, shuffle=False)
-        
-        # Create fresh model for each strategy
-        model_aug = GeospatialModel(num_channels=3, num_classes=5, pretrained_features=True)
-        optimizer_aug = optim.Adam(model_aug.parameters(), lr=1e-3)
-        criterion = nn.CrossEntropyLoss()
-        
-        # Train for 3 epochs
-        strategy_results = {'train_acc': [], 'val_acc': []}
-        
-        for epoch in range(3):
-            train_loss, train_acc = train_epoch(model_aug, aug_train_loader, optimizer_aug, criterion)
-            val_loss, val_acc = validate_epoch(model_aug, aug_val_loader, criterion)
-            
-            strategy_results['train_acc'].append(train_acc)
-            strategy_results['val_acc'].append(val_acc)
-            
-            print(f'  Epoch {epoch+1}: Train Acc: {train_acc:.2f}%, Val Acc: {val_acc:.2f}%')
-        
-        results[strategy_name] = strategy_results
-    
-    return results
-
-# Compare augmentation strategies
-augmentation_results = compare_augmentation_strategies()
-
-# Plot comparison
-fig, axes = plt.subplots(1, 2, figsize=(15, 5))
-
-for strategy_name, results in augmentation_results.items():
-    epochs = range(1, len(results['train_acc']) + 1)
-    axes[0].plot(epochs, results['train_acc'], marker='o', label=strategy_name)
-    axes[1].plot(epochs, results['val_acc'], marker='o', label=strategy_name)
-
-axes[0].set_xlabel('Epoch')
-axes[0].set_ylabel('Training Accuracy (%)')
-axes[0].set_title('Training Accuracy Comparison')
-axes[0].legend()
-axes[0].grid(True, alpha=0.3)
-
-axes[1].set_xlabel('Epoch')
-axes[1].set_ylabel('Validation Accuracy (%)')
-axes[1].set_title('Validation Accuracy Comparison')
-axes[1].legend()
-axes[1].grid(True, alpha=0.3)
-
-plt.tight_layout()
-plt.show()
+    print(f"Epoch {epoch+1}: Train Loss: {train_loss:.3f}, Train Acc: {train_acc:.1f}%, "
+          f"Val Loss: {val_loss:.3f}, Val Acc: {val_acc:.1f}%")
 ```
 
-## Regularization Techniques
+## Learning Rate Scheduling
 
-### Dropout and weight decay
 ```{python}
-class RegularizedGeospatialModel(nn.Module):
-    """Model with configurable regularization"""
+# Demonstrate learning rate scheduling
+from torch.optim.lr_scheduler import StepLR, CosineAnnealingLR
+
+def train_with_scheduler():
+    """Train model with learning rate scheduling"""
     
-    def __init__(self, num_channels=3, num_classes=10, dropout_rate=0.5):
-        super().__init__()
+    model_sched = SimpleGeospatialModel(num_bands=6, num_classes=5)
+    optimizer = optim.Adam(model_sched.parameters(), lr=0.01)  # Higher initial LR
+    scheduler = StepLR(optimizer, step_size=2, gamma=0.5)  # Reduce LR every 2 epochs
+    
+    print("=== Learning Rate Scheduling ===")
+    
+    for epoch in range(4):  # 4 epochs to see LR changes
+        train_loss, train_acc = train_epoch(model_sched, train_loader, optimizer, criterion)
+        val_loss, val_acc = validate(model_sched, val_loader, criterion)
         
-        self.features = nn.Sequential(
-            nn.Conv2d(num_channels, 64, 7, stride=2, padding=3),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(3, stride=2, padding=1),
-            
-            nn.Conv2d(64, 128, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Dropout2d(p=dropout_rate * 0.25),  # Spatial dropout in conv layers
-            
-            nn.Conv2d(128, 256, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Dropout2d(p=dropout_rate * 0.5),
-            
-            nn.AdaptiveAvgPool2d((1, 1))
-        )
+        current_lr = optimizer.param_groups[0]['lr']
+        print(f"Epoch {epoch+1}: LR: {current_lr:.4f}, Train Loss: {train_loss:.3f}, "
+              f"Train Acc: {train_acc:.1f}%, Val Acc: {val_acc:.1f}%")
         
-        self.classifier = nn.Sequential(
-            nn.Dropout(p=dropout_rate),
-            nn.Linear(256, 128),
-            nn.ReLU(inplace=True),
-            nn.Dropout(p=dropout_rate * 0.5),
-            nn.Linear(128, num_classes)
-        )
-    
-    def forward(self, x):
-        x = self.features(x)
-        x = torch.flatten(x, 1)
-        x = self.classifier(x)
-        return x
+        scheduler.step()
 
-def train_with_regularization(dropout_rate=0.5, weight_decay=1e-4, epochs=3):
-    """Train model with specified regularization parameters"""
-    
-    model_reg = RegularizedGeospatialModel(num_channels=3, num_classes=5, dropout_rate=dropout_rate)
-    
-    # Optimizer with weight decay
-    optimizer_reg = optim.Adam(model_reg.parameters(), lr=1e-3, weight_decay=weight_decay)
-    criterion = nn.CrossEntropyLoss()
-    
-    print(f"Training with dropout={dropout_rate}, weight_decay={weight_decay}")
-    
-    results = {'train_acc': [], 'val_acc': [], 'train_loss': [], 'val_loss': []}
-    
-    for epoch in range(epochs):
-        train_loss, train_acc = train_epoch(model_reg, train_loader, optimizer_reg, criterion)
-        val_loss, val_acc = validate_epoch(model_reg, val_loader, criterion)
-        
-        results['train_acc'].append(train_acc)
-        results['val_acc'].append(val_acc)
-        results['train_loss'].append(train_loss)
-        results['val_loss'].append(val_loss)
-        
-        print(f'  Epoch {epoch+1}: Train Acc: {train_acc:.2f}%, Val Acc: {val_acc:.2f}%')
-    
-    return results
-
-# Compare different regularization settings
-regularization_configs = [
-    (0.0, 0.0),    # No regularization
-    (0.3, 1e-4),   # Light regularization
-    (0.5, 1e-3),   # Medium regularization
-    (0.7, 1e-2),   # Strong regularization
-]
-
-reg_results = {}
-for dropout, weight_decay in regularization_configs:
-    config_name = f"Drop={dropout}, WD={weight_decay}"
-    reg_results[config_name] = train_with_regularization(dropout, weight_decay, epochs=3)
-
-# Plot regularization comparison
-fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-
-for config_name, results in reg_results.items():
-    epochs = range(1, len(results['train_acc']) + 1)
-    
-    axes[0, 0].plot(epochs, results['train_acc'], marker='o', label=config_name)
-    axes[0, 1].plot(epochs, results['val_acc'], marker='o', label=config_name)
-    axes[1, 0].plot(epochs, results['train_loss'], marker='o', label=config_name)
-    axes[1, 1].plot(epochs, results['val_loss'], marker='o', label=config_name)
-
-axes[0, 0].set_title('Training Accuracy')
-axes[0, 1].set_title('Validation Accuracy')
-axes[1, 0].set_title('Training Loss')
-axes[1, 1].set_title('Validation Loss')
-
-for ax in axes.flat:
-    ax.set_xlabel('Epoch')
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-
-plt.tight_layout()
-plt.show()
+train_with_scheduler()
 ```
 
-## Fine-tuning Best Practices
+## Early Stopping Implementation
 
-### Early stopping and model checkpointing
 ```{python}
-class EarlyStoppingCallback:
-    """Early stopping callback for training"""
+class EarlyStopping:
+    """Early stopping utility"""
     
-    def __init__(self, patience=5, min_delta=0.001, restore_best_weights=True):
+    def __init__(self, patience=3, min_delta=0.001):
         self.patience = patience
         self.min_delta = min_delta
-        self.restore_best_weights = restore_best_weights
-        
+        self.counter = 0
         self.best_loss = float('inf')
-        self.wait = 0
-        self.best_weights = None
-        self.stopped_epoch = 0
     
-    def __call__(self, val_loss, model):
-        """Check if should stop training"""
-        
+    def __call__(self, val_loss):
         if val_loss < self.best_loss - self.min_delta:
             self.best_loss = val_loss
-            self.wait = 0
-            if self.restore_best_weights:
-                self.best_weights = model.state_dict().copy()
+            self.counter = 0
+            return False  # Continue training
         else:
-            self.wait += 1
-        
-        if self.wait >= self.patience:
-            self.stopped_epoch = len(val_loss) if isinstance(val_loss, list) else 0
-            if self.restore_best_weights and self.best_weights:
-                model.load_state_dict(self.best_weights)
-            return True
-        
-        return False
+            self.counter += 1
+            return self.counter >= self.patience  # Stop if patience exceeded
 
-class ModelCheckpoint:
-    """Model checkpointing utility"""
+# Demonstrate early stopping
+def train_with_early_stopping():
+    """Train with early stopping"""
     
-    def __init__(self, filepath, monitor='val_loss', save_best_only=True):
-        self.filepath = filepath
-        self.monitor = monitor
-        self.save_best_only = save_best_only
-        self.best_value = float('inf') if 'loss' in monitor else 0.0
-        
-    def __call__(self, current_value, model, epoch):
-        """Save model if conditions are met"""
-        
-        improved = False
-        if 'loss' in self.monitor:
-            improved = current_value < self.best_value
-        else:  # accuracy
-            improved = current_value > self.best_value
-        
-        if improved or not self.save_best_only:
-            if improved:
-                self.best_value = current_value
-            
-            checkpoint = {
-                'epoch': epoch,
-                'model_state_dict': model.state_dict(),
-                f'{self.monitor}': current_value
-            }
-            
-            torch.save(checkpoint, self.filepath)
-            print(f"Model saved to {self.filepath} (epoch {epoch}, {self.monitor}: {current_value:.4f})")
-
-def train_with_callbacks(model, train_loader, val_loader, epochs=10, patience=3):
-    """Train model with early stopping and checkpointing"""
+    model_es = SimpleGeospatialModel(num_bands=6, num_classes=5)
+    optimizer = optim.Adam(model_es.parameters(), lr=0.001)
+    early_stopping = EarlyStopping(patience=2)
     
-    optimizer = optim.Adam(model.parameters(), lr=1e-3)
-    criterion = nn.CrossEntropyLoss()
+    print("=== Early Stopping Demo ===")
     
-    # Setup callbacks
-    early_stopping = EarlyStoppingCallback(patience=patience)
-    checkpoint = ModelCheckpoint('best_model.pth', monitor='val_loss')
-    
-    history = {'train_loss': [], 'val_loss': [], 'train_acc': [], 'val_acc': []}
-    
-    for epoch in range(epochs):
-        print(f"\nEpoch {epoch+1}/{epochs}")
+    for epoch in range(10):  # Max 10 epochs
+        train_loss, train_acc = train_epoch(model_es, train_loader, optimizer, criterion)
+        val_loss, val_acc = validate(model_es, val_loader, criterion)
         
-        # Training
-        train_loss, train_acc = train_epoch(model, train_loader, optimizer, criterion)
-        val_loss, val_acc = validate_epoch(model, val_loader, criterion)
+        print(f"Epoch {epoch+1}: Train Loss: {train_loss:.3f}, Train Acc: {train_acc:.1f}%, "
+              f"Val Loss: {val_loss:.3f}, Val Acc: {val_acc:.1f}%")
         
-        # Record history
-        history['train_loss'].append(train_loss)
-        history['val_loss'].append(val_loss)
-        history['train_acc'].append(train_acc)
-        history['val_acc'].append(val_acc)
-        
-        print(f'Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, '
-              f'Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%')
-        
-        # Callbacks
-        checkpoint(val_loss, model, epoch)
-        
-        if early_stopping(val_loss, model):
-            print(f"Early stopping triggered at epoch {epoch+1}")
+        if early_stopping(val_loss):
+            print(f"Early stopping at epoch {epoch+1}")
             break
+
+train_with_early_stopping()
+```
+
+## Model Comparison
+
+```{python}
+def compare_final_performance():
+    """Compare final performance of different strategies"""
     
-    return history
+    models = {
+        'Full Training': model_full,
+        'Frozen Features': model_frozen,
+        'Layerwise LR': model_layerwise
+    }
+    
+    print("\n=== Final Performance Comparison ===")
+    
+    for name, model in models.items():
+        val_loss, val_acc = validate(model, val_loader, criterion)
+        print(f"{name:15}: Val Acc = {val_acc:.1f}%, Val Loss = {val_loss:.3f}")
 
-# Example with callbacks
-model_callbacks = GeospatialModel(num_channels=3, num_classes=5, pretrained_features=True)
-callback_history = train_with_callbacks(model_callbacks, train_loader, val_loader, epochs=10, patience=3)
+compare_final_performance()
+```
 
-print("Training completed with callbacks")
+## Transfer Learning Best Practices
+
+```{python}
+def show_best_practices():
+    """Demonstrate transfer learning best practices"""
+    
+    print("\n=== Transfer Learning Best Practices ===")
+    
+    practices = {
+        "Start with lower learning rates": "0.0001 - 0.001 typically work well",
+        "Freeze early layers initially": "Then gradually unfreeze if needed",
+        "Use different LRs for different layers": "Lower for pretrained, higher for new layers",
+        "Monitor validation carefully": "Use early stopping to prevent overfitting",
+        "Data augmentation is crucial": "Especially with limited training data",
+        "Gradual unfreezing": "Unfreeze layers progressively during training"
+    }
+    
+    for practice, explanation in practices.items():
+        print(f"• {practice}: {explanation}")
+
+show_best_practices()
+```
+
+## Feature Visualization
+
+```{python}
+def visualize_learned_features(model, sample_image):
+    """Visualize what the model has learned"""
+    
+    model.eval()
+    
+    # Get intermediate features
+    features = []
+    def hook_fn(module, input, output):
+        features.append(output.detach())
+    
+    # Register hooks on conv layers
+    hooks = []
+    for name, module in model.features.named_modules():
+        if isinstance(module, nn.Conv2d):
+            hooks.append(module.register_forward_hook(hook_fn))
+    
+    # Forward pass
+    with torch.no_grad():
+        _ = model(sample_image.unsqueeze(0))
+    
+    # Remove hooks
+    for hook in hooks:
+        hook.remove()
+    
+    print(f"\n=== Feature Map Analysis ===")
+    for i, feature_map in enumerate(features):
+        print(f"Layer {i+1}: {feature_map.shape}")
+    
+    return features
+
+# Analyze learned features
+sample_img, _ = train_dataset[0]
+learned_features = visualize_learned_features(model_full, sample_img)
+```
+
+## Key Takeaways
+
+```{python}
+print("\n=== Fine-tuning Strategy Summary ===")
+
+strategies = {
+    "Full Training": "Train all parameters - best when you have lots of data",
+    "Frozen Features": "Only train classifier - fastest, good for small datasets", 
+    "Layerwise LR": "Different learning rates - balanced approach",
+    "Gradual Unfreezing": "Progressive training - best for complex adaptation",
+    "Early Stopping": "Prevent overfitting - essential for small datasets"
+}
+
+for strategy, description in strategies.items():
+    print(f"• {strategy}: {description}")
+
+print(f"\nTraining completed successfully! All examples ran quickly.")
 ```
 
 ## Summary
 
-Key fine-tuning strategies:
-- **Freeze backbone**: Train only classifier head initially
-- **Progressive unfreezing**: Gradually unfreeze layers during training  
-- **Differential learning rates**: Use different LRs for different model parts
-- **Learning rate scheduling**: Warm-up and decay schedules
-- **Data augmentation**: Geometric and photometric transformations
-- **Regularization**: Dropout and weight decay for generalization
-- **Callbacks**: Early stopping and model checkpointing for robust training
+- **Start simple** with frozen features and classifier-only training
+- **Use appropriate learning rates** - lower for pretrained layers
+- **Monitor validation** carefully to avoid overfitting  
+- **Implement early stopping** for robust training
+- **Consider gradual unfreezing** for complex adaptations
+- **Visualize features** to understand what the model learns
+
+These techniques work across different model architectures and can be scaled up for larger, real-world applications.

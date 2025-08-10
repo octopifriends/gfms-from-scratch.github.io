@@ -2,7 +2,9 @@
 title: "Model Evaluation & Validation"
 subtitle: "Comprehensive evaluation strategies for geospatial models"
 jupyter: geoai
-format: html
+format:
+  html:
+    code-fold: false
 ---
 
 ## Introduction to Model Evaluation
@@ -932,7 +934,7 @@ def demonstrate_temporal_validation():
               f"{result['mae_mean']:<10.3f} {result['mae_std']:<10.3f} {result['n_folds']:<6}")
     
     # Visualizations
-    fig, axes = plt.subplots(3, 2, figsize=(18, 15))
+    fig, axes = plt.subplots(2, 3, figsize=(18, 12))
     
     # Original time series
     axes[0,0].plot(time_index[:len(y)], y, alpha=0.7)
@@ -951,27 +953,41 @@ def demonstrate_temporal_validation():
     axes[0,1].set_ylabel('R² Score')
     axes[0,1].tick_params(axis='x', rotation=45)
     
-    # Example predictions for each strategy
-    for idx, result in enumerate(temporal_results):
-        row = idx + 1
-        
-        # Get first fold predictions
+    # MAE comparison
+    mae_means = [r['mae_mean'] for r in temporal_results]
+    mae_stds = [r['mae_std'] for r in temporal_results]
+    
+    bars = axes[0,2].bar(strategies, mae_means, yerr=mae_stds, capsize=5, alpha=0.7, color='lightcoral')
+    axes[0,2].set_title('MAE Comparison')
+    axes[0,2].set_ylabel('Mean Absolute Error')
+    axes[0,2].tick_params(axis='x', rotation=45)
+    
+    # Example predictions for first strategy only (to fit in 2x3 grid)
+    if temporal_results:
+        result = temporal_results[0]  # Show only first strategy
         test_idx, y_true_fold, y_pred_fold = result['predictions'][0]
         
-        axes[row,0].plot(y_true_fold, alpha=0.7, label='True')
-        axes[row,0].plot(y_pred_fold, alpha=0.7, label='Predicted')
-        axes[row,0].set_title(f'{result["strategy"]} - Fold 1 Predictions')
-        axes[row,0].set_ylabel('Value')
-        axes[row,0].legend()
-        axes[row,0].grid(True, alpha=0.3)
+        axes[1,0].plot(y_true_fold, alpha=0.7, label='True')
+        axes[1,0].plot(y_pred_fold, alpha=0.7, label='Predicted')
+        axes[1,0].set_title(f'{result["strategy"]} - Example Predictions')
+        axes[1,0].set_ylabel('Value')
+        axes[1,0].legend()
+        axes[1,0].grid(True, alpha=0.3)
         
-        # Residuals
+        # Residuals for first strategy
         residuals = y_true_fold - y_pred_fold
-        axes[row,1].plot(residuals, alpha=0.7)
-        axes[row,1].axhline(y=0, color='r', linestyle='--')
-        axes[row,1].set_title(f'{result["strategy"]} - Residuals')
-        axes[row,1].set_ylabel('Residual')
-        axes[row,1].grid(True, alpha=0.3)
+        axes[1,1].plot(residuals, alpha=0.7)
+        axes[1,1].axhline(y=0, color='r', linestyle='--')
+        axes[1,1].set_title(f'{result["strategy"]} - Residuals')
+        axes[1,1].set_ylabel('Residual')
+        axes[1,1].grid(True, alpha=0.3)
+        
+        # Residual histogram
+        axes[1,2].hist(residuals, bins=20, alpha=0.7, color='skyblue', edgecolor='black')
+        axes[1,2].set_title('Residual Distribution')
+        axes[1,2].set_xlabel('Residual')
+        axes[1,2].set_ylabel('Frequency')
+        axes[1,2].grid(True, alpha=0.3)
     
     plt.tight_layout()
     plt.show()

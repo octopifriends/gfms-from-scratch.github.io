@@ -2,7 +2,9 @@
 title: "Geospatial Data & Remote Sensing"
 subtitle: "Working with satellite imagery and earth observation data"
 jupyter: geoai
-format: html
+format:
+  html:
+    code-fold: false
 ---
 
 ## Introduction to Geospatial Data

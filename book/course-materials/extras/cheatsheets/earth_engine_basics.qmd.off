@@ -2,7 +2,9 @@
 title: "Earth Engine Basics"
 subtitle: "Working with Google Earth Engine"
 jupyter: geoai
-format: html
+format:
+  html:
+    code-fold: false
 ---
 
 ## Introduction to Earth Engine

@@ -114,7 +114,7 @@ website:
     background: dark
     right: This website is built with [{{< fa brands github title="the github octocat logo" >}}](https://github.com/environmental-data-science/geog-288kc-geospatial-foundation-models) and [Quarto](https://quarto.org/)
     left: |
-      ![The Department of Geography logo](images/geog-logo.png){width=250}
+      ![The Department of Geography logo](course-materials/images/geog-logo.png){width=250}
 format:
   html:
     theme: meds-website-styles.scss

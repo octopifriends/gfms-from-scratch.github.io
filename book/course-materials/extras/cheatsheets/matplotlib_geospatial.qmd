@@ -2,7 +2,9 @@
 title: "Geospatial Plotting with Matplotlib"
 subtitle: "Advanced plotting for geospatial data"
 jupyter: geoai
-format: html
+format:
+  html:
+    code-fold: false
 ---
 
 ## Introduction to Geospatial Plotting
@@ -422,10 +424,10 @@ def plot_different_projections(figsize=(15, 10)):
         ax.add_feature(cfeature.OCEAN, color='lightblue', alpha=0.5)
         ax.add_feature(cfeature.LAND, color='lightgray', alpha=0.5)
         
-        # Plot data
-        im = ax.contourf(lon_grid, lat_grid, data, 
-                        transform=ccrs.PlateCarree(),
-                        levels=20, cmap='RdYlBu_r', alpha=0.7)
+        # Plot data using imshow (more stable with projections)
+        im = ax.imshow(data, extent=[-180, 180, -90, 90],
+                      transform=ccrs.PlateCarree(),
+                      cmap='RdYlBu_r', alpha=0.7, origin='lower')
         
         # Add gridlines
         ax.gridlines(draw_labels=True if name == 'PlateCarree' else False,

@@ -1,7 +1,0 @@
----
-title: "Lecture: Coming Soon"
-jupyter: geoai
-format: html
----
-
-Lecture content coming soon...

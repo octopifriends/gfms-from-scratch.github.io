@@ -2,7 +2,9 @@
 title: "PyTorch Tensors & GPU Operations"
 subtitle: "Essential tensor operations for geospatial AI"
 jupyter: geoai
-format: html
+format:
+  html:
+    code-fold: false
 ---
 
 ## Creating Tensors

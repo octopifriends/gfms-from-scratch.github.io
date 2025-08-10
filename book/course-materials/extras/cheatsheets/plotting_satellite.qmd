@@ -2,7 +2,9 @@
 title: "Plotting Satellite Imagery"
 subtitle: "Visualization techniques for geospatial data"
 jupyter: geoai
-format: html
+format:
+  html:
+    code-fold: false
 ---
 
 ## Introduction

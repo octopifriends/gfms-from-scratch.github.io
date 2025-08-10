@@ -2,7 +2,9 @@
 title: "Cloud & Scalable Computing"
 subtitle: "Large-scale geospatial AI deployment and optimization"
 jupyter: geoai
-format: html
+format:
+  html:
+    code-fold: false
 ---
 
 # Cloud & Scalable Computing for Geospatial AI

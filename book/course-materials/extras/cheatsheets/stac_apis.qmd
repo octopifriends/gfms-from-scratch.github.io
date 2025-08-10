@@ -2,7 +2,9 @@
 title: "STAC APIs & Planetary Computer"
 subtitle: "Accessing satellite data via STAC for GFM training"
 jupyter: geoai
-format: html
+format:
+  html:
+    code-fold: false
 ---
 
 ## Introduction to STAC
@@ -29,9 +31,9 @@ Microsoft's Planetary Computer provides free access to petabytes of earth observ
 
 ```{python}
 # Connect to Planetary Computer STAC API
+# Note: Planetary Computer requires authentication for data access, but catalog browsing is public
 pc_catalog = pystac_client.Client.open(
-    "https://planetarycomputer.microsoft.com/api/stac/v1",
-    modifier=lambda r: r.sign()  # Sign requests for access
+    "https://planetarycomputer.microsoft.com/api/stac/v1"
 )
 
 print(f"Planetary Computer STAC API: {pc_catalog.title}")
@@ -192,22 +194,31 @@ if items:
 ### Accessing Asset URLs
 
 ```{python}
-# Get signed URLs for assets
+# Get asset URLs (authentication required for actual data download)
+# For production use, install: pip install planetary-computer
 if items:
     sample_item = items[0]
     
     # Key Sentinel-2 bands for ML applications
     key_bands = ['B02', 'B03', 'B04', 'B08']  # Blue, Green, Red, NIR
     
-    print("Signed URLs for key bands:")
+    print("Asset URLs for key bands:")
     for band in key_bands:
         if band in sample_item.assets:
-            # Sign the URL for access
-            signed_asset = sample_item.assets[band]
-            signed_href = signed_asset.href
-            print(f"  {band}: {signed_href[:80]}...")
+            # Get the asset URL (would need signing for actual data access)
+            asset = sample_item.assets[band]
+            asset_href = asset.href
+            print(f"  {band}: {asset_href[:80]}...")
+            print(f"    Title: {asset.title}")
         else:
             print(f"  {band}: Not available")
+
+# Note: For actual data access, use planetary-computer package:
+# import planetary_computer as pc
+# signed_item = pc.sign(sample_item)
+# Then use signed_item.assets[band].href for downloading
+print(f"\nNote: URLs above require authentication for actual data access")
+print(f"Install 'planetary-computer' package and use pc.sign() for data downloads")
 ```
 
 ## Other STAC Providers

@@ -2,7 +2,9 @@
 title: "Interactive Maps with Folium"
 subtitle: "Creating interactive web maps"
 jupyter: geoai
-format: html
+format:
+  html:
+    code-fold: false
 ---
 
 ## Introduction to Folium

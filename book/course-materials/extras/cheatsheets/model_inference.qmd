@@ -2,7 +2,9 @@
 title: "Model Inference & Feature Extraction"
 subtitle: "Running inference and extracting features"
 jupyter: geoai
-format: html
+format:
+  html:
+    code-fold: false
 ---
 
 ## Introduction to Model Inference
@@ -450,7 +452,7 @@ class GradCAM:
             display_image = image
         
         display_image = (display_image - display_image.min()) / (display_image.max() - display_image.min())
-        display_image = display_image.permute(1, 2, 0).numpy()
+        display_image = display_image.permute(1, 2, 0).detach().numpy()
         
         # Resize CAM to match image size
         cam_resized = F.interpolate(
