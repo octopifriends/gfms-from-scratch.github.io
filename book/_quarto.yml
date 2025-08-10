@@ -22,8 +22,8 @@ website:
         href: Syllabus.html
       - text: 💻 weekly sessions
         menu:
-          - text: Session 0 - 🪜 Introduction to Deep Learning Architecture
-            href: course-materials/c00-introduction-to-deeplearning-architecture.qmd
+          - text: Session 0a - 🪜 Introduction to Deep Learning Architecture
+            href: course-materials/c00a-introduction-to-deeplearning-architecture.qmd
           - text: Session 1 - 📊 Geospatial Data Foundations
             href: course-materials/c01-geospatial-data-foundations.qmd
           - text: Session 2 - 🧠 Spatial-Temporal Attention Mechanisms
@@ -114,7 +114,7 @@ website:
     background: dark
     right: This website is built with [{{< fa brands github title="the github octocat logo" >}}](https://github.com/environmental-data-science/geog-288kc-geospatial-foundation-models) and [Quarto](https://quarto.org/)
     left: |
-      ![The Department of Geography logo](course-materials/images/geog-logo.png){width=250}
+      ![The Department of Geography logo](/course-materials/images/geog-logo.png){width=250}
 format:
   html:
     theme: meds-website-styles.scss

@@ -14,7 +14,7 @@ Quick, student-facing reference for how our Geospatial Foundation Model (GFM) is
 
 ## Roadmap at a glance
 
-```mermaid
+```{mermaid}
 graph TD
   A[Week 1: Data Foundations] --> B[Week 2: Attention & Blocks]
   B --> C[Week 3: Full Encoder]
