@@ -34,8 +34,21 @@ import pandas as pd
 # Set seeds for reproducibility
 np.random.seed(42)
 
-# Set up data path - use absolute path to find the data file
-DATA_DIR = Path(__file__).parent.parent.parent.parent.parent / "data" if "__file__" in globals() else Path("../../../../data")
+# Set up data path - use book/data for course sample data
+if "__file__" in globals():
+    # From course-materials/extras/examples, go up 2 levels to book folder, then to data
+    DATA_DIR = Path(__file__).parent.parent.parent / "data"
+else:
+    # Fallback for interactive environments - look for book folder
+    current = Path.cwd()
+    while current.name not in ["book", "geoAI"] and current.parent != current:
+        current = current.parent
+    if current.name == "book":
+        DATA_DIR = current / "data"
+    elif current.name == "geoAI":
+        DATA_DIR = current / "book" / "data"
+    else:
+        DATA_DIR = Path("data")
 DATA_DIR.mkdir(exist_ok=True)
 DATA_PATH = DATA_DIR / "landcover_sample.tif"
 

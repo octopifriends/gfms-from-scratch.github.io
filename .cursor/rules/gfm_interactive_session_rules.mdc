@@ -26,6 +26,9 @@ format:
   1. Introduction — 3–5 sentences, no code.
   2. Learning Objectives — 3–6 bullets with action verbs.
   3. Session Roadmap — Mermaid diagram showing logical phase progression (see Section 10)
+  3a. Course Roadmap Mapping — REQUIRED table mapping the session to the overall GFM architecture and libraries:
+     - Columns: Week, Stage, Focus, You will build (geogfm files), Library tools, Outcome
+     - Place immediately after the roadmap diagram; keep concise and specific to the session
   4. Setting Up — split into small tasks:
      - Task: imports (why) → Code (≤10 lines) → (no output required)
      - Task: seeds (what is a seed) → Code (≤10) → Expected Output

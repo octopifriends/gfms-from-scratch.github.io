@@ -1,0 +1,27 @@
+---
+title: "Week 3 Interactive Session: Complete GFM Architecture"
+subtitle: "Assembling Vision Transformer architecture for geospatial data"
+editor_options: 
+  chunk_output_type: console
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+---
+
+## Course Roadmap Mapping
+
+This week’s work in the broader GFM plan.
+
+| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |
+|------|-------|-------|--------------------------|---------------|---------|
+| 3 | Stage 1: Build GFM Architecture | Complete Architecture | `models/gfm_vit.py`; `modules/heads/reconstruction_head.py` | `torch.nn` (timm as reference) | Encoder assembled; end-to-end forward on dummy input |
+
+### Weekly goals
+- Wire blocks into a GeoViT-style encoder
+- Add a simple reconstruction head
+- Run end-to-end forward pass on dummy input
+
+Interactive session content coming soon...

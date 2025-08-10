@@ -1,0 +1,27 @@
+---
+title: "Week 2 Interactive Session: Spatial-Temporal Attention Mechanisms"
+subtitle: "Building attention mechanisms from scratch for geospatial data"
+editor_options: 
+  chunk_output_type: console
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+---
+
+## Course Roadmap Mapping
+
+This week’s work in the broader GFM plan.
+
+| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |
+|------|-------|-------|--------------------------|---------------|---------|
+| 2 | Stage 1: Build GFM Architecture | Attention & Blocks | `modules/embeddings/{patch_embedding.py, positional_encoding.py}`; `modules/attention/multihead_attention.py`; `modules/blocks/transformer_block.py` | `torch.nn` (compare with `torch.nn.MultiheadAttention`) | Blocks run forward with stable shapes; unit tests green |
+
+### Weekly goals
+- Implement patch/positional embeddings and MHA from scratch
+- Assemble a PreNorm transformer block (MHA + MLP)
+- Validate tensor shapes and simple layer tests
+
+Interactive session content coming soon...

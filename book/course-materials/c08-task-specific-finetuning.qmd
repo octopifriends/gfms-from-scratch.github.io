@@ -1,0 +1,27 @@
+---
+title: "Week 8 Interactive Session: Task-Specific Fine-tuning"
+subtitle: "Efficient fine-tuning strategies for geospatial applications"
+editor_options: 
+  chunk_output_type: console
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+---
+
+## Course Roadmap Mapping
+
+This week’s work in the broader GFM plan.
+
+| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |
+|------|-------|-------|--------------------------|---------------|---------|
+| 8 | Stage 3: Apply & Deploy | Task Fine-tuning | `tasks/{classification.py|segmentation.py}` (light heads) | `torch.nn.CrossEntropyLoss`; timm optional | Head swap on frozen encoder; small dataset demo |
+
+### Weekly goals
+- Implement a simple classifier/segmentation head
+- Fine-tune with frozen encoder; evaluate on a tiny dataset
+- Discuss efficient strategies (LoRA/prompting as concepts)
+
+Interactive session content coming soon...

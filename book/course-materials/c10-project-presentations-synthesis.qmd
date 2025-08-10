@@ -1,0 +1,27 @@
+---
+title: "Week 10 Interactive Session: Project Presentations & Synthesis"
+subtitle: "Showcase complete foundation model pipelines"
+editor_options: 
+  chunk_output_type: console
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+---
+
+## Course Roadmap Mapping
+
+This week’s work in the broader GFM plan.
+
+| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |
+|------|-------|-------|--------------------------|---------------|---------|
+| 10 | Stage 3: Apply & Deploy | Presentations & Synthesis | Project deliverables (no new `geogfm` code required) | — | Present MVP builds, analysis, transition plan |
+
+### Weekly goals
+- Synthesize architecture, training, and evaluation learnings
+- Present MVP results and insights
+- Outline next steps with Prithvi/scale-up
+
+Interactive session content coming soon...

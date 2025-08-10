@@ -1,0 +1,27 @@
+---
+title: "Week 6 Interactive Session: Model Evaluation & Analysis"
+subtitle: "Comprehensive evaluation and representation analysis"
+editor_options: 
+  chunk_output_type: console
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+---
+
+## Course Roadmap Mapping
+
+This week’s work in the broader GFM plan.
+
+| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |
+|------|-------|-------|--------------------------|---------------|---------|
+| 6 | Stage 2: Train Foundation Model | Evaluation & Analysis | `evaluation/visualization.py`; (optional) `evaluation/metrics.py` | `matplotlib`; `torchmetrics` optional | Recon visuals; track validation loss/PSNR |
+
+### Weekly goals
+- Implement reconstruction visualization utilities
+- Add a simple metric (e.g., PSNR) and validation loop hooks
+- Interpret embeddings or reconstructions qualitatively
+
+Interactive session content coming soon...

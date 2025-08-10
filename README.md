@@ -94,6 +94,38 @@ python build_docs.py
 python build_docs.py --serve
 ```
 
+### ✂️ Literate Code Export (Quarto tangle)
+
+You can export code blocks from Quarto pages in `book/` directly into Python modules in the repo during build (similar to nbdev, but with `.qmd`). This is powered by a small Quarto extension at `book/_extensions/tangle/` and enabled in `book/_quarto.yml`.
+
+Basic usage inside a code block:
+
+````
+```{python tangle="../geogfm/models/attention.py" tangle-append="true"}
+def scaled_dot_product(q, k, v):
+    ...
+```
+````
+
+Or with hash‑pipe directives inside the cell:
+
+```python
+#| tangle: ../geogfm/models/attention.py
+#| tangle-append: true
+def scaled_dot_product(q, k, v):
+    ...
+```
+
+- **tangle**: relative output path (from the `.qmd` file location)
+- **tangle-append**: append to the file (default: overwrite on first block)
+- Optional: `tangle-marker` to customize the header comment in the exported file
+
+Recommended pattern for multi-block modules:
+1) First block: `tangle: <path>` (no append) to overwrite/reset
+2) Subsequent blocks: `tangle: <same path>` with `tangle-append: true`
+
+Exports occur whenever Quarto renders the page, so remember to commit updated files in `geogfm/` after builds.
+
 ## 📊 Building Course Datasets
 
 The repository includes a powerful Makefile-based pipeline for creating reproducible satellite datasets from STAC APIs.

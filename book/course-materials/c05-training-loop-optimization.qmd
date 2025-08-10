@@ -1,0 +1,27 @@
+---
+title: "Week 5 Interactive Session: Training Loop Optimization"
+subtitle: "Robust training pipelines with geospatial considerations"
+editor_options: 
+  chunk_output_type: console
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+---
+
+## Course Roadmap Mapping
+
+This week’s work in the broader GFM plan.
+
+| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |
+|------|-------|-------|--------------------------|---------------|---------|
+| 5 | Stage 2: Train Foundation Model | Training Optimization | `training/optimizer.py`; `training/loop.py` | `torch.optim.AdamW`; schedulers, AMP optional | Single-epoch run; basic checkpoint save/restore |
+
+### Weekly goals
+- Build `fit`, `train_step`, `eval_step` with logging
+- Configure AdamW; optionally add LR scheduler/AMP
+- Save and restore a basic checkpoint
+
+Interactive session content coming soon...

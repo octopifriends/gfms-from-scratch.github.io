@@ -1,0 +1,27 @@
+---
+title: "Week 9 Interactive Session: Model Implementation & Deployment"
+subtitle: "Deploying geospatial foundation models for production use"
+editor_options: 
+  chunk_output_type: console
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+---
+
+## Course Roadmap Mapping
+
+This week’s work in the broader GFM plan.
+
+| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |
+|------|-------|-------|--------------------------|---------------|---------|
+| 9 | Stage 3: Apply & Deploy | Deployment & Inference | `inference/{tiling.py, sliding_window.py}` | `numpy`, `rasterio` windows | Sliding-window inference on a small scene |
+
+### Weekly goals
+- Implement sliding-window/tiling inference utilities
+- Stitch predictions; sanity-check outputs
+- Outline API/UI deployment considerations
+
+Interactive session content coming soon...

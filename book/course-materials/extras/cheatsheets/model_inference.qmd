@@ -5,4 +5,753 @@ jupyter: geoai
 format: html
 ---
 
-Cheatsheet content coming soon...
+## Introduction to Model Inference
+
+Model inference and feature extraction are crucial for applying trained models to satellite imagery analysis and extracting meaningful representations.
+
+```{python}
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+import seaborn as sns
+
+print(f"PyTorch version: {torch.__version__}")
+print(f"CUDA available: {torch.cuda.is_available()}")
+```
+
+## Basic Inference Patterns
+
+### Single image inference
+```{python}
+class GeospatialClassifier(nn.Module):
+    """Example geospatial classifier for demonstration"""
+    
+    def __init__(self, num_channels=6, num_classes=10, embed_dim=256):
+        super().__init__()
+        
+        # Feature extraction layers
+        self.conv1 = nn.Conv2d(num_channels, 64, 7, stride=2, padding=3)
+        self.conv2 = nn.Conv2d(64, 128, 3, stride=2, padding=1)
+        self.conv3 = nn.Conv2d(128, 256, 3, stride=2, padding=1)
+        
+        # Global pooling and classification
+        self.global_pool = nn.AdaptiveAvgPool2d(1)
+        self.classifier = nn.Linear(256, num_classes)
+        
+        # Feature embedding layer
+        self.feature_embed = nn.Linear(256, embed_dim)
+        
+    def forward(self, x, return_features=False):
+        # Feature extraction
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        features = F.relu(self.conv3(x))
+        
+        # Global pooling
+        pooled = self.global_pool(features).flatten(1)
+        
+        # Classification
+        logits = self.classifier(pooled)
+        
+        if return_features:
+            embeddings = self.feature_embed(pooled)
+            return {
+                'logits': logits,
+                'features': embeddings,
+                'spatial_features': features,
+                'pooled_features': pooled
+            }
+        
+        return logits
+
+# Create model
+model = GeospatialClassifier(num_channels=6, num_classes=10, embed_dim=256)
+model.eval()
+
+# Single image inference
+sample_image = torch.randn(1, 6, 224, 224)  # Batch of 1, 6 channels
+
+with torch.no_grad():
+    # Basic inference
+    predictions = model(sample_image)
+    
+    # Inference with features
+    outputs = model(sample_image, return_features=True)
+
+print(f"Input shape: {sample_image.shape}")
+print(f"Predictions shape: {predictions.shape}")
+print(f"Logits shape: {outputs['logits'].shape}")
+print(f"Features shape: {outputs['features'].shape}")
+print(f"Spatial features shape: {outputs['spatial_features'].shape}")
+```
+
+### Batch inference
+```{python}
+def batch_inference(model, images, batch_size=32, device='cpu'):
+    """Perform batch inference on multiple images"""
+    
+    model.to(device)
+    model.eval()
+    
+    all_predictions = []
+    all_features = []
+    
+    # Process in batches
+    n_images = len(images)
+    n_batches = (n_images + batch_size - 1) // batch_size
+    
+    with torch.no_grad():
+        for i in range(n_batches):
+            start_idx = i * batch_size
+            end_idx = min(start_idx + batch_size, n_images)
+            
+            batch = images[start_idx:end_idx].to(device)
+            
+            # Get predictions and features
+            outputs = model(batch, return_features=True)
+            
+            all_predictions.append(outputs['logits'].cpu())
+            all_features.append(outputs['features'].cpu())
+            
+            print(f"Processed batch {i+1}/{n_batches}", end='\r')
+    
+    # Concatenate results
+    final_predictions = torch.cat(all_predictions, dim=0)
+    final_features = torch.cat(all_features, dim=0)
+    
+    print(f"\nCompleted inference on {n_images} images")
+    
+    return final_predictions, final_features
+
+# Create sample batch
+batch_images = torch.randn(100, 6, 224, 224)
+
+# Run batch inference
+predictions, features = batch_inference(model, batch_images, batch_size=16)
+
+print(f"Batch predictions shape: {predictions.shape}")
+print(f"Batch features shape: {features.shape}")
+```
+
+## Feature Extraction Techniques
+
+### Layer-wise feature extraction
+```{python}
+class FeatureExtractor:
+    """Extract features from specific layers of a model"""
+    
+    def __init__(self, model, layer_names=None):
+        self.model = model
+        self.model.eval()
+        self.features = {}
+        self.hooks = []
+        
+        if layer_names is None:
+            # Extract from all named modules
+            layer_names = [name for name, _ in model.named_modules() if name]
+        
+        self.register_hooks(layer_names)
+    
+    def register_hooks(self, layer_names):
+        """Register forward hooks for feature extraction"""
+        
+        def make_hook(name):
+            def hook(module, input, output):
+                # Store detached copy to avoid gradient tracking
+                if isinstance(output, torch.Tensor):
+                    self.features[name] = output.detach().cpu()
+                elif isinstance(output, (list, tuple)):
+                    self.features[name] = [o.detach().cpu() if isinstance(o, torch.Tensor) else o for o in output]
+                elif isinstance(output, dict):
+                    self.features[name] = {k: v.detach().cpu() if isinstance(v, torch.Tensor) else v 
+                                         for k, v in output.items()}
+            return hook
+        
+        # Register hooks
+        for name, module in self.model.named_modules():
+            if name in layer_names:
+                handle = module.register_forward_hook(make_hook(name))
+                self.hooks.append(handle)
+                print(f"Registered hook for layer: {name}")
+    
+    def extract(self, images):
+        """Extract features from registered layers"""
+        
+        self.features.clear()
+        
+        with torch.no_grad():
+            # Forward pass triggers hooks
+            _ = self.model(images)
+        
+        return self.features.copy()
+    
+    def remove_hooks(self):
+        """Remove all registered hooks"""
+        for hook in self.hooks:
+            hook.remove()
+        self.hooks.clear()
+
+# Create feature extractor
+extractor = FeatureExtractor(
+    model, 
+    layer_names=['conv1', 'conv2', 'conv3', 'global_pool']
+)
+
+# Extract features
+sample_input = torch.randn(4, 6, 224, 224)
+extracted_features = extractor.extract(sample_input)
+
+print("Extracted features:")
+for layer_name, features in extracted_features.items():
+    if isinstance(features, torch.Tensor):
+        print(f"{layer_name}: {features.shape}")
+    else:
+        print(f"{layer_name}: {type(features)}")
+
+# Clean up
+extractor.remove_hooks()
+```
+
+### Multi-scale feature extraction
+```{python}
+class MultiScaleFeatureExtractor(nn.Module):
+    """Extract features at multiple scales"""
+    
+    def __init__(self, backbone):
+        super().__init__()
+        self.backbone = backbone
+        
+        # Feature pyramid levels
+        self.scales = [1.0, 0.75, 0.5, 0.25]
+        
+    def forward(self, x):
+        batch_size, channels, height, width = x.shape
+        
+        multiscale_features = {}
+        
+        for scale in self.scales:
+            # Resize input
+            if scale != 1.0:
+                new_size = (int(height * scale), int(width * scale))
+                scaled_input = F.interpolate(x, size=new_size, mode='bilinear', align_corners=False)
+            else:
+                scaled_input = x
+            
+            # Extract features
+            with torch.no_grad():
+                outputs = self.backbone(scaled_input, return_features=True)
+                
+            # Store features with scale info
+            scale_key = f"scale_{scale:.2f}"
+            multiscale_features[scale_key] = {
+                'features': outputs['features'],
+                'spatial_features': outputs['spatial_features'],
+                'input_size': scaled_input.shape[-2:]
+            }
+        
+        return multiscale_features
+
+# Create multi-scale extractor
+multiscale_extractor = MultiScaleFeatureExtractor(model)
+multiscale_extractor.eval()
+
+# Extract multi-scale features
+sample_input = torch.randn(2, 6, 224, 224)
+multiscale_features = multiscale_extractor(sample_input)
+
+print("Multi-scale features:")
+for scale, features in multiscale_features.items():
+    print(f"{scale}:")
+    print(f"  Features: {features['features'].shape}")
+    print(f"  Spatial: {features['spatial_features'].shape}")
+    print(f"  Input size: {features['input_size']}")
+```
+
+## Advanced Inference Techniques
+
+### Attention map visualization
+```{python}
+class AttentionExtractor:
+    """Extract and visualize attention maps"""
+    
+    def __init__(self, model):
+        self.model = model
+        self.attention_maps = {}
+        self.hooks = []
+    
+    def register_attention_hooks(self):
+        """Register hooks for attention layers"""
+        
+        def attention_hook(name):
+            def hook(module, input, output):
+                # For attention mechanisms, we typically want the attention weights
+                # This is a simplified example - actual implementation depends on model architecture
+                if hasattr(module, 'attention_weights'):
+                    self.attention_maps[name] = module.attention_weights.detach().cpu()
+                elif isinstance(output, tuple) and len(output) > 1:
+                    # Assume second output contains attention weights
+                    self.attention_maps[name] = output[1].detach().cpu()
+                elif hasattr(output, 'attentions'):
+                    self.attention_maps[name] = output.attentions.detach().cpu()
+            return hook
+        
+        # Look for attention-related modules
+        for name, module in self.model.named_modules():
+            if 'attention' in name.lower() or 'attn' in name.lower():
+                handle = module.register_forward_hook(attention_hook(name))
+                self.hooks.append(handle)
+                print(f"Registered attention hook: {name}")
+    
+    def extract_attention(self, images):
+        """Extract attention maps"""
+        self.attention_maps.clear()
+        
+        with torch.no_grad():
+            _ = self.model(images)
+        
+        return self.attention_maps.copy()
+    
+    def visualize_attention(self, image, attention_map, alpha=0.6):
+        """Visualize attention map overlaid on image"""
+        
+        # Convert image to RGB if needed
+        if image.shape[0] > 3:
+            # Use first 3 channels as RGB
+            rgb_image = image[:3]
+        else:
+            rgb_image = image
+        
+        # Normalize image for display
+        rgb_image = (rgb_image - rgb_image.min()) / (rgb_image.max() - rgb_image.min())
+        rgb_image = rgb_image.permute(1, 2, 0).numpy()
+        
+        # Process attention map
+        if attention_map.dim() > 2:
+            attention_map = attention_map.mean(dim=0)  # Average over heads/channels
+        
+        # Resize attention map to match image size
+        attention_resized = F.interpolate(
+            attention_map.unsqueeze(0).unsqueeze(0),
+            size=rgb_image.shape[:2],
+            mode='bilinear',
+            align_corners=False
+        ).squeeze().numpy()
+        
+        # Create visualization
+        fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+        
+        # Original image
+        axes[0].imshow(rgb_image)
+        axes[0].set_title('Original Image')
+        axes[0].axis('off')
+        
+        # Attention map
+        axes[1].imshow(attention_resized, cmap='hot')
+        axes[1].set_title('Attention Map')
+        axes[1].axis('off')
+        
+        # Overlay
+        axes[2].imshow(rgb_image)
+        axes[2].imshow(attention_resized, alpha=alpha, cmap='hot')
+        axes[2].set_title('Attention Overlay')
+        axes[2].axis('off')
+        
+        plt.tight_layout()
+        plt.show()
+    
+    def remove_hooks(self):
+        """Remove attention hooks"""
+        for hook in self.hooks:
+            hook.remove()
+        self.hooks.clear()
+
+# Create attention extractor (mock example)
+attention_extractor = AttentionExtractor(model)
+# attention_extractor.register_attention_hooks()  # Would need actual attention layers
+
+print("Attention extractor ready (requires model with attention layers)")
+```
+
+### Gradient-based explanations
+```{python}
+class GradCAM:
+    """Gradient-weighted Class Activation Mapping"""
+    
+    def __init__(self, model, target_layer):
+        self.model = model
+        self.target_layer = target_layer
+        self.gradients = None
+        self.activations = None
+        
+        # Register hooks
+        self.register_hooks()
+    
+    def register_hooks(self):
+        """Register hooks for gradients and activations"""
+        
+        def backward_hook(module, grad_input, grad_output):
+            self.gradients = grad_output[0].detach()
+        
+        def forward_hook(module, input, output):
+            self.activations = output.detach()
+        
+        # Find target layer
+        target_module = dict(self.model.named_modules())[self.target_layer]
+        target_module.register_forward_hook(forward_hook)
+        target_module.register_backward_hook(backward_hook)
+    
+    def generate_cam(self, images, class_idx=None):
+        """Generate Class Activation Map"""
+        
+        # Enable gradients
+        images.requires_grad_(True)
+        
+        # Forward pass
+        outputs = self.model(images)
+        
+        # If class_idx not specified, use predicted class
+        if class_idx is None:
+            class_idx = outputs.argmax(dim=1)
+        
+        # Backward pass for target class
+        self.model.zero_grad()
+        class_loss = outputs[0, class_idx[0]] if isinstance(class_idx, torch.Tensor) else outputs[0, class_idx]
+        class_loss.backward()
+        
+        # Compute CAM
+        gradients = self.gradients[0]  # First image in batch
+        activations = self.activations[0]  # First image in batch
+        
+        # Global average pooling of gradients
+        weights = torch.mean(gradients, dim=[1, 2])
+        
+        # Weighted combination of activation maps
+        cam = torch.zeros(activations.shape[1], activations.shape[2])
+        for i, w in enumerate(weights):
+            cam += w * activations[i]
+        
+        # Apply ReLU and normalize
+        cam = F.relu(cam)
+        cam = cam / torch.max(cam) if torch.max(cam) > 0 else cam
+        
+        return cam
+    
+    def visualize_cam(self, image, cam, alpha=0.4):
+        """Visualize CAM overlaid on original image"""
+        
+        # Convert image for display
+        if image.shape[0] > 3:
+            display_image = image[:3]  # Use first 3 channels
+        else:
+            display_image = image
+        
+        display_image = (display_image - display_image.min()) / (display_image.max() - display_image.min())
+        display_image = display_image.permute(1, 2, 0).numpy()
+        
+        # Resize CAM to match image size
+        cam_resized = F.interpolate(
+            cam.unsqueeze(0).unsqueeze(0),
+            size=display_image.shape[:2],
+            mode='bilinear',
+            align_corners=False
+        ).squeeze().numpy()
+        
+        # Create visualization
+        fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+        
+        axes[0].imshow(display_image)
+        axes[0].set_title('Original Image')
+        axes[0].axis('off')
+        
+        axes[1].imshow(cam_resized, cmap='jet')
+        axes[1].set_title('Grad-CAM')
+        axes[1].axis('off')
+        
+        axes[2].imshow(display_image)
+        axes[2].imshow(cam_resized, alpha=alpha, cmap='jet')
+        axes[2].set_title('Grad-CAM Overlay')
+        axes[2].axis('off')
+        
+        plt.tight_layout()
+        plt.show()
+
+# Create GradCAM for conv3 layer
+gradcam = GradCAM(model, target_layer='conv3')
+
+# Generate CAM
+sample_input = torch.randn(1, 6, 224, 224)
+cam = gradcam.generate_cam(sample_input)
+
+print(f"Generated CAM shape: {cam.shape}")
+print(f"CAM range: [{cam.min():.3f}, {cam.max():.3f}]")
+
+# Visualize
+gradcam.visualize_cam(sample_input[0], cam)
+```
+
+## Feature Analysis and Dimensionality Reduction
+
+### PCA analysis of features
+```{python}
+def analyze_features_pca(features, n_components=50, visualize=True):
+    """Analyze features using PCA"""
+    
+    # Flatten features if needed
+    if features.dim() > 2:
+        original_shape = features.shape
+        features_flat = features.view(features.shape[0], -1)
+    else:
+        features_flat = features
+        original_shape = features.shape
+    
+    # Convert to numpy
+    features_np = features_flat.numpy()
+    
+    # Apply PCA
+    pca = PCA(n_components=n_components)
+    features_pca = pca.fit_transform(features_np)
+    
+    # Analyze explained variance
+    explained_var_ratio = pca.explained_variance_ratio_
+    cumulative_var = np.cumsum(explained_var_ratio)
+    
+    if visualize:
+        fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+        
+        # Explained variance
+        axes[0].bar(range(len(explained_var_ratio)), explained_var_ratio)
+        axes[0].set_title('Explained Variance by Component')
+        axes[0].set_xlabel('Principal Component')
+        axes[0].set_ylabel('Explained Variance Ratio')
+        
+        # Cumulative explained variance
+        axes[1].plot(cumulative_var, marker='o')
+        axes[1].set_title('Cumulative Explained Variance')
+        axes[1].set_xlabel('Number of Components')
+        axes[1].set_ylabel('Cumulative Variance Ratio')
+        axes[1].grid(True, alpha=0.3)
+        
+        # First two components
+        axes[2].scatter(features_pca[:, 0], features_pca[:, 1], alpha=0.6)
+        axes[2].set_title('First Two Principal Components')
+        axes[2].set_xlabel('PC1')
+        axes[2].set_ylabel('PC2')
+        
+        plt.tight_layout()
+        plt.show()
+    
+    return {
+        'features_pca': features_pca,
+        'explained_variance_ratio': explained_var_ratio,
+        'cumulative_variance': cumulative_var,
+        'pca_model': pca
+    }
+
+# Generate sample features for analysis
+sample_features = torch.randn(100, 256)  # 100 samples, 256 features
+pca_results = analyze_features_pca(sample_features, n_components=20)
+
+print(f"PCA features shape: {pca_results['features_pca'].shape}")
+print(f"First 5 components explain {pca_results['cumulative_variance'][4]:.1%} of variance")
+```
+
+### t-SNE visualization
+```{python}
+def visualize_features_tsne(features, labels=None, perplexity=30, random_state=42):
+    """Visualize features using t-SNE"""
+    
+    # Flatten features if needed
+    if features.dim() > 2:
+        features_flat = features.view(features.shape[0], -1)
+    else:
+        features_flat = features
+    
+    features_np = features_flat.numpy()
+    
+    # Apply t-SNE
+    print("Computing t-SNE embedding...")
+    tsne = TSNE(n_components=2, perplexity=perplexity, random_state=random_state)
+    features_tsne = tsne.fit_transform(features_np)
+    
+    # Create visualization
+    plt.figure(figsize=(10, 8))
+    
+    if labels is not None:
+        # Color by labels
+        unique_labels = np.unique(labels)
+        colors = plt.cm.tab10(np.linspace(0, 1, len(unique_labels)))
+        
+        for i, label in enumerate(unique_labels):
+            mask = labels == label
+            plt.scatter(features_tsne[mask, 0], features_tsne[mask, 1], 
+                       c=[colors[i]], label=f'Class {label}', alpha=0.6)
+        plt.legend()
+    else:
+        plt.scatter(features_tsne[:, 0], features_tsne[:, 1], alpha=0.6)
+    
+    plt.title('t-SNE Visualization of Features')
+    plt.xlabel('t-SNE 1')
+    plt.ylabel('t-SNE 2')
+    plt.grid(True, alpha=0.3)
+    plt.show()
+    
+    return features_tsne
+
+# Generate sample data with labels
+sample_features = torch.randn(200, 256)
+sample_labels = np.random.randint(0, 5, 200)  # 5 classes
+
+# Visualize with t-SNE
+tsne_features = visualize_features_tsne(sample_features, sample_labels)
+print(f"t-SNE features shape: {tsne_features.shape}")
+```
+
+## Inference Optimization
+
+### Model quantization for faster inference
+```{python}
+def quantize_model(model, calibration_data=None):
+    """Quantize model for faster inference"""
+    
+    # Dynamic quantization (post-training)
+    quantized_model = torch.quantization.quantize_dynamic(
+        model,
+        {nn.Linear, nn.Conv2d},  # Layers to quantize
+        dtype=torch.qint8
+    )
+    
+    print("Applied dynamic quantization")
+    
+    return quantized_model
+
+def compare_inference_speed(original_model, quantized_model, test_input, num_runs=100):
+    """Compare inference speed between models"""
+    
+    import time
+    
+    # Warm up
+    for _ in range(10):
+        with torch.no_grad():
+            _ = original_model(test_input)
+            _ = quantized_model(test_input)
+    
+    # Time original model
+    start_time = time.time()
+    for _ in range(num_runs):
+        with torch.no_grad():
+            _ = original_model(test_input)
+    original_time = time.time() - start_time
+    
+    # Time quantized model
+    start_time = time.time()
+    for _ in range(num_runs):
+        with torch.no_grad():
+            _ = quantized_model(test_input)
+    quantized_time = time.time() - start_time
+    
+    speedup = original_time / quantized_time
+    
+    print(f"Original model: {original_time:.3f}s")
+    print(f"Quantized model: {quantized_time:.3f}s") 
+    print(f"Speedup: {speedup:.2f}x")
+    
+    return speedup
+
+# Create quantized version
+model.eval()  # Important: set to eval mode
+quantized_model = quantize_model(model)
+
+# Compare speeds
+test_input = torch.randn(1, 6, 224, 224)
+speedup = compare_inference_speed(model, quantized_model, test_input, num_runs=50)
+```
+
+### Batch size optimization
+```{python}
+def find_optimal_batch_size(model, input_shape, device='cpu', max_batch_size=128):
+    """Find optimal batch size for memory and speed"""
+    
+    model.to(device)
+    model.eval()
+    
+    batch_sizes = [1, 2, 4, 8, 16, 32, 64]
+    if max_batch_size > 64:
+        batch_sizes.extend([128, 256])
+    
+    batch_sizes = [bs for bs in batch_sizes if bs <= max_batch_size]
+    
+    results = {}
+    
+    for batch_size in batch_sizes:
+        try:
+            # Create test batch
+            test_batch = torch.randn(batch_size, *input_shape[1:]).to(device)
+            
+            # Measure memory and time
+            if device != 'cpu' and torch.cuda.is_available():
+                torch.cuda.reset_peak_memory_stats()
+                start_memory = torch.cuda.memory_allocated()
+            
+            import time
+            start_time = time.time()
+            
+            with torch.no_grad():
+                for _ in range(10):  # Average over multiple runs
+                    outputs = model(test_batch)
+            
+            elapsed_time = time.time() - start_time
+            throughput = (batch_size * 10) / elapsed_time  # samples per second
+            
+            if device != 'cpu' and torch.cuda.is_available():
+                peak_memory = torch.cuda.max_memory_allocated()
+                memory_per_sample = (peak_memory - start_memory) / batch_size
+            else:
+                memory_per_sample = 0
+            
+            results[batch_size] = {
+                'throughput': throughput,
+                'time_per_sample': elapsed_time / (batch_size * 10),
+                'memory_per_sample': memory_per_sample / (1024**2)  # MB
+            }
+            
+            print(f"Batch size {batch_size}: {throughput:.1f} samples/sec, "
+                  f"{memory_per_sample / (1024**2):.1f} MB/sample")
+            
+        except RuntimeError as e:
+            if "out of memory" in str(e):
+                print(f"Batch size {batch_size}: Out of memory")
+                break
+            else:
+                raise e
+    
+    # Find optimal batch size (highest throughput)
+    if results:
+        optimal_batch_size = max(results.keys(), key=lambda k: results[k]['throughput'])
+        print(f"\nOptimal batch size: {optimal_batch_size}")
+        return optimal_batch_size, results
+    
+    return 1, results
+
+# Find optimal batch size
+optimal_bs, batch_results = find_optimal_batch_size(
+    model, 
+    input_shape=(1, 6, 224, 224),
+    device='cpu',
+    max_batch_size=64
+)
+```
+
+## Summary
+
+Key inference and feature extraction techniques:
+- **Basic inference**: Single image and batch processing
+- **Feature extraction**: Layer-wise and multi-scale features  
+- **Attention visualization**: Understanding model focus
+- **Gradient explanations**: Grad-CAM for interpretability
+- **Dimensionality reduction**: PCA and t-SNE analysis
+- **Optimization**: Quantization and batch size tuning
+- **Performance monitoring**: Speed and memory profiling

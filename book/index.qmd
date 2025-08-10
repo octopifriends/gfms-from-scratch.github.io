@@ -6,7 +6,7 @@ title-block-banner: false
 toc: false
 ---
 
-![](images/geoai-banner.png){height=5in fig-align="center" alt="Geospatial AI visualization"}
+![](course-materials/images/geoai-banner.png){height=5in fig-align="center" alt="Geospatial AI visualization"}
 
 
 ::: {.gray-text .center-text}
@@ -96,7 +96,7 @@ Quick links:
 **Instructor**
 :::
 
-![](images/kelly.png){width=45% fig-align="center"}
+![](course-materials/images/kelly.png){width=45% fig-align="center"}
 
 ::: {.center-text}
 [**Kelly Caylor**]{.teal-text}  
@@ -112,7 +112,7 @@ Quick links:
 **TA**
 :::
 
-![](images/anna.png){width=45% fig-align="center"}
+![](course-materials/images/anna.png){width=45% fig-align="center"}
 
 
 ::: {.center-text}

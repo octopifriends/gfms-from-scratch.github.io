@@ -5,4 +5,838 @@ jupyter: geoai
 format: html
 ---
 
-Cheatsheet content coming soon...
+## Introduction to Folium
+
+Folium is a Python library that makes it easy to visualize geospatial data on interactive maps powered by Leaflet.js.
+
+```{python}
+import folium
+import numpy as np
+import pandas as pd
+import json
+from folium import plugins
+import branca.colormap as cm
+
+print(f"Folium version: {folium.__version__}")
+```
+
+## Basic Map Creation
+
+### Simple map
+```{python}
+# Create a basic map centered on a location
+def create_basic_map(location=[39.8283, -98.5795], zoom_start=4):
+    """Create a basic folium map"""
+    
+    # Create map
+    m = folium.Map(
+        location=location,
+        zoom_start=zoom_start,
+        tiles='OpenStreetMap'  # Default tile layer
+    )
+    
+    return m
+
+# Create a map centered on the USA
+usa_map = create_basic_map([39.8283, -98.5795], zoom_start=4)
+print("Basic USA map created")
+
+# To display in Jupyter notebooks:
+# usa_map
+```
+
+### Different tile layers
+```{python}
+def compare_tile_layers():
+    """Create maps with different tile layers"""
+    
+    # Available tile options
+    tile_options = [
+        'OpenStreetMap',
+        'Stamen Terrain', 
+        'Stamen Toner',
+        'Stamen Watercolor',
+        'CartoDB positron',
+        'CartoDB dark_matter'
+    ]
+    
+    location = [37.7749, -122.4194]  # San Francisco
+    
+    maps = {}
+    for tile in tile_options:
+        try:
+            m = folium.Map(
+                location=location,
+                zoom_start=12,
+                tiles=tile
+            )
+            maps[tile] = m
+            print(f"Created map with {tile} tiles")
+        except Exception as e:
+            print(f"Error with {tile}: {e}")
+    
+    return maps
+
+# Create maps with different tile layers
+tile_maps = compare_tile_layers()
+```
+
+## Adding Markers and Popups
+
+### Basic markers
+```{python}
+def add_markers_to_map():
+    """Add various markers to a map"""
+    
+    # Create base map
+    m = folium.Map(location=[37.7749, -122.4194], zoom_start=12)
+    
+    # Sample locations in San Francisco
+    locations = [
+        {"name": "Golden Gate Bridge", "coords": [37.8199, -122.4783], "color": "red"},
+        {"name": "Alcatraz Island", "coords": [37.8270, -122.4230], "color": "blue"},
+        {"name": "Fisherman's Wharf", "coords": [37.8080, -122.4177], "color": "green"},
+        {"name": "Lombard Street", "coords": [37.8021, -122.4187], "color": "orange"},
+        {"name": "Coit Tower", "coords": [37.8024, -122.4058], "color": "purple"}
+    ]
+    
+    # Add markers
+    for location in locations:
+        folium.Marker(
+            location=location["coords"],
+            popup=folium.Popup(
+                f"<b>{location['name']}</b><br>Coordinates: {location['coords']}",
+                max_width=200
+            ),
+            tooltip=location["name"],
+            icon=folium.Icon(color=location["color"], icon='info-sign')
+        ).add_to(m)
+    
+    return m
+
+# Create map with markers
+marker_map = add_markers_to_map()
+print("Map with markers created")
+```
+
+### Custom markers and icons
+```{python}
+def add_custom_markers():
+    """Add custom markers with different styles"""
+    
+    m = folium.Map(location=[37.7749, -122.4194], zoom_start=11)
+    
+    # Circle markers
+    folium.CircleMarker(
+        location=[37.7849, -122.4094],
+        radius=20,
+        popup="Circle Marker",
+        color="red",
+        fill=True,
+        fillColor="red",
+        fillOpacity=0.6
+    ).add_to(m)
+    
+    # Custom HTML icon
+    html_icon = """
+    <div style="font-size: 20px; color: blue;">
+        <i class="fa fa-star"></i>
+    </div>
+    """
+    
+    folium.Marker(
+        location=[37.7649, -122.4394],
+        popup="Custom HTML Icon",
+        icon=folium.DivIcon(html=html_icon)
+    ).add_to(m)
+    
+    # Regular marker with custom icon
+    folium.Marker(
+        location=[37.7949, -122.3994],
+        popup="Custom Pin Icon",
+        icon=folium.Icon(
+            color='darkgreen',
+            icon='leaf',
+            prefix='fa'  # Font Awesome icons
+        )
+    ).add_to(m)
+    
+    return m
+
+custom_marker_map = add_custom_markers()
+print("Map with custom markers created")
+```
+
+## Visualizing Geospatial Data
+
+### Point data visualization
+```{python}
+def create_sample_point_data():
+    """Create sample point data for visualization"""
+    
+    np.random.seed(42)
+    n_points = 100
+    
+    # Generate random points around San Francisco Bay Area
+    center_lat, center_lon = 37.7749, -122.4194
+    
+    # Add some random scatter
+    lats = np.random.normal(center_lat, 0.1, n_points)
+    lons = np.random.normal(center_lon, 0.1, n_points)
+    
+    # Generate sample attributes
+    values = np.random.exponential(scale=50, size=n_points)
+    categories = np.random.choice(['A', 'B', 'C', 'D'], n_points)
+    
+    df = pd.DataFrame({
+        'latitude': lats,
+        'longitude': lons,
+        'value': values,
+        'category': categories
+    })
+    
+    return df
+
+def visualize_point_data(df):
+    """Visualize point data with different styles"""
+    
+    m = folium.Map(
+        location=[df['latitude'].mean(), df['longitude'].mean()],
+        zoom_start=10
+    )
+    
+    # Define colors for categories
+    color_map = {'A': 'red', 'B': 'blue', 'C': 'green', 'D': 'orange'}
+    
+    # Add points with different sizes based on values
+    for idx, row in df.iterrows():
+        folium.CircleMarker(
+            location=[row['latitude'], row['longitude']],
+            radius=np.sqrt(row['value']) / 2,  # Scale radius by value
+            popup=f"Category: {row['category']}<br>Value: {row['value']:.2f}",
+            color=color_map[row['category']],
+            fill=True,
+            fillColor=color_map[row['category']],
+            fillOpacity=0.7,
+            weight=2
+        ).add_to(m)
+    
+    # Add legend
+    legend_html = '''
+    <div style="position: fixed; 
+                bottom: 50px; left: 50px; width: 150px; height: 90px; 
+                background-color: white; border:2px solid grey; z-index:9999; 
+                font-size:14px; padding: 10px">
+    <b>Categories</b><br>
+    <i class="fa fa-circle" style="color:red"></i> Category A<br>
+    <i class="fa fa-circle" style="color:blue"></i> Category B<br>
+    <i class="fa fa-circle" style="color:green"></i> Category C<br>
+    <i class="fa fa-circle" style="color:orange"></i> Category D
+    </div>
+    '''
+    m.get_root().html.add_child(folium.Element(legend_html))
+    
+    return m
+
+# Create and visualize sample point data
+sample_df = create_sample_point_data()
+point_map = visualize_point_data(sample_df)
+print(f"Point data map created with {len(sample_df)} points")
+```
+
+### Heat maps
+```{python}
+def create_heatmap(df):
+    """Create a heat map from point data"""
+    
+    m = folium.Map(
+        location=[df['latitude'].mean(), df['longitude'].mean()],
+        zoom_start=10
+    )
+    
+    # Prepare data for heatmap (lat, lon, weight)
+    heat_data = [[row['latitude'], row['longitude'], row['value']] 
+                 for idx, row in df.iterrows()]
+    
+    # Add heatmap layer
+    plugins.HeatMap(
+        heat_data,
+        radius=20,
+        blur=15,
+        max_zoom=1,
+        gradient={
+            0.4: 'blue',
+            0.6: 'cyan',
+            0.7: 'lime',
+            0.8: 'yellow',
+            1.0: 'red'
+        }
+    ).add_to(m)
+    
+    return m
+
+# Create heatmap
+heatmap = create_heatmap(sample_df)
+print("Heatmap created")
+```
+
+## Working with Geospatial Vector Data
+
+### Polygons and shapes
+```{python}
+def create_sample_polygons():
+    """Create sample polygon data"""
+    
+    # Sample polygon coordinates (San Francisco neighborhoods)
+    polygons = {
+        "Mission District": [
+            [37.7749, -122.4194],
+            [37.7849, -122.4094],
+            [37.7949, -122.4194],
+            [37.7849, -122.4294],
+            [37.7749, -122.4194]
+        ],
+        "SOMA": [
+            [37.7649, -122.3994],
+            [37.7749, -122.3894],
+            [37.7849, -122.3994],
+            [37.7749, -122.4094],
+            [37.7649, -122.3994]
+        ],
+        "Castro": [
+            [37.7549, -122.4394],
+            [37.7649, -122.4294],
+            [37.7749, -122.4394],
+            [37.7649, -122.4494],
+            [37.7549, -122.4394]
+        ]
+    }
+    
+    # Add some attributes
+    attributes = {
+        "Mission District": {"population": 45000, "area": 2.5},
+        "SOMA": {"population": 35000, "area": 1.8},
+        "Castro": {"population": 25000, "area": 1.2}
+    }
+    
+    return polygons, attributes
+
+def visualize_polygons():
+    """Visualize polygons with styling"""
+    
+    polygons, attributes = create_sample_polygons()
+    
+    m = folium.Map(location=[37.7649, -122.4194], zoom_start=12)
+    
+    # Color map for population
+    colors = ['lightblue', 'yellow', 'orange']
+    
+    for i, (name, coords) in enumerate(polygons.items()):
+        attr = attributes[name]
+        
+        folium.Polygon(
+            locations=coords,
+            popup=f"<b>{name}</b><br>Population: {attr['population']:,}<br>Area: {attr['area']} km²",
+            tooltip=name,
+            color='black',
+            weight=2,
+            fillColor=colors[i],
+            fillOpacity=0.6
+        ).add_to(m)
+    
+    return m
+
+polygon_map = visualize_polygons()
+print("Polygon map created")
+```
+
+### GeoJSON data
+```{python}
+def create_sample_geojson():
+    """Create sample GeoJSON data"""
+    
+    geojson_data = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {
+                    "name": "Area 1",
+                    "value": 75,
+                    "density": 25.3
+                },
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[
+                        [-122.4494, 37.7549],
+                        [-122.4394, 37.7549],
+                        [-122.4394, 37.7649],
+                        [-122.4494, 37.7649],
+                        [-122.4494, 37.7549]
+                    ]]
+                }
+            },
+            {
+                "type": "Feature", 
+                "properties": {
+                    "name": "Area 2",
+                    "value": 45,
+                    "density": 18.7
+                },
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[
+                        [-122.4294, 37.7649],
+                        [-122.4194, 37.7649],
+                        [-122.4194, 37.7749],
+                        [-122.4294, 37.7749],
+                        [-122.4294, 37.7649]
+                    ]]
+                }
+            },
+            {
+                "type": "Feature",
+                "properties": {
+                    "name": "Area 3", 
+                    "value": 90,
+                    "density": 32.1
+                },
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[
+                        [-122.4094, 37.7749],
+                        [-122.3994, 37.7749],
+                        [-122.3994, 37.7849],
+                        [-122.4094, 37.7849],
+                        [-122.4094, 37.7749]
+                    ]]
+                }
+            }
+        ]
+    }
+    
+    return geojson_data
+
+def visualize_geojson_with_choropleth():
+    """Visualize GeoJSON data with choropleth coloring"""
+    
+    geojson_data = create_sample_geojson()
+    
+    m = folium.Map(location=[37.7699, -122.4294], zoom_start=13)
+    
+    # Create choropleth map
+    folium.Choropleth(
+        geo_data=geojson_data,
+        data=pd.DataFrame([f['properties'] for f in geojson_data['features']]),
+        columns=['name', 'value'],
+        key_on='feature.properties.name',
+        fill_color='YlOrRd',
+        fill_opacity=0.7,
+        line_opacity=0.2,
+        legend_name='Value Scale'
+    ).add_to(m)
+    
+    # Add feature labels
+    for feature in geojson_data['features']:
+        props = feature['properties']
+        coords = feature['geometry']['coordinates'][0]
+        
+        # Calculate centroid
+        center_lat = sum([coord[1] for coord in coords]) / len(coords)
+        center_lon = sum([coord[0] for coord in coords]) / len(coords)
+        
+        folium.Marker(
+            location=[center_lat, center_lon],
+            popup=f"<b>{props['name']}</b><br>Value: {props['value']}<br>Density: {props['density']}",
+            icon=folium.DivIcon(
+                html=f'<div style="font-size: 12px; color: black; font-weight: bold;">{props["name"]}</div>',
+                class_name='custom-div-icon'
+            )
+        ).add_to(m)
+    
+    return m
+
+choropleth_map = visualize_geojson_with_choropleth()
+print("Choropleth map created")
+```
+
+## Advanced Features and Plugins
+
+### Layer control
+```{python}
+def create_layered_map():
+    """Create map with multiple layers and layer control"""
+    
+    m = folium.Map(location=[37.7749, -122.4194], zoom_start=11)
+    
+    # Base layers
+    folium.TileLayer(
+        tiles='Stamen Terrain',
+        name='Terrain',
+        attr='Stamen'
+    ).add_to(m)
+    
+    folium.TileLayer(
+        tiles='CartoDB positron',
+        name='Light',
+        attr='CartoDB'
+    ).add_to(m)
+    
+    # Feature groups for organization
+    markers_group = folium.FeatureGroup(name='Markers')
+    heatmap_group = folium.FeatureGroup(name='Heatmap')
+    polygons_group = folium.FeatureGroup(name='Polygons')
+    
+    # Add markers to group
+    locations = [
+        {"name": "Point 1", "coords": [37.7749, -122.4194]},
+        {"name": "Point 2", "coords": [37.7849, -122.4094]},
+        {"name": "Point 3", "coords": [37.7649, -122.4294]}
+    ]
+    
+    for loc in locations:
+        folium.Marker(
+            location=loc["coords"],
+            popup=loc["name"],
+            tooltip=loc["name"]
+        ).add_to(markers_group)
+    
+    # Add heatmap to group
+    heat_data = [[37.7749 + np.random.normal(0, 0.01), 
+                  -122.4194 + np.random.normal(0, 0.01)] for _ in range(50)]
+    
+    plugins.HeatMap(heat_data).add_to(heatmap_group)
+    
+    # Add polygon to group
+    folium.Polygon(
+        locations=[
+            [37.7649, -122.4394],
+            [37.7849, -122.4394],
+            [37.7849, -122.4094],
+            [37.7649, -122.4094]
+        ],
+        popup="Sample Polygon",
+        color='blue',
+        fillOpacity=0.3
+    ).add_to(polygons_group)
+    
+    # Add all groups to map
+    markers_group.add_to(m)
+    heatmap_group.add_to(m)
+    polygons_group.add_to(m)
+    
+    # Add layer control
+    folium.LayerControl().add_to(m)
+    
+    return m
+
+layered_map = create_layered_map()
+print("Layered map with controls created")
+```
+
+### Interactive plugins
+```{python}
+def add_interactive_plugins():
+    """Add various interactive plugins to map"""
+    
+    m = folium.Map(location=[37.7749, -122.4194], zoom_start=11)
+    
+    # Add fullscreen button
+    plugins.Fullscreen().add_to(m)
+    
+    # Add measure control
+    plugins.MeasureControl().add_to(m)
+    
+    # Add mouse position display
+    plugins.MousePosition().add_to(m)
+    
+    # Add minimap
+    minimap = plugins.MiniMap(toggle_display=True)
+    m.add_child(minimap)
+    
+    # Add search functionality (requires search plugin)
+    # plugins.Search().add_to(m)  # Uncomment if needed
+    
+    # Add drawing tools
+    draw = plugins.Draw(
+        export=True,
+        filename='drawing.geojson',
+        position='topleft',
+        draw_options={
+            'polyline': True,
+            'polygon': True,
+            'circle': False,
+            'rectangle': True,
+            'marker': True,
+            'circlemarker': False,
+        }
+    )
+    m.add_child(draw)
+    
+    return m
+
+interactive_map = add_interactive_plugins()
+print("Interactive map with plugins created")
+```
+
+### Clustering markers
+```{python}
+def create_marker_cluster_map():
+    """Create map with marker clustering"""
+    
+    # Generate many random points
+    np.random.seed(42)
+    n_points = 200
+    
+    center_lat, center_lon = 37.7749, -122.4194
+    lats = np.random.normal(center_lat, 0.05, n_points)
+    lons = np.random.normal(center_lon, 0.05, n_points)
+    
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=11)
+    
+    # Create marker cluster
+    marker_cluster = plugins.MarkerCluster().add_to(m)
+    
+    # Add markers to cluster
+    for i, (lat, lon) in enumerate(zip(lats, lons)):
+        folium.Marker(
+            location=[lat, lon],
+            popup=f"Marker {i+1}",
+            tooltip=f"Point {i+1}"
+        ).add_to(marker_cluster)
+    
+    return m
+
+cluster_map = create_marker_cluster_map()
+print(f"Marker cluster map created")
+```
+
+## Styling and Customization
+
+### Custom styling
+```{python}
+def create_styled_map():
+    """Create map with custom styling"""
+    
+    m = folium.Map(
+        location=[37.7749, -122.4194],
+        zoom_start=12,
+        tiles='CartoDB positron'
+    )
+    
+    # Custom CSS styling
+    custom_css = """
+    <style>
+    .custom-popup {
+        background-color: #f0f0f0;
+        border: 2px solid #333;
+        border-radius: 10px;
+        padding: 10px;
+        font-family: Arial, sans-serif;
+    }
+    
+    .custom-tooltip {
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px;
+        font-size: 12px;
+    }
+    </style>
+    """
+    
+    m.get_root().html.add_child(folium.Element(custom_css))
+    
+    # Styled markers
+    folium.Marker(
+        location=[37.7749, -122.4194],
+        popup=folium.Popup(
+            '<div class="custom-popup"><b>Custom Styled Popup</b><br>This has custom CSS styling!</div>',
+            max_width=200
+        ),
+        tooltip='Custom styled tooltip',
+        icon=folium.Icon(color='red', icon='star', prefix='fa')
+    ).add_to(m)
+    
+    # Custom polygon with advanced styling
+    folium.Polygon(
+        locations=[
+            [37.7849, -122.4294],
+            [37.7949, -122.4194],
+            [37.7849, -122.4094],
+            [37.7749, -122.4194]
+        ],
+        popup="Custom Styled Polygon",
+        color='#FF6B6B',
+        weight=4,
+        fillColor='#4ECDC4',
+        fillOpacity=0.7,
+        dashArray='10,5'  # Dashed line pattern
+    ).add_to(m)
+    
+    return m
+
+styled_map = create_styled_map()
+print("Styled map created")
+```
+
+### Custom colormap
+```{python}
+def create_custom_colormap_visualization():
+    """Create visualization with custom colormap"""
+    
+    # Sample data
+    data = pd.DataFrame({
+        'name': ['Area A', 'Area B', 'Area C', 'Area D', 'Area E'],
+        'value': [23, 67, 45, 89, 12],
+        'lat': [37.7749, 37.7849, 37.7649, 37.7949, 37.7549],
+        'lon': [-122.4194, -122.4094, -122.4294, -122.4094, -122.4394]
+    })
+    
+    m = folium.Map(location=[37.7749, -122.4194], zoom_start=12)
+    
+    # Create custom colormap
+    colormap = cm.LinearColormap(
+        colors=['blue', 'cyan', 'yellow', 'orange', 'red'],
+        vmin=data['value'].min(),
+        vmax=data['value'].max(),
+        caption='Value Scale'
+    )
+    
+    # Add colored circle markers
+    for idx, row in data.iterrows():
+        color = colormap(row['value'])
+        
+        folium.CircleMarker(
+            location=[row['lat'], row['lon']],
+            radius=15,
+            popup=f"<b>{row['name']}</b><br>Value: {row['value']}",
+            tooltip=f"{row['name']}: {row['value']}",
+            color='white',
+            weight=2,
+            fillColor=color,
+            fillOpacity=0.8
+        ).add_to(m)
+    
+    # Add colormap to map
+    colormap.add_to(m)
+    
+    return m
+
+colormap_visualization = create_custom_colormap_visualization()
+print("Custom colormap visualization created")
+```
+
+## Export and Integration
+
+### Saving maps
+```{python}
+def save_map_examples():
+    """Examples of saving maps to different formats"""
+    
+    # Create a simple map
+    m = folium.Map(location=[37.7749, -122.4194], zoom_start=11)
+    
+    folium.Marker(
+        location=[37.7749, -122.4194],
+        popup="San Francisco",
+        tooltip="Click me!"
+    ).add_to(m)
+    
+    # Save as HTML
+    m.save('sample_map.html')
+    print("Map saved as HTML file")
+    
+    # Get HTML representation
+    html_string = m._repr_html_()
+    print("HTML representation obtained")
+    
+    # Save with custom template (if needed)
+    # Custom template would allow for more control over the output
+    
+    return m
+
+# Save examples
+saved_map = save_map_examples()
+```
+
+### Integration tips
+```{python}
+def integration_examples():
+    """Examples of integrating folium maps with other tools"""
+    
+    # Example: Convert map bounds to other formats
+    m = folium.Map(location=[37.7749, -122.4194], zoom_start=11)
+    
+    # Get map bounds (useful for other geospatial operations)
+    bounds = m.get_bounds()
+    print(f"Map bounds: {bounds}")
+    
+    # Example: Adding data from different sources
+    # This would typically involve:
+    # 1. Loading data from CSV, GeoJSON, or database
+    # 2. Processing coordinates and attributes
+    # 3. Adding to map with appropriate styling
+    
+    print("Integration examples demonstrated")
+    
+    return m
+
+integration_map = integration_examples()
+```
+
+## Best Practices and Performance
+
+### Performance optimization
+```{python}
+def performance_tips():
+    """Examples of performance optimization techniques"""
+    
+    # For large datasets, consider:
+    
+    # 1. Use MarkerCluster for many points
+    print("Tip 1: Use MarkerCluster for > 100 markers")
+    
+    # 2. Limit data based on zoom level
+    print("Tip 2: Filter data based on current zoom level")
+    
+    # 3. Use server-side rendering for very large datasets
+    print("Tip 3: Consider server-side rendering for huge datasets")
+    
+    # 4. Optimize GeoJSON file sizes
+    print("Tip 4: Simplify geometries for web display")
+    
+    # 5. Use appropriate tile layers
+    print("Tip 5: Choose efficient tile layers")
+    
+    # Example: Conditional loading based on zoom
+    def add_markers_by_zoom(m, data, min_zoom=10):
+        """Add markers only when zoomed in enough"""
+        
+        # This would be implemented with JavaScript callbacks
+        # in a real application
+        
+        if m.zoom >= min_zoom:
+            # Add detailed markers
+            pass
+        else:
+            # Add simplified markers or clusters
+            pass
+    
+    print("Performance optimization tips provided")
+
+performance_tips()
+```
+
+## Summary
+
+Key Folium capabilities:
+- **Basic maps**: Different tile layers and zoom controls
+- **Markers**: Points, custom icons, popups, and tooltips  
+- **Data visualization**: Points, polygons, heat maps, choropleth
+- **GeoJSON support**: Vector data visualization
+- **Interactive features**: Layer control, plugins, drawing tools
+- **Clustering**: Marker clustering for large datasets
+- **Styling**: Custom CSS, colormaps, and advanced styling
+- **Export**: HTML output and integration options

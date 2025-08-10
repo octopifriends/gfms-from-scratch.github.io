@@ -5,4 +5,935 @@ jupyter: geoai
 format: html
 ---
 
-Cheatsheet content coming soon...
+## Introduction to Geospatial Plotting
+
+Matplotlib provides powerful tools for visualizing geospatial data, including satellite imagery, raster data, and cartographic projections.
+
+```{python}
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+from matplotlib.colors import LinearSegmentedColormap, Normalize, LogNorm
+from matplotlib.patches import Rectangle
+from matplotlib.collections import PatchCollection
+import numpy as np
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+import rasterio
+from rasterio.plot import show as rasterio_show
+import matplotlib.gridspec as gridspec
+
+print(f"Matplotlib version: {plt.matplotlib.__version__}")
+print(f"Cartopy available: {'✓' if 'cartopy' in globals() else '✗'}")
+```
+
+## Basic Satellite Imagery Visualization
+
+### Single band plotting
+```{python}
+def create_sample_satellite_data():
+    """Generate sample multi-band satellite data"""
+    
+    # Create synthetic satellite data
+    np.random.seed(42)
+    height, width = 512, 512
+    
+    # Simulate different spectral bands
+    bands = {
+        'red': np.random.beta(2, 5, (height, width)) * 0.8,
+        'green': np.random.beta(3, 4, (height, width)) * 0.7, 
+        'blue': np.random.beta(4, 3, (height, width)) * 0.6,
+        'nir': np.random.beta(1.5, 3, (height, width)) * 0.9,
+        'swir1': np.random.beta(2, 6, (height, width)) * 0.5,
+        'swir2': np.random.beta(1, 4, (height, width)) * 0.4
+    }
+    
+    # Add some spatial structure (simulate land features)
+    y, x = np.ogrid[:height, :width]
+    center_y, center_x = height // 2, width // 2
+    
+    # Add circular feature (lake/urban area)
+    lake_mask = (x - center_x)**2 + (y - center_y)**2 < (height // 4)**2
+    bands['blue'][lake_mask] *= 1.5
+    bands['green'][lake_mask] *= 0.7
+    bands['red'][lake_mask] *= 0.5
+    
+    # Add linear features (rivers/roads)
+    river_mask = np.abs(y - center_y - 0.3 * (x - center_x)) < 10
+    bands['blue'][river_mask] *= 1.3
+    bands['green'][river_mask] *= 0.8
+    
+    return bands
+
+def plot_single_band(band_data, band_name, cmap='viridis', figsize=(8, 6)):
+    """Plot a single spectral band"""
+    
+    fig, ax = plt.subplots(figsize=figsize)
+    
+    # Display the band
+    im = ax.imshow(band_data, cmap=cmap, aspect='equal')
+    
+    # Add colorbar
+    cbar = plt.colorbar(im, ax=ax, shrink=0.8)
+    cbar.set_label(f'{band_name.upper()} Reflectance', fontsize=12)
+    
+    # Styling
+    ax.set_title(f'{band_name.upper()} Band', fontsize=14, fontweight='bold')
+    ax.set_xlabel('Pixel X', fontsize=12)
+    ax.set_ylabel('Pixel Y', fontsize=12)
+    
+    # Remove tick labels for cleaner look
+    ax.tick_params(labelbottom=False, labelleft=False)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    return fig, ax
+
+# Generate sample data
+bands = create_sample_satellite_data()
+
+# Plot individual bands
+plot_single_band(bands['red'], 'Red', cmap='Reds')
+plot_single_band(bands['nir'], 'NIR', cmap='RdYlGn')
+plot_single_band(bands['swir1'], 'SWIR1', cmap='YlOrBr')
+```
+
+### Multi-band comparison
+```{python}
+def plot_band_comparison(bands, band_names, ncols=3, figsize=(15, 10)):
+    """Plot multiple bands for comparison"""
+    
+    nrows = len(band_names) // ncols + (1 if len(band_names) % ncols else 0)
+    
+    fig, axes = plt.subplots(nrows, ncols, figsize=figsize)
+    if nrows == 1 and ncols == 1:
+        axes = [axes]
+    elif nrows == 1 or ncols == 1:
+        axes = axes.flatten()
+    else:
+        axes = axes.flatten()
+    
+    # Color maps for different bands
+    cmaps = {
+        'red': 'Reds', 'green': 'Greens', 'blue': 'Blues',
+        'nir': 'RdYlGn', 'swir1': 'YlOrBr', 'swir2': 'copper'
+    }
+    
+    for i, band_name in enumerate(band_names):
+        ax = axes[i]
+        band_data = bands[band_name]
+        cmap = cmaps.get(band_name, 'viridis')
+        
+        im = ax.imshow(band_data, cmap=cmap, aspect='equal')
+        
+        # Add colorbar for each subplot
+        cbar = plt.colorbar(im, ax=ax, shrink=0.8)
+        cbar.set_label('Reflectance', fontsize=10)
+        
+        ax.set_title(f'{band_name.upper()}', fontsize=12, fontweight='bold')
+        ax.tick_params(labelbottom=False, labelleft=False)
+    
+    # Hide unused subplots
+    for i in range(len(band_names), len(axes)):
+        axes[i].set_visible(False)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    return fig, axes
+
+# Plot all bands
+band_names = ['red', 'green', 'blue', 'nir', 'swir1', 'swir2']
+plot_band_comparison(bands, band_names, ncols=3)
+```
+
+## RGB and False Color Composites
+
+### RGB composite
+```{python}
+def create_rgb_composite(red, green, blue, enhance=True, gamma=1.0):
+    """Create RGB composite from individual bands"""
+    
+    # Stack bands
+    rgb = np.stack([red, green, blue], axis=-1)
+    
+    if enhance:
+        # Contrast stretching
+        for i in range(3):
+            band = rgb[:, :, i]
+            p2, p98 = np.percentile(band, (2, 98))
+            rgb[:, :, i] = np.clip((band - p2) / (p98 - p2), 0, 1)
+    
+    # Gamma correction
+    if gamma != 1.0:
+        rgb = np.power(rgb, gamma)
+    
+    return np.clip(rgb, 0, 1)
+
+def plot_rgb_composite(rgb_data, title='RGB Composite', figsize=(10, 8)):
+    """Plot RGB composite"""
+    
+    fig, ax = plt.subplots(figsize=figsize)
+    
+    ax.imshow(rgb_data, aspect='equal')
+    ax.set_title(title, fontsize=14, fontweight='bold')
+    ax.tick_params(labelbottom=False, labelleft=False)
+    
+    # Add scale bar (approximate)
+    scale_bar = Rectangle((rgb_data.shape[1] - 100, rgb_data.shape[0] - 30), 
+                         80, 10, facecolor='white', edgecolor='black')
+    ax.add_patch(scale_bar)
+    ax.text(rgb_data.shape[1] - 60, rgb_data.shape[0] - 45, '1 km', 
+            ha='center', va='top', fontsize=10, fontweight='bold')
+    
+    plt.tight_layout()
+    plt.show()
+    
+    return fig, ax
+
+# Create RGB composite
+rgb_composite = create_rgb_composite(bands['red'], bands['green'], bands['blue'])
+plot_rgb_composite(rgb_composite, 'True Color RGB')
+
+# Create false color composite (NIR-Red-Green)
+false_color = create_rgb_composite(bands['nir'], bands['red'], bands['green'])
+plot_rgb_composite(false_color, 'False Color (NIR-Red-Green)')
+```
+
+### Multiple composite comparison
+```{python}
+def plot_composite_comparison(bands, composite_configs, figsize=(15, 10)):
+    """Plot multiple composite configurations"""
+    
+    n_composites = len(composite_configs)
+    ncols = 2
+    nrows = n_composites // ncols + (1 if n_composites % ncols else 0)
+    
+    fig, axes = plt.subplots(nrows, ncols, figsize=figsize)
+    if nrows == 1:
+        axes = axes.reshape(1, -1)
+    
+    for i, (name, config) in enumerate(composite_configs.items()):
+        row, col = i // ncols, i % ncols
+        ax = axes[row, col]
+        
+        # Create composite
+        r_band = bands[config['red']]
+        g_band = bands[config['green']]  
+        b_band = bands[config['blue']]
+        
+        composite = create_rgb_composite(r_band, g_band, b_band, enhance=True)
+        
+        ax.imshow(composite, aspect='equal')
+        ax.set_title(f'{name}\n({config["red"]}-{config["green"]}-{config["blue"]})', 
+                    fontsize=12, fontweight='bold')
+        ax.tick_params(labelbottom=False, labelleft=False)
+    
+    # Hide unused subplots
+    for i in range(n_composites, nrows * ncols):
+        row, col = i // ncols, i % ncols
+        axes[row, col].set_visible(False)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    return fig, axes
+
+# Define different composite configurations
+composite_configs = {
+    'True Color': {'red': 'red', 'green': 'green', 'blue': 'blue'},
+    'False Color': {'red': 'nir', 'green': 'red', 'blue': 'green'},
+    'Agriculture': {'red': 'swir1', 'green': 'nir', 'blue': 'red'},
+    'Urban': {'red': 'swir2', 'green': 'swir1', 'blue': 'red'}
+}
+
+plot_composite_comparison(bands, composite_configs)
+```
+
+## Advanced Visualization Techniques
+
+### Spectral indices calculation and plotting
+```{python}
+def calculate_ndvi(nir, red):
+    """Calculate Normalized Difference Vegetation Index"""
+    return (nir - red) / (nir + red + 1e-8)  # Add small value to avoid division by zero
+
+def calculate_ndwi(green, nir):
+    """Calculate Normalized Difference Water Index"""
+    return (green - nir) / (green + nir + 1e-8)
+
+def calculate_nbr(nir, swir2):
+    """Calculate Normalized Burn Ratio"""
+    return (nir - swir2) / (nir + swir2 + 1e-8)
+
+def plot_spectral_indices(bands, figsize=(15, 5)):
+    """Plot common spectral indices"""
+    
+    # Calculate indices
+    ndvi = calculate_ndvi(bands['nir'], bands['red'])
+    ndwi = calculate_ndwi(bands['green'], bands['nir']) 
+    nbr = calculate_nbr(bands['nir'], bands['swir2'])
+    
+    # Create subplots
+    fig, axes = plt.subplots(1, 3, figsize=figsize)
+    
+    # NDVI plot
+    im1 = axes[0].imshow(ndvi, cmap='RdYlGn', vmin=-1, vmax=1, aspect='equal')
+    axes[0].set_title('NDVI\n(Vegetation Index)', fontsize=12, fontweight='bold')
+    axes[0].tick_params(labelbottom=False, labelleft=False)
+    cbar1 = plt.colorbar(im1, ax=axes[0], shrink=0.8)
+    cbar1.set_label('NDVI', fontsize=10)
+    
+    # NDWI plot
+    im2 = axes[1].imshow(ndwi, cmap='Blues', vmin=-1, vmax=1, aspect='equal')
+    axes[1].set_title('NDWI\n(Water Index)', fontsize=12, fontweight='bold')
+    axes[1].tick_params(labelbottom=False, labelleft=False)
+    cbar2 = plt.colorbar(im2, ax=axes[1], shrink=0.8)
+    cbar2.set_label('NDWI', fontsize=10)
+    
+    # NBR plot
+    im3 = axes[2].imshow(nbr, cmap='RdYlBu_r', vmin=-1, vmax=1, aspect='equal')
+    axes[2].set_title('NBR\n(Burn Ratio)', fontsize=12, fontweight='bold')
+    axes[2].tick_params(labelbottom=False, labelleft=False)
+    cbar3 = plt.colorbar(im3, ax=axes[2], shrink=0.8)
+    cbar3.set_label('NBR', fontsize=10)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    return {'ndvi': ndvi, 'ndwi': ndwi, 'nbr': nbr}
+
+# Plot spectral indices
+indices = plot_spectral_indices(bands)
+```
+
+### Thematic classification visualization
+```{python}
+def create_landcover_classification(indices, rgb_composite):
+    """Create simple land cover classification"""
+    
+    height, width = indices['ndvi'].shape
+    landcover = np.zeros((height, width), dtype=np.uint8)
+    
+    # Classification rules (simplified)
+    # 1 = Water, 2 = Vegetation, 3 = Urban/Built-up, 4 = Bare soil
+    
+    # Water (high NDWI, low NDVI)
+    water_mask = (indices['ndwi'] > 0.3) & (indices['ndvi'] < 0.1)
+    landcover[water_mask] = 1
+    
+    # Vegetation (high NDVI)
+    veg_mask = (indices['ndvi'] > 0.3) & ~water_mask
+    landcover[veg_mask] = 2
+    
+    # Urban/Built-up (low NDVI, moderate brightness)
+    urban_mask = (indices['ndvi'] < 0.1) & (rgb_composite.mean(axis=2) > 0.3) & ~water_mask
+    landcover[urban_mask] = 3
+    
+    # Bare soil (everything else)
+    bare_mask = (landcover == 0)
+    landcover[bare_mask] = 4
+    
+    return landcover
+
+def plot_classification_results(landcover, rgb_composite, figsize=(15, 6)):
+    """Plot classification results alongside RGB"""
+    
+    # Define colors and labels for classes
+    colors = ['black', 'blue', 'green', 'red', 'brown']
+    labels = ['Background', 'Water', 'Vegetation', 'Urban', 'Bare Soil']
+    
+    # Create custom colormap
+    from matplotlib.colors import ListedColormap
+    cmap = ListedColormap(colors)
+    
+    fig, axes = plt.subplots(1, 2, figsize=figsize)
+    
+    # RGB composite
+    axes[0].imshow(rgb_composite, aspect='equal')
+    axes[0].set_title('RGB Composite', fontsize=14, fontweight='bold')
+    axes[0].tick_params(labelbottom=False, labelleft=False)
+    
+    # Classification
+    im = axes[1].imshow(landcover, cmap=cmap, vmin=0, vmax=4, aspect='equal')
+    axes[1].set_title('Land Cover Classification', fontsize=14, fontweight='bold')
+    axes[1].tick_params(labelbottom=False, labelleft=False)
+    
+    # Create custom legend
+    import matplotlib.patches as mpatches
+    legend_patches = [mpatches.Patch(color=colors[i], label=labels[i]) 
+                     for i in range(1, len(colors))]
+    axes[1].legend(handles=legend_patches, loc='upper right', bbox_to_anchor=(1.3, 1))
+    
+    plt.tight_layout()
+    plt.show()
+    
+    # Print class statistics
+    unique, counts = np.unique(landcover, return_counts=True)
+    total_pixels = landcover.size
+    
+    print("Land Cover Statistics:")
+    for class_id, count in zip(unique, counts):
+        if class_id > 0:  # Skip background
+            percentage = (count / total_pixels) * 100
+            print(f"{labels[class_id]}: {count:,} pixels ({percentage:.1f}%)")
+    
+    return fig, axes
+
+# Create and plot classification
+indices = plot_spectral_indices(bands)  # Re-calculate for consistency
+landcover = create_landcover_classification(indices, rgb_composite)
+plot_classification_results(landcover, rgb_composite)
+```
+
+## Cartographic Projections with Cartopy
+
+### Basic map projections
+```{python}
+def plot_different_projections(figsize=(15, 10)):
+    """Demonstrate different map projections"""
+    
+    # Sample geographic data (simulate satellite coverage)
+    lons = np.linspace(-180, 180, 100)
+    lats = np.linspace(-90, 90, 50)
+    lon_grid, lat_grid = np.meshgrid(lons, lats)
+    
+    # Sample data (e.g., temperature, vegetation)
+    data = np.sin(np.radians(lat_grid)) * np.cos(np.radians(lon_grid * 2)) + \
+           0.3 * np.random.randn(*lat_grid.shape)
+    
+    # Different projections
+    projections = [
+        ('PlateCarree', ccrs.PlateCarree()),
+        ('Mollweide', ccrs.Mollweide()),
+        ('Robinson', ccrs.Robinson()),
+        ('Orthographic', ccrs.Orthographic(central_longitude=0, central_latitude=45))
+    ]
+    
+    fig = plt.figure(figsize=figsize)
+    
+    for i, (name, proj) in enumerate(projections):
+        ax = fig.add_subplot(2, 2, i + 1, projection=proj)
+        
+        # Add map features
+        ax.add_feature(cfeature.COASTLINE, linewidth=0.5)
+        ax.add_feature(cfeature.BORDERS, linewidth=0.5)
+        ax.add_feature(cfeature.OCEAN, color='lightblue', alpha=0.5)
+        ax.add_feature(cfeature.LAND, color='lightgray', alpha=0.5)
+        
+        # Plot data
+        im = ax.contourf(lon_grid, lat_grid, data, 
+                        transform=ccrs.PlateCarree(),
+                        levels=20, cmap='RdYlBu_r', alpha=0.7)
+        
+        # Add gridlines
+        ax.gridlines(draw_labels=True if name == 'PlateCarree' else False,
+                    dms=True, x_inline=False, y_inline=False)
+        
+        ax.set_title(f'{name} Projection', fontsize=12, fontweight='bold')
+        
+        # Add colorbar for the last subplot
+        if i == len(projections) - 1:
+            cbar = plt.colorbar(im, ax=ax, shrink=0.5, orientation='horizontal', pad=0.05)
+            cbar.set_label('Sample Data', fontsize=10)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    return fig
+
+# Plot different projections
+plot_different_projections()
+```
+
+### Regional focus maps
+```{python}
+def plot_regional_satellite_data(center_lon=0, center_lat=45, extent=20, figsize=(12, 8)):
+    """Plot regional satellite data with geographic context"""
+    
+    # Define region bounds
+    west = center_lon - extent/2
+    east = center_lon + extent/2  
+    south = center_lat - extent/2
+    north = center_lat + extent/2
+    
+    # Create synthetic satellite data for the region
+    lons = np.linspace(west, east, 200)
+    lats = np.linspace(south, north, 150)
+    lon_grid, lat_grid = np.meshgrid(lons, lats)
+    
+    # Simulate NDVI data
+    ndvi_data = 0.6 * np.sin(np.radians(lat_grid * 4)) + \
+                0.3 * np.cos(np.radians(lon_grid * 3)) + \
+                0.2 * np.random.randn(*lat_grid.shape)
+    ndvi_data = np.clip(ndvi_data, -1, 1)
+    
+    # Create map
+    fig = plt.figure(figsize=figsize)
+    ax = plt.axes(projection=ccrs.PlateCarree())
+    
+    # Set extent
+    ax.set_extent([west, east, south, north], ccrs.PlateCarree())
+    
+    # Add geographic features
+    ax.add_feature(cfeature.COASTLINE, linewidth=1)
+    ax.add_feature(cfeature.BORDERS, linewidth=0.8)
+    ax.add_feature(cfeature.RIVERS, linewidth=0.5, color='blue')
+    ax.add_feature(cfeature.LAKES, color='lightblue')
+    
+    # Plot NDVI data
+    im = ax.imshow(ndvi_data, extent=[west, east, south, north],
+                   transform=ccrs.PlateCarree(), cmap='RdYlGn',
+                   vmin=-1, vmax=1, alpha=0.8)
+    
+    # Add gridlines and labels
+    gl = ax.gridlines(draw_labels=True, dms=True, x_inline=False, y_inline=False)
+    gl.top_labels = False
+    gl.right_labels = False
+    
+    # Add colorbar
+    cbar = plt.colorbar(im, ax=ax, shrink=0.7, orientation='vertical')
+    cbar.set_label('NDVI', fontsize=12)
+    
+    # Add title
+    ax.set_title(f'Regional NDVI Data\n({south:.1f}°-{north:.1f}°N, {west:.1f}°-{east:.1f}°E)', 
+                fontsize=14, fontweight='bold', pad=20)
+    
+    # Add scale bar and north arrow
+    # Scale bar (approximate)
+    scale_x = west + (east - west) * 0.7
+    scale_y = south + (north - south) * 0.1
+    ax.plot([scale_x, scale_x + 2], [scale_y, scale_y], 
+           'k-', linewidth=3, transform=ccrs.PlateCarree())
+    ax.text(scale_x + 1, scale_y - 0.5, '200 km', 
+           ha='center', va='top', fontsize=10, fontweight='bold',
+           transform=ccrs.PlateCarree())
+    
+    plt.tight_layout()
+    plt.show()
+    
+    return fig, ax
+
+# Plot regional data for different areas
+plot_regional_satellite_data(center_lon=-100, center_lat=40, extent=15)  # US Great Plains
+plot_regional_satellite_data(center_lon=25, center_lat=-15, extent=20)   # Southern Africa
+```
+
+## Multi-panel Complex Layouts
+
+### Dashboard-style visualization
+```{python}
+def create_satellite_dashboard(bands, indices, figsize=(16, 12)):
+    """Create a comprehensive satellite data dashboard"""
+    
+    # Create custom grid layout
+    fig = plt.figure(figsize=figsize)
+    gs = gridspec.GridSpec(3, 4, figure=fig, hspace=0.3, wspace=0.3)
+    
+    # Large RGB composite (top left, 2x2)
+    ax_rgb = fig.add_subplot(gs[0:2, 0:2])
+    rgb_composite = create_rgb_composite(bands['red'], bands['green'], bands['blue'])
+    ax_rgb.imshow(rgb_composite, aspect='equal')
+    ax_rgb.set_title('True Color RGB', fontsize=14, fontweight='bold')
+    ax_rgb.tick_params(labelbottom=False, labelleft=False)
+    
+    # Individual band plots (top right)
+    band_axes = []
+    band_list = ['red', 'green', 'nir']
+    cmaps = ['Reds', 'Greens', 'RdYlGn']
+    
+    for i, (band_name, cmap) in enumerate(zip(band_list, cmaps)):
+        ax = fig.add_subplot(gs[i, 2])
+        im = ax.imshow(bands[band_name], cmap=cmap, aspect='equal')
+        ax.set_title(band_name.upper(), fontsize=12, fontweight='bold')
+        ax.tick_params(labelbottom=False, labelleft=False, labelsize=8)
+        
+        # Small colorbar
+        cbar = plt.colorbar(im, ax=ax, shrink=0.8)
+        cbar.ax.tick_params(labelsize=8)
+    
+    # NDVI (top right, bottom)
+    ax_ndvi = fig.add_subplot(gs[0, 3])
+    im_ndvi = ax_ndvi.imshow(indices['ndvi'], cmap='RdYlGn', vmin=-1, vmax=1, aspect='equal')
+    ax_ndvi.set_title('NDVI', fontsize=12, fontweight='bold')
+    ax_ndvi.tick_params(labelbottom=False, labelleft=False, labelsize=8)
+    cbar_ndvi = plt.colorbar(im_ndvi, ax=ax_ndvi, shrink=0.8)
+    cbar_ndvi.ax.tick_params(labelsize=8)
+    
+    # Histogram (middle right)
+    ax_hist = fig.add_subplot(gs[1, 3])
+    ax_hist.hist(indices['ndvi'].flatten(), bins=50, alpha=0.7, color='green', edgecolor='black')
+    ax_hist.set_title('NDVI Histogram', fontsize=12, fontweight='bold')
+    ax_hist.set_xlabel('NDVI Value', fontsize=10)
+    ax_hist.set_ylabel('Frequency', fontsize=10)
+    ax_hist.grid(True, alpha=0.3)
+    ax_hist.tick_params(labelsize=8)
+    
+    # Scatter plot (bottom left)
+    ax_scatter = fig.add_subplot(gs[2, 0])
+    scatter_data = ax_scatter.scatter(bands['red'].flatten(), bands['nir'].flatten(), 
+                                    c=indices['ndvi'].flatten(), cmap='RdYlGn', 
+                                    alpha=0.5, s=1)
+    ax_scatter.set_xlabel('Red Reflectance', fontsize=10)
+    ax_scatter.set_ylabel('NIR Reflectance', fontsize=10)
+    ax_scatter.set_title('Red vs NIR\n(colored by NDVI)', fontsize=12, fontweight='bold')
+    ax_scatter.grid(True, alpha=0.3)
+    ax_scatter.tick_params(labelsize=8)
+    
+    # Classification (bottom center)
+    ax_class = fig.add_subplot(gs[2, 1])
+    landcover = create_landcover_classification(indices, rgb_composite)
+    colors = ['blue', 'green', 'red', 'brown']
+    labels = ['Water', 'Vegetation', 'Urban', 'Bare Soil']
+    from matplotlib.colors import ListedColormap
+    cmap_class = ListedColormap(colors)
+    im_class = ax_class.imshow(landcover, cmap=cmap_class, vmin=1, vmax=4, aspect='equal')
+    ax_class.set_title('Land Cover\nClassification', fontsize=12, fontweight='bold')
+    ax_class.tick_params(labelbottom=False, labelleft=False)
+    
+    # Statistics table (bottom right)
+    ax_stats = fig.add_subplot(gs[2, 2:4])
+    ax_stats.axis('off')
+    
+    # Calculate statistics
+    stats_data = [
+        ['Band', 'Mean', 'Std', 'Min', 'Max'],
+        ['Red', f'{bands["red"].mean():.3f}', f'{bands["red"].std():.3f}', 
+         f'{bands["red"].min():.3f}', f'{bands["red"].max():.3f}'],
+        ['Green', f'{bands["green"].mean():.3f}', f'{bands["green"].std():.3f}', 
+         f'{bands["green"].min():.3f}', f'{bands["green"].max():.3f}'],
+        ['NIR', f'{bands["nir"].mean():.3f}', f'{bands["nir"].std():.3f}', 
+         f'{bands["nir"].min():.3f}', f'{bands["nir"].max():.3f}'],
+        ['NDVI', f'{indices["ndvi"].mean():.3f}', f'{indices["ndvi"].std():.3f}', 
+         f'{indices["ndvi"].min():.3f}', f'{indices["ndvi"].max():.3f}']
+    ]
+    
+    table = ax_stats.table(cellText=stats_data, loc='center', cellLoc='center')
+    table.auto_set_font_size(False)
+    table.set_fontsize(9)
+    table.scale(1, 1.5)
+    ax_stats.set_title('Band Statistics', fontsize=12, fontweight='bold', pad=20)
+    
+    # Main title
+    fig.suptitle('Satellite Imagery Analysis Dashboard', fontsize=18, fontweight='bold', y=0.95)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    return fig
+
+# Create dashboard
+dashboard_fig = create_satellite_dashboard(bands, indices)
+```
+
+### Time series visualization
+```{python}
+def create_time_series_plot(figsize=(15, 10)):
+    """Create time series visualization of satellite indices"""
+    
+    # Generate synthetic time series data
+    dates = pd.date_range('2020-01-01', '2020-12-31', freq='16D')  # Landsat revisit
+    n_dates = len(dates)
+    
+    # Simulate seasonal NDVI pattern
+    day_of_year = np.array([d.timetuple().tm_yday for d in dates])
+    base_ndvi = 0.3 + 0.4 * np.sin(2 * np.pi * (day_of_year - 120) / 365)
+    
+    # Add noise and random events
+    np.random.seed(42)
+    ndvi_series = base_ndvi + 0.1 * np.random.randn(n_dates)
+    
+    # Simulate drought event (reduce NDVI mid-year)
+    drought_mask = (day_of_year > 180) & (day_of_year < 240)
+    ndvi_series[drought_mask] -= 0.2
+    
+    # Create other indices
+    evi_series = ndvi_series * 1.2 + 0.1 * np.random.randn(n_dates)
+    nbr_series = ndvi_series * 0.8 + 0.15 * np.random.randn(n_dates)
+    
+    # Simulate fire event (drop in NBR)
+    fire_date = np.where(day_of_year > 200)[0][0]
+    nbr_series[fire_date:fire_date+3] -= 0.6
+    
+    # Create multi-panel time series plot
+    fig, axes = plt.subplots(3, 1, figsize=figsize, sharex=True)
+    
+    # NDVI plot
+    axes[0].plot(dates, ndvi_series, 'o-', color='green', linewidth=2, markersize=4)
+    axes[0].fill_between(dates, ndvi_series, alpha=0.3, color='green')
+    axes[0].set_ylabel('NDVI', fontsize=12, fontweight='bold')
+    axes[0].set_title('Vegetation Index Time Series', fontsize=14, fontweight='bold')
+    axes[0].grid(True, alpha=0.3)
+    axes[0].set_ylim(-0.2, 0.8)
+    
+    # Mark drought period
+    drought_start = dates[drought_mask][0]
+    drought_end = dates[drought_mask][-1]
+    axes[0].axvspan(drought_start, drought_end, alpha=0.2, color='red', label='Drought Period')
+    axes[0].legend()
+    
+    # EVI plot
+    axes[1].plot(dates, evi_series, 'o-', color='darkgreen', linewidth=2, markersize=4)
+    axes[1].fill_between(dates, evi_series, alpha=0.3, color='darkgreen')
+    axes[1].set_ylabel('EVI', fontsize=12, fontweight='bold')
+    axes[1].grid(True, alpha=0.3)
+    axes[1].set_ylim(-0.2, 1.0)
+    
+    # NBR plot
+    axes[2].plot(dates, nbr_series, 'o-', color='brown', linewidth=2, markersize=4)
+    axes[2].fill_between(dates, nbr_series, alpha=0.3, color='brown')
+    axes[2].set_ylabel('NBR', fontsize=12, fontweight='bold')
+    axes[2].set_xlabel('Date', fontsize=12, fontweight='bold')
+    axes[2].grid(True, alpha=0.3)
+    
+    # Mark fire event
+    fire_date_actual = dates[fire_date]
+    axes[2].axvline(x=fire_date_actual, color='red', linestyle='--', linewidth=2, label='Fire Event')
+    axes[2].legend()
+    
+    # Format x-axis
+    import matplotlib.dates as mdates
+    axes[2].xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
+    axes[2].xaxis.set_major_locator(mdates.MonthLocator(interval=2))
+    plt.setp(axes[2].xaxis.get_majorticklabels(), rotation=45)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    return fig, axes
+
+# Import pandas for date handling
+import pandas as pd
+
+# Create time series plot
+ts_fig, ts_axes = create_time_series_plot()
+```
+
+## Publication-Ready Styling
+
+### Professional styling
+```{python}
+def create_publication_figure(bands, indices, figsize=(12, 8)):
+    """Create publication-ready figure with professional styling"""
+    
+    # Set publication style
+    plt.rcParams.update({
+        'font.family': 'serif',
+        'font.size': 10,
+        'axes.linewidth': 0.8,
+        'axes.spines.top': False,
+        'axes.spines.right': False,
+        'xtick.direction': 'inout',
+        'ytick.direction': 'inout',
+        'figure.dpi': 300
+    })
+    
+    fig, axes = plt.subplots(2, 3, figsize=figsize)
+    
+    # A) RGB Composite
+    rgb = create_rgb_composite(bands['red'], bands['green'], bands['blue'])
+    axes[0, 0].imshow(rgb, aspect='equal')
+    axes[0, 0].set_title('A) RGB Composite', fontsize=11, fontweight='bold', loc='left')
+    axes[0, 0].tick_params(labelbottom=False, labelleft=False)
+    
+    # Add scale bar
+    scale_bar = Rectangle((rgb.shape[1] - 80, rgb.shape[0] - 25), 60, 8, 
+                         facecolor='white', edgecolor='black', linewidth=0.8)
+    axes[0, 0].add_patch(scale_bar)
+    axes[0, 0].text(rgb.shape[1] - 50, rgb.shape[0] - 35, '1 km', 
+                   ha='center', va='top', fontsize=8, fontweight='bold')
+    
+    # B) False Color
+    false_color = create_rgb_composite(bands['nir'], bands['red'], bands['green'])
+    axes[0, 1].imshow(false_color, aspect='equal')
+    axes[0, 1].set_title('B) False Color (NIR-R-G)', fontsize=11, fontweight='bold', loc='left')
+    axes[0, 1].tick_params(labelbottom=False, labelleft=False)
+    
+    # C) NDVI
+    im_ndvi = axes[0, 2].imshow(indices['ndvi'], cmap='RdYlGn', vmin=-1, vmax=1, aspect='equal')
+    axes[0, 2].set_title('C) NDVI', fontsize=11, fontweight='bold', loc='left')
+    axes[0, 2].tick_params(labelbottom=False, labelleft=False)
+    
+    # Add NDVI colorbar
+    from mpl_toolkits.axes_grid1 import make_axes_locatable
+    divider = make_axes_locatable(axes[0, 2])
+    cax = divider.append_axes("right", size="5%", pad=0.1)
+    cbar = plt.colorbar(im_ndvi, cax=cax)
+    cbar.set_label('NDVI', fontsize=9)
+    cbar.ax.tick_params(labelsize=8)
+    
+    # D) Land Cover Classification
+    landcover = create_landcover_classification(indices, rgb)
+    colors = ['#0066CC', '#00AA00', '#CC0000', '#996633']  # Professional colors
+    labels = ['Water', 'Vegetation', 'Urban', 'Bare Soil']
+    from matplotlib.colors import ListedColormap
+    cmap_prof = ListedColormap(colors)
+    
+    im_class = axes[1, 0].imshow(landcover, cmap=cmap_prof, vmin=1, vmax=4, aspect='equal')
+    axes[1, 0].set_title('D) Land Cover Classification', fontsize=11, fontweight='bold', loc='left')
+    axes[1, 0].tick_params(labelbottom=False, labelleft=False)
+    
+    # Add classification legend
+    import matplotlib.patches as mpatches
+    legend_patches = [mpatches.Patch(color=colors[i], label=labels[i]) 
+                     for i in range(len(colors))]
+    axes[1, 0].legend(handles=legend_patches, loc='upper left', 
+                     bbox_to_anchor=(0.02, 0.98), fontsize=8, frameon=True, fancybox=False)
+    
+    # E) Spectral Profiles
+    axes[1, 1].axis('off')  # Remove axes
+    ax_profiles = fig.add_subplot(2, 3, 5)  # Add back with different approach
+    
+    # Sample points from different land cover types
+    water_pts = np.where(landcover == 1)
+    veg_pts = np.where(landcover == 2)
+    urban_pts = np.where(landcover == 3)
+    
+    # Extract spectral profiles
+    band_names = ['Blue', 'Green', 'Red', 'NIR', 'SWIR1', 'SWIR2']
+    wavelengths = [0.48, 0.56, 0.66, 0.83, 1.65, 2.22]  # Approximate wavelengths (µm)
+    
+    # Calculate mean reflectance for each class
+    water_profile = [bands['blue'][water_pts].mean(), bands['green'][water_pts].mean(), 
+                    bands['red'][water_pts].mean(), bands['nir'][water_pts].mean(),
+                    bands['swir1'][water_pts].mean(), bands['swir2'][water_pts].mean()]
+    
+    veg_profile = [bands['blue'][veg_pts].mean(), bands['green'][veg_pts].mean(),
+                  bands['red'][veg_pts].mean(), bands['nir'][veg_pts].mean(),
+                  bands['swir1'][veg_pts].mean(), bands['swir2'][veg_pts].mean()]
+    
+    urban_profile = [bands['blue'][urban_pts].mean(), bands['green'][urban_pts].mean(),
+                    bands['red'][urban_pts].mean(), bands['nir'][urban_pts].mean(),
+                    bands['swir1'][urban_pts].mean(), bands['swir2'][urban_pts].mean()]
+    
+    ax_profiles.plot(wavelengths, water_profile, 'o-', color='#0066CC', linewidth=2, 
+                    label='Water', markersize=6)
+    ax_profiles.plot(wavelengths, veg_profile, 's-', color='#00AA00', linewidth=2, 
+                    label='Vegetation', markersize=6)
+    ax_profiles.plot(wavelengths, urban_profile, '^-', color='#CC0000', linewidth=2, 
+                    label='Urban', markersize=6)
+    
+    ax_profiles.set_xlabel('Wavelength (μm)', fontsize=10)
+    ax_profiles.set_ylabel('Reflectance', fontsize=10)
+    ax_profiles.set_title('E) Spectral Profiles', fontsize=11, fontweight='bold', loc='left')
+    ax_profiles.legend(fontsize=8, frameon=False)
+    ax_profiles.grid(True, alpha=0.3, linewidth=0.5)
+    ax_profiles.tick_params(labelsize=8)
+    
+    # F) Statistics/Summary
+    axes[1, 2].axis('off')
+    
+    # Create summary statistics text
+    stats_text = f"""F) Summary Statistics
+    
+Image Dimensions: {rgb.shape[0]} × {rgb.shape[1]} pixels
+Spatial Resolution: 30 m
+    
+Land Cover Distribution:
+Water: {(landcover == 1).sum() / landcover.size * 100:.1f}%
+Vegetation: {(landcover == 2).sum() / landcover.size * 100:.1f}%
+Urban: {(landcover == 3).sum() / landcover.size * 100:.1f}%
+Bare Soil: {(landcover == 4).sum() / landcover.size * 100:.1f}%
+
+NDVI Statistics:
+Mean: {indices['ndvi'].mean():.3f}
+Std: {indices['ndvi'].std():.3f}
+Range: [{indices['ndvi'].min():.3f}, {indices['ndvi'].max():.3f}]"""
+    
+    axes[1, 2].text(0.05, 0.95, stats_text, transform=axes[1, 2].transAxes, 
+                   fontsize=9, verticalalignment='top', fontfamily='monospace',
+                   bbox=dict(boxstyle='round,pad=0.5', facecolor='lightgray', alpha=0.8))
+    
+    plt.tight_layout()
+    plt.show()
+    
+    # Reset rcParams
+    plt.rcParams.update(plt.rcParamsDefault)
+    
+    return fig
+
+# Create publication figure
+pub_fig = create_publication_figure(bands, indices)
+```
+
+## Custom Colormaps and Advanced Styling
+
+### Custom colormap creation
+```{python}
+def create_custom_colormaps():
+    """Create custom colormaps for different geospatial applications"""
+    
+    # Custom NDVI colormap (brown to green)
+    ndvi_colors = ['#8B4513', '#CD853F', '#F4A460', '#FFFFE0', '#90EE90', '#32CD32', '#006400']
+    ndvi_cmap = LinearSegmentedColormap.from_list('custom_ndvi', ndvi_colors, N=256)
+    
+    # Custom water depth colormap
+    water_colors = ['#000080', '#0066CC', '#00AAFF', '#66CCFF', '#CCE5FF']
+    water_cmap = LinearSegmentedColormap.from_list('water_depth', water_colors, N=256)
+    
+    # Custom elevation colormap
+    elev_colors = ['#2E8B57', '#90EE90', '#FFFFE0', '#CD853F', '#8B4513', '#FFFFFF']
+    elev_cmap = LinearSegmentedColormap.from_list('elevation', elev_colors, N=256)
+    
+    return {
+        'ndvi': ndvi_cmap,
+        'water': water_cmap,
+        'elevation': elev_cmap
+    }
+
+def demonstrate_custom_colormaps(bands, indices, figsize=(15, 5)):
+    """Demonstrate custom colormaps"""
+    
+    custom_cmaps = create_custom_colormaps()
+    
+    fig, axes = plt.subplots(1, 3, figsize=figsize)
+    
+    # NDVI with custom colormap
+    im1 = axes[0].imshow(indices['ndvi'], cmap=custom_cmaps['ndvi'], 
+                        vmin=-1, vmax=1, aspect='equal')
+    axes[0].set_title('NDVI - Custom Colormap', fontsize=12, fontweight='bold')
+    axes[0].tick_params(labelbottom=False, labelleft=False)
+    cbar1 = plt.colorbar(im1, ax=axes[0], shrink=0.8)
+    cbar1.set_label('NDVI', fontsize=10)
+    
+    # Simulated water depth
+    water_depth = indices['ndwi'] * 5  # Scale for visualization
+    water_depth[water_depth < 0] = 0
+    
+    im2 = axes[1].imshow(water_depth, cmap=custom_cmaps['water'], 
+                        vmin=0, vmax=water_depth.max(), aspect='equal')
+    axes[1].set_title('Water Depth - Custom Colormap', fontsize=12, fontweight='bold')
+    axes[1].tick_params(labelbottom=False, labelleft=False)
+    cbar2 = plt.colorbar(im2, ax=axes[1], shrink=0.8)
+    cbar2.set_label('Depth (m)', fontsize=10)
+    
+    # Simulated elevation
+    elevation = (bands['nir'] - bands['blue']) * 1000 + 500  # Simulate elevation
+    
+    im3 = axes[2].imshow(elevation, cmap=custom_cmaps['elevation'], aspect='equal')
+    axes[2].set_title('Elevation - Custom Colormap', fontsize=12, fontweight='bold')
+    axes[2].tick_params(labelbottom=False, labelleft=False)
+    cbar3 = plt.colorbar(im3, ax=axes[2], shrink=0.8)
+    cbar3.set_label('Elevation (m)', fontsize=10)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    return fig
+
+# Demonstrate custom colormaps
+custom_cmap_fig = demonstrate_custom_colormaps(bands, indices)
+```
+
+## Summary
+
+Key matplotlib techniques for geospatial visualization:
+- **Basic plotting**: Single and multi-band satellite imagery display
+- **RGB composites**: True color and false color combinations
+- **Advanced visualization**: Spectral indices, classification, and thematic mapping
+- **Cartographic projections**: Using Cartopy for geographic context
+- **Multi-panel layouts**: Dashboard-style and publication-ready figures
+- **Time series**: Temporal analysis of satellite data
+- **Custom styling**: Professional colormaps and publication formatting
+- **Interactive elements**: Annotations, scale bars, and legends

@@ -1,0 +1,27 @@
+---
+title: "Week 7 Interactive Session: Integration with Existing Models"
+subtitle: "Working with Prithvi, SatMAE, and other foundation models"
+editor_options: 
+  chunk_output_type: console
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+---
+
+## Course Roadmap Mapping
+
+This week’s work in the broader GFM plan.
+
+| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |
+|------|-------|-------|--------------------------|---------------|---------|
+| 7 | Stage 2: Train Foundation Model | Integration w/ Pretrained | (light) `core/registry.py`; `interoperability/huggingface.py` stubs | `huggingface_hub`, `transformers` optional | Show mapping to Prithvi structure; plan switch |
+
+### Weekly goals
+- Create a light registry for model variants
+- Add basic HF Hub glue to load model configs/weights
+- Compare MVP structure to Prithvi and define switch points
+
+Interactive session content coming soon...

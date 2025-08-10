@@ -1,0 +1,27 @@
+---
+title: "Week 4 Interactive Session: Pretraining Implementation"
+subtitle: "Masked autoencoder pretraining for geospatial foundation models"
+editor_options: 
+  chunk_output_type: console
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+---
+
+## Course Roadmap Mapping
+
+This week’s work in the broader GFM plan.
+
+| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |
+|------|-------|-------|--------------------------|---------------|---------|
+| 4 | Stage 2: Train Foundation Model | MAE Pretraining | `models/gfm_mae.py`; `modules/losses/mae_loss.py` | `torch` masking, `numpy` | Masking + reconstruction; loss decreases on toy batch |
+
+### Weekly goals
+- Implement MAE wrapper with masking strategy
+- Build masked reconstruction loss; verify gradients
+- Overfit a toy batch to confirm learning
+
+Interactive session content coming soon...

@@ -42,6 +42,45 @@ Goals: high-clarity pedagogy, reproducible execution, fast local rendering, and 
 - Avoid embedding meeting times/schedules in weekly docs; timing lives only in the syllabus
 - Follow site navigation and file organization; don’t craft ad‑hoc menus inside pages
 
+### Tangling code to repo files (literate export)
+
+To keep pedagogy first while avoiding copy‑paste into `geogfm/`, you can export code blocks from `.qmd` during render using the `tangle` filter (already enabled in `book/_quarto.yml`).
+
+Two ways to opt‑in per code chunk:
+
+1) Attributes in the fence header (preferred for clarity):
+
+````
+```{python tangle="../geogfm/data/tiles.py" tangle-append="true"}
+from pathlib import Path
+
+def tiles_from_aoi(aoi_path: str, patch_size: int):
+    ...
+```
+````
+
+2) Hash‑pipe directives inside the cell:
+
+```python
+#| tangle: ../geogfm/data/tiles.py
+#| tangle-append: true
+from pathlib import Path
+
+def tiles_from_aoi(aoi_path: str, patch_size: int):
+    ...
+```
+
+Options:
+- `tangle`: relative path (from the current `.qmd` directory)
+- `tangle-append`: `true|false` (append vs overwrite)
+- `tangle-marker`: custom first-line header comment
+
+Best practices:
+- Keep exported cells small and composable; mirror import boundaries you’d expect in modules
+- Use a reset block (no append) first, then append in subsequent blocks for stable ordering
+- Printed outputs in the page should remain minimal; exports are independent of visible output
+- Never tangle to absolute paths; keep targets within this repo (e.g., `../geogfm/...`)
+
 ---
 
 ## Deterministic and Reproducible Code

@@ -1,0 +1,836 @@
+---
+title: "Geospatial Data & Remote Sensing"
+subtitle: "Working with satellite imagery and earth observation data"
+jupyter: geoai
+format: html
+---
+
+## Introduction to Geospatial Data
+
+Geospatial data forms the foundation of Earth observation and environmental monitoring. This cheatsheet covers key concepts for working with satellite imagery, coordinate systems, and remote sensing data.
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+import rasterio
+from rasterio.transform import from_bounds
+from rasterio.warp import reproject, Resampling
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+import pandas as pd
+from datetime import datetime, timedelta
+
+print(f"Rasterio version: {rasterio.__version__}")
+```
+
+## Satellite Sensor Fundamentals
+
+### Electromagnetic Spectrum and Bands
+```{python}
+def create_spectral_bands_reference():
+    """Reference for common satellite spectral bands"""
+    
+    # Common Landsat 8/9 bands
+    landsat_bands = {
+        'Band 1': {'name': 'Coastal/Aerosol', 'wavelength': '0.43-0.45 μm', 'use': 'Atmospheric correction'},
+        'Band 2': {'name': 'Blue', 'wavelength': '0.45-0.51 μm', 'use': 'Water mapping, soil/vegetation'},
+        'Band 3': {'name': 'Green', 'wavelength': '0.53-0.59 μm', 'use': 'Vegetation health, urban'},
+        'Band 4': {'name': 'Red', 'wavelength': '0.64-0.67 μm', 'use': 'Vegetation discrimination'},
+        'Band 5': {'name': 'NIR', 'wavelength': '0.85-0.88 μm', 'use': 'Vegetation analysis, water'},
+        'Band 6': {'name': 'SWIR1', 'wavelength': '1.57-1.65 μm', 'use': 'Moisture, burn mapping'},
+        'Band 7': {'name': 'SWIR2', 'wavelength': '2.11-2.29 μm', 'use': 'Geology, hydrothermal'},
+    }
+    
+    # Sentinel-2 bands (subset)
+    sentinel2_bands = {
+        'Band 2': {'name': 'Blue', 'wavelength': '0.49 μm', 'resolution': '10m'},
+        'Band 3': {'name': 'Green', 'wavelength': '0.56 μm', 'resolution': '10m'},
+        'Band 4': {'name': 'Red', 'wavelength': '0.665 μm', 'resolution': '10m'},
+        'Band 8': {'name': 'NIR', 'wavelength': '0.842 μm', 'resolution': '10m'},
+        'Band 11': {'name': 'SWIR1', 'wavelength': '1.610 μm', 'resolution': '20m'},
+        'Band 12': {'name': 'SWIR2', 'wavelength': '2.190 μm', 'resolution': '20m'},
+    }
+    
+    print("Landsat 8/9 Bands:")
+    for band, info in landsat_bands.items():
+        print(f"{band}: {info['name']} ({info['wavelength']}) - {info['use']}")
+    
+    print("\nSentinel-2 Key Bands:")
+    for band, info in sentinel2_bands.items():
+        print(f"{band}: {info['name']} ({info['wavelength']}, {info['resolution']})")
+    
+    return landsat_bands, sentinel2_bands
+
+# Visualize electromagnetic spectrum
+def plot_electromagnetic_spectrum():
+    """Visualize the electromagnetic spectrum with satellite bands"""
+    
+    # Wavelength ranges (in micrometers)
+    wavelengths = np.logspace(-2, 2, 1000)  # 0.01 to 100 μm
+    
+    # Define spectral regions
+    regions = {
+        'Visible': (0.38, 0.7, 'lightblue'),
+        'NIR': (0.7, 1.4, 'lightgreen'), 
+        'SWIR': (1.4, 3.0, 'orange'),
+        'MWIR': (3.0, 8.0, 'red'),
+        'LWIR': (8.0, 14.0, 'darkred')
+    }
+    
+    # Common satellite bands
+    sat_bands = {
+        'Landsat Blue': 0.48,
+        'Landsat Green': 0.56,
+        'Landsat Red': 0.655,
+        'Landsat NIR': 0.865,
+        'Landsat SWIR1': 1.61,
+        'Landsat SWIR2': 2.2
+    }
+    
+    fig, ax = plt.subplots(figsize=(15, 6))
+    
+    # Plot spectral regions
+    for region, (start, end, color) in regions.items():
+        ax.axvspan(start, end, alpha=0.3, color=color, label=region)
+    
+    # Mark satellite bands
+    for band_name, wavelength in sat_bands.items():
+        ax.axvline(wavelength, color='black', linestyle='--', alpha=0.7)
+        ax.text(wavelength, 0.5, band_name, rotation=90, ha='right', va='bottom', fontsize=8)
+    
+    ax.set_xlim(0.3, 15)
+    ax.set_xscale('log')
+    ax.set_xlabel('Wavelength (μm)')
+    ax.set_ylabel('Relative Response')
+    ax.set_title('Electromagnetic Spectrum and Satellite Bands')
+    ax.legend(loc='upper right')
+    ax.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.show()
+
+landsat_bands, sentinel2_bands = create_spectral_bands_reference()
+plot_electromagnetic_spectrum()
+```
+
+### Satellite Orbits and Revisit Times
+```{python}
+def satellite_orbit_comparison():
+    """Compare different satellite orbits and characteristics"""
+    
+    satellites = {
+        'Landsat 8/9': {
+            'orbit': 'Sun-synchronous polar',
+            'altitude': '705 km',
+            'revisit': '16 days',
+            'resolution': '15-30m',
+            'swath': '185 km',
+            'launch': '2013/2021'
+        },
+        'Sentinel-2A/B': {
+            'orbit': 'Sun-synchronous polar',
+            'altitude': '786 km', 
+            'revisit': '5 days (combined)',
+            'resolution': '10-60m',
+            'swath': '290 km',
+            'launch': '2015/2017'
+        },
+        'MODIS': {
+            'orbit': 'Sun-synchronous polar',
+            'altitude': '705 km',
+            'revisit': '1-2 days',
+            'resolution': '250m-1km',
+            'swath': '2330 km',
+            'launch': '1999/2002'
+        },
+        'Planet': {
+            'orbit': 'Sun-synchronous',
+            'altitude': '475 km',
+            'revisit': 'Daily',
+            'resolution': '3-5m',
+            'swath': '24 km',
+            'launch': '2016+'
+        }
+    }
+    
+    print("Satellite Comparison:")
+    print("="*80)
+    
+    for sat, specs in satellites.items():
+        print(f"\n{sat}:")
+        for spec, value in specs.items():
+            print(f"  {spec.capitalize()}: {value}")
+    
+    # Visualize revisit times
+    sat_names = list(satellites.keys())
+    revisit_days = [16, 5, 1.5, 1]  # Approximate revisit times in days
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    bars = ax.bar(sat_names, revisit_days, color=['skyblue', 'lightgreen', 'orange', 'red'])
+    
+    # Add value labels on bars
+    for bar, days in zip(bars, revisit_days):
+        height = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width()/2., height + 0.1,
+               f'{days} days', ha='center', va='bottom')
+    
+    ax.set_ylabel('Revisit Time (Days)')
+    ax.set_title('Satellite Revisit Times Comparison')
+    ax.set_yscale('log')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+
+satellite_orbit_comparison()
+```
+
+## Coordinate Reference Systems
+
+### Understanding Projections
+```{python}
+def demonstrate_coordinate_systems():
+    """Demonstrate different coordinate reference systems"""
+    
+    # Common coordinate systems
+    crs_examples = {
+        'Geographic (WGS84)': {
+            'epsg': 4326,
+            'type': 'Geographic',
+            'units': 'degrees',
+            'use_case': 'Global data, GPS coordinates'
+        },
+        'Web Mercator': {
+            'epsg': 3857,
+            'type': 'Projected',
+            'units': 'meters',
+            'use_case': 'Web mapping, Google Maps'
+        },
+        'UTM Zone 10N': {
+            'epsg': 32610,
+            'type': 'Projected',
+            'units': 'meters', 
+            'use_case': 'Western US, accurate distance/area'
+        },
+        'Albers Equal Area': {
+            'epsg': 5070,
+            'type': 'Projected',
+            'units': 'meters',
+            'use_case': 'CONUS analysis, area preservation'
+        }
+    }
+    
+    print("Common Coordinate Reference Systems:")
+    print("="*60)
+    
+    for crs_name, info in crs_examples.items():
+        print(f"\n{crs_name} (EPSG:{info['epsg']}):")
+        print(f"  Type: {info['type']}")
+        print(f"  Units: {info['units']}")
+        print(f"  Use case: {info['use_case']}")
+    
+    # Demonstrate coordinate transformation
+    def transform_coordinates():
+        """Show coordinate transformation example"""
+        
+        # Sample point in San Francisco
+        lon, lat = -122.4194, 37.7749  # WGS84 geographic coordinates
+        
+        print(f"\nCoordinate Transformation Example:")
+        print(f"Original (WGS84): Longitude = {lon}°, Latitude = {lat}°")
+        
+        # Mock transformation to UTM (simplified calculation)
+        # In practice, use proper projection libraries like pyproj
+        utm_x = (lon + 180) * 111320 * np.cos(np.radians(lat))
+        utm_y = lat * 110540
+        
+        print(f"Approximate UTM: X = {utm_x:.0f}m, Y = {utm_y:.0f}m")
+        print("Note: Use pyproj or rasterio for accurate transformations")
+    
+    transform_coordinates()
+
+demonstrate_coordinate_systems()
+```
+
+### Working with Geospatial Metadata
+```{python}
+def create_sample_geospatial_metadata():
+    """Create and demonstrate geospatial metadata handling"""
+    
+    # Create sample raster with proper geospatial metadata
+    def create_sample_raster():
+        """Create a sample GeoTIFF with metadata"""
+        
+        # Sample data: synthetic NDVI-like values
+        height, width = 100, 100
+        data = np.random.beta(2, 2, (height, width)) * 2 - 1  # Values between -1 and 1
+        
+        # Define geospatial transform (San Francisco Bay Area)
+        west, south, east, north = -122.5, 37.7, -122.3, 37.9
+        transform = from_bounds(west, south, east, north, width, height)
+        
+        # Define coordinate reference system
+        crs = 'EPSG:4326'
+        
+        # Metadata
+        metadata = {
+            'description': 'Synthetic NDVI data for demonstration',
+            'creation_date': datetime.now().isoformat(),
+            'sensor': 'Simulated',
+            'processing_level': 'L2A',
+            'spatial_resolution': '30m',
+            'temporal_coverage': '2023-06-15'
+        }
+        
+        return data, transform, crs, metadata
+    
+    # Create sample data
+    ndvi_data, geotransform, crs, metadata = create_sample_raster()
+    
+    print("Geospatial Metadata Example:")
+    print("="*40)
+    print(f"Data shape: {ndvi_data.shape}")
+    print(f"Data type: {ndvi_data.dtype}")
+    print(f"Value range: [{ndvi_data.min():.3f}, {ndvi_data.max():.3f}]")
+    print(f"CRS: {crs}")
+    print(f"Geotransform: {geotransform}")
+    
+    print("\nMetadata:")
+    for key, value in metadata.items():
+        print(f"  {key}: {value}")
+    
+    # Visualize with geographic context
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+    
+    # Raw data plot
+    im1 = ax1.imshow(ndvi_data, cmap='RdYlGn', vmin=-1, vmax=1)
+    ax1.set_title('NDVI Data (Array View)')
+    ax1.set_xlabel('Column Index')
+    ax1.set_ylabel('Row Index')
+    plt.colorbar(im1, ax=ax1, label='NDVI')
+    
+    # Geographic context plot
+    ax2 = plt.subplot(1, 2, 2, projection=ccrs.PlateCarree())
+    
+    # Calculate bounds from geotransform
+    bounds = rasterio.transform.array_bounds(ndvi_data.shape[0], ndvi_data.shape[1], geotransform)
+    west, south, east, north = bounds
+    
+    im2 = ax2.imshow(ndvi_data, extent=[west, east, south, north],
+                     transform=ccrs.PlateCarree(), cmap='RdYlGn', vmin=-1, vmax=1)
+    
+    # Add geographic features
+    ax2.add_feature(cfeature.COASTLINE)
+    ax2.add_feature(cfeature.BORDERS)
+    ax2.set_extent([west-0.1, east+0.1, south-0.1, north+0.1])
+    
+    # Add gridlines
+    ax2.gridlines(draw_labels=True)
+    ax2.set_title('NDVI Data (Geographic View)')
+    
+    plt.colorbar(im2, ax=ax2, label='NDVI', shrink=0.6)
+    plt.tight_layout()
+    plt.show()
+    
+    return ndvi_data, geotransform, crs, metadata
+
+sample_data, transform, crs, metadata = create_sample_geospatial_metadata()
+```
+
+## Spectral Indices and Analysis
+
+### Common Vegetation Indices
+```{python}
+def calculate_spectral_indices():
+    """Calculate and demonstrate common spectral indices"""
+    
+    # Simulate multi-spectral satellite data
+    np.random.seed(42)
+    height, width = 200, 200
+    
+    # Simulate realistic spectral values (scaled 0-1)
+    bands = {
+        'blue': np.random.beta(2, 5, (height, width)) * 0.3,
+        'green': np.random.beta(3, 4, (height, width)) * 0.4,
+        'red': np.random.beta(2, 3, (height, width)) * 0.5,
+        'nir': np.random.beta(1.5, 2, (height, width)) * 0.8,
+        'swir1': np.random.beta(2, 4, (height, width)) * 0.4,
+        'swir2': np.random.beta(1.5, 4, (height, width)) * 0.3
+    }
+    
+    # Add spatial structure to simulate land features
+    y, x = np.ogrid[:height, :width]
+    
+    # Water bodies (higher blue, lower NIR)
+    water_mask = (x - width//3)**2 + (y - height//2)**2 < (width//8)**2
+    bands['blue'][water_mask] *= 2.0
+    bands['nir'][water_mask] *= 0.3
+    
+    # Vegetation areas (higher NIR, lower red)
+    veg_mask = (x > 2*width//3) & (y < height//2)
+    bands['nir'][veg_mask] *= 1.5
+    bands['red'][veg_mask] *= 0.6
+    
+    # Urban areas (higher SWIR, moderate all bands)
+    urban_mask = (x < width//3) & (y > height//2)
+    bands['swir1'][urban_mask] *= 1.3
+    bands['swir2'][urban_mask] *= 1.2
+    
+    # Calculate indices
+    indices = {}
+    
+    # NDVI (Normalized Difference Vegetation Index)
+    indices['NDVI'] = (bands['nir'] - bands['red']) / (bands['nir'] + bands['red'] + 1e-8)
+    
+    # NDWI (Normalized Difference Water Index)
+    indices['NDWI'] = (bands['green'] - bands['nir']) / (bands['green'] + bands['nir'] + 1e-8)
+    
+    # NDBI (Normalized Difference Built-up Index)
+    indices['NDBI'] = (bands['swir1'] - bands['nir']) / (bands['swir1'] + bands['nir'] + 1e-8)
+    
+    # EVI (Enhanced Vegetation Index)
+    indices['EVI'] = 2.5 * ((bands['nir'] - bands['red']) / 
+                           (bands['nir'] + 6*bands['red'] - 7.5*bands['blue'] + 1))
+    
+    # SAVI (Soil Adjusted Vegetation Index)
+    L = 0.5  # Soil brightness correction factor
+    indices['SAVI'] = ((bands['nir'] - bands['red']) / (bands['nir'] + bands['red'] + L)) * (1 + L)
+    
+    # NBR (Normalized Burn Ratio)
+    indices['NBR'] = (bands['nir'] - bands['swir2']) / (bands['nir'] + bands['swir2'] + 1e-8)
+    
+    # Visualize indices
+    fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+    axes = axes.ravel()
+    
+    index_cmaps = {
+        'NDVI': ('RdYlGn', -1, 1),
+        'NDWI': ('Blues', -1, 1),
+        'NDBI': ('RdYlBu_r', -1, 1),
+        'EVI': ('Greens', 0, 1),
+        'SAVI': ('RdYlGn', -1, 1),
+        'NBR': ('RdBu', -1, 1)
+    }
+    
+    for i, (index_name, values) in enumerate(indices.items()):
+        if i < len(axes):
+            cmap, vmin, vmax = index_cmaps[index_name]
+            
+            im = axes[i].imshow(values, cmap=cmap, vmin=vmin, vmax=vmax)
+            axes[i].set_title(f'{index_name}', fontsize=14, fontweight='bold')
+            axes[i].tick_params(labelbottom=False, labelleft=False)
+            
+            # Add colorbar
+            plt.colorbar(im, ax=axes[i], shrink=0.8)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    # Print index statistics
+    print("Spectral Index Statistics:")
+    print("="*50)
+    for index_name, values in indices.items():
+        print(f"{index_name}:")
+        print(f"  Range: [{values.min():.3f}, {values.max():.3f}]")
+        print(f"  Mean: {values.mean():.3f}")
+        print(f"  Std: {values.std():.3f}")
+    
+    return bands, indices
+
+bands_data, calculated_indices = calculate_spectral_indices()
+```
+
+### Spectral Signatures and Analysis
+```{python}
+def analyze_spectral_signatures():
+    """Analyze spectral signatures for different land cover types"""
+    
+    # Define wavelengths for common satellite bands
+    band_info = {
+        'Blue': {'wavelength': 0.48, 'band_num': 2},
+        'Green': {'wavelength': 0.56, 'band_num': 3},
+        'Red': {'wavelength': 0.66, 'band_num': 4},
+        'NIR': {'wavelength': 0.84, 'band_num': 8},
+        'SWIR1': {'wavelength': 1.61, 'band_num': 11},
+        'SWIR2': {'wavelength': 2.19, 'band_num': 12}
+    }
+    
+    wavelengths = [info['wavelength'] for info in band_info.values()]
+    band_names = list(band_info.keys())
+    
+    # Typical spectral signatures for different land cover types
+    signatures = {
+        'Healthy Vegetation': [0.05, 0.08, 0.04, 0.45, 0.25, 0.15],
+        'Water': [0.10, 0.08, 0.06, 0.02, 0.01, 0.01],
+        'Urban/Built-up': [0.15, 0.18, 0.20, 0.25, 0.35, 0.28],
+        'Bare Soil': [0.12, 0.16, 0.22, 0.28, 0.32, 0.30],
+        'Snow/Ice': [0.85, 0.88, 0.85, 0.75, 0.45, 0.25],
+        'Dry Vegetation': [0.08, 0.12, 0.18, 0.22, 0.28, 0.32]
+    }
+    
+    # Plot spectral signatures
+    fig, ax = plt.subplots(figsize=(12, 8))
+    
+    colors = ['green', 'blue', 'red', 'brown', 'cyan', 'orange']
+    markers = ['o', 's', '^', 'v', 'D', 'x']
+    
+    for i, (land_cover, reflectance) in enumerate(signatures.items()):
+        ax.plot(wavelengths, reflectance, 
+               marker=markers[i], color=colors[i], 
+               linewidth=2, markersize=8, label=land_cover)
+    
+    ax.set_xlabel('Wavelength (μm)', fontsize=12)
+    ax.set_ylabel('Reflectance', fontsize=12)
+    ax.set_title('Typical Spectral Signatures for Land Cover Types', fontsize=14, fontweight='bold')
+    ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    ax.grid(True, alpha=0.3)
+    
+    # Add band labels
+    for i, (wl, band) in enumerate(zip(wavelengths, band_names)):
+        ax.axvline(wl, color='gray', linestyle='--', alpha=0.5)
+        ax.text(wl, ax.get_ylim()[1] * 0.9, band, rotation=90, 
+               ha='right', va='bottom', fontsize=9, alpha=0.7)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    # Calculate spectral separability
+    def calculate_separability(sig1, sig2):
+        """Calculate simple spectral separability metric"""
+        sig1, sig2 = np.array(sig1), np.array(sig2)
+        return np.sqrt(np.sum((sig1 - sig2)**2))
+    
+    print("Spectral Separability Matrix:")
+    print("="*40)
+    
+    land_covers = list(signatures.keys())
+    separability_matrix = np.zeros((len(land_covers), len(land_covers)))
+    
+    for i, lc1 in enumerate(land_covers):
+        for j, lc2 in enumerate(land_covers):
+            if i != j:
+                sep = calculate_separability(signatures[lc1], signatures[lc2])
+                separability_matrix[i, j] = sep
+    
+    # Create separability heatmap
+    fig, ax = plt.subplots(figsize=(10, 8))
+    im = ax.imshow(separability_matrix, cmap='YlOrRd')
+    
+    # Add labels
+    ax.set_xticks(range(len(land_covers)))
+    ax.set_yticks(range(len(land_covers)))
+    ax.set_xticklabels(land_covers, rotation=45, ha='right')
+    ax.set_yticklabels(land_covers)
+    
+    # Add values to cells
+    for i in range(len(land_covers)):
+        for j in range(len(land_covers)):
+            text = ax.text(j, i, f'{separability_matrix[i, j]:.2f}',
+                          ha='center', va='center', color='black' if separability_matrix[i, j] < 0.5 else 'white')
+    
+    ax.set_title('Spectral Separability Between Land Cover Types')
+    plt.colorbar(im, label='Separability Distance')
+    plt.tight_layout()
+    plt.show()
+    
+    return signatures, separability_matrix
+
+spectral_sigs, sep_matrix = analyze_spectral_signatures()
+```
+
+## Temporal Analysis and Time Series
+
+### Satellite Time Series Analysis
+```{python}
+def demonstrate_temporal_analysis():
+    """Demonstrate time series analysis of satellite data"""
+    
+    # Create synthetic time series for different locations
+    dates = pd.date_range('2020-01-01', '2023-12-31', freq='16D')  # Landsat-like revisit
+    
+    # Simulate seasonal NDVI patterns for different land cover types
+    def create_ndvi_time_series(land_cover_type, dates):
+        """Create realistic NDVI time series for different land covers"""
+        
+        day_of_year = np.array([d.timetuple().tm_yday for d in dates])
+        
+        if land_cover_type == 'Cropland':
+            # Strong seasonal pattern with planting/harvest cycles
+            base_ndvi = 0.3 + 0.5 * np.sin(2 * np.pi * (day_of_year - 120) / 365)
+            base_ndvi = np.clip(base_ndvi, 0, 0.9)
+            # Add harvest drops
+            harvest_days = [280, 280+365, 280+2*365, 280+3*365]
+            for harvest_day in harvest_days:
+                mask = np.abs(day_of_year - harvest_day) < 30
+                base_ndvi[mask] *= 0.3
+            
+        elif land_cover_type == 'Forest':
+            # Stable with slight seasonal variation
+            base_ndvi = 0.7 + 0.2 * np.sin(2 * np.pi * (day_of_year - 150) / 365)
+            base_ndvi = np.clip(base_ndvi, 0.5, 0.9)
+            
+        elif land_cover_type == 'Grassland':
+            # Moderate seasonal pattern
+            base_ndvi = 0.4 + 0.3 * np.sin(2 * np.pi * (day_of_year - 120) / 365)
+            base_ndvi = np.clip(base_ndvi, 0.1, 0.7)
+            
+        elif land_cover_type == 'Urban':
+            # Low, stable values with minimal variation
+            base_ndvi = 0.2 + 0.05 * np.sin(2 * np.pi * (day_of_year - 120) / 365)
+            base_ndvi = np.clip(base_ndvi, 0.1, 0.3)
+            
+        # Add noise
+        noise = np.random.normal(0, 0.05, len(dates))
+        ndvi_series = base_ndvi + noise
+        ndvi_series = np.clip(ndvi_series, -1, 1)
+        
+        return ndvi_series
+    
+    # Generate time series for different land covers
+    land_covers = ['Cropland', 'Forest', 'Grassland', 'Urban']
+    time_series_data = {}
+    
+    for lc in land_covers:
+        time_series_data[lc] = create_ndvi_time_series(lc, dates)
+    
+    # Plot time series
+    fig, axes = plt.subplots(2, 1, figsize=(15, 10))
+    
+    # Individual time series
+    colors = ['green', 'darkgreen', 'orange', 'red']
+    for i, (lc, ndvi_series) in enumerate(time_series_data.items()):
+        axes[0].plot(dates, ndvi_series, label=lc, color=colors[i], alpha=0.8, linewidth=2)
+    
+    axes[0].set_ylabel('NDVI')
+    axes[0].set_title('NDVI Time Series by Land Cover Type')
+    axes[0].legend()
+    axes[0].grid(True, alpha=0.3)
+    axes[0].set_ylim(-0.1, 1.0)
+    
+    # Seasonal averages
+    monthly_data = {}
+    for lc, ndvi_series in time_series_data.items():
+        df = pd.DataFrame({'date': dates, 'ndvi': ndvi_series})
+        df['month'] = df['date'].dt.month
+        monthly_avg = df.groupby('month')['ndvi'].mean()
+        monthly_data[lc] = monthly_avg
+    
+    months = range(1, 13)
+    month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    
+    for i, (lc, monthly_ndvi) in enumerate(monthly_data.items()):
+        axes[1].plot(months, monthly_ndvi, marker='o', label=lc, 
+                    color=colors[i], linewidth=2, markersize=6)
+    
+    axes[1].set_xlabel('Month')
+    axes[1].set_ylabel('Average NDVI')
+    axes[1].set_title('Seasonal NDVI Patterns by Land Cover Type')
+    axes[1].set_xticks(months)
+    axes[1].set_xticklabels(month_names)
+    axes[1].legend()
+    axes[1].grid(True, alpha=0.3)
+    axes[1].set_ylim(-0.1, 1.0)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    # Calculate phenology metrics
+    def calculate_phenology_metrics(ndvi_series, dates):
+        """Calculate basic phenology metrics"""
+        
+        df = pd.DataFrame({'date': dates, 'ndvi': ndvi_series})
+        df['doy'] = df['date'].dt.dayofyear
+        
+        # Annual cycle (use first complete year)
+        year_data = df[df['date'].dt.year == 2020].copy()
+        
+        if len(year_data) == 0:
+            return None
+        
+        # Basic metrics
+        max_ndvi = year_data['ndvi'].max()
+        min_ndvi = year_data['ndvi'].min()
+        amplitude = max_ndvi - min_ndvi
+        
+        # Find peak of season
+        peak_doy = year_data.loc[year_data['ndvi'].idxmax(), 'doy']
+        
+        # Growing season metrics (simplified)
+        threshold = min_ndvi + 0.2 * amplitude
+        growing_season = year_data[year_data['ndvi'] > threshold]
+        
+        if len(growing_season) > 0:
+            sos = growing_season['doy'].min()  # Start of season
+            eos = growing_season['doy'].max()  # End of season
+            los = eos - sos  # Length of season
+        else:
+            sos, eos, los = None, None, None
+        
+        return {
+            'max_ndvi': max_ndvi,
+            'min_ndvi': min_ndvi,
+            'amplitude': amplitude,
+            'peak_doy': peak_doy,
+            'start_of_season': sos,
+            'end_of_season': eos,
+            'length_of_season': los
+        }
+    
+    print("Phenology Metrics (2020):")
+    print("="*50)
+    
+    for lc, ndvi_series in time_series_data.items():
+        metrics = calculate_phenology_metrics(ndvi_series, dates)
+        if metrics:
+            print(f"\n{lc}:")
+            for metric, value in metrics.items():
+                if value is not None:
+                    if 'doy' in metric or 'season' in metric:
+                        print(f"  {metric}: {value:.0f} (day of year)")
+                    else:
+                        print(f"  {metric}: {value:.3f}")
+    
+    return time_series_data, monthly_data
+
+ts_data, monthly_data = demonstrate_temporal_analysis()
+```
+
+## Data Quality and Cloud Masking
+
+### Cloud Detection and Masking
+```{python}
+def demonstrate_cloud_masking():
+    """Demonstrate cloud detection and masking techniques"""
+    
+    # Create synthetic satellite image with clouds
+    height, width = 200, 200
+    
+    # Base surface reflectance
+    np.random.seed(42)
+    surface_reflectance = {
+        'blue': np.random.beta(2, 5, (height, width)) * 0.3,
+        'green': np.random.beta(3, 4, (height, width)) * 0.4,
+        'red': np.random.beta(2, 3, (height, width)) * 0.5,
+        'nir': np.random.beta(1.5, 2, (height, width)) * 0.8,
+    }
+    
+    # Add clouds
+    # Create cloud shapes
+    y, x = np.ogrid[:height, :width]
+    
+    # Multiple cloud areas
+    cloud_centers = [(50, 60), (150, 40), (120, 150)]
+    cloud_sizes = [30, 25, 35]
+    
+    cloud_mask = np.zeros((height, width), dtype=bool)
+    cloud_shadow_mask = np.zeros((height, width), dtype=bool)
+    
+    for (cy, cx), size in zip(cloud_centers, cloud_sizes):
+        # Cloud area
+        cloud_area = (x - cx)**2 + (y - cy)**2 < size**2
+        cloud_mask |= cloud_area
+        
+        # Cloud shadow (offset)
+        shadow_offset_x, shadow_offset_y = 10, 15
+        shadow_area = ((x - (cx + shadow_offset_x))**2 + 
+                      (y - (cy + shadow_offset_y))**2 < (size * 0.7)**2)
+        cloud_shadow_mask |= shadow_area
+    
+    # Apply cloud effects to reflectance
+    cloudy_reflectance = surface_reflectance.copy()
+    
+    # Clouds: high reflectance in visible, low in NIR
+    for band in ['blue', 'green', 'red']:
+        cloudy_reflectance[band][cloud_mask] = 0.8 + 0.1 * np.random.random(cloud_mask.sum())
+    cloudy_reflectance['nir'][cloud_mask] = 0.3 + 0.1 * np.random.random(cloud_mask.sum())
+    
+    # Cloud shadows: reduced reflectance
+    for band in cloudy_reflectance:
+        cloudy_reflectance[band][cloud_shadow_mask] *= 0.7
+    
+    # Cloud detection algorithms
+    def simple_cloud_detection(bands):
+        """Simple cloud detection based on spectral criteria"""
+        
+        # Calculate indices useful for cloud detection
+        # Normalized Difference Snow Index (can detect bright clouds)
+        ndsi = (bands['green'] - bands['nir']) / (bands['green'] + bands['nir'] + 1e-8)
+        
+        # Blue-NIR ratio (clouds are bright in blue, dark in NIR)
+        blue_nir_ratio = bands['blue'] / (bands['nir'] + 1e-8)
+        
+        # Simple thresholding
+        cloud_detected = (
+            (bands['blue'] > 0.3) &  # High blue reflectance
+            (blue_nir_ratio > 1.5) &  # High blue/NIR ratio
+            (ndsi > -0.1)  # Modified NDSI threshold
+        )
+        
+        return cloud_detected, {'ndsi': ndsi, 'blue_nir_ratio': blue_nir_ratio}
+    
+    # Detect clouds
+    detected_clouds, detection_indices = simple_cloud_detection(cloudy_reflectance)
+    
+    # Visualize cloud detection
+    fig, axes = plt.subplots(2, 4, figsize=(20, 10))
+    
+    # Original bands
+    band_names = ['blue', 'green', 'red', 'nir']
+    for i, band in enumerate(band_names):
+        axes[0, i].imshow(cloudy_reflectance[band], cmap='gray', vmin=0, vmax=1)
+        axes[0, i].set_title(f'{band.upper()} Band')
+        axes[0, i].axis('off')
+    
+    # Detection results
+    axes[1, 0].imshow(cloud_mask, cmap='Blues')
+    axes[1, 0].set_title('True Cloud Mask')
+    axes[1, 0].axis('off')
+    
+    axes[1, 1].imshow(detected_clouds, cmap='Reds')
+    axes[1, 1].set_title('Detected Clouds')
+    axes[1, 1].axis('off')
+    
+    axes[1, 2].imshow(detection_indices['ndsi'], cmap='RdBu', vmin=-1, vmax=1)
+    axes[1, 2].set_title('NDSI')
+    axes[1, 2].axis('off')
+    
+    axes[1, 3].imshow(detection_indices['blue_nir_ratio'], cmap='viridis', vmin=0, vmax=3)
+    axes[1, 3].set_title('Blue/NIR Ratio')
+    axes[1, 3].axis('off')
+    
+    plt.tight_layout()
+    plt.show()
+    
+    # Calculate detection accuracy
+    true_positives = (cloud_mask & detected_clouds).sum()
+    false_positives = (~cloud_mask & detected_clouds).sum()
+    false_negatives = (cloud_mask & ~detected_clouds).sum()
+    true_negatives = (~cloud_mask & ~detected_clouds).sum()
+    
+    precision = true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0
+    recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0
+    f1_score = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0
+    
+    print("Cloud Detection Performance:")
+    print("="*35)
+    print(f"True Positives: {true_positives}")
+    print(f"False Positives: {false_positives}")
+    print(f"False Negatives: {false_negatives}")
+    print(f"Precision: {precision:.3f}")
+    print(f"Recall: {recall:.3f}")
+    print(f"F1 Score: {f1_score:.3f}")
+    
+    return cloudy_reflectance, cloud_mask, detected_clouds
+
+cloudy_data, true_clouds, detected_clouds = demonstrate_cloud_masking()
+```
+
+## Summary
+
+Key concepts for geospatial data and remote sensing:
+- **Sensor Fundamentals**: Electromagnetic spectrum, satellite orbits, revisit times
+- **Coordinate Systems**: Projections, transformations, metadata handling
+- **Spectral Analysis**: Indices calculation, signatures, land cover discrimination
+- **Temporal Analysis**: Time series, phenology, seasonal patterns
+- **Data Quality**: Cloud detection, masking, quality assessment
+- **Applications**: Vegetation monitoring, change detection, environmental assessment
