@@ -46,10 +46,49 @@ website:
             href: course-materials/c10-project-presentations-synthesis.qmd
       - text: 👀 Cheatsheets
         menu:
-          - text: 🌍 Earth Engine Basics
-            href: course-materials/extras/cheatsheets/earth-engine-basics.qmd
-          - text: 🧩 GFM Architecture Cheatsheet
+          - text: "🏗️ Foundation Models & AI"
+          - text: Foundation Model Architectures
+            href: course-materials/extras/cheatsheets/foundation_model_architectures.qmd
+          - text: GFM Architecture Cheatsheet
             href: course-materials/extras/cheatsheets/gfm_architecture.qmd
+          - text: Fine-tuning Basics
+            href: course-materials/extras/cheatsheets/finetuning_basics.qmd
+          - text: Multi-modal Learning
+            href: course-materials/extras/cheatsheets/multimodal_learning.qmd
+          - text: Model Evaluation & Validation
+            href: course-materials/extras/cheatsheets/model_evaluation_validation.qmd
+          - text: Loading Pre-trained Models
+            href: course-materials/extras/cheatsheets/loading_models.qmd
+          - text: Model Inference & Feature Extraction
+            href: course-materials/extras/cheatsheets/model_inference.qmd
+          - text: "🗺️ Geospatial Data & Remote Sensing"
+          - text: Geospatial Data & Remote Sensing
+            href: course-materials/extras/cheatsheets/geospatial_data_remote_sensing.qmd
+          - text: Earth Engine Basics
+            href: course-materials/extras/cheatsheets/earth_engine_basics.qmd
+          - text: STAC APIs
+            href: course-materials/extras/cheatsheets/stac_apis.qmd
+          - text: Rasterio Basics
+            href: course-materials/extras/cheatsheets/rasterio_basics.qmd
+          - text: Xarray for Multi-dimensional Data
+            href: course-materials/extras/cheatsheets/xarray_basics.qmd
+          - text: "🔥 PyTorch & Deep Learning"
+          - text: PyTorch Tensors
+            href: course-materials/extras/cheatsheets/pytorch_tensors.qmd
+          - text: TorchGeo Datasets & Transforms
+            href: course-materials/extras/cheatsheets/torchgeo_basics.qmd
+          - text: Data Loading for Satellite Imagery
+            href: course-materials/extras/cheatsheets/dataloader_satellite.qmd
+          - text: "📊 Visualization & Analysis"
+          - text: Plotting Satellite Data
+            href: course-materials/extras/cheatsheets/plotting_satellite.qmd
+          - text: Interactive Maps with Folium
+            href: course-materials/extras/cheatsheets/folium_basics.qmd
+          - text: Geospatial Plotting with Matplotlib
+            href: course-materials/extras/cheatsheets/matplotlib_geospatial.qmd
+          - text: "☁️ Deployment & Scaling"
+          - text: Cloud & Scalable Computing
+            href: course-materials/extras/cheatsheets/cloud_scalable_computing.qmd
       - text: 📖 extras
         menu:
           - text: "📚 Reference Materials"
@@ -63,19 +102,6 @@ website:
             href: course-materials/extras/examples/text_encoder.qmd
           - text: Tiling and Patches
             href: course-materials/extras/examples/tiling-and-patches.qmd
-          - text: "🎓 Lectures"
-          - text: Foundation Model Architectures
-            href: course-materials/extras/lectures/lecture1_architectures.qmd
-          - text: Geospatial Data & Remote Sensing
-            href: course-materials/extras/lectures/lecture2_geospatial_data.qmd
-          - text: Fine-tuning Strategies
-            href: course-materials/extras/lectures/lecture3_finetuning.qmd
-          - text: Multi-modal Learning
-            href: course-materials/extras/lectures/lecture4_multimodal.qmd
-          - text: Model Evaluation & Validation
-            href: course-materials/extras/lectures/lecture5_evaluation.qmd
-          - text: Cloud & Scalable Computing
-            href: course-materials/extras/lectures/lecture6_cloud_computing.qmd
           - text: "📁 Project Templates"
           - text: Project Proposal Template
             href: course-materials/extras/projects/project-proposal-template.qmd
@@ -88,7 +114,7 @@ website:
     background: dark
     right: This website is built with [{{< fa brands github title="the github octocat logo" >}}](https://github.com/environmental-data-science/geog-288kc-geospatial-foundation-models) and [Quarto](https://quarto.org/)
     left: |
-      <img src="course-materials/images/geog-logo.png" alt="The Department of Geography logo" width="250"/>
+      ![The Department of Geography logo](images/geog-logo.png){width=250}
 format:
   html:
     theme: meds-website-styles.scss

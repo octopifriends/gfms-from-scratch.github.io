@@ -80,10 +80,9 @@ flowchart TD
 - Week 9: Model Implementation & Deployment (APIs, UI, benchmarking)
 - Week 10: Project Presentations & Synthesis
 
-Quick links:
+## Course Sessions
 
-- Weekly materials: see navbar → 🗓️ weekly materials
-- Interactive sessions: see navbar → 💻 interactive sessions
+- Weekly sessions: see navbar → 💻 weekly sessions
 
 ## Teaching Team
 

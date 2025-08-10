@@ -149,3 +149,22 @@ h2 {
   display: block !important;
 }
 
+// Prevent wide tables from colliding with the right-side TOC
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  display: table;
+  width: max-content; /* allow wide tables to exceed container width */
+  max-width: none;
+}
+
+/* On very narrow screens, let tables wrap inside container */
+@media (max-width: 991.98px) {
+  table {
+    width: 100%;
+  }
+}
+

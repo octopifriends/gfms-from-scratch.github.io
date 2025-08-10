@@ -137,48 +137,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-weekly-sessions">    
         <li>
-    <a class="dropdown-item" href="../../../course-materials/00-introduction-to-deeplearning-architecture.html">
+    <a class="dropdown-item" href="../../../course-materials/c00-introduction-to-deeplearning-architecture.html">
  <span class="dropdown-text">Session 0 - 🪜 Introduction to Deep Learning Architecture</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../course-materials/01-geospatial-data-foundations.html">
+    <a class="dropdown-item" href="../../../course-materials/c01-geospatial-data-foundations.html">
  <span class="dropdown-text">Session 1 - 📊 Geospatial Data Foundations</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../course-materials/02-spatial-temporal-attention-mechanisms.html">
+    <a class="dropdown-item" href="../../../course-materials/c02-spatial-temporal-attention-mechanisms.html">
  <span class="dropdown-text">Session 2 - 🧠 Spatial-Temporal Attention Mechanisms</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../course-materials/03-complete-gfm-architecture.html">
+    <a class="dropdown-item" href="../../../course-materials/c03-complete-gfm-architecture.html">
  <span class="dropdown-text">Session 3 - 🏗️ Complete GFM Architecture</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../course-materials/04-pretraining-implementation.html">
+    <a class="dropdown-item" href="../../../course-materials/c04-pretraining-implementation.html">
  <span class="dropdown-text">Session 4 - 🔥 Pretraining Implementation</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../course-materials/05-training-loop-optimization.html">
+    <a class="dropdown-item" href="../../../course-materials/c05-training-loop-optimization.html">
  <span class="dropdown-text">Session 5 - ⚙️ Training Loop Optimization</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../course-materials/06-model-evaluation-analysis.html">
+    <a class="dropdown-item" href="../../../course-materials/c06-model-evaluation-analysis.html">
  <span class="dropdown-text">Session 6 - 📈 Model Evaluation &amp; Analysis</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../course-materials/07-integration-with-existing-models.html">
+    <a class="dropdown-item" href="../../../course-materials/c07-integration-with-existing-models.html">
  <span class="dropdown-text">Session 7 - 🤝 Integration with Existing Models</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../course-materials/08-task-specific-finetuning.html">
+    <a class="dropdown-item" href="../../../course-materials/c08-task-specific-finetuning.html">
  <span class="dropdown-text">Session 8 - 🔧 Task-Specific Fine-tuning</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../course-materials/09-model-implementation-deployment.html">
+    <a class="dropdown-item" href="../../../course-materials/c09-model-implementation-deployment.html">
  <span class="dropdown-text">Session 9 - ☁️ Model Implementation &amp; Deployment</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../course-materials/10-project-presentations-synthesis.html">
+    <a class="dropdown-item" href="../../../course-materials/c10-project-presentations-synthesis.html">
  <span class="dropdown-text">Session 10 - 🎯 Project Presentations &amp; Synthesis</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-cheatsheets" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">👀 Cheatsheets</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-cheatsheets">    
+        <li>
+    <a class="dropdown-item" href="../../../course-materials/extras/cheatsheets/earth-engine-basics.qmd">
+ <span class="dropdown-text">🌍 Earth Engine Basics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../course-materials/extras/cheatsheets/gfm_architecture.html">
+ <span class="dropdown-text">🧩 GFM Architecture Cheatsheet</span></a>
   </li>  
     </ul>
   </li>
@@ -187,14 +202,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">📖 extras</span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-extras">    
-        <li class="dropdown-header">📚 Reference Materials</li>
-        <li>
-    <a class="dropdown-item" href="../../../cheatsheets.html">
- <span class="dropdown-text">Cheatsheets</span></a>
-  </li>  
         <li>
     <a class="dropdown-item" href="../../../course-materials/extras/resources/course_resources.html">
- <span class="dropdown-text">Course Resources</span></a>
+ <span class="dropdown-text">📚 Reference Materials</span></a>
   </li>  
         <li class="dropdown-header">🎯 Practical Examples</li>
         <li>
@@ -326,7 +336,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-to-satellite-data-loading" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-satellite-data-loading">Introduction to Satellite Data Loading</h2>
 <p>Efficient data loading is crucial for satellite imagery analysis due to large file sizes, multiple spectral bands, and complex geospatial metadata.</p>
-<div id="7729c28d" class="cell" data-execution_count="1">
+<div id="d067c555" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
@@ -351,7 +361,7 @@ Rasterio version: 1.4.3</code></pre>
 <h2 class="anchored" data-anchor-id="basic-dataset-patterns">Basic Dataset Patterns</h2>
 <section id="simple-satellite-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="simple-satellite-dataset">Simple satellite dataset</h3>
-<div id="95a3acc7" class="cell" data-execution_count="2">
+<div id="30e0e2ce" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SatelliteDataset(Dataset):</span>
@@ -424,7 +434,7 @@ Image shape: torch.Size([4, 256, 256])</code></pre>
 </section>
 <section id="multi-temporal-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="multi-temporal-dataset">Multi-temporal dataset</h3>
-<div id="187993d0" class="cell" data-execution_count="3">
+<div id="c719aab9" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TemporalSatelliteDataset(Dataset):</span>
@@ -497,7 +507,7 @@ Sequence ID: tile_000</code></pre>
 <h2 class="anchored" data-anchor-id="memory-efficient-loading">Memory-Efficient Loading</h2>
 <section id="windowed-reading-for-large-files" class="level3">
 <h3 class="anchored" data-anchor-id="windowed-reading-for-large-files">Windowed reading for large files</h3>
-<div id="0a18f035" class="cell" data-execution_count="4">
+<div id="e9a92362" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> WindowedSatelliteDataset(Dataset):</span>
@@ -571,7 +581,7 @@ Window bounds: (0, 0, 512, 512)</code></pre>
 </section>
 <section id="lazy-loading-with-caching" class="level3">
 <h3 class="anchored" data-anchor-id="lazy-loading-with-caching">Lazy loading with caching</h3>
-<div id="c01cf80c" class="cell" data-execution_count="5">
+<div id="f291d95a" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> functools <span class="im">import</span> lru_cache</span>
@@ -657,8 +667,8 @@ Sample 1: bands=4, image_idx=0, patch_idx=1
 Sample 2: bands=4, image_idx=0, patch_idx=2
 Sample 3: bands=4, image_idx=0, patch_idx=3
 Loading image2.tif into cache...
-Sample 4: bands=8, image_idx=1, patch_idx=0
-Sample 5: bands=8, image_idx=1, patch_idx=1
+Sample 4: bands=4, image_idx=1, patch_idx=0
+Sample 5: bands=4, image_idx=1, patch_idx=1
 Cache statistics: CacheInfo(hits=4, misses=2, maxsize=10, currsize=2)</code></pre>
 </div>
 </div>
@@ -668,7 +678,7 @@ Cache statistics: CacheInfo(hits=4, misses=2, maxsize=10, currsize=2)</code></pr
 <h2 class="anchored" data-anchor-id="advanced-data-loading-strategies">Advanced Data Loading Strategies</h2>
 <section id="multi-resolution-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="multi-resolution-dataset">Multi-resolution dataset</h3>
-<div id="aa20ada6" class="cell" data-execution_count="6">
+<div id="fef2f91e" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultiResolutionDataset(Dataset):</span>
@@ -741,7 +751,7 @@ image_512: torch.Size([4, 512, 512])</code></pre>
 </section>
 <section id="balanced-sampling-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="balanced-sampling-dataset">Balanced sampling dataset</h3>
-<div id="6f4f9203" class="cell" data-execution_count="7">
+<div id="67797ff4" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BalancedSatelliteDataset(Dataset):</span>
@@ -845,7 +855,7 @@ Balanced dataset size: 117</code></pre>
 <h2 class="anchored" data-anchor-id="dataloader-optimization">DataLoader Optimization</h2>
 <section id="custom-collate-functions" class="level3">
 <h3 class="anchored" data-anchor-id="custom-collate-functions">Custom collate functions</h3>
-<div id="0ac22e06" class="cell" data-execution_count="8">
+<div id="2ba52e76" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> satellite_collate_fn(batch):</span>
@@ -949,7 +959,7 @@ Paths: 3</code></pre>
 </section>
 <section id="performance-optimization" class="level3">
 <h3 class="anchored" data-anchor-id="performance-optimization">Performance optimization</h3>
-<div id="b20d1678" class="cell" data-execution_count="9">
+<div id="099d4a2f" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_optimized_dataloader(dataset, batch_size<span class="op">=</span><span class="dv">32</span>, num_workers<span class="op">=</span><span class="dv">4</span>):</span>
@@ -1004,7 +1014,7 @@ Paths: 3</code></pre>
 <h2 class="anchored" data-anchor-id="real-world-integration-examples">Real-World Integration Examples</h2>
 <section id="integration-with-preprocessing-pipeline" class="level3">
 <h3 class="anchored" data-anchor-id="integration-with-preprocessing-pipeline">Integration with preprocessing pipeline</h3>
-<div id="eb6f2fe6" class="cell" data-execution_count="10">
+<div id="7d17d511" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PreprocessingSatelliteDataset(Dataset):</span>
@@ -2286,7 +2296,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p><img src="../../../images/geog-logo.png" alt="The Department of Geography logo" width="250"></p>
+<p><img src="course-materials/images/geog-logo.png" alt="The Department of Geography logo" width="250"></p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

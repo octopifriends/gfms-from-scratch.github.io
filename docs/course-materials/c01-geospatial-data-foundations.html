@@ -191,7 +191,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-cheatsheets">    
         <li>
-    <a class="dropdown-item" href="../course-materials/cheatsheets/earth-engine-basics.qmd">
+    <a class="dropdown-item" href="../course-materials/extras/cheatsheets/earth-engine-basics.qmd">
  <span class="dropdown-text">🌍 Earth Engine Basics</span></a>
   </li>  
         <li>
@@ -439,7 +439,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Let’s establish our development environment and define the core constants we’ll use throughout.</p>
 <section id="imports-and-configuration" class="level3">
 <h3 class="anchored" data-anchor-id="imports-and-configuration">Imports and Configuration</h3>
-<div id="c8313c6f" class="cell" data-execution_count="1">
+<div id="4c4e42e0" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
@@ -478,7 +478,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="data-preparation" class="level3">
 <h3 class="anchored" data-anchor-id="data-preparation">Data Preparation</h3>
-<div id="7296919c" class="cell" data-execution_count="2">
+<div id="6a075816" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up data paths - use book/data for course sample data</span></span>
@@ -523,7 +523,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="build-it-geotiff-loader-function" class="level3">
 <h3 class="anchored" data-anchor-id="build-it-geotiff-loader-function">🛠️ Build It: GeoTIFF Loader Function</h3>
 <p>Your task: Complete this function to load a GeoTIFF and return both the data and metadata.</p>
-<div id="3cf36d23" class="cell" data-execution_count="3">
+<div id="3ccc978f" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_geotiff(file_path: Path) <span class="op">-&gt;</span> Tuple[np.ndarray, Dict[<span class="bu">str</span>, Any]]:</span>
@@ -567,7 +567,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="verify-it-inspect-your-data" class="level3">
 <h3 class="anchored" data-anchor-id="verify-it-inspect-your-data">🔍 Verify It: Inspect Your Data</h3>
-<div id="f2e4580c" class="cell" data-execution_count="4">
+<div id="cabf73ab" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examine the data you loaded</span></span>
@@ -620,7 +620,7 @@ Value ranges per band:
 <p><strong>Why use global statistics?</strong> When training on multiple images, each tile might have different value ranges. Using global statistics ensures that the same pixel value represents the same relative intensity across all training data.</p>
 <section id="min-max-normalization-function" class="level4">
 <h4 class="anchored" data-anchor-id="min-max-normalization-function">Min-Max Normalization Function</h4>
-<div id="ec93af65" class="cell" data-tangle="null" data-execution_count="5">
+<div id="6fa0ad25" class="cell" data-tangle="null" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> minmax_normalize(data: np.ndarray, </span>
@@ -675,7 +675,7 @@ Value ranges per band:
 </section>
 <section id="z-score-normalization-function" class="level4">
 <h4 class="anchored" data-anchor-id="z-score-normalization-function">Z-Score Normalization Function</h4>
-<div id="dba892f8" class="cell" data-execution_count="6">
+<div id="32f3abd3" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> zscore_normalize(data: np.ndarray,</span>
@@ -739,7 +739,7 @@ Value ranges per band:
 </section>
 <section id="test-both-functions-with-local-statistics" class="level4">
 <h4 class="anchored" data-anchor-id="test-both-functions-with-local-statistics">Test Both Functions with Local Statistics</h4>
-<div id="c35ccabb" class="cell" data-execution_count="7">
+<div id="5ff33388" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test min-max normalization with local statistics</span></span>
@@ -781,7 +781,7 @@ Value ranges per band:
 </section>
 <section id="test-with-global-statistics" class="level4">
 <h4 class="anchored" data-anchor-id="test-with-global-statistics">Test with Global Statistics</h4>
-<div id="4af22392" class="cell" data-execution_count="8">
+<div id="0a7a59e8" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate global statistics from a larger dataset</span></span>
@@ -836,7 +836,7 @@ Value ranges per band:
 </section>
 <section id="build-it-spatial-cropping-function" class="level3">
 <h3 class="anchored" data-anchor-id="build-it-spatial-cropping-function">🛠️ Build It: Spatial Cropping Function</h3>
-<div id="8064527c" class="cell" data-execution_count="9">
+<div id="1ee7f1bb" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> crop_to_patches(data: np.ndarray, patch_size: <span class="bu">int</span>, stride: <span class="bu">int</span>) <span class="op">-&gt;</span> np.ndarray:</span>
@@ -885,7 +885,7 @@ Value ranges per band:
 <p><strong>Goal</strong>: Extract patches while preserving spatial context information.</p>
 <section id="build-it-patch-extraction-function" class="level3">
 <h3 class="anchored" data-anchor-id="build-it-patch-extraction-function">🛠️ Build It: Patch Extraction Function</h3>
-<div id="91bb0484" class="cell" data-execution_count="10">
+<div id="5d34f519" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_patches_with_metadata(</span>
@@ -971,7 +971,7 @@ Value ranges per band:
 <p><strong>Goal</strong>: Convert numpy arrays to PyTorch tensors and encode metadata.</p>
 <section id="build-it-metadata-encoder" class="level3">
 <h3 class="anchored" data-anchor-id="build-it-metadata-encoder">🛠️ Build It: Metadata Encoder</h3>
-<div id="e88653bd" class="cell" data-execution_count="11">
+<div id="5b8da004" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> encode_metadata(coordinates: np.ndarray) <span class="op">-&gt;</span> np.ndarray:</span>
@@ -1031,7 +1031,7 @@ Value ranges per band:
 </section>
 <section id="build-it-tensor-conversion" class="level3">
 <h3 class="anchored" data-anchor-id="build-it-tensor-conversion">🛠️ Build It: Tensor Conversion</h3>
-<div id="28bafc88" class="cell" data-execution_count="12">
+<div id="bb77f70a" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_tensors(patches: np.ndarray, metadata: np.ndarray) <span class="op">-&gt;</span> Tuple[torch.Tensor, torch.Tensor]:</span>
@@ -1071,7 +1071,7 @@ Value ranges per band:
 <p><strong>Goal</strong>: Build a PyTorch Dataset and DataLoader for training.</p>
 <section id="build-it-custom-dataset-class" class="level3">
 <h3 class="anchored" data-anchor-id="build-it-custom-dataset-class">🛠️ Build It: Custom Dataset Class</h3>
-<div id="77222b18" class="cell" data-execution_count="13">
+<div id="94b9b5c5" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GeospatialDataset(Dataset):</span>
@@ -1124,7 +1124,7 @@ Value ranges per band:
 </section>
 <section id="build-it-dataloader" class="level3">
 <h3 class="anchored" data-anchor-id="build-it-dataloader">🛠️ Build It: DataLoader</h3>
-<div id="64ad6d38" class="cell" data-execution_count="14">
+<div id="2e0b4db0" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Create DataLoader with appropriate batch size and shuffling</span></span>
@@ -1169,7 +1169,7 @@ Value ranges per band:
 <p><strong>Goal</strong>: Connect to a simple embedding layer to verify end-to-end functionality.</p>
 <section id="build-it-simple-gfm-embedding-layer" class="level3">
 <h3 class="anchored" data-anchor-id="build-it-simple-gfm-embedding-layer">🛠️ Build It: Simple GFM Embedding Layer</h3>
-<div id="0fd36701" class="cell" data-execution_count="15">
+<div id="542c8232" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SimpleGFMEmbedding(nn.Module):</span>
@@ -1263,7 +1263,7 @@ Value ranges per band:
 <p><strong>Goal</strong>: Run the complete pipeline and verify everything works together.</p>
 <section id="build-it-complete-pipeline-function" class="level3">
 <h3 class="anchored" data-anchor-id="build-it-complete-pipeline-function">🛠️ Build It: Complete Pipeline Function</h3>
-<div id="9c7f1784" class="cell" data-execution_count="16">
+<div id="659068ef" class="cell" data-execution_count="16">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> geotiff_to_embeddings_pipeline(</span>
@@ -1381,7 +1381,7 @@ Value ranges per band:
 </section>
 <section id="verify-it-pipeline-output-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="verify-it-pipeline-output-analysis">🔍 Verify It: Pipeline Output Analysis</h3>
-<div id="3e69fb8c" class="cell" data-execution_count="17">
+<div id="05fe46c0" class="cell" data-execution_count="17">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize embedding similarities</span></span>
@@ -2854,7 +2854,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p><img src="../images/geog-logo.png" alt="The Department of Geography logo" width="250"></p>
+<p><img src="course-materials/images/geog-logo.png" alt="The Department of Geography logo" width="250"></p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

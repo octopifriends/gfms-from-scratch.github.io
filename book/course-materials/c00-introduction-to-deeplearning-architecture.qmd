@@ -151,6 +151,7 @@ What to notice:
 
 This table maps each week to the broader stages (see the course index), the key `geogfm` files you’ll touch, and the primary deep learning tools you’ll rely on.
 
+::: {.table-responsive}
 | Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |
 |------|-------|-------|--------------------------|---------------|---------|
 | 1 | Stage 1: Build GFM Architecture | Data Foundations | `core/config.py`; `data/datasets/stac_dataset.py`; `data/transforms/{normalization.py, patchify.py}`; `data/loaders.py` | `torch.utils.data.Dataset`/`DataLoader`, `rasterio`, `numpy` | Config-driven dataloaders that yield normalized patches |
@@ -163,3 +164,4 @@ This table maps each week to the broader stages (see the course index), the key 
 | 8 | Stage 3: Apply & Deploy | Task Fine-tuning | `tasks/{classification.py|segmentation.py}` (light heads) | `torch.nn.CrossEntropyLoss`; timm optional | Head swap on frozen encoder; small dataset demo |
 | 9 | Stage 3 | Deployment & Inference | `inference/{tiling.py, sliding_window.py}` | `numpy`, `rasterio` windows | Sliding-window inference on a small scene |
 | 10 | Stage 3 | Presentations & Synthesis | Project deliverables (no new `geogfm` code required) | — | Present MVP builds, analysis, transition plan |
+:::
