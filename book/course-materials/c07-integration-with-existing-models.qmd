@@ -32,17 +32,17 @@ This week’s work in the broader GFM plan.
 
 ### Package inits
 
-```{python tangle="../geogfm/interoperability/__init__.py"}
+```{python tangle="../../geogfm/interoperability/__init__.py"}
 # geogfm.interoperability
 ```
 
-```{python tangle="../geogfm/core/__init__.py" tangle-append="true"}
+```{python tangle="../../geogfm/core/__init__.py" tangle-append="true"}
 # registry will be added here
 ```
 
 ### 1) Lightweight Registry
 
-```{python tangle="../geogfm/core/registry.py"}
+```{python tangle="../../geogfm/core/registry.py"}
 from __future__ import annotations
 from typing import Callable, Dict, Any
 
@@ -72,7 +72,7 @@ HEAD_REGISTRY = Registry()
 
 ### 2) HuggingFace Interoperability Stubs
 
-```{python tangle="../geogfm/interoperability/huggingface.py"}
+```{python tangle="../../geogfm/interoperability/huggingface.py"}
 from __future__ import annotations
 from typing import Any, Dict
 

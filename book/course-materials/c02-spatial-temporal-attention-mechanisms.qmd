@@ -40,33 +40,33 @@ This week’s work in the broader GFM plan.
 
 ### Package inits
 
-```{python tangle="../geogfm/modules/__init__.py"}
+```{python tangle="../../geogfm/modules/__init__.py"}
 # geogfm.modules
 ```
 
-```{python tangle="../geogfm/modules/attention/__init__.py"}
+```{python tangle="../../geogfm/modules/attention/__init__.py"}
 # geogfm.modules.attention
 ```
 
-```{python tangle="../geogfm/modules/embeddings/__init__.py"}
+```{python tangle="../../geogfm/modules/embeddings/__init__.py"}
 # geogfm.modules.embeddings
 ```
 
-```{python tangle="../geogfm/modules/blocks/__init__.py"}
+```{python tangle="../../geogfm/modules/blocks/__init__.py"}
 # geogfm.modules.blocks
 ```
 
-```{python tangle="../geogfm/modules/heads/__init__.py"}
+```{python tangle="../../geogfm/modules/heads/__init__.py"}
 # geogfm.modules.heads
 ```
 
-```{python tangle="../geogfm/modules/losses/__init__.py"}
+```{python tangle="../../geogfm/modules/losses/__init__.py"}
 # geogfm.modules.losses
 ```
 
 ### 1) Patch Embedding
 
-```{python tangle="../geogfm/modules/embeddings/patch_embedding.py"}
+```{python tangle="../../geogfm/modules/embeddings/patch_embedding.py"}
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Tuple
@@ -100,7 +100,7 @@ class PatchEmbedding(nn.Module):
 
 ### 2) Positional Encoding (Sinusoidal)
 
-```{python tangle="../geogfm/modules/embeddings/positional_encoding.py"}
+```{python tangle="../../geogfm/modules/embeddings/positional_encoding.py"}
 from __future__ import annotations
 import math
 import torch
@@ -131,7 +131,7 @@ def sinusoidal_positional_encoding_2d(height: int, width: int, dim: int, device:
 
 ### 3) Multihead Self-Attention
 
-```{python tangle="../geogfm/modules/attention/multihead_attention.py"}
+```{python tangle="../../geogfm/modules/attention/multihead_attention.py"}
 from __future__ import annotations
 from typing import Optional
 import math
@@ -172,7 +172,7 @@ class MultiheadSelfAttention(nn.Module):
 
 ### 4) MLP and Transformer Block (PreNorm)
 
-```{python tangle="../geogfm/modules/blocks/mlp.py"}
+```{python tangle="../../geogfm/modules/blocks/mlp.py"}
 from __future__ import annotations
 import torch
 import torch.nn as nn
@@ -195,7 +195,7 @@ class MLP(nn.Module):
         return x
 ```
 
-```{python tangle="../geogfm/modules/blocks/transformer_block.py"}
+```{python tangle="../../geogfm/modules/blocks/transformer_block.py"}
 from __future__ import annotations
 import torch
 import torch.nn as nn

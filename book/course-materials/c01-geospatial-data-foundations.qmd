@@ -37,29 +37,29 @@ This week’s work in the broader GFM plan.
 
 ### Package inits
 
-```{python tangle="../geogfm/__init__.py"}
+```{python tangle="../../geogfm/__init__.py"}
 # geogfm package init
 ```
 
-```{python tangle="../geogfm/core/__init__.py"}
+```{python tangle="../../geogfm/core/__init__.py"}
 # geogfm.core
 ```
 
-```{python tangle="../geogfm/data/__init__.py"}
+```{python tangle="../../geogfm/data/__init__.py"}
 # geogfm.data
 ```
 
-```{python tangle="../geogfm/data/datasets/__init__.py"}
+```{python tangle="../../geogfm/data/datasets/__init__.py"}
 # geogfm.data.datasets
 ```
 
-```{python tangle="../geogfm/data/transforms/__init__.py"}
+```{python tangle="../../geogfm/data/transforms/__init__.py"}
 # geogfm.data.transforms
 ```
 
 ### 1) Typed Configs
 
-```{python tangle="../geogfm/core/config.py"}
+```{python tangle="../../geogfm/core/config.py"}
 from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, Any, Optional
@@ -97,7 +97,7 @@ class TrainConfig:
 
 ### 2) Normalization Transform
 
-```{python tangle="../geogfm/data/transforms/normalization.py"}
+```{python tangle="../../geogfm/data/transforms/normalization.py"}
 from __future__ import annotations
 import numpy as np
 from typing import Tuple, Dict, Any, Optional
@@ -143,7 +143,7 @@ def zscore_normalize(data: Array, global_mean: Optional[Array] = None, global_st
 
 ### 3) Patchify Utilities
 
-```{python tangle="../geogfm/data/transforms/patchify.py"}
+```{python tangle="../../geogfm/data/transforms/patchify.py"}
 from __future__ import annotations
 import numpy as np
 from typing import Tuple
@@ -184,7 +184,7 @@ def reconstruct_from_patches(patches: Array, height: int, width: int, patch_size
 
 ### 4) Minimal STAC-like Dataset
 
-```{python tangle="../geogfm/data/datasets/stac_dataset.py"}
+```{python tangle="../../geogfm/data/datasets/stac_dataset.py"}
 from __future__ import annotations
 from typing import List, Optional
 from pathlib import Path
@@ -237,7 +237,7 @@ class StacLikeDataset(Dataset):
 
 ### 5) DataLoader Builders
 
-```{python tangle="../geogfm/data/loaders.py"}
+```{python tangle="../../geogfm/data/loaders.py"}
 from __future__ import annotations
 from typing import Tuple
 from torch.utils.data import DataLoader

@@ -33,13 +33,13 @@ This week’s work in the broader GFM plan.
 
 ### Package inits
 
-```{python tangle="../geogfm/models/__init__.py"}
+```{python tangle="../../geogfm/models/__init__.py"}
 # geogfm.models
 ```
 
 ### 1) GeoViT Backbone
 
-```{python tangle="../geogfm/models/gfm_vit.py"}
+```{python tangle="../../geogfm/models/gfm_vit.py"}
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import List
@@ -82,7 +82,7 @@ class GeoViTBackbone(nn.Module):
 
 ### 2) Reconstruction Head
 
-```{python tangle="../geogfm/modules/heads/reconstruction_head.py"}
+```{python tangle="../../geogfm/modules/heads/reconstruction_head.py"}
 from __future__ import annotations
 import torch
 import torch.nn as nn

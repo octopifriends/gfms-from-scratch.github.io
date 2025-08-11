@@ -32,13 +32,13 @@ This week’s work in the broader GFM plan.
 
 ### Package inits
 
-```{python tangle="../geogfm/training/__init__.py"}
+```{python tangle="../../geogfm/training/__init__.py"}
 # geogfm.training
 ```
 
 ### 1) Optimizer Builder
 
-```{python tangle="../geogfm/training/optimizer.py"}
+```{python tangle="../../geogfm/training/optimizer.py"}
 from __future__ import annotations
 from typing import Dict, Any
 import torch
@@ -57,7 +57,7 @@ def build_optimizer(model: torch.nn.Module, cfg: Dict[str, Any]) -> torch.optim.
 
 ### 2) Training Loop (fit/train/eval)
 
-```{python tangle="../geogfm/training/loop.py"}
+```{python tangle="../../geogfm/training/loop.py"}
 from __future__ import annotations
 from typing import Tuple, Callable, Optional
 import time

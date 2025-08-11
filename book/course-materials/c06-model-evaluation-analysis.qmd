@@ -32,13 +32,13 @@ This week’s work in the broader GFM plan.
 
 ### Package inits
 
-```{python tangle="../geogfm/evaluation/__init__.py"}
+```{python tangle="../../geogfm/evaluation/__init__.py"}
 # geogfm.evaluation
 ```
 
 ### 1) Visualization Utilities
 
-```{python tangle="../geogfm/evaluation/visualization.py"}
+```{python tangle="../../geogfm/evaluation/visualization.py"}
 from __future__ import annotations
 import torch
 import matplotlib.pyplot as plt
@@ -82,7 +82,7 @@ def show_reconstruction_grid(images: torch.Tensor, recon_patches: torch.Tensor, 
 
 ### 2) Simple Metrics (optional)
 
-```{python tangle="../geogfm/evaluation/metrics.py"}
+```{python tangle="../../geogfm/evaluation/metrics.py"}
 from __future__ import annotations
 import torch
 

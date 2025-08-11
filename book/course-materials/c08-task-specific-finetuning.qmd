@@ -32,13 +32,13 @@ This week’s work in the broader GFM plan.
 
 ### Package inits
 
-```{python tangle="../geogfm/tasks/__init__.py"}
+```{python tangle="../../geogfm/tasks/__init__.py"}
 # geogfm.tasks
 ```
 
 ### 1) Classification Head
 
-```{python tangle="../geogfm/tasks/classification.py"}
+```{python tangle="../../geogfm/tasks/classification.py"}
 from __future__ import annotations
 import torch
 import torch.nn as nn
@@ -56,7 +56,7 @@ class ClassificationHead(nn.Module):
 
 ### 2) Segmentation Head (token-wise classifier)
 
-```{python tangle="../geogfm/tasks/segmentation.py"}
+```{python tangle="../../geogfm/tasks/segmentation.py"}
 from __future__ import annotations
 import torch
 import torch.nn as nn

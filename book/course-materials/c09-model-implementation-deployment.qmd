@@ -31,13 +31,13 @@ This week’s work in the broader GFM plan.
 
 ### Package inits
 
-```{python tangle="../geogfm/inference/__init__.py"}
+```{python tangle="../../geogfm/inference/__init__.py"}
 # geogfm.inference
 ```
 
 ### 1) Sliding-window helpers
 
-```{python tangle="../geogfm/inference/sliding_window.py"}
+```{python tangle="../../geogfm/inference/sliding_window.py"}
 from __future__ import annotations
 import numpy as np
 from typing import Iterator, Tuple
@@ -52,7 +52,7 @@ def window_slices(height: int, width: int, patch_size: int, stride: int) -> Iter
 
 ### 2) Tiling inference (naive)
 
-```{python tangle="../geogfm/inference/tiling.py"}
+```{python tangle="../../geogfm/inference/tiling.py"}
 from __future__ import annotations
 import numpy as np
 from typing import Callable

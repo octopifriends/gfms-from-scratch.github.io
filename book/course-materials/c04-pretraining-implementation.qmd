@@ -33,7 +33,7 @@ This week’s work in the broader GFM plan.
 
 ### 1) MAE Loss (masked MSE)
 
-```{python tangle="../geogfm/modules/losses/mae_loss.py"}
+```{python tangle="../../geogfm/modules/losses/mae_loss.py"}
 from __future__ import annotations
 import torch
 import torch.nn.functional as F
@@ -55,7 +55,7 @@ def masked_mse_loss(pred: torch.Tensor, target: torch.Tensor, mask: torch.Tensor
 
 ### 2) Masked Autoencoder Wrapper
 
-```{python tangle="../geogfm/models/gfm_mae.py"}
+```{python tangle="../../geogfm/models/gfm_mae.py"}
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Tuple
