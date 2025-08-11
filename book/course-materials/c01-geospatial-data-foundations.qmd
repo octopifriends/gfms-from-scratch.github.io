@@ -26,6 +26,232 @@ This week’s work in the broader GFM plan.
 - Normalize channels; extract patches deterministically
 - Verify shapes/CRS/stats prints; run a tiny DataLoader
 
+## Session Outline (and Tangled Code)
+
+- Concepts → Components mapping
+  - Configuration schemas → `core/config.py`
+  - Normalization and patchifying transforms → `data/transforms/{normalization.py, patchify.py}`
+  - Minimal STAC-like dataset → `data/datasets/stac_dataset.py`
+  - DataLoader builders → `data/loaders.py`
+  - Package init files → `geogfm/__init__.py` and subpackages
+
+### Package inits
+
+```{python tangle="../geogfm/__init__.py"}
+# geogfm package init
+```
+
+```{python tangle="../geogfm/core/__init__.py"}
+# geogfm.core
+```
+
+```{python tangle="../geogfm/data/__init__.py"}
+# geogfm.data
+```
+
+```{python tangle="../geogfm/data/datasets/__init__.py"}
+# geogfm.data.datasets
+```
+
+```{python tangle="../geogfm/data/transforms/__init__.py"}
+# geogfm.data.transforms
+```
+
+### 1) Typed Configs
+
+```{python tangle="../geogfm/core/config.py"}
+from __future__ import annotations
+from dataclasses import dataclass, field
+from typing import Dict, Any, Optional
+
+@dataclass
+class ModelConfig:
+    architecture: str = "gfm_vit"
+    in_channels: int = 3
+    image_size: int = 64
+    patch_size: int = 16
+    embed_dim: int = 128
+    depth: int = 4
+    num_heads: int = 4
+    mlp_ratio: float = 4.0
+
+@dataclass
+class DataConfig:
+    dataset: str = "stac"
+    root_dir: str = "data/out"  # or a small sample dir
+    split: str = "train"
+    image_size: int = 64
+    in_channels: int = 3
+    length: int = 64  # synthetic length fallback
+    num_workers: int = 0
+    batch_size: int = 8
+    seed: int = 42
+
+@dataclass
+class TrainConfig:
+    epochs: int = 1
+    batch_size: int = 8
+    optimizer: Dict[str, Any] = field(default_factory=lambda: {"name": "adamw", "lr": 2e-4})
+    device: str = "cpu"
+```
+
+### 2) Normalization Transform
+
+```{python tangle="../geogfm/data/transforms/normalization.py"}
+from __future__ import annotations
+import numpy as np
+from typing import Tuple, Dict, Any, Optional
+
+Array = np.ndarray
+
+def minmax_normalize(data: Array, global_min: Optional[Array] = None, global_max: Optional[Array] = None) -> tuple[Array, dict]:
+    bands, height, width = data.shape
+    normalized = np.zeros_like(data, dtype=np.float32)
+    if global_min is None or global_max is None:
+        mins = np.array([data[i].min() for i in range(bands)], dtype=np.float32)
+        maxs = np.array([data[i].max() for i in range(bands)], dtype=np.float32)
+        src = "local"
+    else:
+        mins, maxs, src = global_min.astype(np.float32), global_max.astype(np.float32), "global"
+    for i in range(bands):
+        rng = maxs[i] - mins[i]
+        if rng > 0:
+            normalized[i] = (data[i] - mins[i]) / rng
+        else:
+            normalized[i] = 0
+    stats = {"source": src, "mins": mins, "maxs": maxs, "output_range": (float(normalized.min()), float(normalized.max()))}
+    return normalized, stats
+
+
+def zscore_normalize(data: Array, global_mean: Optional[Array] = None, global_std: Optional[Array] = None) -> tuple[Array, dict]:
+    bands, height, width = data.shape
+    normalized = np.zeros_like(data, dtype=np.float32)
+    if global_mean is None or global_std is None:
+        means = np.array([data[i].mean() for i in range(bands)], dtype=np.float32)
+        stds = np.array([data[i].std() for i in range(bands)], dtype=np.float32)
+        src = "local"
+    else:
+        means, stds, src = global_mean.astype(np.float32), global_std.astype(np.float32), "global"
+    for i in range(bands):
+        if stds[i] > 0:
+            normalized[i] = (data[i] - means[i]) / stds[i]
+        else:
+            normalized[i] = 0
+    stats = {"source": src, "means": means, "stds": stds, "output_mean": float(normalized.mean()), "output_std": float(normalized.std())}
+    return normalized, stats
+```
+
+### 3) Patchify Utilities
+
+```{python tangle="../geogfm/data/transforms/patchify.py"}
+from __future__ import annotations
+import numpy as np
+from typing import Tuple
+
+Array = np.ndarray
+
+def crop_to_patches(data: Array, patch_size: int, stride: int) -> Array:
+    bands, height, width = data.shape
+    patches_h = (height - patch_size) // stride + 1
+    patches_w = (width - patch_size) // stride + 1
+    new_height = (patches_h - 1) * stride + patch_size
+    new_width = (patches_w - 1) * stride + patch_size
+    return data[:, :new_height, :new_width]
+
+
+def extract_patches(data: Array, patch_size: int, stride: int) -> Array:
+    bands, height, width = data.shape
+    patches = []
+    for r in range(0, height - patch_size + 1, stride):
+        for c in range(0, width - patch_size + 1, stride):
+            patches.append(data[:, r:r+patch_size, c:c+patch_size])
+    return np.stack(patches, axis=0)
+
+
+def reconstruct_from_patches(patches: Array, height: int, width: int, patch_size: int) -> Array:
+    # naive grid reassembly (assumes non-overlapping P stride)
+    bands = patches.shape[1]
+    grid_h = height // patch_size
+    grid_w = width // patch_size
+    out = np.zeros((bands, height, width), dtype=patches.dtype)
+    idx = 0
+    for r in range(grid_h):
+        for c in range(grid_w):
+            out[:, r*patch_size:(r+1)*patch_size, c*patch_size:(c+1)*patch_size] = patches[idx]
+            idx += 1
+    return out
+```
+
+### 4) Minimal STAC-like Dataset
+
+```{python tangle="../geogfm/data/datasets/stac_dataset.py"}
+from __future__ import annotations
+from typing import List, Optional
+from pathlib import Path
+import random
+import numpy as np
+import torch
+from torch.utils.data import Dataset
+import rasterio as rio
+
+class StacLikeDataset(Dataset):
+    """Minimal dataset reading GeoTIFF files under a directory, or generating synthetic data.
+    Returns images sized to (C, H, W) where H=W=image_size and divisible by patch size.
+    """
+    def __init__(self, root_dir: str, split: str = "train", image_size: int = 64, in_channels: int = 3, length: int = 64, seed: int = 42):
+        self.root = Path(root_dir)
+        self.split = split
+        self.image_size = int(image_size)
+        self.in_channels = int(in_channels)
+        self.length = int(length)
+        self.rng = random.Random(seed)
+        self.files: List[Path] = []
+        if self.root.exists():
+            for p in self.root.rglob("*.tif"):
+                self.files.append(p)
+        if split == "val":
+            self.files = self.files[::5]
+        elif split == "train":
+            self.files = [p for i, p in enumerate(self.files) if i % 5 != 0]
+
+    def __len__(self) -> int:
+        return max(len(self.files), self.length)
+
+    def _load_or_synthesize(self, idx: int) -> np.ndarray:
+        if self.files:
+            path = self.files[idx % len(self.files)]
+            with rio.open(path) as src:
+                arr = src.read(out_shape=(min(self.in_channels, src.count), self.image_size, self.image_size))
+                if arr.shape[0] < self.in_channels:
+                    pad = np.zeros((self.in_channels - arr.shape[0], self.image_size, self.image_size), dtype=arr.dtype)
+                    arr = np.concatenate([arr, pad], axis=0)
+                return arr.astype(np.float32)
+        # synthetic fallback
+        self.rng.seed(idx)
+        return np.random.rand(self.in_channels, self.image_size, self.image_size).astype(np.float32)
+
+    def __getitem__(self, idx: int) -> torch.Tensor:
+        arr = self._load_or_synthesize(idx)
+        return torch.from_numpy(arr)
+```
+
+### 5) DataLoader Builders
+
+```{python tangle="../geogfm/data/loaders.py"}
+from __future__ import annotations
+from typing import Tuple
+from torch.utils.data import DataLoader
+from geogfm.core.config import DataConfig
+from geogfm.data.datasets.stac_dataset import StacLikeDataset
+
+
+def build_dataloader(cfg: DataConfig) -> Tuple[DataLoader, DataLoader]:
+    train_ds = StacLikeDataset(cfg.root_dir, split="train", image_size=cfg.image_size, in_channels=cfg.in_channels, length=cfg.length, seed=cfg.seed)
+    val_ds = StacLikeDataset(cfg.root_dir, split="val", image_size=cfg.image_size, in_channels=cfg.in_channels, length=max(8, cfg.length // 5), seed=cfg.seed)
+    train_dl = DataLoader(train_ds, batch_size=cfg.batch_size, shuffle=True, num_workers=cfg.num_workers, pin_memory=False)
+    val_dl = DataLoader(val_ds, batch_size=cfg.batch_size, shuffle=False, num_workers=cfg.num_workers, pin_memory=False)
+    return train_dl, val_dl
+```
 ## Learning Objectives
 
 By building this pipeline, you will:

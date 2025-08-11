@@ -24,4 +24,125 @@ This week’s work in the broader GFM plan.
 - Configure AdamW; optionally add LR scheduler/AMP
 - Save and restore a basic checkpoint
 
-Interactive session content coming soon...
+## Session Outline (and Tangled Code)
+
+- Concepts → Components mapping
+  - Optimizer builder → `training/optimizer.py`
+  - Minimal training loop with logging/validation → `training/loop.py`
+
+### Package inits
+
+```{python tangle="../geogfm/training/__init__.py"}
+# geogfm.training
+```
+
+### 1) Optimizer Builder
+
+```{python tangle="../geogfm/training/optimizer.py"}
+from __future__ import annotations
+from typing import Dict, Any
+import torch
+
+def build_optimizer(model: torch.nn.Module, cfg: Dict[str, Any]) -> torch.optim.Optimizer:
+    name = (cfg.get("name") or "adamw").lower()
+    lr = float(cfg.get("lr", 2e-4))
+    weight_decay = float(cfg.get("weight_decay", 0.05))
+    if name == "adamw":
+        return torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
+    elif name == "adam":
+        return torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+    else:
+        raise ValueError(f"Unsupported optimizer: {name}")
+```
+
+### 2) Training Loop (fit/train/eval)
+
+```{python tangle="../geogfm/training/loop.py"}
+from __future__ import annotations
+from typing import Tuple, Callable, Optional
+import time
+import torch
+from torch.utils.data import DataLoader
+
+@torch.no_grad()
+def evaluate(model: torch.nn.Module, loader: DataLoader, loss_fn: Callable[[torch.Tensor, torch.Tensor], torch.Tensor]) -> float:
+    model.eval()
+    total_loss, count = 0.0, 0
+    for batch in loader:
+        if isinstance(batch, (list, tuple)):
+            images = batch[0]
+        else:
+            images = batch
+        outputs = model(images)
+        if isinstance(outputs, dict) and "reconstructions" in outputs:
+            preds = outputs["reconstructions"]
+            # Target as non-overlapping patches (assumes square patches and stride=patch)
+            b, c, h, w = images.shape
+            p = preds.shape[-1]
+            target = images.unfold(2, p, p).unfold(3, p, p).contiguous().view(b, -1, c, p, p)
+            try:
+                loss = loss_fn(preds, target, outputs.get("mask"))
+            except TypeError:
+                loss = loss_fn(preds, target)
+        else:
+            raise RuntimeError("Model output not supported for evaluation")
+        total_loss += float(loss) * images.size(0)
+        count += images.size(0)
+    return total_loss / max(1, count)
+
+
+def fit(model: torch.nn.Module,
+        loaders: Tuple[DataLoader, Optional[DataLoader]],
+        optimizer: torch.optim.Optimizer,
+        loss_fn: Callable[[torch.Tensor, torch.Tensor], torch.Tensor],
+        epochs: int = 1,
+        device: torch.device | str = "cpu") -> None:
+    device = torch.device(device)
+    model.to(device)
+
+    train_loader, val_loader = loaders
+    for epoch in range(1, epochs + 1):
+        model.train()
+        start = time.time()
+        running_loss, count = 0.0, 0
+        for batch in train_loader:
+            if isinstance(batch, (list, tuple)):
+                images = batch[0].to(device)
+            else:
+                images = batch.to(device)
+            optimizer.zero_grad(set_to_none=True)
+            outputs = model(images)
+            if isinstance(outputs, dict) and "reconstructions" in outputs:
+                preds = outputs["reconstructions"]
+                b, c, h, w = images.shape
+                p = preds.shape[-1]
+                target = images.unfold(2, p, p).unfold(3, p, p).contiguous().view(b, -1, c, p, p)
+                try:
+                    loss = loss_fn(preds, target, outputs.get("mask"))
+                except TypeError:
+                    loss = loss_fn(preds, target)
+            else:
+                raise RuntimeError("Model output not supported for training")
+            loss.backward()
+            optimizer.step()
+            running_loss += float(loss) * images.size(0)
+            count += images.size(0)
+        train_loss = running_loss / max(1, count)
+
+        msg = f"Epoch {epoch:03d} | train_loss={train_loss:.4f}"
+        if val_loader is not None:
+            val_loss = evaluate(model, val_loader, loss_fn)
+            msg += f" | val_loss={val_loss:.4f}"
+        elapsed = time.time() - start
+        print(msg + f" | time={elapsed:.1f}s")
+```
+
+### Usage snippet (non-tangled)
+
+```{python}
+# Example (after Weeks 1–4 have produced datasets + MAE):
+# from geogfm.training.optimizer import build_optimizer
+# from geogfm.training.loop import fit
+# optimizer = build_optimizer(mae, {"name": "adamw", "lr": 2e-4})
+# fit(mae, (train_loader, val_loader), optimizer, masked_mse_loss, epochs=1, device="cpu")
+```

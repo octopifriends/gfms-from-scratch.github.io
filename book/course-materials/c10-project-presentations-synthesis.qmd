@@ -24,4 +24,19 @@ This week’s work in the broader GFM plan.
 - Present MVP results and insights
 - Outline next steps with Prithvi/scale-up
 
-Interactive session content coming soon...
+## Session Outline
+
+- Concepts → Components mapping
+  - Model architecture → `models/gfm_vit.py`
+  - Pretraining objective → `models/gfm_mae.py` + `modules/losses/mae_loss.py`
+  - Training loop → `training/{optimizer.py, loop.py}`
+  - Evaluation → `evaluation/{visualization.py, metrics.py}`
+  - Applied tasks → `tasks/{classification.py, segmentation.py}`
+  - Inference → `inference/{sliding_window.py, tiling.py}`
+
+- Deliverables checklist
+  - Slides with pipeline diagram and key code references
+  - Short demo: load a small batch, run MAE forward, show recon
+  - One analysis figure (recon grid or PSNR curve)
+  - What you would swap to scale (timm blocks, TorchGeo datasets, FlashAttention, HF hub)
+
