@@ -384,7 +384,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-to-rasterio" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-rasterio">Introduction to Rasterio</h2>
 <p>Rasterio is the essential Python library for reading and writing geospatial raster data.</p>
-<div id="4b8fc4f6" class="cell" data-execution_count="1">
+<div id="bc8d5125" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -398,7 +398,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="creating-sample-data" class="level2">
 <h2 class="anchored" data-anchor-id="creating-sample-data">Creating Sample Data</h2>
 <p>Since we may not have actual satellite imagery files, let’s create some sample raster data:</p>
-<div id="14f795bc" class="cell" data-execution_count="2">
+<div id="3d54ba79" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create sample raster data</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_sample_raster():</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a simple 100x100 raster with some pattern</span></span>
@@ -430,7 +430,7 @@ Data range: 7 to 254</code></pre>
 <h2 class="anchored" data-anchor-id="working-with-raster-arrays">Working with Raster Arrays</h2>
 <section id="basic-array-operations" class="level3">
 <h3 class="anchored" data-anchor-id="basic-array-operations">Basic array operations</h3>
-<div id="1e558090" class="cell" data-execution_count="3">
+<div id="f0a51149" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic statistics</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean: </span><span class="sc">{</span>np<span class="sc">.</span>mean(sample_data)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Standard deviation: </span><span class="sc">{</span>np<span class="sc">.</span>std(sample_data)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
@@ -468,7 +468,7 @@ Unique values: 182</code></pre>
 </section>
 <section id="array-masking-and-filtering" class="level3">
 <h3 class="anchored" data-anchor-id="array-masking-and-filtering">Array masking and filtering</h3>
-<div id="87181314" class="cell" data-execution_count="4">
+<div id="b104f45e" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create masks</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>high_values <span class="op">=</span> sample_data <span class="op">&gt;</span> <span class="dv">200</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>low_values <span class="op">=</span> sample_data <span class="op">&lt;</span> <span class="dv">50</span></span>
@@ -513,7 +513,7 @@ Pixels with low values (&lt;50): 76</code></pre>
 <h2 class="anchored" data-anchor-id="raster-metadata-and-transforms">Raster Metadata and Transforms</h2>
 <section id="understanding-geospatial-transforms" class="level3">
 <h3 class="anchored" data-anchor-id="understanding-geospatial-transforms">Understanding geospatial transforms</h3>
-<div id="d8bed880" class="cell" data-execution_count="5">
+<div id="001d95a6" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rasterio.transform <span class="im">import</span> from_bounds</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a sample transform (geographic coordinates)</span></span>
@@ -545,7 +545,7 @@ Center pixel (50, 50) -&gt; Geographic: (-117.47, 37.48)</code></pre>
 </section>
 <section id="creating-profiles-for-writing-rasters" class="level3">
 <h3 class="anchored" data-anchor-id="creating-profiles-for-writing-rasters">Creating profiles for writing rasters</h3>
-<div id="4ff4ca37" class="cell" data-execution_count="6">
+<div id="9406edcf" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a profile for writing raster data</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>profile <span class="op">=</span> {</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'driver'</span>: <span class="st">'GTiff'</span>,</span>
@@ -581,7 +581,7 @@ Center pixel (50, 50) -&gt; Geographic: (-117.47, 37.48)</code></pre>
 <h2 class="anchored" data-anchor-id="multi-band-operations">Multi-band Operations</h2>
 <section id="working-with-multi-band-data" class="level3">
 <h3 class="anchored" data-anchor-id="working-with-multi-band-data">Working with multi-band data</h3>
-<div id="8b3c134e" class="cell" data-execution_count="7">
+<div id="d5257132" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create multi-band sample data (RGB-like)</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_multiband_sample():</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    height, width <span class="op">=</span> <span class="dv">100</span>, <span class="dv">100</span></span>
@@ -614,7 +614,7 @@ Shape format: (bands, height, width)</code></pre>
 </section>
 <section id="visualizing-multi-band-data" class="level3">
 <h3 class="anchored" data-anchor-id="visualizing-multi-band-data">Visualizing multi-band data</h3>
-<div id="79d3f5bb" class="cell" data-execution_count="8">
+<div id="6e669b6c" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Individual bands</span></span>
@@ -644,7 +644,7 @@ Shape format: (bands, height, width)</code></pre>
 <h2 class="anchored" data-anchor-id="band-math-and-indices">Band Math and Indices</h2>
 <section id="calculate-vegetation-index-ndvi-like" class="level3">
 <h3 class="anchored" data-anchor-id="calculate-vegetation-index-ndvi-like">Calculate vegetation index (NDVI-like)</h3>
-<div id="94b38b05" class="cell" data-execution_count="9">
+<div id="867b400f" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate NIR and Red bands</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>nir_band <span class="op">=</span> multiband_data[<span class="dv">0</span>].astype(np.float32)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>red_band <span class="op">=</span> multiband_data[<span class="dv">1</span>].astype(np.float32)</span>
@@ -693,7 +693,7 @@ NDVI mean: 0.353</code></pre>
 <h2 class="anchored" data-anchor-id="resampling-and-reprojection-concepts">Resampling and Reprojection Concepts</h2>
 <section id="understanding-resampling-methods" class="level3">
 <h3 class="anchored" data-anchor-id="understanding-resampling-methods">Understanding resampling methods</h3>
-<div id="3f4d8df3" class="cell" data-execution_count="10">
+<div id="1a7dfcc1" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> ndimage</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Demonstrate different resampling methods</span></span>
@@ -744,7 +744,7 @@ Upsampled size: (200, 200)</code></pre>
 <h2 class="anchored" data-anchor-id="common-rasterio-patterns">Common Rasterio Patterns</h2>
 <section id="working-with-windows-and-blocks" class="level3">
 <h3 class="anchored" data-anchor-id="working-with-windows-and-blocks">Working with windows and blocks</h3>
-<div id="3777edbc" class="cell" data-execution_count="11">
+<div id="21ef60da" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate processing large rasters in blocks</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> process_in_blocks(data, block_size<span class="op">=</span><span class="dv">50</span>):</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Process data in blocks to simulate handling large rasters"""</span></span>
@@ -1627,12 +1627,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
-<figcaption>The Department of Geography logo</figcaption>
-</figure>
-</div>
+<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

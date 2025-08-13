@@ -1,5 +1,5 @@
 # geogfm.evaluation.visualization — Reconstruction visualization utilities (Week 6).
-# Tangled on 2025-08-12T17:08:11
+# Tangled on 2025-08-12T17:19:47
 
 from __future__ import annotations
 import torch

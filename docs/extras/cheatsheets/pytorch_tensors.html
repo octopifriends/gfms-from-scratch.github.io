@@ -380,7 +380,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="creating-tensors">Creating Tensors</h2>
 <section id="basic-tensor-creation" class="level3">
 <h3 class="anchored" data-anchor-id="basic-tensor-creation">Basic tensor creation</h3>
-<div id="81ddbfb6" class="cell" data-execution_count="1">
+<div id="d54b52c3" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -408,14 +408,14 @@ From numpy: tensor([[1, 2],
 Zeros: tensor([[0., 0., 0.],
         [0., 0., 0.],
         [0., 0., 0.]])
-Random: tensor([[-0.3666,  1.2135, -0.9947],
-        [ 1.3591, -1.1439, -0.2313]])</code></pre>
+Random: tensor([[ 1.1412, -0.2031, -0.3355],
+        [-0.0908,  1.3401,  0.5090]])</code></pre>
 </div>
 </div>
 </section>
 <section id="tensor-properties" class="level3">
 <h3 class="anchored" data-anchor-id="tensor-properties">Tensor Properties</h3>
-<div id="a8a84e43" class="cell" data-execution_count="2">
+<div id="1fca1cdb" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check tensor properties</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sample_tensor <span class="op">=</span> torch.randn(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -440,7 +440,7 @@ Total elements: 60</code></pre>
 <h2 class="anchored" data-anchor-id="gpu-operations">GPU Operations</h2>
 <section id="check-gpu-availability" class="level3">
 <h3 class="anchored" data-anchor-id="check-gpu-availability">Check GPU availability</h3>
-<div id="b26c9220" class="cell" data-execution_count="3">
+<div id="8130872c" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if CUDA is available</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>cuda_available <span class="op">=</span> torch.cuda.is_available()</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"CUDA available: </span><span class="sc">{</span>cuda_available<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -460,7 +460,7 @@ Running on CPU</code></pre>
 </section>
 <section id="moving-tensors-to-gpu" class="level3">
 <h3 class="anchored" data-anchor-id="moving-tensors-to-gpu">Moving tensors to GPU</h3>
-<div id="afa789f3" class="cell" data-execution_count="4">
+<div id="fbfc8e0c" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a tensor</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>cpu_tensor <span class="op">=</span> torch.randn(<span class="dv">3</span>, <span class="dv">3</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Original device: </span><span class="sc">{</span>cpu_tensor<span class="sc">.</span>device<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -490,7 +490,7 @@ After moving to device: cpu</code></pre>
 <h2 class="anchored" data-anchor-id="basic-tensor-operations">Basic Tensor Operations</h2>
 <section id="mathematical-operations" class="level3">
 <h3 class="anchored" data-anchor-id="mathematical-operations">Mathematical operations</h3>
-<div id="191a555c" class="cell" data-execution_count="5">
+<div id="4e646ce8" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create sample tensors</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> torch.randn(<span class="dv">3</span>, <span class="dv">3</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> torch.randn(<span class="dv">3</span>, <span class="dv">3</span>)</span>
@@ -512,7 +512,7 @@ After moving to device: cpu</code></pre>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Transpose shape: </span><span class="sc">{</span>transpose<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Addition shape: torch.Size([3, 3])
-Subtraction mean: -0.303
+Subtraction mean: -0.339
 Matrix multiplication shape: torch.Size([3, 3])
 Transpose shape: torch.Size([3, 3])</code></pre>
 </div>
@@ -520,7 +520,7 @@ Transpose shape: torch.Size([3, 3])</code></pre>
 </section>
 <section id="useful-tensor-methods" class="level3">
 <h3 class="anchored" data-anchor-id="useful-tensor-methods">Useful tensor methods</h3>
-<div id="5565c879" class="cell" data-execution_count="6">
+<div id="3f1aec69" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Statistical operations</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> torch.randn(<span class="dv">4</span>, <span class="dv">5</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -537,10 +537,10 @@ Transpose shape: torch.Size([3, 3])</code></pre>
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Reshaped: </span><span class="sc">{</span>reshaped<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Flattened: </span><span class="sc">{</span>flattened<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Mean: -0.445
-Standard deviation: 1.003
-Min: -1.879
-Max: 1.725
+<pre><code>Mean: 0.097
+Standard deviation: 1.046
+Min: -1.472
+Max: 2.772
 Original shape: torch.Size([4, 5])
 Reshaped: torch.Size([2, 10])
 Flattened: torch.Size([20])</code></pre>
@@ -552,7 +552,7 @@ Flattened: torch.Size([20])</code></pre>
 <h2 class="anchored" data-anchor-id="memory-management">Memory Management</h2>
 <section id="gpu-memory-monitoring" class="level3">
 <h3 class="anchored" data-anchor-id="gpu-memory-monitoring">GPU memory monitoring</h3>
-<div id="b646deb3" class="cell" data-execution_count="7">
+<div id="ec0e07d7" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> torch.cuda.is_available():</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check current memory usage</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    allocated <span class="op">=</span> torch.cuda.memory_allocated() <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)  <span class="co"># Convert to MB</span></span>
@@ -573,7 +573,7 @@ Flattened: torch.Size([20])</code></pre>
 </section>
 <section id="best-practices" class="level3">
 <h3 class="anchored" data-anchor-id="best-practices">Best practices</h3>
-<div id="96548f5f" class="cell" data-execution_count="8">
+<div id="7ff411f9" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use context managers for temporary operations</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> memory_efficient_operation():</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> torch.no_grad():  <span class="co"># Disable gradient computation</span></span>
@@ -586,7 +586,7 @@ Flattened: torch.Size([20])</code></pre>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co"># The large_tensor is automatically garbage collected</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Result: -0.000</code></pre>
+<pre><code>Result: 0.003</code></pre>
 </div>
 </div>
 </section>
@@ -595,7 +595,7 @@ Flattened: torch.Size([20])</code></pre>
 <h2 class="anchored" data-anchor-id="converting-between-formats">Converting Between Formats</h2>
 <section id="pytorch-numpy" class="level3">
 <h3 class="anchored" data-anchor-id="pytorch-numpy">PyTorch ↔︎ NumPy</h3>
-<div id="4c8d380f" class="cell" data-execution_count="9">
+<div id="4cd1b443" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PyTorch to NumPy</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>torch_tensor <span class="op">=</span> torch.randn(<span class="dv">2</span>, <span class="dv">3</span>)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>numpy_array <span class="op">=</span> torch_tensor.numpy()  <span class="co"># Only works on CPU tensors</span></span>
@@ -607,18 +607,18 @@ Flattened: torch.Size([20])</code></pre>
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>new_torch <span class="op">=</span> torch.from_numpy(numpy_array)</span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Back to PyTorch: </span><span class="sc">{</span>new_torch<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>PyTorch tensor: tensor([[ 1.6709,  2.4352,  2.6051],
-        [-0.0985, -1.4198, -0.2361]])
-NumPy array: [[ 1.6708962   2.435198    2.605142  ]
- [-0.09845593 -1.4198312  -0.23609029]]
-Back to PyTorch: tensor([[ 1.6709,  2.4352,  2.6051],
-        [-0.0985, -1.4198, -0.2361]])</code></pre>
+<pre><code>PyTorch tensor: tensor([[ 0.2251, -2.4200, -0.5279],
+        [ 0.2539,  0.0140,  0.7673]])
+NumPy array: [[ 0.22508296 -2.4199913  -0.5278681 ]
+ [ 0.2538971   0.01396694  0.7672555 ]]
+Back to PyTorch: tensor([[ 0.2251, -2.4200, -0.5279],
+        [ 0.2539,  0.0140,  0.7673]])</code></pre>
 </div>
 </div>
 </section>
 <section id="handling-gpu-tensors" class="level3">
 <h3 class="anchored" data-anchor-id="handling-gpu-tensors">Handling GPU tensors</h3>
-<div id="8b212a84" class="cell" data-execution_count="10">
+<div id="9fca3513" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> torch.cuda.is_available():</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># GPU tensor must be moved to CPU first</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    gpu_tensor <span class="op">=</span> torch.randn(<span class="dv">2</span>, <span class="dv">3</span>).cuda()</span>
@@ -1305,12 +1305,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
-<figcaption>The Department of Geography logo</figcaption>
-</figure>
-</div>
+<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

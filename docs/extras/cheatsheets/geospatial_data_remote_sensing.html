@@ -379,7 +379,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-to-geospatial-data" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-geospatial-data">Introduction to Geospatial Data</h2>
 <p>Geospatial data forms the foundation of Earth observation and environmental monitoring. This cheatsheet covers key concepts for working with satellite imagery, coordinate systems, and remote sensing data.</p>
-<div id="8c386ac1" class="cell" data-execution_count="1">
+<div id="c23097c3" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
@@ -400,7 +400,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="satellite-sensor-fundamentals">Satellite Sensor Fundamentals</h2>
 <section id="electromagnetic-spectrum-and-bands" class="level3">
 <h3 class="anchored" data-anchor-id="electromagnetic-spectrum-and-bands">Electromagnetic Spectrum and Bands</h3>
-<div id="ad29c02a" class="cell" data-execution_count="2">
+<div id="5f9163b3" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_spectral_bands_reference():</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Reference for common satellite spectral bands"""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -514,7 +514,7 @@ Band 12: SWIR2 (2.190 μm, 20m)</code></pre>
 </section>
 <section id="satellite-orbits-and-revisit-times" class="level3">
 <h3 class="anchored" data-anchor-id="satellite-orbits-and-revisit-times">Satellite Orbits and Revisit Times</h3>
-<div id="de0eecb2" class="cell" data-execution_count="3">
+<div id="bba9727b" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> satellite_orbit_comparison():</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compare different satellite orbits and characteristics"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -632,7 +632,7 @@ Planet:
 <h2 class="anchored" data-anchor-id="coordinate-reference-systems">Coordinate Reference Systems</h2>
 <section id="understanding-projections" class="level3">
 <h3 class="anchored" data-anchor-id="understanding-projections">Understanding Projections</h3>
-<div id="447298f1" class="cell" data-execution_count="4">
+<div id="bdf3defd" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> demonstrate_coordinate_systems():</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Demonstrate different coordinate reference systems"""</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -727,7 +727,7 @@ Note: Use pyproj or rasterio for accurate transformations</code></pre>
 </section>
 <section id="working-with-geospatial-metadata" class="level3">
 <h3 class="anchored" data-anchor-id="working-with-geospatial-metadata">Working with Geospatial Metadata</h3>
-<div id="275e9fb9" class="cell" data-execution_count="5">
+<div id="fae7413d" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_sample_geospatial_metadata():</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create and demonstrate geospatial metadata handling"""</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -814,7 +814,7 @@ Note: Use pyproj or rasterio for accurate transformations</code></pre>
 ========================================
 Data shape: (100, 100)
 Data type: float64
-Value range: [-0.995, 0.987]
+Value range: [-0.984, 0.990]
 CRS: EPSG:4326
 Geotransform: | 0.00, 0.00,-122.50|
 | 0.00,-0.00, 37.90|
@@ -822,7 +822,7 @@ Geotransform: | 0.00, 0.00,-122.50|
 
 Metadata:
   description: Synthetic NDVI data for demonstration
-  creation_date: 2025-08-12T17:10:28.395894
+  creation_date: 2025-08-12T17:22:04.368532
   sensor: Simulated
   processing_level: L2A
   spatial_resolution: 30m
@@ -852,7 +852,7 @@ invalid value encountered in create_collection
 <h2 class="anchored" data-anchor-id="spectral-indices-and-analysis">Spectral Indices and Analysis</h2>
 <section id="common-vegetation-indices" class="level3">
 <h3 class="anchored" data-anchor-id="common-vegetation-indices">Common Vegetation Indices</h3>
-<div id="12e76ba9" class="cell" data-execution_count="6">
+<div id="12232b74" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_spectral_indices():</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Calculate and demonstrate common spectral indices"""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -989,7 +989,7 @@ NBR:
 </section>
 <section id="spectral-signatures-and-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="spectral-signatures-and-analysis">Spectral Signatures and Analysis</h3>
-<div id="ce1cb7f4" class="cell" data-execution_count="7">
+<div id="9b5cf4f7" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> analyze_spectral_signatures():</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Analyze spectral signatures for different land cover types"""</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1109,7 +1109,7 @@ NBR:
 <h2 class="anchored" data-anchor-id="temporal-analysis-and-time-series">Temporal Analysis and Time Series</h2>
 <section id="satellite-time-series-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="satellite-time-series-analysis">Satellite Time Series Analysis</h3>
-<div id="adc12e17" class="cell" data-execution_count="8">
+<div id="0bd8d328" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> demonstrate_temporal_analysis():</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Demonstrate time series analysis of satellite data"""</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1316,7 +1316,7 @@ Urban:
 <h2 class="anchored" data-anchor-id="data-quality-and-cloud-masking">Data Quality and Cloud Masking</h2>
 <section id="cloud-detection-and-masking" class="level3">
 <h3 class="anchored" data-anchor-id="cloud-detection-and-masking">Cloud Detection and Masking</h3>
-<div id="7fb03c27" class="cell" data-execution_count="9">
+<div id="7fb0a21c" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> demonstrate_cloud_masking():</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Demonstrate cloud detection and masking techniques"""</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -2786,12 +2786,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
-<figcaption>The Department of Geography logo</figcaption>
-</figure>
-</div>
+<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

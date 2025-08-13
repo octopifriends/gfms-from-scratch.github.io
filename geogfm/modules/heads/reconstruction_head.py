@@ -1,5 +1,5 @@
 # geogfm.modules.heads.reconstruction_head — Token-wise MLP decoder for MAE-style reconstruction (Week 3).
-# Tangled on 2025-08-12T17:08:41
+# Tangled on 2025-08-12T17:20:17
 
 from __future__ import annotations
 import torch

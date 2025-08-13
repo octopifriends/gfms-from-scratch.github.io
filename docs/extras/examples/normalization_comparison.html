@@ -426,7 +426,7 @@ window.Quarto = {
 </section>
 <section id="setting-up" class="level2">
 <h2 class="anchored" data-anchor-id="setting-up">Setting Up</h2>
-<div id="1c05e047" class="cell" data-execution_count="1">
+<div id="383cbcd8" class="cell" data-execution_count="1">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -480,7 +480,7 @@ window.Quarto = {
 <p>where <span class="math inline">\(\min(X_b)\)</span> and <span class="math inline">\(\max(X_b)\)</span> are the minimum and maximum values across all spatial locations in band <span class="math inline">\(b\)</span>.</p>
 <p><strong>Advantages:</strong> Fast computation, preserves data distribution shape, interpretable output range<br>
 <strong>Disadvantages:</strong> Sensitive to outliers, can compress most data into narrow range if extreme values present</p>
-<div id="8a55d684" class="cell" data-execution_count="2">
+<div id="42ff34f5" class="cell" data-execution_count="2">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> min_max_normalize(data, epsilon<span class="op">=</span><span class="fl">1e-8</span>):</span>
@@ -529,7 +529,7 @@ Output shape: (3, 10, 10)</code></pre>
 <p>where <span class="math inline">\(\mu_b = \mathbb{E}[X_b]\)</span> is the mean and <span class="math inline">\(\sigma_b = \sqrt{\text{Var}[X_b]}\)</span> is the standard deviation of band <span class="math inline">\(b\)</span>.</p>
 <p><strong>Advantages:</strong> Removes sensor biases, enables transfer learning, standard statistical interpretation<br>
 <strong>Disadvantages:</strong> Can amplify noise in low-variance regions, unbounded output range</p>
-<div id="84f51630" class="cell" data-execution_count="3">
+<div id="362d6a79" class="cell" data-execution_count="3">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> z_score_normalize(data, epsilon<span class="op">=</span><span class="fl">1e-8</span>):</span>
@@ -578,7 +578,7 @@ Output range: [-1.918, 1.781]</code></pre>
 <p>where <span class="math inline">\(Q_p(X_b)\)</span> denotes the <span class="math inline">\(p\)</span>-th percentile of band <span class="math inline">\(b\)</span>, and the denominator is the interquartile range (IQR).</p>
 <p><strong>Advantages:</strong> Highly resistant to outliers, stable with contaminated data, preserves most data relationships<br>
 <strong>Disadvantages:</strong> Slightly more computationally expensive, can underestimate true data spread</p>
-<div id="b0070895" class="cell" data-execution_count="4">
+<div id="1834d23a" class="cell" data-execution_count="4">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> robust_iqr_normalize(data, epsilon<span class="op">=</span><span class="fl">1e-8</span>):</span>
@@ -633,7 +633,7 @@ Robust IQR range: [-1.053, 21.676]</code></pre>
 <p>where <span class="math inline">\(\alpha\)</span> is typically 2, giving the 2nd and 98th percentiles as clipping bounds.</p>
 <p><strong>Advantages:</strong> Good balance of robustness and data preservation, bounded output, handles diverse data quality<br>
 <strong>Disadvantages:</strong> Loss of extreme values that might be scientifically meaningful, requires percentile parameter tuning</p>
-<div id="5e6838ac" class="cell" data-execution_count="5">
+<div id="981de8db" class="cell" data-execution_count="5">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> percentile_clip_normalize(data, p_low<span class="op">=</span><span class="dv">2</span>, p_high<span class="op">=</span><span class="dv">98</span>, epsilon<span class="op">=</span><span class="fl">1e-8</span>):</span>
@@ -699,7 +699,7 @@ Data clipped to [0,1] range successfully</code></pre>
 \]</span></p>
 <p><strong>Advantages:</strong> Adapts to data quality, robust across diverse inputs, maintains efficiency when possible<br>
 <strong>Disadvantages:</strong> More complex implementation, slight computational overhead for outlier detection</p>
-<div id="a770533a" class="cell" data-execution_count="6">
+<div id="2bb103cf" class="cell" data-execution_count="6">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adaptive_hybrid_normalize(data, outlier_threshold<span class="op">=</span><span class="fl">3.0</span>, epsilon<span class="op">=</span><span class="fl">1e-8</span>):</span>
@@ -761,7 +761,7 @@ Method automatically adapts normalization based on data characteristics</code></
 </section>
 <section id="load-and-examine-test-data" class="level2">
 <h2 class="anchored" data-anchor-id="load-and-examine-test-data">Load and Examine Test Data</h2>
-<div id="8e46de23" class="cell" data-execution_count="7">
+<div id="613432a8" class="cell" data-execution_count="7">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio <span class="im">as</span> rio</span>
@@ -811,7 +811,7 @@ With synthetic outliers:
 <section id="raw-data-visualization" class="level2">
 <h2 class="anchored" data-anchor-id="raw-data-visualization">Raw Data Visualization</h2>
 <p>Before comparing normalization methods, let’s examine our test datasets to understand what we’re working with. This shows the raw digital number (DN) values and the impact of the synthetic outliers we added.</p>
-<div id="1b0734d6" class="cell" data-execution_count="8">
+<div id="75f28987" class="cell" data-execution_count="8">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the original data before normalization</span></span>
@@ -887,7 +887,7 @@ These extreme outliers simulate severe sensor failures and atmospheric artifacts
 <section id="visual-comparison-how-each-method-transforms-spatial-data" class="level2">
 <h2 class="anchored" data-anchor-id="visual-comparison-how-each-method-transforms-spatial-data">Visual Comparison: How Each Method Transforms Spatial Data</h2>
 <p>Now that we have implemented all five normalization algorithms and loaded our test data, let’s start by visualizing how each method transforms the same satellite imagery. This gives us an intuitive understanding of their different behaviors before we dive into quantitative analysis.</p>
-<div id="c96c7713" class="cell" data-execution_count="9">
+<div id="6a271e7e" class="cell" data-execution_count="9">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create methods dictionary for easy comparison</span></span>
@@ -907,7 +907,7 @@ These extreme outliers simulate severe sensor failures and atmospheric artifacts
 Methods available: ['Min-Max', 'Z-Score', 'Robust IQR', 'Percentile Clip', 'Adaptive Hybrid']</code></pre>
 </div>
 </div>
-<div id="3b289af3" class="cell" data-execution_count="10">
+<div id="1d7b0281" class="cell" data-execution_count="10">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply all methods to our sample data and visualize</span></span>
@@ -956,7 +956,7 @@ Methods available: ['Min-Max', 'Z-Score', 'Robust IQR', 'Percentile Clip', 'Adap
 <p><strong>What we’re testing:</strong> How fast each normalization method processes large satellite imagery datasets, which is crucial for training foundation models on millions of images.</p>
 <p><strong>Why it matters:</strong> Even small per-image time differences compound significantly when processing massive datasets. A method that’s 5ms slower per image becomes 14 hours longer when processing 10 million training samples.</p>
 <p><strong>Our approach:</strong> We’ll time each method on large synthetic arrays (6 bands × 1024×1024 pixels) across multiple trials to get reliable performance estimates that account for system variability.</p>
-<div id="7fd2abd2" class="cell" data-execution_count="11">
+<div id="62d39d05" class="cell" data-execution_count="11">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create larger test data for timing</span></span>
@@ -997,11 +997,11 @@ Methods available: ['Min-Max', 'Z-Score', 'Robust IQR', 'Percentile Clip', 'Adap
 <div class="cell-output cell-output-stdout">
 <pre><code>Timing with data shape: (6, 1024, 1024)
 Total pixels: 6,291,456
-Min-Max        : 0.0040 ± 0.0030 seconds
-Z-Score        : 0.0050 ± 0.0003 seconds
-Robust IQR     : 0.1705 ± 0.0022 seconds
-Percentile Clip: 0.1034 ± 0.0053 seconds
-Adaptive Hybrid: 0.0181 ± 0.0026 seconds</code></pre>
+Min-Max        : 0.0043 ± 0.0033 seconds
+Z-Score        : 0.0049 ± 0.0001 seconds
+Robust IQR     : 0.1760 ± 0.0018 seconds
+Percentile Clip: 0.1078 ± 0.0059 seconds
+Adaptive Hybrid: 0.0210 ± 0.0031 seconds</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
@@ -1011,7 +1011,7 @@ Adaptive Hybrid: 0.0181 ± 0.0026 seconds</code></pre>
 </div>
 </div>
 </div>
-<div id="a186d7e1" class="cell" data-execution_count="12">
+<div id="da4b2c81" class="cell" data-execution_count="12">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate and display efficiency ranking</span></span>
@@ -1035,11 +1035,11 @@ Adaptive Hybrid: 0.0181 ± 0.0026 seconds</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>⚡ COMPUTATIONAL EFFICIENCY RANKING
 ==================================================
-1. Min-Max         -    4.0ms (1.0× vs Min-Max)
-2. Z-Score         -    5.0ms (0.8× vs Min-Max)
-3. Adaptive Hybrid -   18.1ms (0.2× vs Min-Max)
-4. Percentile Clip -  103.4ms (0.0× vs Min-Max)
-5. Robust IQR      -  170.5ms (0.0× vs Min-Max)</code></pre>
+1. Min-Max         -    4.3ms (1.0× vs Min-Max)
+2. Z-Score         -    4.9ms (0.9× vs Min-Max)
+3. Adaptive Hybrid -   21.0ms (0.2× vs Min-Max)
+4. Percentile Clip -  107.8ms (0.0× vs Min-Max)
+5. Robust IQR      -  176.0ms (0.0× vs Min-Max)</code></pre>
 </div>
 </div>
 <p><strong>Performance Insights from our benchmarking analysis on 6-band, 1024×1024 pixel imagery:</strong></p>
@@ -1089,7 +1089,7 @@ Adaptive Hybrid: 0.0181 ± 0.0026 seconds</code></pre>
 <p><strong>What we’re testing:</strong> How each normalization method handles contaminated data with extreme values, which commonly occur in satellite imagery due to cloud shadows, sensor errors, or atmospheric interference.</p>
 <p><strong>Why it matters:</strong> Real-world satellite data is never perfect. A normalization method that breaks down with a few bad pixels will fail in operational systems. Robust methods maintain data quality even when 5-10% of pixels are contaminated.</p>
 <p><strong>Our approach:</strong> We’ll compare the statistical distributions (histograms) of normalized values for the same data with and without synthetic outliers. Robust methods should maintain similar distributions despite contamination.</p>
-<div id="33ddf105" class="cell" data-execution_count="13">
+<div id="f94e7cef" class="cell" data-execution_count="13">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare methods on clean vs contaminated data</span></span>
@@ -1160,7 +1160,7 @@ Adaptive Hybrid: 0.0181 ± 0.0026 seconds</code></pre>
 <p><strong>What we’re testing:</strong> The precise numerical characteristics each method produces—mean, standard deviation, and value ranges—which directly affect how well neural networks can learn from the data.</p>
 <p><strong>Why it matters:</strong> Different model architectures expect different input statistics. Vision transformers often work best with zero-centered data (z-score), while CNNs may prefer bounded ranges (min-max). Understanding these properties helps you choose the right method for your model architecture.</p>
 <p><strong>Our approach:</strong> We’ll compute and compare key statistics for each normalization method on both clean and contaminated data, revealing how robust each method’s statistical properties are to data quality issues.</p>
-<div id="bd3aee95" class="cell" data-execution_count="14">
+<div id="5dda0cd2" class="cell" data-execution_count="14">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Analyze statistical properties of each method</span></span>
@@ -2573,12 +2573,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
-<figcaption>The Department of Geography logo</figcaption>
-</figure>
-</div>
+<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

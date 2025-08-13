@@ -377,7 +377,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <section id="setup" class="level3">
 <h3 class="anchored" data-anchor-id="setup">Setup</h3>
-<div id="09e938e3" class="cell" data-execution_count="1">
+<div id="c7955910" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -457,7 +457,7 @@ Using device: mps</code></pre>
 <li><strong>Abbreviations used</strong>: <code>B</code> = batch size, <code>S</code> = sequence length (or number of tokens/patches), <code>E</code> = embedding dimension, <code>H</code> = number of attention heads.</li>
 </ul>
 <p>The following implementation demonstrates a simplified transformer block following the <a href="https://arxiv.org/abs/1706.03762">original architecture</a>:</p>
-<div id="3729f118" class="cell" data-execution_count="2">
+<div id="add3354b" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SimpleTransformerBlock(nn.Module):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Transformer block with Multi-Head Self-Attention (MHSA) and MLP.</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -652,7 +652,7 @@ Parameters:  7,087,872</code></pre>
 <li><strong>Cloud Masking</strong>: Identifying and handling cloudy pixels</li>
 <li><strong>Georegistration</strong>: Aligning images to geographic coordinate systems</li>
 </ul>
-<div id="c567284d" class="cell" data-execution_count="3">
+<div id="d4808a73" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># LLM text preprocessing example</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>sample_texts <span class="op">=</span> [</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"The quick brown fox jumps over the lazy dog."</span>,</span>
@@ -693,7 +693,7 @@ Parameters:  7,087,872</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>LLM Data Processing:
 Sample vocabulary size: 20
-Sample tokens: ['action', 'machine', 'is', 'climate', 'learning', 'global', 'the', 'lazy', 'industries', 'over']
+Sample tokens: ['lazy', 'industries', 'climate', 'transforming', 'requires', 'machine', 'action', 'quick', 'fox', 'jumps']
 
 ==================================================
 
@@ -719,7 +719,7 @@ Valid pixels per band: 3,265</code></pre>
 <li><strong>Linear Projection</strong>: Maps high-dimensional patches to embedding space</li>
 <li><strong>Positional Encoding</strong>: 2D spatial positions rather than 1D sequence positions</li>
 </ul>
-<div id="fad05829" class="cell" data-execution_count="4">
+<div id="5a6e2ae3" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># LLM discrete tokenization example</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>vocab_size, embed_dim <span class="op">=</span> <span class="dv">50000</span>, <span class="dv">768</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>token_ids <span class="op">=</span> torch.tensor([<span class="dv">1</span>, <span class="dv">15</span>, <span class="dv">234</span>, <span class="dv">5678</span>, <span class="dv">2</span>])  <span class="co"># [CLS, word1, word2, word3, SEP]</span></span>
@@ -776,7 +776,7 @@ No discrete vocabulary - continuous projection</code></pre>
 <li><strong>Attention Patterns</strong>: Causal masking vs.&nbsp;full bidirectional attention</li>
 <li><strong>Output Heads</strong>: Language modeling head vs.&nbsp;reconstruction/classification heads</li>
 </ul>
-<div id="ab191e88" class="cell" data-execution_count="5">
+<div id="760c0ae6" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> LLMArchitecture(nn.Module):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Simplified LLM architecture (GPT-style)"""</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -905,7 +905,7 @@ GFM output shape: torch.Size([2, 16, 384])</code></pre>
 <li><a href="https://arxiv.org/abs/2111.06377">Masked Autoencoders Are Scalable Vision Learners</a> - MAE methodology</li>
 <li><a href="https://arxiv.org/abs/2207.08051">SatMAE: Pre-training Transformers for Temporal and Multi-Spectral Satellite Imagery</a></li>
 </ul>
-<div id="48cf53c5" class="cell" data-execution_count="6">
+<div id="3acbb773" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># LLM next-token prediction objective</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>sequence <span class="op">=</span> torch.tensor([[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>]])</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>targets <span class="op">=</span> torch.tensor([[<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>]])  <span class="co"># Shifted by one position</span></span>
@@ -947,14 +947,14 @@ GFM output shape: torch.Size([2, 16, 384])</code></pre>
 <span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Reconstruction loss: </span><span class="sc">{</span>reconstruction_loss<span class="sc">.</span>item()<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>LLM Pretraining Objectives:
-Next-token prediction loss: 7.4944
+Next-token prediction loss: 7.4160
 
 --------------------------------------------------
 
 GFM Pretraining Objectives:
 Mask ratio: 75.0%
 Masked patches per sample: 48
-Reconstruction loss: 2.0044</code></pre>
+Reconstruction loss: 1.9891</code></pre>
 </div>
 </div>
 </section>
@@ -994,7 +994,7 @@ Reconstruction loss: 2.0044</code></pre>
 <li>Temporal dimension: Single → time series → multi-temporal</li>
 <li>Focus: Earth observation and environmental monitoring</li>
 </ul>
-<div id="d090fe2c" class="cell" data-execution_count="7">
+<div id="ec9d1e22" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize parameter scaling comparison</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>llm_milestones <span class="op">=</span> {</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'GPT-1'</span>: <span class="fl">117e6</span>,</span>
@@ -1092,7 +1092,7 @@ Reconstruction loss: 2.0044</code></pre>
 <section id="embedding-creation" class="level4">
 <h4 class="anchored" data-anchor-id="embedding-creation">Embedding Creation</h4>
 <p>Embeddings are the foundation of both LLMs and GFMs, but they differ in how raw inputs are converted to dense vector representations. This section demonstrates practical implementation patterns for both domains.</p>
-<div id="aa575bcc" class="cell" data-execution_count="8">
+<div id="be0115ac" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Text embedding creation (LLM approach)</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"The forest shows signs of deforestation."</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>tokens <span class="op">=</span> text.lower().replace(<span class="st">'.'</span>, <span class="st">''</span>).split()</span>
@@ -1140,7 +1140,7 @@ Reconstruction loss: 2.0044</code></pre>
 <pre><code>Text Embeddings (LLM):
 Original text: The forest shows signs of deforestation.
 Tokens: ['the', 'forest', 'shows', 'signs', 'of', 'deforestation']
-Token IDs: [3, 0, 1, 5, 4, 2]
+Token IDs: [4, 3, 2, 1, 0, 5]
 Embeddings shape: torch.Size([1, 6, 256])
 
 --------------------------------------------------
@@ -1161,7 +1161,7 @@ Patch embeddings shape: torch.Size([1, 256])</code></pre>
 <li><strong>GFM</strong>: 2D spatial encoding combining height/width coordinates</li>
 <li><strong>Learned vs Fixed</strong>: Both approaches can use learned or fixed encodings</li>
 </ul>
-<div id="f17daece" class="cell" data-execution_count="9">
+<div id="1196d9f9" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1D positional encoding for language models</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sinusoidal_positional_encoding(seq_len, embed_dim):</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create sinusoidal positional encodings for sequence data"""</span></span>
@@ -2465,12 +2465,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
-<figcaption>The Department of Geography logo</figcaption>
-</figure>
-</div>
+<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

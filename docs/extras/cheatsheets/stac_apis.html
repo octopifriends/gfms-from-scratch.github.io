@@ -392,7 +392,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-to-stac" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-stac">Introduction to STAC</h2>
 <p>STAC (SpatioTemporal Asset Catalog) is a specification for describing geospatial information that makes it easier to work with satellite imagery and other earth observation data at scale.</p>
-<div id="032b9245" class="cell" data-execution_count="1">
+<div id="e16eb2d7" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pystac_client</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -412,7 +412,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="microsoft-planetary-computer" class="level2">
 <h2 class="anchored" data-anchor-id="microsoft-planetary-computer">Microsoft Planetary Computer</h2>
 <p>Microsoft’s Planetary Computer provides free access to petabytes of earth observation data through STAC APIs.</p>
-<div id="e18e8195" class="cell" data-execution_count="2">
+<div id="ba35ed8b" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect to Planetary Computer STAC API</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: Planetary Computer requires authentication for data access, but catalog browsing is public</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>pc_catalog <span class="op">=</span> pystac_client.Client.<span class="bu">open</span>(</span>
@@ -448,7 +448,7 @@ Number of collections: 126
 </div>
 <section id="key-planetary-computer-collections" class="level3">
 <h3 class="anchored" data-anchor-id="key-planetary-computer-collections">Key Planetary Computer Collections</h3>
-<div id="96b0a673" class="cell" data-execution_count="3">
+<div id="8ea9729a" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Key collections for GFM training</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>key_collections <span class="op">=</span> [</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sentinel-2-l2a"</span>,      <span class="co"># Sentinel-2 Level 2A (surface reflectance)</span></span>
@@ -517,7 +517,7 @@ cop-dem-glo-30
 <h2 class="anchored" data-anchor-id="searching-for-data">Searching for Data</h2>
 <section id="basic-search-parameters" class="level3">
 <h3 class="anchored" data-anchor-id="basic-search-parameters">Basic Search Parameters</h3>
-<div id="6bd3c5d1" class="cell" data-execution_count="4">
+<div id="ad152ecd" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define area of interest (AOI) - California Central Valley</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>aoi <span class="op">=</span> {</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"type"</span>: <span class="st">"Polygon"</span>,</span>
@@ -548,7 +548,7 @@ cop-dem-glo-30
 </section>
 <section id="sentinel-2-search-example" class="level3">
 <h3 class="anchored" data-anchor-id="sentinel-2-search-example">Sentinel-2 Search Example</h3>
-<div id="06fcb149" class="cell" data-execution_count="5">
+<div id="a4c828a2" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Search for Sentinel-2 data</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>search <span class="op">=</span> pc_catalog.search(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    collections<span class="op">=</span>[<span class="st">"sentinel-2-l2a"</span>],</span>
@@ -598,7 +598,7 @@ cop-dem-glo-30
 </section>
 <section id="multi-collection-search" class="level3">
 <h3 class="anchored" data-anchor-id="multi-collection-search">Multi-Collection Search</h3>
-<div id="6ae025dc" class="cell" data-execution_count="6">
+<div id="5cf4a800" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Search across multiple collections</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>multi_search <span class="op">=</span> pc_catalog.search(</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    collections<span class="op">=</span>[<span class="st">"sentinel-2-l2a"</span>, <span class="st">"landsat-c2-l2"</span>],</span>
@@ -643,7 +643,7 @@ landsat-c2-l2: 15 items
 <h2 class="anchored" data-anchor-id="working-with-stac-items">Working with STAC Items</h2>
 <section id="examining-item-metadata" class="level3">
 <h3 class="anchored" data-anchor-id="examining-item-metadata">Examining Item Metadata</h3>
-<div id="0237988d" class="cell" data-execution_count="7">
+<div id="d4a55809" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Take a closer look at a single item</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> items:</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    sample_item <span class="op">=</span> items[<span class="dv">0</span>]</span>
@@ -707,7 +707,7 @@ Available Assets:
 </section>
 <section id="accessing-asset-urls" class="level3">
 <h3 class="anchored" data-anchor-id="accessing-asset-urls">Accessing Asset URLs</h3>
-<div id="9a3f222c" class="cell" data-execution_count="8">
+<div id="29017548" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get asset URLs (authentication required for actual data download)</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># For production use, install: pip install planetary-computer</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> items:</span>
@@ -750,7 +750,7 @@ Install 'planetary-computer' package and use pc.sign() for data downloads</code>
 <h2 class="anchored" data-anchor-id="other-stac-providers">Other STAC Providers</h2>
 <section id="earth-search-element84" class="level3">
 <h3 class="anchored" data-anchor-id="earth-search-element84">Earth Search (Element84)</h3>
-<div id="6a86252f" class="cell" data-execution_count="9">
+<div id="3d1f5324" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect to Earth Search STAC API</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    earth_search <span class="op">=</span> pystac_client.Client.<span class="bu">open</span>(<span class="st">"https://earth-search.aws.element84.com/v1"</span>)</span>
@@ -778,7 +778,7 @@ Available collections: 9
 </section>
 <section id="google-earth-engine-data-catalog" class="level3">
 <h3 class="anchored" data-anchor-id="google-earth-engine-data-catalog">Google Earth Engine Data Catalog</h3>
-<div id="e2bd6868" class="cell" data-execution_count="10">
+<div id="5ef746f3" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example of other STAC endpoints</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>other_endpoints <span class="op">=</span> {</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"USGS STAC"</span>: <span class="st">"https://landsatlook.usgs.gov/stac-server"</span>,</span>
@@ -804,7 +804,7 @@ Available collections: 9
 <h2 class="anchored" data-anchor-id="loading-data-for-ml-applications">Loading Data for ML Applications</h2>
 <section id="creating-datacubes" class="level3">
 <h3 class="anchored" data-anchor-id="creating-datacubes">Creating Datacubes</h3>
-<div id="64e7a087" class="cell" data-execution_count="11">
+<div id="55795a5e" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_datacube_info(items, bands<span class="op">=</span>[<span class="st">'B02'</span>, <span class="st">'B03'</span>, <span class="st">'B04'</span>, <span class="st">'B08'</span>]):</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create information for a datacube from STAC items"""</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -877,7 +877,7 @@ Scene 5:
 </section>
 <section id="integration-with-rasterio-and-xarray" class="level3">
 <h3 class="anchored" data-anchor-id="integration-with-rasterio-and-xarray">Integration with Rasterio and Xarray</h3>
-<div id="6fa595b2" class="cell" data-execution_count="12">
+<div id="1f5150ca" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example of loading data with rasterio (conceptual)</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_stac_band_info(item, band_name):</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Get information needed to load a band with rasterio"""</span></span>
@@ -916,7 +916,7 @@ Scene 5:
 <h2 class="anchored" data-anchor-id="stac-for-gfm-training-workflows">STAC for GFM Training Workflows</h2>
 <section id="multi-temporal-data-collection" class="level3">
 <h3 class="anchored" data-anchor-id="multi-temporal-data-collection">Multi-Temporal Data Collection</h3>
-<div id="4d0e9334" class="cell" data-execution_count="13">
+<div id="5b90c712" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plan_multitemporal_collection(aoi, date_ranges, collections):</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plan a multi-temporal data collection for GFM training"""</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -970,28 +970,28 @@ Scene 5:
 <span id="cb24-51"><a href="#cb24-51" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>collection<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>count<span class="sc">}</span><span class="ss"> scenes"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Multi-temporal Collection Plan:
-Total estimated scenes: 145
+Total estimated scenes: 215
 
 By Date Range:
   2023-03-01_to_2023-05-31:
-    sentinel-2-l2a: 33 scenes
-    landsat-c2-l2: 15 scenes
+    sentinel-2-l2a: 43 scenes
+    landsat-c2-l2: 37 scenes
   2023-06-01_to_2023-08-31:
-    sentinel-2-l2a: 31 scenes
-    landsat-c2-l2: 12 scenes
+    sentinel-2-l2a: 15 scenes
+    landsat-c2-l2: 39 scenes
   2023-09-01_to_2023-11-30:
-    sentinel-2-l2a: 30 scenes
-    landsat-c2-l2: 24 scenes
+    sentinel-2-l2a: 32 scenes
+    landsat-c2-l2: 49 scenes
 
 By Collection:
-  sentinel-2-l2a: 94 scenes
-  landsat-c2-l2: 51 scenes</code></pre>
+  sentinel-2-l2a: 90 scenes
+  landsat-c2-l2: 125 scenes</code></pre>
 </div>
 </div>
 </section>
 <section id="quality-filtering-for-ml" class="level3">
 <h3 class="anchored" data-anchor-id="quality-filtering-for-ml">Quality Filtering for ML</h3>
-<div id="20b1a6b1" class="cell" data-execution_count="14">
+<div id="55ba048f" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> filter_scenes_for_ml(items, max_cloud_cover<span class="op">=</span><span class="dv">10</span>, min_data_coverage<span class="op">=</span><span class="dv">80</span>):</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Filter STAC items for ML training quality"""</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1043,7 +1043,7 @@ By Collection:
 </section>
 <section id="metadata-extraction-for-training" class="level3">
 <h3 class="anchored" data-anchor-id="metadata-extraction-for-training">Metadata Extraction for Training</h3>
-<div id="bfd544b5" class="cell" data-execution_count="15">
+<div id="3fcef69d" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_training_metadata(items):</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Extract metadata useful for ML training"""</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1106,7 +1106,7 @@ LC09_L2SP_044034_20230725_02_T1 2023-07-25 18:45:40.240352+00:00        32.50   
 <h2 class="anchored" data-anchor-id="advanced-stac-operations">Advanced STAC Operations</h2>
 <section id="aggregating-collections" class="level3">
 <h3 class="anchored" data-anchor-id="aggregating-collections">Aggregating Collections</h3>
-<div id="2a1f4352" class="cell" data-execution_count="16">
+<div id="740992db" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compare_collections(catalog, collection_ids, aoi, date_range):</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compare multiple collections for the same area and time"""</span></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1182,7 +1182,7 @@ landsat-c2-l2:
 </section>
 <section id="creating-training-datasets" class="level3">
 <h3 class="anchored" data-anchor-id="creating-training-datasets">Creating Training Datasets</h3>
-<div id="653f0bdf" class="cell" data-execution_count="17">
+<div id="23a1765b" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_training_manifest(filtered_items, output_bands<span class="op">=</span>[<span class="st">'B02'</span>, <span class="st">'B03'</span>, <span class="st">'B04'</span>, <span class="st">'B08'</span>]):</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create a manifest file for ML training"""</span></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1241,7 +1241,7 @@ landsat-c2-l2:
 <pre><code>Training Manifest Created:
   Total scenes: 1
   Bands: ['B02', 'B03', 'B04', 'B08']
-  Created: 2025-08-12T17:11:52.215865
+  Created: 2025-08-12T17:23:26.623615
 
 First scene structure:
   scene_id: LC08_L2SP_043034_20230726_02_T1
@@ -2380,12 +2380,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
-<figcaption>The Department of Geography logo</figcaption>
-</figure>
-</div>
+<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

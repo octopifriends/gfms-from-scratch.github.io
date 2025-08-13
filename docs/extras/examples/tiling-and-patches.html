@@ -420,7 +420,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="tiling-overlay-on-a-full-image" class="level3">
 <h3 class="anchored" data-anchor-id="tiling-overlay-on-a-full-image">1) Tiling Overlay on a Full Image</h3>
 <p>We split the image into equally sized tiles (here: 50×50). White grid lines mark tile boundaries.</p>
-<div id="6c557b6c" class="cell" data-execution_count="1">
+<div id="97848e0c" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -476,7 +476,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="patch-extraction-inside-a-single-tile" class="level3">
 <h3 class="anchored" data-anchor-id="patch-extraction-inside-a-single-tile">2) Patch Extraction Inside a Single Tile</h3>
 <p>Zoom into the <strong>top-left tile</strong> (50×50) and split it into smaller patches (here: 10×10). Grid lines show patch boundaries; labels mark patch indices (row, col).</p>
-<div id="c2d271c0" class="cell" data-execution_count="2">
+<div id="346e9886" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -538,7 +538,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="overlapping-patches-with-stride" class="level3">
 <h3 class="anchored" data-anchor-id="overlapping-patches-with-stride">3) Overlapping Patches with Stride</h3>
 <p>When stride &lt; patch size, patches overlap. This is common in computer vision to capture more spatial information.</p>
-<div id="d3184697" class="cell" data-execution_count="3">
+<div id="295f780f" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -611,7 +611,7 @@ Patches fit: 3 rows x 4 cols</code></pre>
 <h3 class="anchored" data-anchor-id="handling-incomplete-patches-padding-strategies">4) Handling Incomplete Patches: Padding Strategies</h3>
 <p>When image dimensions don’t divide evenly by patch size, we face the “edge problem” - what to do with incomplete patches at borders. Different strategies offer different trade-offs between computational efficiency, information preservation, and artifact introduction.</p>
 <p>First, let’s set up our test image and examine the edge problem:</p>
-<div id="644a91ea" class="cell" data-execution_count="4">
+<div id="15d85763" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-stdout">
 <pre><code>Original image: 40×56 pixels
 Patch size: 16×16 pixels
@@ -643,7 +643,7 @@ Leftover pixels: 8 rows, 8 columns
 <li><strong>Size dependency</strong>: Loss percentage varies with image dimensions</li>
 </ul>
 <p><strong>Use cases</strong>: When speed is critical and edge information is less important (e.g., dense feature extraction where overlap provides coverage).</p>
-<div id="2747445a" class="cell" data-execution_count="5">
+<div id="3214f951" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -669,7 +669,7 @@ Leftover pixels: 8 rows, 8 columns
 <li><strong>Increased computation</strong>: More patches to process</li>
 </ul>
 <p><strong>Use cases</strong>: When complete coverage is essential and models are robust to boundary artifacts (e.g., segmentation tasks).</p>
-<div id="7ec2a877" class="cell" data-execution_count="6">
+<div id="15b8cfcb" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -695,7 +695,7 @@ Leftover pixels: 8 rows, 8 columns
 <li><strong>May duplicate features</strong>: Reflected content isn’t truly independent</li>
 </ul>
 <p><strong>Use cases</strong>: When image quality and natural appearance are important (e.g., super-resolution, denoising, medical imaging).</p>
-<div id="cdc5838a" class="cell" data-execution_count="7">
+<div id="9d36e9f1" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1805,12 +1805,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
-<figcaption>The Department of Geography logo</figcaption>
-</figure>
-</div>
+<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

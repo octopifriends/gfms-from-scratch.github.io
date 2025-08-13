@@ -415,7 +415,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <section id="mae-loss-masked-mse" class="level3">
 <h3 class="anchored" data-anchor-id="mae-loss-masked-mse">1) MAE Loss (masked MSE)</h3>
-<div id="ad6eaf7e" class="cell" data-header="geogfm.modules.losses.mae_loss — Masked MSE for MAE pretraining (Week 4)." data-mode="overwrite" data-tangle="geogfm/modules/losses/mae_loss.py" data-execution_count="1">
+<div id="9874a1a3" class="cell" data-header="geogfm.modules.losses.mae_loss — Masked MSE for MAE pretraining (Week 4)." data-mode="overwrite" data-tangle="geogfm/modules/losses/mae_loss.py" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations</span>
@@ -440,7 +440,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="masked-autoencoder-wrapper" class="level3">
 <h3 class="anchored" data-anchor-id="masked-autoencoder-wrapper">2) Masked Autoencoder Wrapper</h3>
-<div id="64a9d0b4" class="cell" data-header="geogfm.models.gfm_mae — Masked Autoencoder wrapper (Week 4): random masking + reconstruction." data-mode="overwrite" data-tangle="geogfm/models/gfm_mae.py" data-execution_count="2">
+<div id="3a2f0552" class="cell" data-header="geogfm.models.gfm_mae — Masked Autoencoder wrapper (Week 4): random masking + reconstruction." data-mode="overwrite" data-tangle="geogfm/models/gfm_mae.py" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations</span>
@@ -498,7 +498,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="quick-toy-batch-non-tangled" class="level3">
 <h3 class="anchored" data-anchor-id="quick-toy-batch-non-tangled">Quick Toy Batch (non-tangled)</h3>
-<div id="9e8c698a" class="cell" data-execution_count="3">
+<div id="57794a17" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
@@ -519,7 +519,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"latent:"</span>, outputs[<span class="st">"latent"</span>].shape, <span class="st">"recon:"</span>, outputs[<span class="st">"reconstructions"</span>].shape, <span class="st">"loss:"</span>, <span class="bu">float</span>(loss))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>latent: torch.Size([2, 16, 128]) recon: torch.Size([2, 16, 3, 16, 16]) loss: 1.0006000995635986</code></pre>
+<pre><code>latent: torch.Size([2, 16, 128]) recon: torch.Size([2, 16, 3, 16, 16]) loss: 0.9888859391212463</code></pre>
 </div>
 </div>
 
@@ -1143,12 +1143,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
-<figcaption>The Department of Geography logo</figcaption>
-</figure>
-</div>
+<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

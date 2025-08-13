@@ -1,5 +1,5 @@
 # geogfm.training.loop — Minimal fit/evaluate loop (Week 5): logging and patch-based loss.
-# Tangled on 2025-08-12T17:08:04
+# Tangled on 2025-08-12T17:19:40
 
 from __future__ import annotations
 from typing import Tuple, Callable, Optional

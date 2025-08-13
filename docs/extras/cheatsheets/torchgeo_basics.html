@@ -405,7 +405,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-to-torchgeo" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-torchgeo">Introduction to TorchGeo</h2>
 <p>TorchGeo is a PyTorch domain library for geospatial data, providing datasets, samplers, transforms, and pre-trained models for satellite imagery and geospatial applications.</p>
-<div id="a1652f39" class="cell" data-execution_count="1">
+<div id="cb1a7382" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torchgeo</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchgeo.datasets <span class="im">import</span> RasterDataset, stack_samples</span>
@@ -425,7 +425,7 @@ PyTorch version: 2.7.1</code></pre>
 <h2 class="anchored" data-anchor-id="core-dataset-classes">Core Dataset Classes</h2>
 <section id="rasterdataset-basics" class="level3">
 <h3 class="anchored" data-anchor-id="rasterdataset-basics">RasterDataset basics</h3>
-<div id="0054a775" class="cell" data-execution_count="2">
+<div id="0d6a9f24" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchgeo.datasets <span class="im">import</span> RasterDataset</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchgeo.samplers <span class="im">import</span> RandomGeoSampler</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tempfile</span>
@@ -479,7 +479,7 @@ Dataset bounds: BoundingBox(minx=-10.0, maxx=10.0, miny=-10.0, maxy=10.0, mint=0
 </section>
 <section id="visiondataset-examples" class="level3">
 <h3 class="anchored" data-anchor-id="visiondataset-examples">VisionDataset examples</h3>
-<div id="479114cd" class="cell" data-execution_count="3">
+<div id="4e3c417a" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchgeo.datasets <span class="im">import</span> RESISC45, EuroSAT</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: These require downloaded data files</span></span>
@@ -504,7 +504,7 @@ Dataset bounds: BoundingBox(minx=-10.0, maxx=10.0, miny=-10.0, maxy=10.0, mint=0
 <h2 class="anchored" data-anchor-id="geospatial-sampling">Geospatial Sampling</h2>
 <section id="randomgeosampler" class="level3">
 <h3 class="anchored" data-anchor-id="randomgeosampler">RandomGeoSampler</h3>
-<div id="16ff3775" class="cell" data-execution_count="4">
+<div id="60999b87" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchgeo.samplers <span class="im">import</span> RandomGeoSampler, GridGeoSampler</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchgeo.datasets <span class="im">import</span> BoundingBox</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -535,7 +535,7 @@ Sample ROI: BoundingBox(minx=-10.0, maxx=10.0, miny=-10.0, maxy=10.0, mint=0, ma
 </section>
 <section id="gridgeosampler" class="level3">
 <h3 class="anchored" data-anchor-id="gridgeosampler">GridGeoSampler</h3>
-<div id="0b62877b" class="cell" data-execution_count="5">
+<div id="e2d7ff5b" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grid-based systematic sampling concept</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"GridGeoSampler Usage Pattern:"</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"- size: Patch size in pixels (e.g., 256)"</span>)</span>
@@ -559,7 +559,7 @@ Sample ROI: BoundingBox(minx=-10.0, maxx=10.0, miny=-10.0, maxy=10.0, mint=0, ma
 <h2 class="anchored" data-anchor-id="data-transforms">Data Transforms</h2>
 <section id="basic-transforms" class="level3">
 <h3 class="anchored" data-anchor-id="basic-transforms">Basic transforms</h3>
-<div id="901e9d37" class="cell" data-execution_count="6">
+<div id="141eb470" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torchvision.transforms <span class="im">as</span> T</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchgeo.transforms <span class="im">import</span> AugmentationSequential</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -586,7 +586,7 @@ Sample ROI: BoundingBox(minx=-10.0, maxx=10.0, miny=-10.0, maxy=10.0, mint=0, ma
 </section>
 <section id="geospatial-aware-transforms" class="level3">
 <h3 class="anchored" data-anchor-id="geospatial-aware-transforms">Geospatial-aware transforms</h3>
-<div id="acd42ffb" class="cell" data-execution_count="7">
+<div id="131b8bc1" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create sample data for demonstration</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>sample_image <span class="op">=</span> torch.rand(<span class="dv">3</span>, <span class="dv">256</span>, <span class="dv">256</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>sample_mask <span class="op">=</span> torch.randint(<span class="dv">0</span>, <span class="dv">5</span>, (<span class="dv">256</span>, <span class="dv">256</span>))</span>
@@ -621,7 +621,7 @@ TorchGeo AugmentationSequential benefits:
 <h2 class="anchored" data-anchor-id="working-with-real-satellite-data">Working with Real Satellite Data</h2>
 <section id="landsat-dataset-example" class="level3">
 <h3 class="anchored" data-anchor-id="landsat-dataset-example">Landsat dataset example</h3>
-<div id="ed12e8cf" class="cell" data-execution_count="8">
+<div id="bb5e207c" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchgeo.datasets <span class="im">import</span> Landsat8</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: Requires actual Landsat data</span></span>
@@ -647,7 +647,7 @@ TorchGeo AugmentationSequential benefits:
 </section>
 <section id="sentinel-2-dataset-example" class="level3">
 <h3 class="anchored" data-anchor-id="sentinel-2-dataset-example">Sentinel-2 dataset example</h3>
-<div id="7a2b7e9e" class="cell" data-execution_count="9">
+<div id="9f110fa8" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchgeo.datasets <span class="im">import</span> Sentinel2</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Sentinel-2 usage pattern</span></span>
@@ -665,7 +665,7 @@ TorchGeo AugmentationSequential benefits:
 <h2 class="anchored" data-anchor-id="multi-modal-data-fusion">Multi-modal Data Fusion</h2>
 <section id="combining-datasets" class="level3">
 <h3 class="anchored" data-anchor-id="combining-datasets">Combining datasets</h3>
-<div id="6c90c6ef" class="cell" data-execution_count="10">
+<div id="b5022253" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchgeo.datasets <span class="im">import</span> IntersectionDataset, UnionDataset</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Multi-modal data fusion concept</span></span>
@@ -701,7 +701,7 @@ Typical fusion workflow:
 </section>
 <section id="stack-samples-utility" class="level3">
 <h3 class="anchored" data-anchor-id="stack-samples-utility">Stack samples utility</h3>
-<div id="5edb4496" class="cell" data-execution_count="11">
+<div id="37a150f7" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create multiple samples to stack</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>samples <span class="op">=</span> []</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
@@ -730,7 +730,7 @@ Batch elevation shape: torch.Size([4, 1, 64, 64])</code></pre>
 <h2 class="anchored" data-anchor-id="datamodule-for-training">DataModule for Training</h2>
 <section id="lightning-datamodule" class="level3">
 <h3 class="anchored" data-anchor-id="lightning-datamodule">Lightning DataModule</h3>
-<div id="8b62d977" class="cell" data-execution_count="12">
+<div id="0f1df225" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytorch_lightning <span class="im">as</span> pl</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -783,7 +783,7 @@ Setting up geospatial data module:
 <h2 class="anchored" data-anchor-id="pre-trained-models">Pre-trained Models</h2>
 <section id="using-torchgeo-models" class="level3">
 <h3 class="anchored" data-anchor-id="using-torchgeo-models">Using TorchGeo models</h3>
-<div id="068e0f57" class="cell" data-execution_count="13">
+<div id="2d1f73dc" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchgeo.models <span class="im">import</span> ResNet18_Weights</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torchvision.models <span class="im">as</span> models</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -820,7 +820,7 @@ Arguments other than a weight enum or `None` for 'weights' are deprecated since 
 </section>
 <section id="fine-tuning-for-classification" class="level3">
 <h3 class="anchored" data-anchor-id="fine-tuning-for-classification">Fine-tuning for classification</h3>
-<div id="d4d5e67b" class="cell" data-execution_count="14">
+<div id="a63cbacc" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GeospatialClassifier(nn.Module):</span>
@@ -851,7 +851,7 @@ Arguments other than a weight enum or `None` for 'weights' are deprecated since 
 <h2 class="anchored" data-anchor-id="visualization-and-inspection">Visualization and Inspection</h2>
 <section id="plotting-samples" class="level3">
 <h3 class="anchored" data-anchor-id="plotting-samples">Plotting samples</h3>
-<div id="cb554ec9" class="cell" data-execution_count="15">
+<div id="ca0a3a49" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_sample(sample, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">4</span>)):</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plot a geospatial sample"""</span></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>figsize)</span>
@@ -904,7 +904,7 @@ Arguments other than a weight enum or `None` for 'weights' are deprecated since 
 </section>
 <section id="dataset-statistics" class="level3">
 <h3 class="anchored" data-anchor-id="dataset-statistics">Dataset statistics</h3>
-<div id="20a951de" class="cell" data-execution_count="16">
+<div id="50dae490" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_dataset_stats(dataloader, num_samples<span class="op">=</span><span class="dv">100</span>):</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute dataset statistics for normalization"""</span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -945,7 +945,7 @@ Arguments other than a weight enum or `None` for 'weights' are deprecated since 
 <h2 class="anchored" data-anchor-id="advanced-features">Advanced Features</h2>
 <section id="custom-indices-and-bands" class="level3">
 <h3 class="anchored" data-anchor-id="custom-indices-and-bands">Custom indices and bands</h3>
-<div id="685d744c" class="cell" data-execution_count="17">
+<div id="2d004989" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SpectralIndices:</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Common spectral indices for satellite imagery"""</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -988,7 +988,7 @@ NDWI shape: torch.Size([256, 256]), range: [-1.000, 1.000]</code></pre>
 </section>
 <section id="temporal-data-handling" class="level3">
 <h3 class="anchored" data-anchor-id="temporal-data-handling">Temporal data handling</h3>
-<div id="8dc3f819" class="cell" data-execution_count="18">
+<div id="07b2489d" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TemporalDataset:</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Dataset for temporal satellite imagery"""</span></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1027,7 +1027,7 @@ NDWI shape: torch.Size([256, 256]), range: [-1.000, 1.000]</code></pre>
 <h2 class="anchored" data-anchor-id="performance-optimization">Performance Optimization</h2>
 <section id="caching-and-preprocessing" class="level3">
 <h3 class="anchored" data-anchor-id="caching-and-preprocessing">Caching and preprocessing</h3>
-<div id="3db40c98" class="cell" data-execution_count="19">
+<div id="e0debf4a" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CachedDataset:</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Dataset with caching for repeated access"""</span></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1065,7 +1065,7 @@ NDWI shape: torch.Size([256, 256]), range: [-1.000, 1.000]</code></pre>
 </section>
 <section id="memory-efficient-loading" class="level3">
 <h3 class="anchored" data-anchor-id="memory-efficient-loading">Memory-efficient loading</h3>
-<div id="5bbcfccd" class="cell" data-execution_count="20">
+<div id="81448776" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_efficient_dataloader(dataset, batch_size<span class="op">=</span><span class="dv">32</span>, num_workers<span class="op">=</span><span class="dv">4</span>):</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create memory-efficient dataloader"""</span></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -2140,12 +2140,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
-<figcaption>The Department of Geography logo</figcaption>
-</figure>
-</div>
+<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
