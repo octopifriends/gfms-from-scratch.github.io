@@ -396,7 +396,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-to-folium" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-folium">Introduction to Folium</h2>
 <p>Folium is a Python library that makes it easy to visualize geospatial data on interactive maps powered by Leaflet.js.</p>
-<div id="df0d28c0" class="cell" data-execution_count="1">
+<div id="e92516bd" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> folium</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -414,7 +414,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="basic-map-creation">Basic Map Creation</h2>
 <section id="simple-map" class="level3">
 <h3 class="anchored" data-anchor-id="simple-map">Simple map</h3>
-<div id="7516dd1f" class="cell" data-execution_count="2">
+<div id="5bc05e38" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a basic map centered on a location</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_basic_map(location<span class="op">=</span>[<span class="fl">39.8283</span>, <span class="op">-</span><span class="fl">98.5795</span>], zoom_start<span class="op">=</span><span class="dv">4</span>):</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create a basic folium map"""</span></span>
@@ -441,7 +441,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="different-tile-layers" class="level3">
 <h3 class="anchored" data-anchor-id="different-tile-layers">Different tile layers</h3>
-<div id="04be9e20" class="cell" data-execution_count="3">
+<div id="95dfddb4" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compare_tile_layers():</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create maps with different tile layers"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -489,7 +489,7 @@ Created map with CartoDB dark_matter tiles</code></pre>
 <h2 class="anchored" data-anchor-id="adding-markers-and-popups">Adding Markers and Popups</h2>
 <section id="basic-markers" class="level3">
 <h3 class="anchored" data-anchor-id="basic-markers">Basic markers</h3>
-<div id="6fb69010" class="cell" data-execution_count="4">
+<div id="dd1029a1" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_markers_to_map():</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Add various markers to a map"""</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -529,7 +529,7 @@ Created map with CartoDB dark_matter tiles</code></pre>
 </section>
 <section id="custom-markers-and-icons" class="level3">
 <h3 class="anchored" data-anchor-id="custom-markers-and-icons">Custom markers and icons</h3>
-<div id="8ad759bd" class="cell" data-execution_count="5">
+<div id="fd3255c1" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_custom_markers():</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Add custom markers with different styles"""</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -584,7 +584,7 @@ Created map with CartoDB dark_matter tiles</code></pre>
 <h2 class="anchored" data-anchor-id="visualizing-geospatial-data">Visualizing Geospatial Data</h2>
 <section id="point-data-visualization" class="level3">
 <h3 class="anchored" data-anchor-id="point-data-visualization">Point data visualization</h3>
-<div id="6324bd7f" class="cell" data-execution_count="6">
+<div id="5afa9335" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_sample_point_data():</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create sample point data for visualization"""</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -663,7 +663,7 @@ Created map with CartoDB dark_matter tiles</code></pre>
 </section>
 <section id="heat-maps" class="level3">
 <h3 class="anchored" data-anchor-id="heat-maps">Heat maps</h3>
-<div id="0caa957a" class="cell" data-execution_count="7">
+<div id="e514ddf1" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_heatmap(df):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create a heat map from point data"""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -706,7 +706,7 @@ Created map with CartoDB dark_matter tiles</code></pre>
 <h2 class="anchored" data-anchor-id="working-with-geospatial-vector-data">Working with Geospatial Vector Data</h2>
 <section id="polygons-and-shapes" class="level3">
 <h3 class="anchored" data-anchor-id="polygons-and-shapes">Polygons and shapes</h3>
-<div id="b4b4bb06" class="cell" data-execution_count="8">
+<div id="dab621fd" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_sample_polygons():</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create sample polygon data"""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -778,7 +778,7 @@ Created map with CartoDB dark_matter tiles</code></pre>
 </section>
 <section id="geojson-data" class="level3">
 <h3 class="anchored" data-anchor-id="geojson-data">GeoJSON data</h3>
-<div id="bd7ebfbb" class="cell" data-execution_count="9">
+<div id="d8a21b08" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_sample_geojson():</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create sample GeoJSON data"""</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -895,7 +895,7 @@ Created map with CartoDB dark_matter tiles</code></pre>
 <h2 class="anchored" data-anchor-id="advanced-features-and-plugins">Advanced Features and Plugins</h2>
 <section id="layer-control" class="level3">
 <h3 class="anchored" data-anchor-id="layer-control">Layer control</h3>
-<div id="d3f867a9" class="cell" data-execution_count="10">
+<div id="30bff117" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_layered_map():</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create map with multiple layers and layer control"""</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -971,7 +971,7 @@ Created map with CartoDB dark_matter tiles</code></pre>
 </section>
 <section id="interactive-plugins" class="level3">
 <h3 class="anchored" data-anchor-id="interactive-plugins">Interactive plugins</h3>
-<div id="896cce87" class="cell" data-execution_count="11">
+<div id="bfea2ad0" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_interactive_plugins():</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Add various interactive plugins to map"""</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1020,7 +1020,7 @@ Created map with CartoDB dark_matter tiles</code></pre>
 </section>
 <section id="clustering-markers" class="level3">
 <h3 class="anchored" data-anchor-id="clustering-markers">Clustering markers</h3>
-<div id="5bfa3bed" class="cell" data-execution_count="12">
+<div id="8191bfe0" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_marker_cluster_map():</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create map with marker clustering"""</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1059,7 +1059,7 @@ Created map with CartoDB dark_matter tiles</code></pre>
 <h2 class="anchored" data-anchor-id="styling-and-customization">Styling and Customization</h2>
 <section id="custom-styling" class="level3">
 <h3 class="anchored" data-anchor-id="custom-styling">Custom styling</h3>
-<div id="389fadb1" class="cell" data-execution_count="13">
+<div id="655ea962" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_styled_map():</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create map with custom styling"""</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1131,7 +1131,7 @@ Created map with CartoDB dark_matter tiles</code></pre>
 </section>
 <section id="custom-colormap" class="level3">
 <h3 class="anchored" data-anchor-id="custom-colormap">Custom colormap</h3>
-<div id="57db9d5a" class="cell" data-execution_count="14">
+<div id="3b694304" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_custom_colormap_visualization():</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create visualization with custom colormap"""</span></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1185,7 +1185,7 @@ Created map with CartoDB dark_matter tiles</code></pre>
 <h2 class="anchored" data-anchor-id="export-and-integration">Export and Integration</h2>
 <section id="saving-maps" class="level3">
 <h3 class="anchored" data-anchor-id="saving-maps">Saving maps</h3>
-<div id="85820b77" class="cell" data-execution_count="15">
+<div id="1a1ce270" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> save_map_examples():</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Examples of saving maps to different formats"""</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1221,7 +1221,7 @@ HTML representation obtained</code></pre>
 </section>
 <section id="integration-tips" class="level3">
 <h3 class="anchored" data-anchor-id="integration-tips">Integration tips</h3>
-<div id="6a9972ed" class="cell" data-execution_count="16">
+<div id="269d089e" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> integration_examples():</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Examples of integrating folium maps with other tools"""</span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1254,7 +1254,7 @@ Integration examples demonstrated</code></pre>
 <h2 class="anchored" data-anchor-id="best-practices-and-performance">Best Practices and Performance</h2>
 <section id="performance-optimization" class="level3">
 <h3 class="anchored" data-anchor-id="performance-optimization">Performance optimization</h3>
-<div id="800e1a4c" class="cell" data-execution_count="17">
+<div id="2bc56181" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> performance_tips():</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Examples of performance optimization techniques"""</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1457,7 +1457,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/kellycaylor\.github\.io\/geoAI");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
@@ -2635,7 +2635,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
+<figcaption>Department of Geography logo</figcaption>
+</figure>
+</div>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

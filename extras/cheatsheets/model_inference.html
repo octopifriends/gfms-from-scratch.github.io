@@ -381,7 +381,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-to-model-inference" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-model-inference">Introduction to Model Inference</h2>
 <p>Model inference and feature extraction are crucial for applying trained models to satellite imagery analysis and extracting meaningful representations.</p>
-<div id="5860be20" class="cell" data-execution_count="1">
+<div id="25dd2933" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn.functional <span class="im">as</span> F</span>
@@ -403,7 +403,7 @@ CUDA available: False</code></pre>
 <h2 class="anchored" data-anchor-id="basic-inference-patterns">Basic Inference Patterns</h2>
 <section id="single-image-inference" class="level3">
 <h3 class="anchored" data-anchor-id="single-image-inference">Single image inference</h3>
-<div id="ff3a8e54" class="cell" data-execution_count="2">
+<div id="7f6f4f6b" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GeospatialClassifier(nn.Module):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Example geospatial classifier for demonstration"""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -475,7 +475,7 @@ Spatial features shape: torch.Size([1, 256, 28, 28])</code></pre>
 </section>
 <section id="batch-inference" class="level3">
 <h3 class="anchored" data-anchor-id="batch-inference">Batch inference</h3>
-<div id="e79cca2f" class="cell" data-execution_count="3">
+<div id="897c84b4" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> batch_inference(model, images, batch_size<span class="op">=</span><span class="dv">32</span>, device<span class="op">=</span><span class="st">'cpu'</span>):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Perform batch inference on multiple images"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -533,7 +533,7 @@ Batch features shape: torch.Size([100, 256])</code></pre>
 <h2 class="anchored" data-anchor-id="feature-extraction-techniques">Feature Extraction Techniques</h2>
 <section id="layer-wise-feature-extraction" class="level3">
 <h3 class="anchored" data-anchor-id="layer-wise-feature-extraction">Layer-wise feature extraction</h3>
-<div id="63b4ff21" class="cell" data-execution_count="4">
+<div id="cda188ab" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FeatureExtractor:</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Extract features from specific layers of a model"""</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -622,7 +622,7 @@ global_pool: torch.Size([4, 256, 1, 1])</code></pre>
 </section>
 <section id="multi-scale-feature-extraction" class="level3">
 <h3 class="anchored" data-anchor-id="multi-scale-feature-extraction">Multi-scale feature extraction</h3>
-<div id="4ec5ec92" class="cell" data-execution_count="5">
+<div id="fe08d07d" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultiScaleFeatureExtractor(nn.Module):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Extract features at multiple scales"""</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -700,7 +700,7 @@ scale_0.25:
 <h2 class="anchored" data-anchor-id="advanced-inference-techniques">Advanced Inference Techniques</h2>
 <section id="attention-map-visualization" class="level3">
 <h3 class="anchored" data-anchor-id="attention-map-visualization">Attention map visualization</h3>
-<div id="47599de6" class="cell" data-execution_count="6">
+<div id="2bae7976" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AttentionExtractor:</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Extract and visualize attention maps"""</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -807,7 +807,7 @@ scale_0.25:
 </section>
 <section id="gradient-based-explanations" class="level3">
 <h3 class="anchored" data-anchor-id="gradient-based-explanations">Gradient-based explanations</h3>
-<div id="c84580e6" class="cell" data-execution_count="7">
+<div id="2c540df5" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GradCAM:</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Gradient-weighted Class Activation Mapping"""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -945,7 +945,7 @@ Using a non-full backward hook when the forward contains multiple autograd Nodes
 <h2 class="anchored" data-anchor-id="feature-analysis-and-dimensionality-reduction">Feature Analysis and Dimensionality Reduction</h2>
 <section id="pca-analysis-of-features" class="level3">
 <h3 class="anchored" data-anchor-id="pca-analysis-of-features">PCA analysis of features</h3>
-<div id="a1585c9e" class="cell" data-execution_count="8">
+<div id="3a42e195" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> analyze_features_pca(features, n_components<span class="op">=</span><span class="dv">50</span>, visualize<span class="op">=</span><span class="va">True</span>):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Analyze features using PCA"""</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1015,13 +1015,13 @@ Using a non-full backward hook when the forward contains multiple autograd Nodes
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>PCA features shape: (100, 20)
-First 5 components explain 12.1% of variance</code></pre>
+First 5 components explain 11.8% of variance</code></pre>
 </div>
 </div>
 </section>
 <section id="t-sne-visualization" class="level3">
 <h3 class="anchored" data-anchor-id="t-sne-visualization">t-SNE visualization</h3>
-<div id="04a4e3f3" class="cell" data-execution_count="9">
+<div id="1d851810" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> visualize_features_tsne(features, labels<span class="op">=</span><span class="va">None</span>, perplexity<span class="op">=</span><span class="dv">30</span>, random_state<span class="op">=</span><span class="dv">42</span>):</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Visualize features using t-SNE"""</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1089,7 +1089,7 @@ First 5 components explain 12.1% of variance</code></pre>
 <h2 class="anchored" data-anchor-id="inference-optimization">Inference Optimization</h2>
 <section id="model-quantization-for-faster-inference" class="level3">
 <h3 class="anchored" data-anchor-id="model-quantization-for-faster-inference">Model quantization for faster inference</h3>
-<div id="29cfc356" class="cell" data-execution_count="10">
+<div id="e0e3474c" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> quantize_model(model, calibration_data<span class="op">=</span><span class="va">None</span>):</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Quantize model for faster inference"""</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1146,15 +1146,15 @@ First 5 components explain 12.1% of variance</code></pre>
 <span id="cb21-54"><a href="#cb21-54" aria-hidden="true" tabindex="-1"></a>speedup <span class="op">=</span> compare_inference_speed(model, quantized_model, test_input, num_runs<span class="op">=</span><span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Applied dynamic quantization
-Original model: 0.325s
-Quantized model: 0.313s
-Speedup: 1.04x</code></pre>
+Original model: 0.305s
+Quantized model: 0.301s
+Speedup: 1.01x</code></pre>
 </div>
 </div>
 </section>
 <section id="batch-size-optimization" class="level3">
 <h3 class="anchored" data-anchor-id="batch-size-optimization">Batch size optimization</h3>
-<div id="f34e954d" class="cell" data-execution_count="11">
+<div id="040dfac4" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> find_optimal_batch_size(model, input_shape, device<span class="op">=</span><span class="st">'cpu'</span>, max_batch_size<span class="op">=</span><span class="dv">128</span>):</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Find optimal batch size for memory and speed"""</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1227,13 +1227,13 @@ Speedup: 1.04x</code></pre>
 <span id="cb23-70"><a href="#cb23-70" aria-hidden="true" tabindex="-1"></a>    max_batch_size<span class="op">=</span><span class="dv">64</span></span>
 <span id="cb23-71"><a href="#cb23-71" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Batch size 1: 163.4 samples/sec, 0.0 MB/sample
-Batch size 2: 151.6 samples/sec, 0.0 MB/sample
-Batch size 4: 199.7 samples/sec, 0.0 MB/sample
-Batch size 8: 217.1 samples/sec, 0.0 MB/sample
-Batch size 16: 233.2 samples/sec, 0.0 MB/sample
-Batch size 32: 235.4 samples/sec, 0.0 MB/sample
-Batch size 64: 247.1 samples/sec, 0.0 MB/sample
+<pre><code>Batch size 1: 167.5 samples/sec, 0.0 MB/sample
+Batch size 2: 152.9 samples/sec, 0.0 MB/sample
+Batch size 4: 203.1 samples/sec, 0.0 MB/sample
+Batch size 8: 200.3 samples/sec, 0.0 MB/sample
+Batch size 16: 222.5 samples/sec, 0.0 MB/sample
+Batch size 32: 252.3 samples/sec, 0.0 MB/sample
+Batch size 64: 273.1 samples/sec, 0.0 MB/sample
 
 Optimal batch size: 64</code></pre>
 </div>
@@ -1394,7 +1394,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/kellycaylor\.github\.io\/geoAI");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
@@ -2487,7 +2487,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
+<figcaption>Department of Geography logo</figcaption>
+</figure>
+</div>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

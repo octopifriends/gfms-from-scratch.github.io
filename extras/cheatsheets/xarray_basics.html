@@ -405,7 +405,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-to-xarray" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-xarray">Introduction to Xarray</h2>
 <p>Xarray is a powerful Python library for working with labeled, multi-dimensional arrays, particularly useful for climate and geospatial data.</p>
-<div id="e0146b79" class="cell" data-execution_count="1">
+<div id="48408882" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -423,7 +423,7 @@ NumPy version: 1.26.4</code></pre>
 <h2 class="anchored" data-anchor-id="creating-sample-data">Creating Sample Data</h2>
 <section id="creating-dataarrays" class="level3">
 <h3 class="anchored" data-anchor-id="creating-dataarrays">Creating DataArrays</h3>
-<div id="ce7810f7" class="cell" data-execution_count="2">
+<div id="6db15727" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create sample temperature data</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -464,7 +464,7 @@ Coordinates: ['time', 'lat', 'lon']</code></pre>
 </section>
 <section id="creating-datasets" class="level3">
 <h3 class="anchored" data-anchor-id="creating-datasets">Creating Datasets</h3>
-<div id="b69fdb9b" class="cell" data-execution_count="3">
+<div id="0b4f7816" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create precipitation data</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>precip_data <span class="op">=</span> np.maximum(<span class="dv">0</span>, np.random.randn(<span class="dv">365</span>, <span class="dv">25</span>, <span class="dv">60</span>) <span class="op">*</span> <span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>precipitation <span class="op">=</span> xr.DataArray(</span>
@@ -503,7 +503,7 @@ Dataset dimensions: Frozen({'time': 365, 'lat': 25, 'lon': 60})</code></pre>
 <h2 class="anchored" data-anchor-id="basic-data-inspection">Basic Data Inspection</h2>
 <section id="dataset-overview" class="level3">
 <h3 class="anchored" data-anchor-id="dataset-overview">Dataset overview</h3>
-<div id="1f0fa5b8" class="cell" data-execution_count="4">
+<div id="1f2e9bd8" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dataset info</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dataset structure:"</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(weather_ds)</span>
@@ -539,7 +539,7 @@ Temperature statistics:
 </section>
 <section id="coordinate-inspection" class="level3">
 <h3 class="anchored" data-anchor-id="coordinate-inspection">Coordinate inspection</h3>
-<div id="428c2da0" class="cell" data-execution_count="5">
+<div id="5f1fc750" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examine coordinates</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time coordinate:"</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Start: </span><span class="sc">{</span>weather_ds<span class="sc">.</span>time<span class="sc">.</span>values[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -575,7 +575,7 @@ Missing values:
 <h2 class="anchored" data-anchor-id="data-selection-and-indexing">Data Selection and Indexing</h2>
 <section id="label-based-selection" class="level3">
 <h3 class="anchored" data-anchor-id="label-based-selection">Label-based selection</h3>
-<div id="abce00da" class="cell" data-execution_count="6">
+<div id="4f9f0d3c" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select by coordinate values</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>summer_data <span class="op">=</span> weather_ds.sel(time<span class="op">=</span><span class="bu">slice</span>(<span class="st">'2020-06-01'</span>, <span class="st">'2020-08-31'</span>))</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Summer data shape: </span><span class="sc">{</span>summer_data<span class="sc">.</span>temperature<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -599,7 +599,7 @@ Regional data shape: (365, 15, 30)</code></pre>
 </section>
 <section id="integer-based-indexing" class="level3">
 <h3 class="anchored" data-anchor-id="integer-based-indexing">Integer-based indexing</h3>
-<div id="3de4462c" class="cell" data-execution_count="7">
+<div id="0a2b1cfd" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Index-based selection</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>first_week <span class="op">=</span> weather_ds.isel(time<span class="op">=</span><span class="bu">slice</span>(<span class="dv">0</span>, <span class="dv">7</span>))</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"First week shape: </span><span class="sc">{</span>first_week<span class="sc">.</span>temperature<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -620,7 +620,7 @@ Corner data shape: (365, 2, 2)</code></pre>
 </section>
 <section id="boolean-masking" class="level3">
 <h3 class="anchored" data-anchor-id="boolean-masking">Boolean masking</h3>
-<div id="038dc5b8" class="cell" data-execution_count="8">
+<div id="c84b57e1" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Temperature-based mask</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>hot_days <span class="op">=</span> weather_ds.where(weather_ds.temperature <span class="op">&gt;</span> <span class="dv">25</span>, drop<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Hot days data points: </span><span class="sc">{</span>hot_days<span class="sc">.</span>temperature<span class="sc">.</span>count()<span class="sc">.</span>values<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -643,7 +643,7 @@ Summer hot days: 98382</code></pre>
 <h2 class="anchored" data-anchor-id="statistical-operations">Statistical Operations</h2>
 <section id="basic-statistics" class="level3">
 <h3 class="anchored" data-anchor-id="basic-statistics">Basic statistics</h3>
-<div id="a8c76a79" class="cell" data-execution_count="9">
+<div id="49636d43" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Global statistics</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>global_stats <span class="op">=</span> weather_ds.mean()</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Global mean values:"</span>)</span>
@@ -669,7 +669,7 @@ Time series of spatial means: (365,)</code></pre>
 </section>
 <section id="advanced-aggregations" class="level3">
 <h3 class="anchored" data-anchor-id="advanced-aggregations">Advanced aggregations</h3>
-<div id="03a90914" class="cell" data-execution_count="10">
+<div id="9606e61e" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard deviation</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>temp_std <span class="op">=</span> weather_ds.temperature.std(<span class="st">'time'</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Temperature variability shape: </span><span class="sc">{</span>temp_std<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -690,7 +690,7 @@ Cumulative precipitation shape: (365, 25, 60)</code></pre>
 </section>
 <section id="groupby-operations" class="level3">
 <h3 class="anchored" data-anchor-id="groupby-operations">Groupby operations</h3>
-<div id="9b5e65bd" class="cell" data-execution_count="11">
+<div id="7da89432" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by season</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>seasonal_stats <span class="op">=</span> weather_ds.groupby(<span class="st">'time.season'</span>).mean()</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Seasonal statistics dimensions: </span><span class="sc">{</span>seasonal_stats<span class="sc">.</span>dims<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -717,7 +717,7 @@ Decade-based statistics created</code></pre>
 <h2 class="anchored" data-anchor-id="data-visualization">Data Visualization</h2>
 <section id="simple-plots" class="level3">
 <h3 class="anchored" data-anchor-id="simple-plots">Simple plots</h3>
-<div id="07099772" class="cell" data-execution_count="12">
+<div id="007f7315" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Time series plot at a specific location</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>location_ts <span class="op">=</span> weather_ds.sel(lat<span class="op">=</span><span class="dv">40</span>, lon<span class="op">=-</span><span class="dv">100</span>, method<span class="op">=</span><span class="st">'nearest'</span>)</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -746,7 +746,7 @@ Decade-based statistics created</code></pre>
 </section>
 <section id="spatial-maps" class="level3">
 <h3 class="anchored" data-anchor-id="spatial-maps">Spatial maps</h3>
-<div id="dc3d8d6e" class="cell" data-execution_count="13">
+<div id="1c12c89e" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot spatial maps for specific dates</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>))</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -786,7 +786,7 @@ Decade-based statistics created</code></pre>
 <h2 class="anchored" data-anchor-id="data-manipulation-and-processing">Data Manipulation and Processing</h2>
 <section id="mathematical-operations" class="level3">
 <h3 class="anchored" data-anchor-id="mathematical-operations">Mathematical operations</h3>
-<div id="146d78ef" class="cell" data-execution_count="14">
+<div id="edb5b478" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert Celsius to Fahrenheit</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>temp_fahrenheit <span class="op">=</span> weather_ds.temperature <span class="op">*</span> <span class="dv">9</span><span class="op">/</span><span class="dv">5</span> <span class="op">+</span> <span class="dv">32</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>temp_fahrenheit.attrs[<span class="st">'units'</span>] <span class="op">=</span> <span class="st">'degrees_Fahrenheit'</span></span>
@@ -809,7 +809,7 @@ Daily temperature range shape: (365,)</code></pre>
 </section>
 <section id="resampling-and-interpolation" class="level3">
 <h3 class="anchored" data-anchor-id="resampling-and-interpolation">Resampling and interpolation</h3>
-<div id="c37a4209" class="cell" data-execution_count="15">
+<div id="704830b0" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Temporal resampling</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>weekly_data <span class="op">=</span> weather_ds.resample(time<span class="op">=</span><span class="st">'W'</span>).mean()</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Weekly data shape: </span><span class="sc">{</span>weekly_data<span class="sc">.</span>temperature<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -842,7 +842,7 @@ Monthly data shape: (12, 25, 60)</code></pre>
 </section>
 <section id="rolling-operations" class="level3">
 <h3 class="anchored" data-anchor-id="rolling-operations">Rolling operations</h3>
-<div id="d237216a" class="cell" data-execution_count="16">
+<div id="b262b1b8" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rolling mean (7-day moving average)</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>rolling_temp <span class="op">=</span> weather_ds.temperature.rolling(time<span class="op">=</span><span class="dv">7</span>, center<span class="op">=</span><span class="va">True</span>).mean()</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"7-day rolling mean shape: </span><span class="sc">{</span>rolling_temp<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -861,7 +861,7 @@ Weekly precipitation totals shape: (365, 25, 60)</code></pre>
 <h2 class="anchored" data-anchor-id="working-with-real-netcdf-files">Working with Real NetCDF Files</h2>
 <section id="file-io-operations" class="level3">
 <h3 class="anchored" data-anchor-id="file-io-operations">File I/O operations</h3>
-<div id="dbf49732" class="cell" data-execution_count="17">
+<div id="a1baea25" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save dataset to NetCDF</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>weather_ds.to_netcdf(<span class="st">'sample_weather_data.nc'</span>)</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dataset saved to NetCDF file"</span>)</span>
@@ -880,7 +880,7 @@ Loaded dataset variables: ['temperature', 'precipitation', 'humidity']</code></p
 </section>
 <section id="chunking-and-dask-integration" class="level3">
 <h3 class="anchored" data-anchor-id="chunking-and-dask-integration">Chunking and Dask integration</h3>
-<div id="07c743bf" class="cell" data-execution_count="18">
+<div id="81fa3667" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create chunked dataset for large data</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>chunked_ds <span class="op">=</span> weather_ds.chunk({<span class="st">'time'</span>: <span class="dv">30</span>, <span class="st">'lat'</span>: <span class="dv">10</span>, <span class="st">'lon'</span>: <span class="dv">20</span>})</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Chunked dataset: </span><span class="sc">{</span>chunked_ds<span class="sc">.</span>temperature<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -913,7 +913,7 @@ Computed mean: 19.99</code></pre>
 <h2 class="anchored" data-anchor-id="advanced-operations">Advanced Operations</h2>
 <section id="coordinate-operations" class="level3">
 <h3 class="anchored" data-anchor-id="coordinate-operations">Coordinate operations</h3>
-<div id="af00f82e" class="cell" data-execution_count="19">
+<div id="4f77021a" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add new coordinates</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>weather_ds_with_doy <span class="op">=</span> weather_ds.assign_coords(</span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    day_of_year<span class="op">=</span>weather_ds.time.dt.dayofyear</span>
@@ -933,7 +933,7 @@ Unstacked back to: ('time', 'lat', 'lon')</code></pre>
 </section>
 <section id="apply-functions" class="level3">
 <h3 class="anchored" data-anchor-id="apply-functions">Apply functions</h3>
-<div id="9b8fa81c" class="cell" data-execution_count="20">
+<div id="45e454dd" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply custom function along dimension</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> temp_category(temp_array):</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Categorize temperature"""</span></span>
@@ -955,7 +955,7 @@ Unstacked back to: ('time', 'lat', 'lon')</code></pre>
 </section>
 <section id="merge-and-concatenate" class="level3">
 <h3 class="anchored" data-anchor-id="merge-and-concatenate">Merge and concatenate</h3>
-<div id="1516b9a5" class="cell" data-execution_count="21">
+<div id="2e0d0cae" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Split dataset by time</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>first_half <span class="op">=</span> weather_ds.isel(time<span class="op">=</span><span class="bu">slice</span>(<span class="dv">0</span>, <span class="dv">182</span>))</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>second_half <span class="op">=</span> weather_ds.isel(time<span class="op">=</span><span class="bu">slice</span>(<span class="dv">182</span>, <span class="va">None</span>))</span>
@@ -985,7 +985,7 @@ Merged dataset variables: ['temperature', 'precipitation', 'humidity', 'elevatio
 <h2 class="anchored" data-anchor-id="performance-tips-and-best-practices">Performance Tips and Best Practices</h2>
 <section id="memory-management" class="level3">
 <h3 class="anchored" data-anchor-id="memory-management">Memory management</h3>
-<div id="fae50b59" class="cell" data-execution_count="22">
+<div id="8dc458f8" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check memory usage</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Dataset memory usage: </span><span class="sc">{</span>weather_ds<span class="sc">.</span>nbytes <span class="op">/</span> <span class="fl">1e6</span><span class="sc">:.1f}</span><span class="ss"> MB"</span>)</span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1003,7 +1003,7 @@ File closed to free memory</code></pre>
 </section>
 <section id="efficient-operations" class="level3">
 <h3 class="anchored" data-anchor-id="efficient-operations">Efficient operations</h3>
-<div id="17ebcd4e" class="cell" data-execution_count="23">
+<div id="1988d424" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use vectorized operations</span></span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>efficient_calc <span class="op">=</span> weather_ds.temperature <span class="op">-</span> weather_ds.temperature.mean(<span class="st">'time'</span>)</span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Efficient anomaly calculation completed"</span>)</span>
@@ -1172,7 +1172,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/kellycaylor\.github\.io\/geoAI");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
@@ -1962,7 +1962,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
+<figcaption>Department of Geography logo</figcaption>
+</figure>
+</div>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

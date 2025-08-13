@@ -372,7 +372,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This cheatsheet demonstrates practical fine-tuning techniques for geospatial models using small examples that run quickly.</p>
 <section id="setup-and-sample-data" class="level2">
 <h2 class="anchored" data-anchor-id="setup-and-sample-data">Setup and Sample Data</h2>
-<div id="266b9af8" class="cell" data-execution_count="1">
+<div id="60c0800e" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.optim <span class="im">as</span> optim</span>
@@ -394,7 +394,7 @@ Quick fine-tuning examples</code></pre>
 </section>
 <section id="simple-classification-model" class="level2">
 <h2 class="anchored" data-anchor-id="simple-classification-model">Simple Classification Model</h2>
-<div id="409a523e" class="cell" data-execution_count="2">
+<div id="2dc07e02" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SimpleGeospatialModel(nn.Module):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Lightweight model for demonstration"""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -439,7 +439,7 @@ Quick fine-tuning examples</code></pre>
 </section>
 <section id="synthetic-dataset-for-fast-training" class="level2">
 <h2 class="anchored" data-anchor-id="synthetic-dataset-for-fast-training">Synthetic Dataset for Fast Training</h2>
-<div id="751314fe" class="cell" data-execution_count="3">
+<div id="b87fda0f" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SyntheticGeospatialDataset(Dataset):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Synthetic dataset that generates data on-the-fly"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -499,7 +499,7 @@ Sample shape: torch.Size([6, 64, 64]), Label: 0</code></pre>
 </section>
 <section id="fine-tuning-strategy-1-full-model-training" class="level2">
 <h2 class="anchored" data-anchor-id="fine-tuning-strategy-1-full-model-training">Fine-tuning Strategy 1: Full Model Training</h2>
-<div id="fe44c454" class="cell" data-execution_count="4">
+<div id="5cc8a488" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_epoch(model, dataloader, optimizer, criterion):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Train for one epoch"""</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    model.train()</span>
@@ -566,7 +566,7 @@ Epoch 3: Train Loss: 1.463, Train Acc: 43.8%, Val Loss: 1.371, Val Acc: 40.0%</c
 </section>
 <section id="fine-tuning-strategy-2-frozen-feature-extractor" class="level2">
 <h2 class="anchored" data-anchor-id="fine-tuning-strategy-2-frozen-feature-extractor">Fine-tuning Strategy 2: Frozen Feature Extractor</h2>
-<div id="c6b40d3a" class="cell" data-execution_count="5">
+<div id="7cad95fa" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new model with frozen features</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>model_frozen <span class="op">=</span> SimpleGeospatialModel(num_bands<span class="op">=</span><span class="dv">6</span>, num_classes<span class="op">=</span><span class="dv">5</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -604,7 +604,7 @@ Epoch 3: Train Loss: 1.593, Train Acc: 22.5%, Val Loss: 1.575, Val Acc: 20.0%</c
 </section>
 <section id="fine-tuning-strategy-3-layer-wise-learning-rates" class="level2">
 <h2 class="anchored" data-anchor-id="fine-tuning-strategy-3-layer-wise-learning-rates">Fine-tuning Strategy 3: Layer-wise Learning Rates</h2>
-<div id="6e889080" class="cell" data-execution_count="6">
+<div id="7d17211b" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Different learning rates for different parts</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_layerwise_optimizer(model, base_lr<span class="op">=</span><span class="fl">0.001</span>):</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create optimizer with different learning rates for different layers"""</span></span>
@@ -640,7 +640,7 @@ Epoch 3: Train Loss: 1.576, Train Acc: 18.8%, Val Loss: 1.547, Val Acc: 20.0%</c
 </section>
 <section id="learning-rate-scheduling" class="level2">
 <h2 class="anchored" data-anchor-id="learning-rate-scheduling">Learning Rate Scheduling</h2>
-<div id="81e9550f" class="cell" data-execution_count="7">
+<div id="63f9a5c9" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Demonstrate learning rate scheduling</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.optim.lr_scheduler <span class="im">import</span> StepLR, CosineAnnealingLR</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -675,7 +675,7 @@ Epoch 4: LR: 0.0050, Train Loss: 1.588, Train Acc: 25.0%, Val Acc: 20.0%</code><
 </section>
 <section id="early-stopping-implementation" class="level2">
 <h2 class="anchored" data-anchor-id="early-stopping-implementation">Early Stopping Implementation</h2>
-<div id="a42f8947" class="cell" data-execution_count="8">
+<div id="95aa0e9a" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> EarlyStopping:</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Early stopping utility"""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -733,7 +733,7 @@ Epoch 10: Train Loss: 1.009, Train Acc: 52.5%, Val Loss: 0.948, Val Acc: 60.0%</
 </section>
 <section id="model-comparison" class="level2">
 <h2 class="anchored" data-anchor-id="model-comparison">Model Comparison</h2>
-<div id="9cd2e761" class="cell" data-execution_count="9">
+<div id="86e9ad52" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compare_final_performance():</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compare final performance of different strategies"""</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -761,7 +761,7 @@ Layerwise LR   : Val Acc = 20.0%, Val Loss = 1.547</code></pre>
 </section>
 <section id="transfer-learning-best-practices" class="level2">
 <h2 class="anchored" data-anchor-id="transfer-learning-best-practices">Transfer Learning Best Practices</h2>
-<div id="dcf7b7f8" class="cell" data-execution_count="10">
+<div id="414084e8" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> show_best_practices():</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Demonstrate transfer learning best practices"""</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -794,7 +794,7 @@ Layerwise LR   : Val Acc = 20.0%, Val Loss = 1.547</code></pre>
 </section>
 <section id="feature-visualization" class="level2">
 <h2 class="anchored" data-anchor-id="feature-visualization">Feature Visualization</h2>
-<div id="1177b8bc" class="cell" data-execution_count="11">
+<div id="c9a810cc" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> visualize_learned_features(model, sample_image):</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Visualize what the model has learned"""</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -836,13 +836,13 @@ Layer 2: torch.Size([1, 64, 32, 32])
 Layer 3: torch.Size([1, 128, 16, 16])</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>[W812 17:21:57.620869000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.</code></pre>
+<pre><code>[W812 19:01:05.616707000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.</code></pre>
 </div>
 </div>
 </section>
 <section id="key-takeaways" class="level2">
 <h2 class="anchored" data-anchor-id="key-takeaways">Key Takeaways</h2>
-<div id="83fd3cc0" class="cell" data-execution_count="12">
+<div id="fda26a1b" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">=== Fine-tuning Strategy Summary ==="</span>)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>strategies <span class="op">=</span> {</span>
@@ -1033,7 +1033,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/kellycaylor\.github\.io\/geoAI");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
@@ -1799,7 +1799,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
+<figcaption>Department of Geography logo</figcaption>
+</figure>
+</div>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

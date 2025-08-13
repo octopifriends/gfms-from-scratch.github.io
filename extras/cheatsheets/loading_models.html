@@ -368,7 +368,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This cheatsheet shows how to load and work with pre-trained models for geospatial AI, using real examples with small sample data.</p>
 <section id="setup-and-imports" class="level2">
 <h2 class="anchored" data-anchor-id="setup-and-imports">Setup and Imports</h2>
-<div id="d45d57b1" class="cell" data-execution_count="1">
+<div id="997fd040" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> timm</span>
@@ -391,7 +391,7 @@ TIMM available: ✓</code></pre>
 <section id="timm-torch-image-models---quick-and-reliable" class="level2">
 <h2 class="anchored" data-anchor-id="timm-torch-image-models---quick-and-reliable">TIMM (Torch Image Models) - Quick and Reliable</h2>
 <p>TIMM is the most reliable way to load pre-trained vision models. Let’s start with a small ResNet model.</p>
-<div id="c9c47972" class="cell" data-execution_count="2">
+<div id="5e940137" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load a lightweight ResNet model</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> timm.create_model(<span class="st">'resnet18'</span>, pretrained<span class="op">=</span><span class="va">True</span>, num_classes<span class="op">=</span><span class="dv">10</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">eval</span>()</span>
@@ -416,7 +416,7 @@ Std: (0.229, 0.224, 0.225)</code></pre>
 <section id="adapting-rgb-models-for-satellite-data" class="level2">
 <h2 class="anchored" data-anchor-id="adapting-rgb-models-for-satellite-data">Adapting RGB Models for Satellite Data</h2>
 <p>Most models expect 3-channel RGB, but satellite data has more bands. Here’s how to adapt:</p>
-<div id="7d0eaf5b" class="cell" data-execution_count="3">
+<div id="c95600df" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adapt_first_layer_for_multispectral(model, num_bands<span class="op">=</span><span class="dv">6</span>):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Adapt the first convolutional layer for multi-band input"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -482,7 +482,7 @@ Adapted input channels: 6</code></pre>
 </section>
 <section id="quick-inference-example" class="level2">
 <h2 class="anchored" data-anchor-id="quick-inference-example">Quick Inference Example</h2>
-<div id="1501d4e6" class="cell" data-execution_count="4">
+<div id="cb8eeec9" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create sample satellite-like data (6 bands, 224x224)</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>sample_data <span class="op">=</span> torch.randn(<span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">224</span>, <span class="dv">224</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Sample data shape: </span><span class="sc">{</span>sample_data<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -503,7 +503,7 @@ Top 3 predictions: [0.11709771 0.11393189 0.10691801]</code></pre>
 </section>
 <section id="model-preprocessing-pipeline" class="level2">
 <h2 class="anchored" data-anchor-id="model-preprocessing-pipeline">Model Preprocessing Pipeline</h2>
-<div id="c3971750" class="cell" data-execution_count="5">
+<div id="69bfea66" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SatellitePreprocessor:</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Simple preprocessing for satellite imagery"""</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -552,7 +552,7 @@ Preprocessed range: [-2.454, 6.526]</code></pre>
 </section>
 <section id="feature-extraction" class="level2">
 <h2 class="anchored" data-anchor-id="feature-extraction">Feature Extraction</h2>
-<div id="e63a40ce" class="cell" data-execution_count="6">
+<div id="631afe76" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_features(model, data, layer_name<span class="op">=</span><span class="st">'avgpool'</span>):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Extract features from a specific layer.</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -613,7 +613,7 @@ Feature stats: mean=0.075, std=0.231</code></pre>
 </section>
 <section id="band-selection-utilities" class="level2">
 <h2 class="anchored" data-anchor-id="band-selection-utilities">Band Selection Utilities</h2>
-<div id="1ee17f59" class="cell" data-execution_count="7">
+<div id="0d8ed0e4" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BandSelector:</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Select specific bands for different visualizations"""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -675,7 +675,7 @@ Available band combinations: ['rgb', 'false_color', 'swir', 'agriculture']</code
 </section>
 <section id="model-inference-wrapper" class="level2">
 <h2 class="anchored" data-anchor-id="model-inference-wrapper">Model Inference Wrapper</h2>
-<div id="03d2753d" class="cell" data-execution_count="8">
+<div id="8723f5b8" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SimpleInference:</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Simple inference wrapper for geospatial models"""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -892,7 +892,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/kellycaylor\.github\.io\/geoAI");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
@@ -1574,7 +1574,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
+<figcaption>Department of Geography logo</figcaption>
+</figure>
+</div>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
