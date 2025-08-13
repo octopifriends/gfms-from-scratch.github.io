@@ -11,7 +11,7 @@
 ### I'm a Student 
 1. **Browse the course**: [https://gfms-from-scratch.github.io](https://gfms-from-scratch.github.io)
 2. **Set up your environment**: Follow [installation/README.md](installation/README.md)  
-3. **Start learning**: Begin with [Week 1: Geospatial Data Foundations](https://kellycaylor.github.io/geoAI/chapters/c01-geospatial-data-foundations.html)
+3. **Start learning**: Begin with [Week 1: Geospatial Data Foundations](https://gfms-from-scratch.github.io/chapters/c01-geospatial-data-foundations.html)
 
 ### I'm an Instructor/TA
 1. **Get the code**: `git clone https://github.com/kellycaylor/geoAI.git && cd geoAI`
