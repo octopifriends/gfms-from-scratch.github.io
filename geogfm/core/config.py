@@ -1,7 +1,12 @@
-# Generated from book/course-materials/c01-geospatial-data-foundations.qmd
+# Tangled on 2025-08-12T17:13:21
+
+# Typed configuration schemas (Week 1)
+# Tangles to `geogfm/core/config.py`
+
 from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, Any, Optional
+
 
 @dataclass
 class ModelConfig:
@@ -13,6 +18,7 @@ class ModelConfig:
     depth: int = 4
     num_heads: int = 4
     mlp_ratio: float = 4.0
+
 
 @dataclass
 class DataConfig:
@@ -26,9 +32,11 @@ class DataConfig:
     batch_size: int = 8
     seed: int = 42
 
+
 @dataclass
 class TrainConfig:
     epochs: int = 1
     batch_size: int = 8
-    optimizer: Dict[str, Any] = field(default_factory=lambda: {"name": "adamw", "lr": 2e-4})
+    optimizer: Dict[str, Any] = field(
+        default_factory=lambda: {"name": "adamw", "lr": 2e-4})
     device: str = "cpu"

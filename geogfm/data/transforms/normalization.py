@@ -1,4 +1,7 @@
-# Generated from book/course-materials/c01-geospatial-data-foundations.qmd
+# Tangled on 2025-08-12T17:13:21
+
+# Channel-wise normalization utilities (Week 1)
+# Tangles to `geogfm/data/transforms/normalization.py`
 from __future__ import annotations
 import numpy as np
 from typing import Tuple, Dict, Any, Optional

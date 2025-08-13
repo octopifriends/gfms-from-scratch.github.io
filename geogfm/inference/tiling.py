@@ -1,4 +1,6 @@
-# Generated from book/course-materials/c09-model-implementation-deployment.qmd
+# geogfm.inference.tiling — Naive tiled apply and stitch-back (Week 9).
+# Tangled on 2025-08-12T17:09:13
+
 from __future__ import annotations
 import numpy as np
 from typing import Callable

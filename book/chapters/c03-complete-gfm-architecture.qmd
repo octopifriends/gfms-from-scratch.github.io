@@ -1,0 +1,136 @@
+---
+title: "Week 3 Interactive Session: Complete GFM Architecture"
+subtitle: "Assembling Vision Transformer architecture for geospatial data"
+editor_options: 
+  chunk_output_type: console
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+---
+
+## Course Roadmap Mapping
+
+This week’s work in the broader GFM plan.
+
+| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |
+|------|-------|-------|--------------------------|---------------|---------|
+| 3 | Stage 1: Build GFM Architecture | Complete Architecture | `models/gfm_vit.py`; `modules/heads/reconstruction_head.py` | `torch.nn` (timm as reference) | Encoder assembled; end-to-end forward on dummy input |
+
+### Weekly goals
+- Wire blocks into a GeoViT-style encoder
+- Add a simple reconstruction head
+- Run end-to-end forward pass on dummy input
+
+## Session Outline (and Tangled Code)
+
+- Concepts → Components mapping
+  - Token pipeline → `PatchEmbedding` + positional encoding + stack of `TransformerBlock`s
+  - Encoder backbone → `models/gfm_vit.py`
+  - Decoder/readout for MAE → `modules/heads/reconstruction_head.py`
+
+### Package inits
+
+```{python}
+#| tangle: geogfm/models/__init__.py
+#| header: "geogfm.models — package init (Week 3). Exposes model namespaces for GFM architectures."
+# geogfm.models
+# Package init for model modules
+```
+
+### 1) GeoViT Backbone
+
+```{python}
+#| tangle: geogfm/models/gfm_vit.py
+#| header: "geogfm.models.gfm_vit — GeoViT backbone (Week 3). PatchEmbedding + sinusoidal positional encodings + TransformerBlock stack."
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import List
+import torch
+import torch.nn as nn
+from geogfm.modules.embeddings.patch_embedding import PatchEmbedding, PatchEmbedConfig
+from geogfm.modules.embeddings.positional_encoding import sinusoidal_positional_encoding
+from geogfm.modules.blocks.transformer_block import TransformerBlock
+
+@dataclass
+class ViTBackboneConfig:
+    in_channels: int = 3
+    image_size: int = 224
+    patch_size: int = 16
+    embed_dim: int = 256
+    depth: int = 8
+    num_heads: int = 8
+    mlp_ratio: float = 4.0
+
+class GeoViTBackbone(nn.Module):
+    def __init__(self, cfg: ViTBackboneConfig):
+        super().__init__()
+        self.cfg = cfg
+        # Tokenization: Conv2d-based patchify + linear projection
+        self.patch_embed = PatchEmbedding(PatchEmbedConfig(cfg.in_channels, cfg.embed_dim, cfg.patch_size))
+        num_patches = (cfg.image_size // cfg.patch_size) ** 2
+        # Fixed positional encodings for stability and speed in the session
+        self.pos_embed = nn.Parameter(sinusoidal_positional_encoding(num_patches, cfg.embed_dim), requires_grad=False)
+        # Encoder: stack of PreNorm Transformer blocks
+        self.blocks = nn.ModuleList([
+            TransformerBlock(cfg.embed_dim, cfg.num_heads, mlp_ratio=cfg.mlp_ratio) for _ in range(cfg.depth)
+        ])
+        self.norm = nn.LayerNorm(cfg.embed_dim)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Return latent token sequence of shape (batch, num_tokens, embed_dim)."""
+        tokens = self.patch_embed(x)  # (B, N, D)
+        tokens = tokens + self.pos_embed.unsqueeze(0)
+        for blk in self.blocks:
+            tokens = blk(tokens)
+        tokens = self.norm(tokens)
+        return tokens  # (B, N, D)
+```
+
+### 2) Reconstruction Head
+
+```{python}
+#| tangle: geogfm/modules/heads/reconstruction_head.py
+#| header: "geogfm.modules.heads.reconstruction_head — Token-wise MLP decoder for MAE-style reconstruction (Week 3)."
+from __future__ import annotations
+import torch
+import torch.nn as nn
+
+class ReconstructionHead(nn.Module):
+    """Token-wise MLP to reconstruct patch pixels from latent tokens."""
+    def __init__(self, embed_dim: int, out_channels: int, patch_size: int):
+        super().__init__()
+        self.out_channels = out_channels
+        self.patch_size = patch_size
+        # Two-layer MLP mapping from token dim D -> (C * P * P)
+        self.linear = nn.Sequential(
+            nn.Linear(embed_dim, embed_dim),
+            nn.GELU(),
+            nn.Linear(embed_dim, out_channels * patch_size * patch_size),
+        )
+
+    def forward(self, tokens: torch.Tensor) -> torch.Tensor:
+        # Transform tokens: (B, N, D) -> (B, N, C*P*P) -> (B, N, C, P, P)
+        b, n, d = tokens.shape
+        x = self.linear(tokens)
+        x = x.view(b, n, self.out_channels, self.patch_size, self.patch_size)
+        return x
+```
+
+### Quick Forward Check (non-tangled)
+
+```{python}
+import torch
+
+# Use locally defined classes in this session (avoid importing from geogfm here)
+x = torch.randn(2, 3, 64, 64)
+vit = GeoViTBackbone(ViTBackboneConfig(in_channels=3, image_size=64, patch_size=16, embed_dim=128, depth=2, num_heads=4))
+latent = vit(x)
+head = ReconstructionHead(embed_dim=128, out_channels=3, patch_size=16)
+recon = head(latent)
+print("latent:", latent.shape, "recon:", recon.shape)
+```
+
+

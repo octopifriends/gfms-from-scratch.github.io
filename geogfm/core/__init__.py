@@ -1,3 +1,5 @@
-# Generated from book/course-materials/c01-geospatial-data-foundations.qmd
-# geogfm.core
-# registry will be added here
+# Tangled on 2025-08-12T17:13:21
+
+# Core subpackage init (Week 1)
+# Tangles to `geogfm/core/__init__.py`
+# Exposes config schemas

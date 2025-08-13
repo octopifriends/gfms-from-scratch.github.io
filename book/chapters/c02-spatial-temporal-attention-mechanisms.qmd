@@ -1,0 +1,260 @@
+---
+title: "Week 2 Interactive Session: Spatial-Temporal Attention Mechanisms"
+subtitle: "Building attention mechanisms from scratch for geospatial data"
+editor_options: 
+  chunk_output_type: console
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+---
+
+## Course Roadmap Mapping
+
+This week’s work in the broader GFM plan.
+
+| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |
+|------|-------|-------|--------------------------|---------------|---------|
+| 2 | Stage 1: Build GFM Architecture | Attention & Blocks | `modules/embeddings/{patch_embedding.py, positional_encoding.py}`; `modules/attention/multihead_attention.py`; `modules/blocks/{mlp.py, transformer_block.py}` | `torch.nn` (compare with `torch.nn.MultiheadAttention`) | Blocks run forward with stable shapes; unit tests green |
+
+### Weekly goals
+- Implement patch/positional embeddings and MHA from scratch
+- Assemble a PreNorm transformer block (MHA + MLP)
+- Validate tensor shapes and simple layer tests
+
+## Session Outline (and Tangled Code)
+
+- Concepts → Components mapping
+  - Patch tokenization → `modules/embeddings/patch_embedding.py`
+  - Positional encoding → `modules/embeddings/positional_encoding.py`
+  - Scaled dot-product multihead self-attention → `modules/attention/multihead_attention.py`
+  - Feedforward/MLP and Transformer block (PreNorm) → `modules/blocks/{mlp.py, transformer_block.py}`
+
+- What you will implement
+  1) Patch embedding (Conv2d patchify + linear projection)
+  2) Sinusoidal positional encodings (1D for tokens; optional 2D helper)
+  3) Multihead self-attention from scratch
+  4) MLP block and a PreNorm Transformer block
+
+### Package inits
+
+```{python}
+#| tangle: geogfm/modules/__init__.py
+# Package init for `geogfm.modules` (Week 2)
+# geogfm.modules
+```
+
+```{python}
+#| tangle: geogfm/modules/attention/__init__.py
+# Package init for `geogfm.modules.attention` (Week 2)
+# geogfm.modules.attention
+```
+
+```{python}
+#| tangle: geogfm/modules/embeddings/__init__.py
+# Package init for `geogfm.modules.embeddings` (Week 2)
+# geogfm.modules.embeddings
+```
+
+```{python}
+#| tangle: geogfm/modules/blocks/__init__.py
+# Package init for `geogfm.modules.blocks` (Week 2)
+# geogfm.modules.blocks
+```
+
+```{python}
+#| tangle: geogfm/modules/heads/__init__.py
+# Package init for `geogfm.modules.heads` (Week 2)
+# geogfm.modules.heads
+```
+
+```{python}
+#| tangle: geogfm/modules/losses/__init__.py
+# Package init for `geogfm.modules.losses` (Week 2)
+# geogfm.modules.losses
+```
+
+### 1) Patch Embedding
+
+```{python}
+#| tangle: geogfm/modules/embeddings/patch_embedding.py
+# Patch embedding layer (Week 2)
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import Tuple
+import torch
+import torch.nn as nn
+
+@dataclass
+class PatchEmbedConfig:
+    in_channels: int = 3
+    embed_dim: int = 256
+    patch_size: int = 16
+
+class PatchEmbedding(nn.Module):
+    """Conv2d-based patchifier producing token embeddings.
+    Input:  (B, C, H, W)
+    Output: (B, N, D) where N = (H/ps)*(W/ps), D = embed_dim
+    """
+    def __init__(self, cfg: PatchEmbedConfig):
+        super().__init__()
+        self.cfg = cfg
+        self.proj = nn.Conv2d(cfg.in_channels, cfg.embed_dim,
+                              kernel_size=cfg.patch_size, stride=cfg.patch_size)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # (B, D, H/ps, W/ps) -> (B, D, N) -> (B, N, D)
+        x = self.proj(x)
+        b, d, gh, gw = x.shape
+        x = x.flatten(2).transpose(1, 2)
+        return x
+```
+
+### 2) Positional Encoding (Sinusoidal)
+
+```{python}
+#| tangle: geogfm/modules/embeddings/positional_encoding.py
+# Sinusoidal positional encodings (Week 2)
+from __future__ import annotations
+import math
+import torch
+
+def sinusoidal_positional_encoding(seq_len: int, dim: int, device: torch.device | None = None) -> torch.Tensor:
+    """Return (seq_len, dim) sinusoidal positional encodings."""
+    device = device or torch.device("cpu")
+    pe = torch.zeros(seq_len, dim, device=device)
+    position = torch.arange(0, seq_len, dtype=torch.float32, device=device).unsqueeze(1)
+    div_term = torch.exp(torch.arange(0, dim, 2, device=device).float() * (-math.log(10000.0) / dim))
+    pe[:, 0::2] = torch.sin(position * div_term)
+    pe[:, 1::2] = torch.cos(position * div_term)
+    return pe
+
+def sinusoidal_positional_encoding_2d(height: int, width: int, dim: int, device: torch.device | None = None) -> torch.Tensor:
+    """Return (height*width, dim) 2D positional encodings by concatenating two 1D encodings.
+    dim must be even.
+    """
+    assert dim % 2 == 0, "dim must be even for 2D positional encoding"
+    device = device or torch.device("cpu")
+    pe_h = sinusoidal_positional_encoding(height, dim // 2, device)  # (H, D/2)
+    pe_w = sinusoidal_positional_encoding(width, dim // 2, device)   # (W, D/2)
+    pe_h = pe_h.unsqueeze(1).expand(height, width, dim // 2)
+    pe_w = pe_w.unsqueeze(0).expand(height, width, dim // 2)
+    pe = torch.cat([pe_h, pe_w], dim=-1).reshape(height * width, dim)
+    return pe
+```
+
+### 3) Multihead Self-Attention
+
+```{python}
+#| tangle: geogfm/modules/attention/multihead_attention.py
+# Multihead self-attention from scratch (Week 2)
+from __future__ import annotations
+from typing import Optional
+import math
+import torch
+import torch.nn as nn
+
+class MultiheadSelfAttention(nn.Module):
+    def __init__(self, embed_dim: int, num_heads: int, attn_dropout: float = 0.0, proj_dropout: float = 0.0):
+        super().__init__()
+        assert embed_dim % num_heads == 0, "embed_dim must be divisible by num_heads"
+        self.embed_dim = embed_dim
+        self.num_heads = num_heads
+        self.head_dim = embed_dim // num_heads
+
+        self.qkv = nn.Linear(embed_dim, embed_dim * 3)
+        self.attn_drop = nn.Dropout(attn_dropout)
+        self.proj = nn.Linear(embed_dim, embed_dim)
+        self.proj_drop = nn.Dropout(proj_dropout)
+
+    def forward(self, x: torch.Tensor, attn_mask: Optional[torch.Tensor] = None) -> torch.Tensor:
+        bsz, num_tokens, dim = x.shape
+        qkv = self.qkv(x).reshape(bsz, num_tokens, 3, self.num_heads, self.head_dim).permute(2, 0, 3, 1, 4)
+        q, k, v = qkv[0], qkv[1], qkv[2]  # (B, H, N, Hd)
+
+        scale = 1.0 / math.sqrt(self.head_dim)
+        attn_scores = (q @ k.transpose(-2, -1)) * scale  # (B, H, N, N)
+        if attn_mask is not None:
+            attn_scores = attn_scores.masked_fill(attn_mask == 0, float("-inf"))
+        attn = attn_scores.softmax(dim=-1)
+        attn = self.attn_drop(attn)
+
+        out = attn @ v  # (B, H, N, Hd)
+        out = out.transpose(1, 2).reshape(bsz, num_tokens, dim)  # (B, N, D)
+        out = self.proj(out)
+        out = self.proj_drop(out)
+        return out
+```
+
+### 4) MLP and Transformer Block (PreNorm)
+
+```{python}
+#| tangle: geogfm/modules/blocks/mlp.py
+# MLP feedforward block (Week 2)
+from __future__ import annotations
+import torch
+import torch.nn as nn
+
+class MLP(nn.Module):
+    def __init__(self, embed_dim: int, mlp_ratio: float = 4.0, dropout: float = 0.0):
+        super().__init__()
+        hidden_dim = int(embed_dim * mlp_ratio)
+        self.fc1 = nn.Linear(embed_dim, hidden_dim)
+        self.act = nn.GELU()
+        self.fc2 = nn.Linear(hidden_dim, embed_dim)
+        self.drop = nn.Dropout(dropout)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.fc1(x)
+        x = self.act(x)
+        x = self.drop(x)
+        x = self.fc2(x)
+        x = self.drop(x)
+        return x
+```
+
+```{python}
+#| tangle: geogfm/modules/blocks/transformer_block.py
+# PreNorm Transformer block (Week 2)
+from __future__ import annotations
+import torch
+import torch.nn as nn
+from geogfm.modules.attention.multihead_attention import MultiheadSelfAttention
+from geogfm.modules.blocks.mlp import MLP
+
+class TransformerBlock(nn.Module):
+    """PreNorm Transformer block: LN → MHA → Residual → LN → MLP → Residual."""
+    def __init__(self, embed_dim: int, num_heads: int, mlp_ratio: float = 4.0, dropout: float = 0.0):
+        super().__init__()
+        self.norm1 = nn.LayerNorm(embed_dim)
+        self.attn = MultiheadSelfAttention(embed_dim, num_heads, proj_dropout=dropout)
+        self.norm2 = nn.LayerNorm(embed_dim)
+        self.mlp = MLP(embed_dim, mlp_ratio=mlp_ratio, dropout=dropout)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = x + self.attn(self.norm1(x))
+        x = x + self.mlp(self.norm2(x))
+        return x
+```
+
+### Quick Shape Checks (non-tangled)
+
+```{python}
+import torch
+from geogfm.modules.embeddings.patch_embedding import PatchEmbedding, PatchEmbedConfig
+from geogfm.modules.embeddings.positional_encoding import sinusoidal_positional_encoding
+from geogfm.modules.blocks.transformer_block import TransformerBlock
+
+# Dummy image
+x = torch.randn(2, 3, 64, 64)
+pe = PatchEmbedding(PatchEmbedConfig(in_channels=3, embed_dim=128, patch_size=16))
+tokens = pe(x)  # (2, 16, 128)
+pos = sinusoidal_positional_encoding(tokens.shape[1], 128, tokens.device)
+tokens = tokens + pos.unsqueeze(0)
+
+block = TransformerBlock(embed_dim=128, num_heads=4)
+out = block(tokens)
+print("tokens ->", tokens.shape, "block out ->", out.shape)
+```

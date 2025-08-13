@@ -1,0 +1,77 @@
+---
+title: "Week 9 Interactive Session: Model Implementation & Deployment"
+subtitle: "Deploying geospatial foundation models for production use"
+editor_options: 
+  chunk_output_type: console
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+---
+
+## Course Roadmap Mapping
+
+This week’s work in the broader GFM plan.
+
+| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |
+|------|-------|-------|--------------------------|---------------|---------|
+| 9 | Stage 3: Apply & Deploy | Deployment & Inference | `inference/{tiling.py, sliding_window.py}` | `numpy`, `rasterio` windows | Sliding-window inference on a small scene |
+
+### Weekly goals
+- Implement sliding-window/tiling inference utilities
+- Stitch predictions; sanity-check outputs
+- Outline API/UI deployment considerations
+
+## Session Outline (and Tangled Code)
+
+- Concepts → Components mapping
+  - Sliding-window and tiling utilities → `inference/*.py`
+
+### Package inits
+
+```{python}
+#| tangle: geogfm/inference/__init__.py
+#| header: "geogfm.inference — package init (Week 9). Inference utilities: tiling and sliding-window."
+# geogfm.inference
+```
+
+### 1) Sliding-window helpers
+
+```{python}
+#| tangle: geogfm/inference/sliding_window.py
+#| header: "geogfm.inference.sliding_window — Window generator for patch traversal (Week 9)."
+from __future__ import annotations
+import numpy as np
+from typing import Iterator, Tuple
+
+Array = np.ndarray
+
+def window_slices(height: int, width: int, patch_size: int, stride: int) -> Iterator[Tuple[slice, slice]]:
+    for r in range(0, height - patch_size + 1, stride):
+        for c in range(0, width - patch_size + 1, stride):
+            yield slice(r, r + patch_size), slice(c, c + patch_size)
+```
+
+### 2) Tiling inference (naive)
+
+```{python}
+#| tangle: geogfm/inference/tiling.py
+#| header: "geogfm.inference.tiling — Naive tiled apply and stitch-back (Week 9)."
+from __future__ import annotations
+import numpy as np
+from typing import Callable
+from geogfm.inference.sliding_window import window_slices
+
+Array = np.ndarray
+
+def apply_tiled(model_apply: Callable[[Array], Array], image: Array, patch_size: int, stride: int) -> Array:
+    """Apply a function over tiles and stitch back naively (no overlaps blending)."""
+    bands, height, width = image.shape
+    output = np.zeros_like(image)
+    for rs, cs in window_slices(height, width, patch_size, stride):
+        pred = model_apply(image[:, rs, cs])  # (C, P, P)
+        output[:, rs, cs] = pred
+    return output
+```

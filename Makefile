@@ -29,18 +29,70 @@ STAC_ARGS = --stac-url $(STAC_URL) --collections $(COLLS) \
             --stratify $(STRATIFY)
 
 # -------- targets --------
-.PHONY: help data-dryrun data clean checksums data-course-dryrun data-course
+.PHONY: help env install install-dev kernelspec test docs docs-full preview clean data-dryrun data checksums data-course-dryrun data-course geogfm-clean geogfm-clean-all
 
 help:
 	@echo "Targets:"
-	@echo "  make data-dryrun   # Preview STAC results (no files written)"
-	@echo "  make data          # Build scenes.parquet + scene splits + CHECKSUMS"
-	@echo "  make data-course-dryrun   # Preview STAC results (no files written)"
-	@echo "  make data-course          # Build scenes.parquet + scene splits + CHECKSUMS"
-	@echo "  make clean         # Remove data/out"
+	@echo "  make env           # Reminder to activate conda env (geoAI)"
+	@echo "  make install       # pip install -e . (editable geogfm)"
+	@echo "  make install-dev   # editable install + pytest"
+	@echo "  make kernelspec    # register Jupyter kernel 'geoai' for the env"
+	@echo "  make test          # run pytest"
+	@echo "  make docs          # incremental docs build"
+	@echo "  make docs-full     # full docs build (clears cache)"
+	@echo "  make bootstrap-lib # render foundational pages in order"
+	@echo "  make preview       # quarto preview (in book/)"
+	@echo "  make clean         # remove data/out or clean docs intermediates"
+	@echo "  make geogfm-clean   # delete generated .py under geogfm/ (keeps __init__.py)"
+	@echo "  make geogfm-clean-all # delete ALL .py under geogfm/ (dangerous)"
+	@echo "  (Tangling is now handled during Quarto render via the Python panflute filter)"
+	@echo ""
+	@echo "Dataset targets:"
+	@echo "  make data-dryrun         # Preview STAC results (no files written)"
+	@echo "  make data                # Build scenes.parquet + scene splits + CHECKSUMS"
+	@echo "  make data-course-dryrun  # Preview STAC results (no files written)"
+	@echo "  make data-course         # Build scenes.parquet + scene splits + CHECKSUMS"
 	@echo ""
 	@echo "Vars you can override:"
 	@echo "  AOI=<path.geojson> START=YYYY-MM-DD END=YYYY-MM-DD CLOUD=25 MAX_SCENES=30 SIGN=--sign-assets"
+
+env:
+	@echo "Use: conda activate geoAI"
+
+install:
+	$(PY) -m pip install -e .
+
+install-dev:
+	$(PY) -m pip install -e .
+	$(PY) -m pip install -U pytest
+
+kernelspec:
+	$(PY) -m ipykernel install --user --name geoai --display-name "geoai"
+
+test:
+	@echo "Running pytest $(if $(TESTS),for '$(TESTS)',for all tests) with verbose output..."
+	@set -e; \
+	pytest -vv -ra $(TESTS) || rc=$$?; \
+	if [ -n "$$rc" ]; then \
+	  if [ $$rc -eq 5 ]; then \
+	    echo "Pytest exit code 5 (no tests collected or all skipped) — treating as success"; \
+	    exit 0; \
+	  else \
+	    exit $$rc; \
+	  fi; \
+	fi
+
+docs:
+	cd book && $(PY) build_docs.py
+
+docs-full:
+	cd book && $(PY) build_docs.py --full
+
+bootstrap-lib:
+	cd book && $(PY) build_docs.py --bootstrap
+
+preview:
+	cd book && quarto preview
 
 data-dryrun:
 	$(PY) data/build_from_stac.py $(STAC_ARGS) $(SIGN) --out-dir $(OUT_DIR) --dryrun
@@ -80,6 +132,18 @@ data:
 
 clean:
 	rm -rf $(OUT_DIR)
+	cd book && $(PY) build_docs.py --clean
 
 checksums:
 	@test -f $(OUT_DIR)/CHECKSUMS.md && cat $(OUT_DIR)/CHECKSUMS.md || echo "No CHECKSUMS.md yet."
+
+# ===== Literate module export =====
+GEOGFM_DIR ?= geogfm
+
+geogfm-clean:
+	@echo "Deleting generated Python files under $(GEOGFM_DIR) (excluding __init__.py)..."
+	@find $(GEOGFM_DIR) -type f -name "*.py" ! -name "__init__.py" -print -delete || true
+
+geogfm-clean-all:
+	@echo "DELETING ALL Python files under $(GEOGFM_DIR) (including __init__.py)..."
+	@find $(GEOGFM_DIR) -type f -name "*.py" -print -delete || true

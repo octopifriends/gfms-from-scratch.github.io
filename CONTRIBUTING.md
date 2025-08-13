@@ -32,11 +32,11 @@ Naming PRs: `[Week N] <topic>`, `[Session N] <topic>`, `[Infra] build_docs sync`
 
 ## Content Authoring Guidelines (Quarto)
 - Only include executable code blocks for functional, instructive examples; narrative demos or pseudo-code should use Quarto callouts/tables, not code fences
-- Use `qmd` for lessons; organize by `course-materials/` structure
+- Use `qmd` for lessons; organize by `chapters/` structure
 - Use callouts (`note`, `tip`, `warning`, `important`) to convey narrative content
 - Keep code chunks minimal and runnable; prefer smaller, composable examples over monoliths
 - Avoid time/scheduling in weekly docs; class meets Fridays 9–12; office hours 2–5 (only in syllabus)
-- Use relative links within `course-materials/`; prefer root `/images/...` for images that are shared
+- Use relative links within `chapters/`; prefer root `/images/...` for images that are shared
 - Do not reference external frameworks by name repeatedly; keep content course-native
 
 Quarto front-matter tips:
@@ -57,19 +57,27 @@ Quarto front-matter tips:
 - Do not commit large datasets or model weights to the repo
 
 ## Environment and Builds
-- Local dev: `conda activate geoAI`; install extras from `requirements.txt`
-- Build site locally: `python build_docs.py --serve` for preview; `--full` for clean builds
-- When running `build_docs.py --full`, clear Quarto freeze/cache to avoid errors
+- Local dev: `conda activate geoAI` (environment from `environment.yml`)
+- Install the package for development (editable): `pip install -e .`
+- Optional: register the Jupyter kernel used by Quarto: `make kernelspec` (kernel name `geoai`)
+- Build site locally: `make docs` (incremental) or `make docs-full` (clean build)
+- Preview locally: `make preview`
+- When running full builds, caches are cleared to avoid freeze errors
 - The build process must mirror `_quarto.yml` render rules. Exclusions include:
   - `nbs/`, `installation/`, `example_course/`, `LLMs-from-scratch/`
   - Non-course internal docs like `COURSE_*.md`, `*_PLAN.md`
 - Never render or link to excluded folders in Quarto navigation
 
+### Rationale: conda + editable install
+- Heavy geospatial/DL deps (GDAL/PROJ/PyTorch) are installed via conda to ensure binary compatibility
+- `pyproject.toml` uses setuptools with empty `dependencies` to avoid conflicts with conda
+- `pip install -e .` makes code tangled into `geogfm/` immediately importable during Quarto execution
+
 ## File/Path Conventions
-- Weekly lessons: `course-materials/weekN.qmd` with Stage title and Week subtitle
-- Interactive sessions: `course-materials/interactive-sessions/sessionN_<topic>.qmd`
-- Lectures: `course-materials/lectures/lectureN_<topic>.qmd`
-- Projects/templates: `course-materials/projects/`
+- Weekly lessons: `chapters/c0N-*.qmd` (Week N) with Stage title and Week subtitle
+- Interactive sessions: within `chapters/` as weekly files (c0N-*.qmd)
+- Lectures: `chapters/extras/lectures/lectureN_<topic>.qmd`
+- Projects/templates: `chapters/extras/projects/`
 - Images: `images/`; reference as `images/<file>` in docs
 - Sample data: `data/`; reference via relative path or raw GitHub URL
 
@@ -95,6 +103,6 @@ Before submitting a PR:
 - Q: Can I add new datasets?
   - A: Yes; keep them small, documented in `data/README.md`, and attribute sources
 - Q: How do I add a new interactive session?
-  - A: Create `course-materials/interactive-sessions/sessionN_<topic>.qmd` and link from the Week N file and `_quarto.yml`
+  - A: Create a new weekly page under `chapters/` (e.g., `chapters/c0N-<topic>.qmd`) and link it from `_quarto.yml` navigation
 
 Thanks for contributing to a high-clarity, reproducible course experience!

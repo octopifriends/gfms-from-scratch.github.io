@@ -1,4 +1,8 @@
-# Generated from book/course-materials/c01-geospatial-data-foundations.qmd
+# Tangled on 2025-08-12T17:13:21
+
+# DataLoader builders (Week 1)
+# Tangles to `geogfm/data/loaders.py`
+#| eval: false
 from __future__ import annotations
 from typing import Tuple
 from torch.utils.data import DataLoader

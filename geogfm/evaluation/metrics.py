@@ -1,4 +1,6 @@
-# Generated from book/course-materials/c06-model-evaluation-analysis.qmd
+# geogfm.evaluation.metrics — Simple metrics like PSNR for reconstructions (Week 6).
+# Tangled on 2025-08-12T17:08:11
+
 from __future__ import annotations
 import torch
 

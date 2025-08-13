@@ -1,4 +1,6 @@
-# Generated from book/course-materials/c02-spatial-temporal-attention-mechanisms.qmd
+# Tangled on 2025-08-12T17:13:44
+
+# Sinusoidal positional encodings (Week 2)
 from __future__ import annotations
 import math
 import torch

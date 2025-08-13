@@ -1,6 +1,6 @@
 # Authoring Guide for GEOG 288KC (geoAI)
 
-This guide outlines best practices and code patterns for developing interactive sessions, cheatsheets, lectures, and other course materials in this repository.
+This guide outlines best practices and code patterns for developing interactive sessions, cheatsheets, lectures, and other chapters in this repository.
 
 Goals: high-clarity pedagogy, reproducible execution, fast local rendering, and consistent outputs across environments (AI Sandbox, local laptops, CI).
 
@@ -18,14 +18,14 @@ Goals: high-clarity pedagogy, reproducible execution, fast local rendering, and 
 
 ## Content Types and Structure
 
-- Interactive sessions (hands-on): `course-materials/interactive-sessions/sessionN_<topic>.qmd`
+- Interactive sessions (hands-on): weekly pages under `chapters/` (e.g., `chapters/c0N-<topic>.qmd`)
   - Sections: Introduction → Setup → Data → Core tasks → Wrap-up
   - Include runnable, minimal examples with clear printed outputs
-- Cheatsheets: `course-materials/cheatsheets/<topic>.qmd`
+- Cheatsheets: `chapters/extras/cheatsheets/<topic>.qmd`
   - Quick reference, copy-paste friendly; prioritize short code blocks and tables
-- Weekly materials: `course-materials/weekN.qmd`
+- Weekly materials: `chapters/c0N-*.qmd`
   - Link to the corresponding interactive session; no timing/scheduling
-- Lectures: `course-materials/lectures/lectureN_<topic>.qmd`
+- Lectures: `chapters/extras/lectures/lectureN_<topic>.qmd`
   - Conceptual content; minimal execution; use figures/tables/callouts
 
 ---
@@ -121,7 +121,7 @@ except ImportError:
 
 ## Data Handling and Sample Datasets
 
-- Prefer small sample data in `data/` and load via `Path("../../data")` from within course materials
+- Prefer small sample data in `data/` and load via `Path("../../data")` from within chapters
 - If downloading, use stable URLs (e.g., raw GitHub) and cache to `data/`:
 
 ```python

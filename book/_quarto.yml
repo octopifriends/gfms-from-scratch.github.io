@@ -22,99 +22,97 @@ website:
         href: Syllabus.html
       - text: 💻 weekly sessions
         menu:
-          - text: Session 0a - 🪜 Introduction to Deep Learning Architecture
-            href: course-materials/c00a-introduction-to-deeplearning-architecture.qmd
+          - text: Session 0a - 🪜 Foundation Model Architectures
+            href: chapters/c00a-foundation_model_architectures.qmd
           - text: Session 1 - 📊 Geospatial Data Foundations
-            href: course-materials/c01-geospatial-data-foundations.qmd
+            href: chapters/c01-geospatial-data-foundations.qmd
           - text: Session 2 - 🧠 Spatial-Temporal Attention Mechanisms
-            href: course-materials/c02-spatial-temporal-attention-mechanisms.qmd
+            href: chapters/c02-spatial-temporal-attention-mechanisms.qmd
           - text: Session 3 - 🏗️ Complete GFM Architecture
-            href: course-materials/c03-complete-gfm-architecture.qmd
+            href: chapters/c03-complete-gfm-architecture.qmd
           - text: Session 4 - 🔥 Pretraining Implementation
-            href: course-materials/c04-pretraining-implementation.qmd
+            href: chapters/c04-pretraining-implementation.qmd
           - text: Session 5 - ⚙️ Training Loop Optimization
-            href: course-materials/c05-training-loop-optimization.qmd
+            href: chapters/c05-training-loop-optimization.qmd
           - text: Session 6 - 📈 Model Evaluation & Analysis
-            href: course-materials/c06-model-evaluation-analysis.qmd
+            href: chapters/c06-model-evaluation-analysis.qmd
           - text: Session 7 - 🤝 Integration with Existing Models
-            href: course-materials/c07-integration-with-existing-models.qmd
+            href: chapters/c07-integration-with-existing-models.qmd
           - text: Session 8 - 🔧 Task-Specific Fine-tuning
-            href: course-materials/c08-task-specific-finetuning.qmd
+            href: chapters/c08-task-specific-finetuning.qmd
           - text: Session 9 - ☁️ Model Implementation & Deployment
-            href: course-materials/c09-model-implementation-deployment.qmd
+            href: chapters/c09-model-implementation-deployment.qmd
           - text: Session 10 - 🎯 Project Presentations & Synthesis
-            href: course-materials/c10-project-presentations-synthesis.qmd
+            href: chapters/c10-project-presentations-synthesis.qmd
       - text: 👀 Cheatsheets
         menu:
           - text: "🏗️ Foundation Models & AI"
           - text: Foundation Model Architectures
-            href: course-materials/extras/cheatsheets/foundation_model_architectures.qmd
+            href: chapters/c00a-foundation_model_architectures.qmd
           - text: GFM Architecture Cheatsheet
-            href: course-materials/extras/cheatsheets/gfm_architecture.qmd
+            href: extras/cheatsheets/gfm_architecture.qmd
           - text: Fine-tuning Basics
-            href: course-materials/extras/cheatsheets/finetuning_basics.qmd
+            href: extras/cheatsheets/finetuning_basics.qmd
           - text: Multi-modal Learning
-            href: course-materials/extras/cheatsheets/multimodal_learning.qmd
+            href: extras/cheatsheets/multimodal_learning.qmd
           - text: Model Evaluation & Validation
-            href: course-materials/extras/cheatsheets/model_evaluation_validation.qmd
+            href: extras/cheatsheets/model_evaluation_validation.qmd
           - text: Loading Pre-trained Models
-            href: course-materials/extras/cheatsheets/loading_models.qmd
+            href: extras/cheatsheets/loading_models.qmd
           - text: Model Inference & Feature Extraction
-            href: course-materials/extras/cheatsheets/model_inference.qmd
+            href: extras/cheatsheets/model_inference.qmd
           - text: "🗺️ Geospatial Data & Remote Sensing"
           - text: Geospatial Data & Remote Sensing
-            href: course-materials/extras/cheatsheets/geospatial_data_remote_sensing.qmd
-          - text: Earth Engine Basics
-            href: course-materials/extras/cheatsheets/earth_engine_basics.qmd
+            href: extras/cheatsheets/geospatial_data_remote_sensing.qmd
           - text: STAC APIs
-            href: course-materials/extras/cheatsheets/stac_apis.qmd
+            href: extras/cheatsheets/stac_apis.qmd
           - text: Rasterio Basics
-            href: course-materials/extras/cheatsheets/rasterio_basics.qmd
+            href: extras/cheatsheets/rasterio_basics.qmd
           - text: Xarray for Multi-dimensional Data
-            href: course-materials/extras/cheatsheets/xarray_basics.qmd
+            href: extras/cheatsheets/xarray_basics.qmd
           - text: "🔥 PyTorch & Deep Learning"
           - text: PyTorch Tensors
-            href: course-materials/extras/cheatsheets/pytorch_tensors.qmd
+            href: extras/cheatsheets/pytorch_tensors.qmd
           - text: TorchGeo Datasets & Transforms
-            href: course-materials/extras/cheatsheets/torchgeo_basics.qmd
+            href: extras/cheatsheets/torchgeo_basics.qmd
           - text: Data Loading for Satellite Imagery
-            href: course-materials/extras/cheatsheets/dataloader_satellite.qmd
+            href: extras/cheatsheets/dataloader_satellite.qmd
           - text: "📊 Visualization & Analysis"
           - text: Plotting Satellite Data
-            href: course-materials/extras/cheatsheets/plotting_satellite.qmd
+            href: extras/cheatsheets/plotting_satellite.qmd
           - text: Interactive Maps with Folium
-            href: course-materials/extras/cheatsheets/folium_basics.qmd
+            href: extras/cheatsheets/folium_basics.qmd
           - text: Geospatial Plotting with Matplotlib
-            href: course-materials/extras/cheatsheets/matplotlib_geospatial.qmd
+            href: extras/cheatsheets/matplotlib_geospatial.qmd
           - text: "☁️ Deployment & Scaling"
           - text: Cloud & Scalable Computing
-            href: course-materials/extras/cheatsheets/cloud_scalable_computing.qmd
+            href: extras/cheatsheets/cloud_scalable_computing.qmd
       - text: 📖 extras
         menu:
           - text: "📚 Reference Materials"
-            href: course-materials/extras/resources/course_resources.qmd
+            href: extras/resources/course_resources.qmd
           - text: "🎯 Practical Examples"
           - text: Normalization Comparison
-            href: course-materials/extras/examples/normalization_comparison.qmd
+            href: extras/examples/normalization_comparison.qmd
           - text: ResNet Implementation
-            href: course-materials/extras/examples/resnet.qmd
+            href: extras/examples/resnet.qmd
           - text: Text Encoder
-            href: course-materials/extras/examples/text_encoder.qmd
+            href: extras/examples/text_encoder.qmd
           - text: Tiling and Patches
-            href: course-materials/extras/examples/tiling-and-patches.qmd
+            href: extras/examples/tiling-and-patches.qmd
           - text: "📁 Project Templates"
           - text: Project Proposal Template
-            href: course-materials/extras/projects/project-proposal-template.qmd
+            href: extras/projects/project-proposal-template.qmd
           - text: MVP Presentation Template
-            href: course-materials/extras/projects/mvp-template.qmd
+            href: extras/projects/mvp-template.qmd
       - icon: github
-        href: https://github.com/kellycaylor/geoAI
+        href: https://github.com/kcaylor/GEOG-288KC-geospatial-foundation-models
         target: _blank
   page-footer:
     background: dark
     right: This website is built with [{{< fa brands github title="the github octocat logo" >}}](https://github.com/environmental-data-science/geog-288kc-geospatial-foundation-models) and [Quarto](https://quarto.org/)
     left: |
-      ![The Department of Geography logo](/course-materials/images/geog-logo.png){width=250}
+      ![The Department of Geography logo](images/geog-logo.png){width=250}
 format:
   html:
     theme: meds-website-styles.scss
@@ -124,10 +122,13 @@ format:
     code-fold: true
     code-tools: true
     jupyter: geoai
+    # note: keep filters at project level for reliability across engines
 
 filters:
   - fontawesome
-  - tangle
+  - tools/filters/tangle.py   # run your Python filter
+
+tangle-root: ..
 
 execute:
   freeze: auto

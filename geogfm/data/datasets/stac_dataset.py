@@ -1,4 +1,8 @@
-# Generated from book/course-materials/c01-geospatial-data-foundations.qmd
+# Tangled on 2025-08-12T17:13:21
+
+# Minimal STAC-like dataset (Week 1)
+# Tangles to `geogfm/data/datasets/stac_dataset.py`
+#| auto-imports: true
 from __future__ import annotations
 from typing import List, Optional
 from pathlib import Path

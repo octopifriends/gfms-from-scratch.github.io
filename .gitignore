@@ -87,7 +87,6 @@ large_datasets/
 data/out/
 
 # Model files and checkpoints
-models/
 *.model
 *.pkl
 *.pickle

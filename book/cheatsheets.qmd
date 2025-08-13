@@ -10,24 +10,24 @@ format:
 
 ## 🌍 Geospatial Data Fundamentals
 
-- [Working with Rasterio](course-materials/cheatsheets/rasterio_basics.qmd)
-- [Earth Engine Basics](course-materials/cheatsheets/earth_engine_basics.qmd)
-- [Xarray for Multi-dimensional Data](course-materials/cheatsheets/xarray_basics.qmd)
+- [Working with Rasterio](extras/cheatsheets/rasterio_basics.qmd)
+- [Earth Engine Basics](extras/cheatsheets/earth_engine_basics.qmd)
+- [Xarray for Multi-dimensional Data](extras/cheatsheets/xarray_basics.qmd)
 
 ## 🔥 PyTorch for Geospatial AI
 
-- [PyTorch Tensors & GPU Operations](course-materials/cheatsheets/pytorch_tensors.qmd)
-- [TorchGeo Datasets & Transforms](course-materials/cheatsheets/torchgeo_basics.qmd)
-- [Data Loading for Satellite Imagery](course-materials/cheatsheets/dataloader_satellite.qmd)
+- [PyTorch Tensors & GPU Operations](extras/cheatsheets/pytorch_tensors.qmd)
+- [TorchGeo Datasets & Transforms](extras/cheatsheets/torchgeo_basics.qmd)
+- [Data Loading for Satellite Imagery](extras/cheatsheets/dataloader_satellite.qmd)
 
 ## 🤗 Foundation Models & HuggingFace
 
-- [Loading Pre-trained Models](course-materials/cheatsheets/loading_models.qmd)
-- [Model Inference & Feature Extraction](course-materials/cheatsheets/model_inference.qmd)
-- [Fine-tuning Strategies](course-materials/cheatsheets/finetuning_basics.qmd)
+- [Loading Pre-trained Models](extras/cheatsheets/loading_models.qmd)
+- [Model Inference & Feature Extraction](extras/cheatsheets/model_inference.qmd)
+- [Fine-tuning Strategies](extras/cheatsheets/finetuning_basics.qmd)
 
 ## 📊 Visualization & Analysis
 
-- [Plotting Satellite Imagery](course-materials/cheatsheets/plotting_satellite.qmd)
-- [Interactive Maps with Folium](course-materials/cheatsheets/folium_basics.qmd)
-- [Geospatial Plotting with Matplotlib](course-materials/cheatsheets/matplotlib_geospatial.qmd)
+- [Plotting Satellite Imagery](extras/cheatsheets/plotting_satellite.qmd)
+- [Interactive Maps with Folium](extras/cheatsheets/folium_basics.qmd)
+- [Geospatial Plotting with Matplotlib](extras/cheatsheets/matplotlib_geospatial.qmd)

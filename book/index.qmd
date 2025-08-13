@@ -6,7 +6,7 @@ title-block-banner: false
 toc: false
 ---
 
-![](course-materials/images/geoai-banner.png){height=5in fig-align="center" alt="Geospatial AI visualization"}
+![](images/geoai-banner.png){height=5in fig-align="center" alt="Geospatial AI visualization"}
 
 
 ::: {.gray-text .center-text}
@@ -95,7 +95,7 @@ flowchart TD
 **Instructor**
 :::
 
-![](course-materials/images/kelly.png){width=45% fig-align="center"}
+![](images/kelly.png){width=45% fig-align="center"}
 
 ::: {.center-text}
 [**Kelly Caylor**]{.teal-text}  
@@ -111,7 +111,7 @@ flowchart TD
 **TA**
 :::
 
-![](course-materials/images/anna.png){width=45% fig-align="center"}
+![](images/anna.png){width=45% fig-align="center"}
 
 
 ::: {.center-text}

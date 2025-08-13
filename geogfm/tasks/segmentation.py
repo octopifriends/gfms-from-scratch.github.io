@@ -1,4 +1,6 @@
-# Generated from book/course-materials/c08-task-specific-finetuning.qmd
+# geogfm.tasks.segmentation — Token-wise segmentation head (Week 8).
+# Tangled on 2025-08-12T17:09:08
+
 from __future__ import annotations
 import torch
 import torch.nn as nn

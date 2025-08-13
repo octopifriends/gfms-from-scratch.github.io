@@ -14,6 +14,7 @@ import argparse
 import time
 import glob
 from pathlib import Path
+import json
 
 # Directories/files excluded by Quarto (_quarto.yml render settings)
 # Keep this in sync with _quarto.yml 'render' excludes
@@ -164,12 +165,19 @@ def activate_conda_environment():
             print("   conda env list")
             sys.exit(1)
         
-        # Add environment bin to PATH
+        # Add environment bin to PATH and guide Quarto to use this env's Python/Jupyter
         env_bin = os.path.join(env_path, "bin")
         current_path = os.environ.get("PATH", "")
         os.environ["PATH"] = f"{env_bin}:{current_path}"
         os.environ["CONDA_DEFAULT_ENV"] = "geoAI"
         os.environ["CONDA_PREFIX"] = env_path
+        # Ensure Quarto uses the same interpreter/kernel discovery as this conda env
+        os.environ["QUARTO_PYTHON"] = os.path.join(env_bin, "python")
+        os.environ["QUARTO_JUPYTER"] = os.path.join(env_bin, "jupyter")
+        # Also expose the repo root on PYTHONPATH so source imports resolve as a fallback
+        repo_root = str(Path(__file__).resolve().parents[1])
+        existing_pp = os.environ.get("PYTHONPATH", "")
+        os.environ["PYTHONPATH"] = f"{repo_root}:{existing_pp}" if existing_pp else repo_root
         
         print(f"   ✅ Environment activated: geoAI")
         
@@ -195,6 +203,101 @@ def check_prerequisites():
         print("❌ Error: _quarto.yml not found. Are you in the book directory?")
         sys.exit(1)
     print("   ✅ _quarto.yml found")
+
+def check_jupyter_kernel(kernel_name: str = "geoai"):
+    """Ensure the requested Jupyter kernel is available to Quarto/Jupyter.
+
+    Exits with guidance if the kernel is not found.
+    """
+    try:
+        result = subprocess.run(
+            ["jupyter", "kernelspec", "list", "--json"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        data = json.loads(result.stdout)
+        kernels = data.get("kernelspecs", {})
+        if kernel_name not in kernels:
+            print(f"❌ Error: Jupyter kernel '{kernel_name}' not found.\n   Known kernels: {', '.join(sorted(kernels.keys())) or '(none)'}")
+            print("   Tip: Register the kernel for this environment:")
+            print(f"      python -m ipykernel install --user --name {kernel_name} --display-name \"{kernel_name}\"")
+            print("   Or run: make kernelspec")
+            sys.exit(1)
+        else:
+            print(f"   ✅ Jupyter kernel found: {kernel_name}")
+    except (subprocess.CalledProcessError, json.JSONDecodeError):
+        print("⚠️  Warning: Could not verify Jupyter kernels. Proceeding, but Quarto may fail if the kernel is missing.")
+
+def install_jupyter_kernel(kernel_name: str = "geoai", display_name: str | None = None, force: bool = True):
+    """Install or update the Jupyter kernelspec to point at the current Python.
+
+    This ensures the named kernel uses this env's interpreter, avoiding drift
+    when Quarto spawns kernels by name.
+    """
+    display = display_name or kernel_name
+    args = [
+        "python", "-m", "ipykernel", "install",
+        "--user", "--name", kernel_name, "--display-name", display,
+    ]
+    if force:
+        args.append("--force")
+    try:
+        subprocess.run(args, check=True, capture_output=True, text=True)
+        print(f"   ✅ Jupyter kernel installed/updated: {kernel_name}")
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️  Warning: Failed to (re)install kernel '{kernel_name}': {e}")
+
+def verify_kernel_binding(kernel_name: str, expected_python: str):
+    """Inspect kernelspec argv and warn if it doesn't match expected interpreter."""
+    try:
+        result = subprocess.run(
+            ["jupyter", "kernelspec", "list", "--json"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        data = json.loads(result.stdout)
+        ks = data.get("kernelspecs", {}).get(kernel_name)
+        if not ks:
+            return
+        resource_dir = ks.get("resource_dir")
+        kernel_json = Path(resource_dir) / "kernel.json"
+        if not kernel_json.exists():
+            return
+        spec = json.loads(kernel_json.read_text())
+        argv = spec.get("argv", [])
+        actual_python = argv[0] if argv else ""
+        if Path(actual_python).resolve() != Path(expected_python).resolve():
+            print("⚠️  Warning: Kernelspec python does not match active env")
+            print(f"   kernelspec: {actual_python}")
+            print(f"   expected:   {expected_python}")
+            print("   Tip: run 'make kernelspec' to rebind the kernel to this env.")
+        else:
+            print("   ✅ Kernelspec is bound to this environment's python")
+    except Exception:
+        # Non-fatal; used only for diagnostics
+        pass
+
+def ensure_editable_install():
+    """Ensure the geogfm package is installed editable in the active env.
+
+    Attempts an import; if it fails, runs `pip install -e ..` from the book dir.
+    """
+    try:
+        subprocess.run(["python", "-c", "import geogfm"], check=True, capture_output=True)
+        print("   ✅ geogfm importable in this environment")
+        return
+    except subprocess.CalledProcessError:
+        print("🔧 Installing geogfm in editable mode (pip -e ..)...")
+        try:
+            # We are in book/; install package from repo root
+            subprocess.run(["python", "-m", "pip", "install", "-e", ".."], check=True)
+            print("   ✅ geogfm installed (editable)")
+        except subprocess.CalledProcessError as e:
+            print("❌ Error: Failed to install geogfm (editable)")
+            print(f"   {e}")
+            sys.exit(1)
 
 def clean_docs():
     """Clean the docs directory and any stray HTML files."""
@@ -272,8 +375,8 @@ def clear_quarto_cache():
     print("   🔄 Fresh build environment prepared")
 
 def clean_intermediate_files():
-    """Remove all HTML and other intermediate files from course_materials directories."""
-    print("🧹 Cleaning intermediate files from course_materials...")
+    """Remove all HTML and other intermediate files from chapters directories."""
+    print("🧹 Cleaning intermediate files from chapters...")
     
     # Extensions to clean up
     extensions_to_remove = [
@@ -292,9 +395,9 @@ def clean_intermediate_files():
         "*.synctex.gz",     # SyncTeX files
     ]
     
-    course_materials_path = Path("course-materials")
-    if not course_materials_path.exists():
-        print("   No course-materials directory found")
+    chapters_path = Path("chapters")
+    if not chapters_path.exists():
+        print("   No chapters directory found")
         return
     
     total_removed = 0
@@ -302,14 +405,14 @@ def clean_intermediate_files():
     for extension in extensions_to_remove:
         if extension.endswith("/"):
             # Remove directories
-            for item in course_materials_path.rglob(extension):
+            for item in chapters_path.rglob(extension):
                 if item.is_dir():
                     shutil.rmtree(item)
                     total_removed += 1
                     print(f"   Removed directory: {item}")
         else:
             # Remove files
-            for item in course_materials_path.rglob(extension):
+            for item in chapters_path.rglob(extension):
                 if item.is_file():
                     item.unlink()
                     total_removed += 1
@@ -461,7 +564,17 @@ def parse_arguments():
     parser.add_argument(
         "--clean", "-c",
         action="store_true",
-        help="Clean intermediate files (HTML, _files/, etc.) from course_materials directories"
+        help="Clean intermediate files (HTML, _files/, etc.) from chapters directories"
+    )
+    parser.add_argument(
+        "--bootstrap",
+        action="store_true",
+        help="Render foundational pages in order to tangle the library, then exit"
+    )
+    parser.add_argument(
+        "--bootstrap-pages",
+        nargs="*",
+        help="Optional explicit list of .qmd pages to render in order (relative to book dir)"
     )
     return parser.parse_args()
 
@@ -497,6 +610,20 @@ def main():
         clean_intermediate_files()
         print("✅ Intermediate files cleaned successfully!")
         return
+
+    # Handle bootstrap-only operation
+    if args.bootstrap and not any([args.full, args.serve, args.clean]):
+        activate_conda_environment()
+        check_prerequisites()
+        check_jupyter_kernel("geoai")
+        # Refresh kernelspec to bind name -> current interpreter path
+        install_jupyter_kernel("geoai")
+        verify_kernel_binding("geoai", os.environ.get("QUARTO_PYTHON", sys.executable))
+        ensure_editable_install()
+        # Import local bootstrap to avoid global dependency
+        from tools.bootstrap_lib import bootstrap
+        bootstrap(Path("."), pages=args.bootstrap_pages)
+        return
     
     if args.full:
         print("🚀 Starting GEOG 288KC documentation build (FULL BUILD)...")
@@ -506,6 +633,10 @@ def main():
     try:
         activate_conda_environment()
         check_prerequisites()
+        check_jupyter_kernel("geoai")
+        install_jupyter_kernel("geoai")
+        verify_kernel_binding("geoai", os.environ.get("QUARTO_PYTHON", sys.executable))
+        ensure_editable_install()
         
         # Clear Quarto caches and freeze files for full builds
         if args.full:
@@ -528,6 +659,10 @@ def main():
             clean_intermediate_files()
         
         clean_docs()
+        # Always bootstrap foundational pages first on full builds to avoid ordering issues
+        if args.full:
+            from tools.bootstrap_lib import bootstrap
+            bootstrap(Path("."), pages=args.bootstrap_pages)
         build_site(files_to_build, args.full)
         verify_build()
         

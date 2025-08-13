@@ -1,4 +1,6 @@
-# Generated from book/course-materials/c07-integration-with-existing-models.qmd
+# geogfm.interoperability.huggingface — Lightweight HF Hub helpers (Week 7).
+# Tangled on 2025-08-12T17:08:23
+
 from __future__ import annotations
 from typing import Any, Dict
 

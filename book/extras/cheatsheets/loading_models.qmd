@@ -1,0 +1,348 @@
+---
+title: "Loading Pre-trained Models"
+subtitle: "Working with HuggingFace model hub"
+jupyter: geoai
+format:
+  html:
+    code-fold: false
+---
+
+# Loading Pre-trained Models
+
+This cheatsheet shows how to load and work with pre-trained models for geospatial AI, using real examples with small sample data.
+
+## Setup and Imports
+
+```{python}
+import torch
+import torch.nn as nn
+import timm
+import numpy as np
+from PIL import Image
+import matplotlib.pyplot as plt
+
+print(f"PyTorch version: {torch.__version__}")
+print(f"TIMM available: ✓")
+
+# Set random seeds for reproducible results
+torch.manual_seed(42)
+np.random.seed(42)
+```
+
+## TIMM (Torch Image Models) - Quick and Reliable
+
+TIMM is the most reliable way to load pre-trained vision models. Let's start with a small ResNet model.
+
+```{python}
+# Load a lightweight ResNet model
+model = timm.create_model('resnet18', pretrained=True, num_classes=10)
+model.eval()
+
+print(f"Model: {model.__class__.__name__}")
+print(f"Parameters: {sum(p.numel() for p in model.parameters()):,}")
+
+# Check input requirements
+data_config = timm.data.resolve_model_data_config(model)
+print(f"Expected input size: {data_config['input_size']}")
+print(f"Mean: {data_config['mean']}")
+print(f"Std: {data_config['std']}")
+```
+
+## Adapting RGB Models for Satellite Data
+
+Most models expect 3-channel RGB, but satellite data has more bands. Here's how to adapt:
+
+```{python}
+def adapt_first_layer_for_multispectral(model, num_bands=6):
+    """Adapt the first convolutional layer for multi-band input"""
+    
+    # Find the first conv layer
+    first_conv = None
+    for name, module in model.named_modules():
+        if isinstance(module, nn.Conv2d):
+            first_conv = module
+            first_conv_name = name
+            break
+    
+    if first_conv is None:
+        return model
+    
+    # Get original weights
+    old_weight = first_conv.weight.data  # [out_channels, in_channels, H, W]
+    
+    # Create new layer with more input channels
+    new_conv = nn.Conv2d(
+        num_bands, 
+        first_conv.out_channels,
+        first_conv.kernel_size,
+        first_conv.stride,
+        first_conv.padding,
+        bias=first_conv.bias is not None
+    )
+    
+    # Initialize new weights by repeating/averaging RGB channels
+    with torch.no_grad():
+        if num_bands >= 3:
+            # Copy RGB weights
+            new_conv.weight[:, :3] = old_weight
+            # Initialize extra bands as average of RGB
+            for i in range(3, num_bands):
+                new_conv.weight[:, i:i+1] = old_weight.mean(dim=1, keepdim=True)
+        else:
+            # Use first num_bands from original
+            new_conv.weight = old_weight[:, :num_bands]
+        
+        # Copy bias
+        if first_conv.bias is not None:
+            new_conv.bias.data = first_conv.bias.data
+    
+    # Replace the layer
+    setattr(model, first_conv_name.split('.')[-1], new_conv)
+    
+    print(f"Adapted {first_conv_name}: {old_weight.shape[1]} -> {num_bands} input channels")
+    return model
+
+# Create a 6-band version of ResNet
+model_6band = timm.create_model('resnet18', pretrained=True, num_classes=10)
+model_6band = adapt_first_layer_for_multispectral(model_6band, num_bands=6)
+model_6band.eval()
+
+print(f"Original input channels: 3")
+print(f"Adapted input channels: 6")
+```
+
+## Quick Inference Example
+
+```{python}
+# Create sample satellite-like data (6 bands, 224x224)
+sample_data = torch.randn(1, 6, 224, 224)
+print(f"Sample data shape: {sample_data.shape}")
+
+# Test the adapted model
+with torch.no_grad():
+    output = model_6band(sample_data)
+    predictions = torch.softmax(output, dim=1)
+
+print(f"Output shape: {output.shape}")
+print(f"Top 3 predictions: {predictions[0].topk(3)[0].numpy()}")
+```
+
+## Model Preprocessing Pipeline
+
+```{python}
+class SatellitePreprocessor:
+    """Simple preprocessing for satellite imagery"""
+    
+    def __init__(self, input_size=224, num_bands=6):
+        self.input_size = input_size
+        self.num_bands = num_bands
+        
+        # Typical normalization for satellite data
+        self.mean = [0.485, 0.456, 0.406, 0.5, 0.3, 0.2][:num_bands]
+        self.std = [0.229, 0.224, 0.225, 0.2, 0.15, 0.12][:num_bands]
+    
+    def __call__(self, image_tensor):
+        """Normalize image tensor"""
+        # Ensure correct shape [C, H, W] or [B, C, H, W]
+        if image_tensor.dim() == 3:
+            image_tensor = image_tensor.unsqueeze(0)
+        
+        # Resize if needed
+        if image_tensor.shape[-1] != self.input_size:
+            image_tensor = nn.functional.interpolate(
+                image_tensor, size=(self.input_size, self.input_size), 
+                mode='bilinear', align_corners=False
+            )
+        
+        # Normalize
+        mean = torch.tensor(self.mean).view(1, -1, 1, 1)
+        std = torch.tensor(self.std).view(1, -1, 1, 1)
+        
+        normalized = (image_tensor - mean) / std
+        return normalized
+
+# Test preprocessing
+preprocessor = SatellitePreprocessor(input_size=224, num_bands=6)
+raw_data = torch.rand(6, 256, 256)  # Raw satellite patch
+
+preprocessed = preprocessor(raw_data)
+print(f"Raw data: {raw_data.shape} -> Preprocessed: {preprocessed.shape}")
+print(f"Raw range: [{raw_data.min():.3f}, {raw_data.max():.3f}]")
+print(f"Preprocessed range: [{preprocessed.min():.3f}, {preprocessed.max():.3f}]")
+```
+
+## Feature Extraction
+
+```{python}
+def extract_features(model, data, layer_name='avgpool'):
+    """Extract features from a specific layer.
+
+    Robust to different model implementations (e.g., timm vs torchvision).
+    """
+
+    features = {}
+    handle = None
+
+    def hook(name):
+        def fn(module, input, output):
+            features[name] = output.detach()
+        return fn
+
+    # Try requested layer name first, then common fallbacks
+    candidate_names = [layer_name, 'global_pool', 'avgpool', 'head.global_pool']
+
+    named_modules = list(model.named_modules())
+    for candidate in candidate_names:
+        for name, module in named_modules:
+            if name == candidate or candidate in name:
+                handle = module.register_forward_hook(hook(name))
+                break
+        if handle is not None:
+            break
+
+    if handle is None:
+        available = [name for name, _ in named_modules]
+        raise ValueError(
+            f"Requested layer '{layer_name}' not found. Available modules include: "
+            f"{available[:20]}{' ...' if len(available) > 20 else ''}"
+        )
+
+    # Forward pass
+    with torch.no_grad():
+        _ = model(data)
+
+    # Clean up
+    if handle is not None:
+        handle.remove()
+
+    return features
+
+# Extract features from our sample
+features = extract_features(model_6band, sample_data, 'global_pool')
+feature_name = list(features.keys())[0]
+feature_tensor = features[feature_name]
+
+print(f"Feature layer: {feature_name}")
+print(f"Feature shape: {feature_tensor.shape}")
+print(f"Feature stats: mean={feature_tensor.mean():.3f}, std={feature_tensor.std():.3f}")
+```
+
+## Band Selection Utilities
+
+```{python}
+class BandSelector:
+    """Select specific bands for different visualizations"""
+    
+    # Common band combinations for Landsat-8
+    COMBINATIONS = {
+        'rgb': [3, 2, 1],        # True color (Red, Green, Blue)
+        'false_color': [4, 3, 2], # False color (NIR, Red, Green)
+        'swir': [6, 5, 4],       # SWIR composite
+        'agriculture': [5, 4, 3]  # Agriculture (SWIR1, NIR, Red)
+    }
+    
+    def __init__(self):
+        pass
+    
+    def select_bands(self, image, combination='rgb'):
+        """Select 3 bands for visualization"""
+        if combination not in self.COMBINATIONS:
+            print(f"Unknown combination. Available: {list(self.COMBINATIONS.keys())}")
+            return image[:3]  # Return first 3 bands
+        
+        indices = [i-1 for i in self.COMBINATIONS[combination]]  # Convert to 0-indexed
+        
+        if image.dim() == 3:  # [C, H, W]
+            return image[indices]
+        elif image.dim() == 4:  # [B, C, H, W]
+            return image[:, indices]
+    
+    def visualize_bands(self, image, combination='rgb'):
+        """Create a simple visualization"""
+        selected = self.select_bands(image, combination)
+        
+        if selected.dim() == 4:
+            selected = selected[0]  # Take first batch item
+        
+        # Convert to numpy and normalize for display
+        vis_data = selected.permute(1, 2, 0).numpy()
+        vis_data = (vis_data - vis_data.min()) / (vis_data.max() - vis_data.min())
+        
+        plt.figure(figsize=(6, 6))
+        plt.imshow(vis_data)
+        plt.title(f'{combination.upper()} Visualization')
+        plt.axis('off')
+        plt.show()
+
+# Test band selection
+selector = BandSelector()
+sample_6band = torch.rand(6, 128, 128)
+
+rgb_bands = selector.select_bands(sample_6band, 'rgb')
+print(f"Original: {sample_6band.shape} -> RGB: {rgb_bands.shape}")
+
+# Show available combinations
+print(f"Available band combinations: {list(selector.COMBINATIONS.keys())}")
+```
+
+## Model Inference Wrapper
+
+```{python}
+class SimpleInference:
+    """Simple inference wrapper for geospatial models"""
+    
+    def __init__(self, model, preprocessor=None):
+        self.model = model
+        self.preprocessor = preprocessor
+        self.model.eval()
+    
+    @torch.no_grad()
+    def predict(self, image_tensor, return_features=False):
+        """Run prediction on image tensor"""
+        
+        # Preprocess if needed
+        if self.preprocessor:
+            image_tensor = self.preprocessor(image_tensor)
+        
+        # Ensure batch dimension
+        if image_tensor.dim() == 3:
+            image_tensor = image_tensor.unsqueeze(0)
+        
+        # Forward pass
+        output = self.model(image_tensor)
+        
+        if return_features:
+            # Extract features from a pooling layer
+            features = extract_features(self.model, image_tensor, 'global_pool')
+            return output, features
+        
+        return output
+    
+    def predict_proba(self, image_tensor):
+        """Get class probabilities"""
+        logits = self.predict(image_tensor)
+        return torch.softmax(logits, dim=1)
+
+# Create inference wrapper
+inference = SimpleInference(model_6band, preprocessor)
+
+# Test inference
+test_image = torch.rand(6, 200, 200)
+probabilities = inference.predict_proba(test_image)
+
+print(f"Input: {test_image.shape}")
+print(f"Predictions shape: {probabilities.shape}")
+print(f"Top 3 classes: {probabilities[0].topk(3)[1].tolist()}")
+print(f"Top 3 probabilities: {probabilities[0].topk(3)[0].tolist()}")
+```
+
+## Key Takeaways
+
+- **TIMM models** are reliable and easy to load
+- **Adapt the first layer** for multi-spectral satellite data
+- **Use proper preprocessing** with band-specific normalization
+- **Extract features** using forward hooks for analysis
+- **Band selection** enables different visualization modes
+- **Inference wrappers** simplify model deployment
+
+These patterns work with any vision model and can be extended for more complex geospatial applications.

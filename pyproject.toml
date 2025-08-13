@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "geogfm"
+version = "0.1.0"
+description = "Geospatial Foundation Model components for the course"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "GEOG 288KC" }]
+license = { text = "MIT" }
+dependencies = []  # Heavy runtime deps (PyTorch, GDAL, etc.) come from the conda env
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["geogfm*"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+

@@ -22,9 +22,9 @@ This directory contains **sample datasets** used in course materials, examples, 
 ## Usage in Course Materials
 
 All book materials reference this directory using relative paths:
-- From `course-materials/`: `../data/`
-- From `course-materials/examples/`: `../../data/`
-- From `course-materials/extras/`: `../../data/`
+- From `chapters/`: `../data/`
+- From `extras/examples/`: `../../data/`
+- From `extras/`: `../../data/`
 
 ## Adding New Sample Data
 

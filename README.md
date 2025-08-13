@@ -9,9 +9,8 @@ This repository is organized to support both **educational content** (book mater
 ```
 geoAI/
 ├── book/                           # 📖 Educational content (course → book)
-│   ├── course-materials/           
-│   │   ├── week*.qmd              # 📚 Chapter overviews (10 weeks)
-│   │   ├── weekly-sessions/       # 💻 Detailed hands-on tutorials
+│   ├── chapters/                   # 📚 Chapters (weeks) and supporting materials
+│   │   ├── c0X-*.qmd              # 💻 Weekly interactive sessions (10 weeks)
 │   │   └── extras/                # 📖 Appendix materials
 │   │       ├── cheatsheets/       # 📋 Quick reference guides
 │   │       ├── examples/          # 🎯 Practical examples
@@ -19,7 +18,7 @@ geoAI/
 │   │       ├── projects/          # 📁 Project templates
 │   │       └── resources/         # 📚 Additional resources
 │   ├── docs/                      # 🌐 Compiled website
-│   ├── images/                    # 🖼️ Course images
+│   ├── images/                    # 🖼️ Site images
 │   ├── index.qmd                  # 🏠 Homepage
 │   ├── _quarto.yml               # ⚙️ Book configuration
 │   └── build_docs.py             # 🔨 Book building script
@@ -35,7 +34,7 @@ geoAI/
 
 1. **View the book online**: [Building Geospatial Foundation Models](https://kellycaylor.github.io/geoAI)
 2. **Set up your environment**: Follow the [installation guide](installation/README.md)
-3. **Start with Week 1**: Begin with [geospatial data foundations](book/course-materials/week1.qmd)
+3. **Start with Week 1**: Begin with [geospatial data foundations](book/chapters/c01-geospatial-data-foundations.qmd)
 
 ### For Developers
 
@@ -53,7 +52,19 @@ geoAI/
 
 3. **Install GFM package** (development mode):
    ```bash
+   # Editable install so tangled code in geogfm/ is importable by Quarto
    pip install -e .
+
+4. (Optional) Register the Jupyter kernel name used by Quarto:
+   ```bash
+   make kernelspec
+   ```
+
+5. Build docs:
+   ```bash
+   make docs       # incremental
+   make docs-full  # full build (clears cache)
+   ```
    ```
 
 ## 📖 About the Book
@@ -78,53 +89,45 @@ This educational resource teaches you to build geospatial foundation models from
 
 ## 🛠️ Building the Book
 
-The book is built using [Quarto](https://quarto.org/) and outputs to the repository's `docs/` folder for GitHub Pages hosting.
+The book is built using [Quarto](https://quarto.org/) and outputs to the repository's `docs/` folder for GitHub Pages hosting. Quarto executes with the Jupyter kernel named `geoai` (configured in `book/_quarto.yml`) which should point to the `geoAI` conda environment.
 
 ```bash
 # Navigate to the book directory
 cd book
 
-# Full build (clears cache)
-python build_docs.py --full
-
-# Incremental build (faster)
-python build_docs.py
-
-# Build and serve locally
-python build_docs.py --serve
+make docs-full
+make docs
+python book/build_docs.py --serve
 ```
 
 ### ✂️ Literate Code Export (Quarto tangle)
 
-You can export code blocks from Quarto pages in `book/` directly into Python modules in the repo during build (similar to nbdev, but with `.qmd`). This is powered by a small Quarto extension at `book/_extensions/tangle/` and enabled in `book/_quarto.yml`.
+You can export code blocks from Quarto pages in `book/` directly into Python modules in the repo during build (similar to nbdev, but with `.qmd`). Tangling is enabled by the custom filter configured in `book/_quarto.yml`.
 
-Basic usage inside a code block:
-
-````
-```{python tangle="../geogfm/models/attention.py" tangle-append="true"}
-def scaled_dot_product(q, k, v):
-    ...
-```
-````
-
-Or with hash‑pipe directives inside the cell:
+Basic usage inside a code block (hash‑pipe directives):
 
 ```python
 #| tangle: ../geogfm/models/attention.py
-#| tangle-append: true
+#| mode: append
 def scaled_dot_product(q, k, v):
     ...
 ```
 
+Key options:
 - **tangle**: relative output path (from the `.qmd` file location)
-- **tangle-append**: append to the file (default: overwrite on first block)
-- Optional: `tangle-marker` to customize the header comment in the exported file
+- **mode**: `append | overwrite | concat` (default: concat)
 
 Recommended pattern for multi-block modules:
-1) First block: `tangle: <path>` (no append) to overwrite/reset
-2) Subsequent blocks: `tangle: <same path>` with `tangle-append: true`
+1) First block: `tangle: <path>` + `mode: overwrite` to reset file
+2) Subsequent blocks: `tangle: <same path>` + `mode: append`
 
 Exports occur whenever Quarto renders the page, so remember to commit updated files in `geogfm/` after builds.
+
+### 🧩 Why conda + editable install?
+
+- Heavy geospatial and DL dependencies (GDAL, PROJ, PyTorch) are reliably managed by conda.
+- Keeping `pyproject.toml` minimal avoids pip/conda conflicts; `pip install -e .` only installs the `geogfm` Python package into the active env.
+- As you tangle code from lessons into `geogfm/`, the editable install makes those updates immediately importable during Quarto execution.
 
 ## 📊 Building Course Datasets
 

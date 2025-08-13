@@ -1,4 +1,6 @@
-# Generated from book/course-materials/c05-training-loop-optimization.qmd
+# geogfm.training.optimizer — Optimizer builder (Week 5): AdamW by default, Adam optional.
+# Tangled on 2025-08-12T17:08:04
+
 from __future__ import annotations
 from typing import Dict, Any
 import torch

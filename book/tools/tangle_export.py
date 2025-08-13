@@ -6,7 +6,7 @@ from typing import Dict, List, Tuple
 
 ROOT = Path(__file__).resolve().parents[2]
 BOOK_DIR = ROOT / "book"
-COURSE_DIR = BOOK_DIR / "course-materials"
+COURSE_DIR = BOOK_DIR / "chapters"
 
 CODE_FENCE_START_RE = re.compile(r"^```\{python(?P<attrs>[^}]*)\}\s*$")
 CODE_FENCE_END_RE = re.compile(r"^```\s*$")
@@ -73,10 +73,10 @@ def tangle_from_file(qmd_path: Path) -> List[Tuple[Path, str, bool]]:
 
 def main() -> int:
     if not COURSE_DIR.exists():
-        print(f"Course directory not found: {COURSE_DIR}")
+        print(f"Chapters directory not found: {COURSE_DIR}")
         return 1
 
-    # Collect all QMD files under course-materials
+    # Collect all QMD files under chapters
     qmd_files = sorted(COURSE_DIR.rglob("*.qmd"))
     if not qmd_files:
         print("No .qmd files found to tangle.")
