@@ -1,108 +1,286 @@
-# Contributing to GEOG 288KC (geoAI)
+# Contributing to GEOG 288KC
 
-Thank you for helping build and maintain GEOG 288KC: Building Geospatial Foundation Models. This document defines the rules and best practices for contributing course materials, code, and infrastructure.
+*A practical workflow guide for instructional staff contributing course materials*
 
-The key goals are: high-quality instructional content, reproducible builds, and a smooth developer workflow that matches our Quarto setup and AI Sandbox environment.
+## 🚀 Quick Start for Contributors
 
-## Table of Contents
-- Scope and Roles
-- Branching and PR Workflow
-- Content Authoring Guidelines (Quarto)
-- Code Style and Linting
-- Data and Assets
-- Environment and Builds
-- File/Path Conventions
-- Review Checklist
-- FAQ
+**Never contributed before?**
+1. `make setup` - Install environment
+2. Create branch: `git checkout -b week-3-updates`  
+3. Edit files in `book/chapters/`
+4. Test: `make preview`
+5. Submit PR with clear description
 
-## Scope and Roles
-- Instructors maintain course structure, learning outcomes, and major content edits
-- Contributors may add lessons, examples, fixes, or improvements following these rules
-- GRIT/IT focuses on AI Sandbox setup and performance; coordinate via installation/ updates
+**Need help?** Check [AUTHORING_GUIDE.md](AUTHORING_GUIDE.md) for content editing or [TROUBLESHOOTING.md](installation/TROUBLESHOOTING.md) for technical issues.
 
-## Branching and PR Workflow
-1. Create a feature branch: `git checkout -b feature/<short-description>`
-2. Make focused edits; keep diffs small and scoped
-3. Build locally (see Environment and Builds). Fix all errors before PR
-4. Open a PR against `main` with a concise summary and screenshots (if UI changes)
-5. Request review from maintainers (Kelly, Anna). Address feedback promptly
-6. Squash-merge after approval; avoid force-pushing to `main`
+---
 
-Naming PRs: `[Week N] <topic>`, `[Session N] <topic>`, `[Infra] build_docs sync`, `[Fix] broken link`
+## 🔄 Standard Workflow
 
-## Content Authoring Guidelines (Quarto)
-- Only include executable code blocks for functional, instructive examples; narrative demos or pseudo-code should use Quarto callouts/tables, not code fences
-- Use `qmd` for lessons; organize by `chapters/` structure
-- Use callouts (`note`, `tip`, `warning`, `important`) to convey narrative content
-- Keep code chunks minimal and runnable; prefer smaller, composable examples over monoliths
-- Avoid time/scheduling in weekly docs; class meets Fridays 9–12; office hours 2–5 (only in syllabus)
-- Use relative links within `chapters/`; prefer root `/images/...` for images that are shared
-- Do not reference external frameworks by name repeatedly; keep content course-native
+### 1. Before You Start
+```bash
+git checkout main
+git pull origin main
+make setup                    # First time only
+conda activate geoAI         # Every session
+```
 
-Quarto front-matter tips:
-- Provide clear `title` and `subtitle`
-- Set `code-fold: true|show` thoughtfully
-- Prefer `toc: true` and `toc-depth: 3` for longer pages
+### 2. Create Your Branch
+```bash
+# Use descriptive names
+git checkout -b week-4-mae-implementation
+git checkout -b fix-broken-links-session-2
+git checkout -b add-visualization-examples
+```
 
-## Code Style and Linting
-- Python: write clear, readable code; follow PEP8 and repo’s explicit patterns
-- Prefer explicit names (no 1–2 char vars); small functions; early returns
-- Keep notebooks minimal; prefer `qmd` with Python chunks
-- Validate imports and runtime paths locally before committing
+### 3. Make Your Changes
+- **Edit content**: Modify `.qmd` files in `book/chapters/` or `book/extras/`
+- **Test locally**: `make preview` (rebuilds automatically on save)
+- **Verify build**: `make docs-full` (complete rebuild to catch issues)
 
-## Data and Assets
-- Place reusable assets in `images/` and small sample datasets in `data/`
-- For new example data, add a brief `data/README.md` entry with source and license
-- Use raw GitHub URLs for small static assets when necessary
-- Do not commit large datasets or model weights to the repo
+### 4. Before Submitting PR
+**Required checklist:**
+- [ ] `make preview` works without errors
+- [ ] `make docs-full` builds successfully  
+- [ ] All links work (click through your changes)
+- [ ] Code blocks execute properly
+- [ ] No absolute paths or time-dependent content
 
-## Environment and Builds
-- Local dev: `conda activate geoAI` (environment from `environment.yml`)
-- Install the package for development (editable): `pip install -e .`
-- Optional: register the Jupyter kernel used by Quarto: `make kernelspec` (kernel name `geoai`)
-- Build site locally: `make docs` (incremental) or `make docs-full` (clean build)
-- Preview locally: `make preview`
-- When running full builds, caches are cleared to avoid freeze errors
-- The build process must mirror `_quarto.yml` render rules. Exclusions include:
-  - `nbs/`, `installation/`, `example_course/`, `LLMs-from-scratch/`
-  - Non-course internal docs like `COURSE_*.md`, `*_PLAN.md`
-- Never render or link to excluded folders in Quarto navigation
+**Test your code:**
+```bash
+# Verify tangled code imports correctly
+conda activate geoAI
+python -c "import geogfm; print('✅ Package imports work')"
+```
 
-### Rationale: conda + editable install
-- Heavy geospatial/DL deps (GDAL/PROJ/PyTorch) are installed via conda to ensure binary compatibility
-- `pyproject.toml` uses setuptools with empty `dependencies` to avoid conflicts with conda
-- `pip install -e .` makes code tangled into `geogfm/` immediately importable during Quarto execution
+### 5. Submit Pull Request
+```bash
+git add .
+git commit -m "Add MAE implementation to Week 4"
+git push origin week-4-mae-implementation
+```
 
-## File/Path Conventions
-- Weekly lessons: `chapters/c0N-*.qmd` (Week N) with Stage title and Week subtitle
-- Interactive sessions: within `chapters/` as weekly files (c0N-*.qmd)
-- Lectures: `chapters/extras/lectures/lectureN_<topic>.qmd`
-- Projects/templates: `chapters/extras/projects/`
-- Images: `images/`; reference as `images/<file>` in docs
-- Sample data: `data/`; reference via relative path or raw GitHub URL
+**PR Description Template:**
+```markdown
+## Changes
+- Added MAE implementation section to Session 4
+- Fixed broken links in patch embedding examples
+- Updated visualization code to use fixed random seeds
 
-## Review Checklist
-Before submitting a PR:
-- Content
-  - [ ] Titles/subtitles match course structure
-  - [ ] Executable code is minimal, functional, and necessary for instruction
-  - [ ] Narrative is in callouts/tables, not code blocks
-- Links & Paths
-  - [ ] All links resolve; images render
-  - [ ] Paths are relative and respect repo structure
-- Build
-  - [ ] Local build passes: `python build_docs.py --serve` (or `--full`)
-  - [ ] No content from excluded directories is rendered
-- Style
-  - [ ] Variable names and functions are descriptive
-  - [ ] No scheduling times in weekly docs; timing only in syllabus
+## Testing
+- [x] Local preview works
+- [x] Full build passes  
+- [x] Code imports correctly
 
-## FAQ
-- Q: Where do I put new rules or guidelines?
-  - A: Here in `CONTRIBUTING.md`; instructional-team-only docs in `COURSE_*.md` (excluded from site)
-- Q: Can I add new datasets?
-  - A: Yes; keep them small, documented in `data/README.md`, and attribute sources
-- Q: How do I add a new interactive session?
-  - A: Create a new weekly page under `chapters/` (e.g., `chapters/c0N-<topic>.qmd`) and link it from `_quarto.yml` navigation
+## Screenshots
+[Include screenshots of any UI/content changes]
+```
 
-Thanks for contributing to a high-clarity, reproducible course experience!
+---
+
+## 📋 Content Guidelines
+
+### ✅ Good Practices
+- **Clear section headings** with file paths: `### Data Loader → geogfm/data/loaders.py`
+- **Small, focused code blocks** - one concept per block
+- **Executable examples** that students can run immediately
+- **Reproducible outputs** (use fixed seeds: `SEED = 42`)
+- **Relative paths** for data/images (`../../data/sample.tif`)
+
+### ❌ Things to Avoid  
+- **Large monolithic code blocks** (break into smaller pieces)
+- **Absolute paths** (`/Users/kelly/Desktop/...` ← Never!)
+- **Time references** ("this week", "today", "last Friday")
+- **Installation commands** in content (use environment instead)
+- **Editing generated files** (anything in `geogfm/` or `docs/`)
+
+### Content Structure Pattern
+```markdown
+---
+title: "Session Title"
+subtitle: "Week N: Specific Focus"  
+jupyter: geoai
+---
+
+## Overview
+Brief introduction to what students will learn.
+
+### Component Name → `geogfm/path/to/file.py`
+
+```{python}
+#| tangle: geogfm/path/to/file.py
+# Clear, focused code that demonstrates one concept
+def example_function():
+    return "Students can understand this!"
+```
+
+Explanation of what the code does and why it matters.
+```
+
+---
+
+## 🏗️ Understanding Our Build System
+
+### The Big Picture
+1. **Content** (`.qmd` files) contains instructional material + code
+2. **Tangle filter** extracts code → creates Python package (`geogfm/`)
+3. **Quarto** renders content → creates website (`docs/`)
+4. **GitHub Pages** serves website to students
+
+### Why This Matters
+- Students get both **learning materials** (website) and **working code** (Python package)
+- Everything stays in sync automatically
+- One source of truth for content and implementation
+
+### File Flow
+```
+book/chapters/c01-*.qmd  →  [Quarto + Tangle]  →  docs/chapters/c01-*.html
+                        →                      →  geogfm/data/loaders.py
+                        →                      →  geogfm/models/vit.py
+```
+
+---
+
+## 🐛 Troubleshooting Common Issues
+
+### Build Fails
+```bash
+# Nuclear option - start fresh
+make clean
+make docs-full
+
+# If still failing
+conda activate geoAI
+pip install -e .
+make kernelspec
+```
+
+### Kernel/Import Errors
+```bash
+# Fix Jupyter kernel binding
+make kernelspec
+
+# Ensure package is editable-installed
+pip install -e .
+```
+
+### Preview Not Updating
+- Check for syntax errors in your `.qmd` files
+- Look for broken tangle paths (`#| tangle: wrong/path.py`)
+- Verify all Python imports work
+
+### Git Issues
+```bash
+# Your branch is behind main
+git checkout main
+git pull origin main
+git checkout your-branch
+git merge main
+
+# Resolve conflicts, then continue
+```
+
+---
+
+## 📝 PR Guidelines
+
+### Good PR Titles
+- `[Week 4] Add MAE pretraining implementation`
+- `[Session 2] Fix broken attention mechanism examples`  
+- `[Infra] Update environment dependencies`
+- `[Docs] Clarify tangle usage in authoring guide`
+
+### What to Include
+- **Clear description** of what changed
+- **Screenshots** for visual/content changes
+- **Testing notes** ("Verified full build works")
+- **Context** if fixing bugs or addressing issues
+
+### Review Process
+1. **Automated checks** must pass (build succeeds)
+2. **Manual review** by Kelly/Anna 
+3. **Address feedback** promptly
+4. **Squash merge** after approval
+
+---
+
+## 🎯 Types of Contributions
+
+### Content Updates (Most Common)
+- Adding new examples or explanations
+- Fixing typos, broken links, or errors
+- Improving code clarity or adding comments
+- Updating visualizations or plots
+
+### Infrastructure Changes  
+- Environment/dependency updates
+- Build system improvements
+- New make targets or automation
+- Documentation improvements
+
+### Major Content Additions
+- New weekly sessions or sections
+- Additional cheatsheets or examples
+- Project templates or resources
+- Coordinate with Kelly/Anna first
+
+---
+
+## 💡 Tips for Success
+
+### Efficient Workflow
+- Use `make preview` while editing (auto-rebuilds)
+- Keep browser dev tools open to catch errors
+- Test imports in Python/Jupyter before committing
+- Make small, focused commits with clear messages
+
+### Communication
+- **Ask questions early** rather than struggling
+- **Share screenshots** when describing visual issues  
+- **Tag relevant people** in PR discussions
+- **Be specific** about what's not working
+
+### Quality Checks
+```bash
+# Before every PR
+make docs-full                    # Verify clean build
+python -c "import geogfm"        # Test package imports  
+grep -r "/Users\|/home" book/    # Check for absolute paths
+```
+
+---
+
+## 📚 Resources
+
+- **Content Editing**: [AUTHORING_GUIDE.md](AUTHORING_GUIDE.md)
+- **Technical Issues**: [installation/TROUBLESHOOTING.md](installation/TROUBLESHOOTING.md)
+- **Quarto Docs**: [quarto.org/docs/guide](https://quarto.org/docs/guide/)
+- **Course Questions**: Kelly, Anna, or course Slack
+- **Build System**: `book/build_docs.py --help`
+
+---
+
+## ⚡ Command Cheat Sheet
+
+```bash
+# Setup (first time)
+make setup
+
+# Daily workflow
+conda activate geoAI
+git checkout -b my-feature-branch
+make preview                    # Edit and preview
+make docs-full                  # Verify before PR
+
+# Troubleshooting  
+make clean
+make kernelspec
+pip install -e .
+
+# Submit changes
+git add . && git commit -m "Clear description"
+git push origin my-feature-branch
+# Create PR on GitHub
+```
+
+**Remember**: Focus on creating clear, executable educational content. The build system handles the technical complexity!

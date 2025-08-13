@@ -1,5 +1,5 @@
 # geogfm.training.optimizer — Optimizer builder (Week 5): AdamW by default, Adam optional.
-# Tangled on 2025-08-12T17:19:40
+# Tangled on 2025-08-12T18:58:58
 
 from __future__ import annotations
 from typing import Dict, Any

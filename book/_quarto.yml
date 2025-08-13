@@ -13,6 +13,7 @@ project:
     - "!*_PLAN.md"
 
 website:
+  site-url: https://kellycaylor.github.io/geoAI
   navbar:
     title: "GEOG 288KC"
     right:
@@ -112,14 +113,14 @@ website:
     background: dark
     right: This website is built with [{{< fa brands github title="the github octocat logo" >}}](https://github.com/environmental-data-science/geog-288kc-geospatial-foundation-models) and [Quarto](https://quarto.org/)
     left: |
-      <img src="{{< path images/geog-logo.png >}}" alt="The Department of Geography logo" width="250"/>
+      ![Department of Geography logo](/images/geog-logo.png){.img-fluid width=250px}
 format:
   html:
     theme: meds-website-styles.scss
     toc: true
     title-block-banner: true
     page-layout: full
-    code-fold: true
+    code-fold: false
     code-tools: true
     jupyter: geoai
     # note: keep filters at project level for reliability across engines
@@ -127,6 +128,7 @@ format:
 filters:
   - fontawesome
   - tools/filters/tangle.py   # run your Python filter
+  - path-shortcode   # handle {{< path >}} shortcodes
 
 tangle-root: ..
 

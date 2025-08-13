@@ -6,7 +6,6 @@ format:
   html:
     toc: true
     toc-depth: 3
-    code-fold: true
 ---
 
 ## Introduction
@@ -72,7 +71,7 @@ This week’s work in the broader GFM plan.
 # Exposes normalization and patchify transforms
 ```
 
-### 1) Typed Configs
+### 1) Typed Configs → `geogfm/core/config.py`
 
 ```{python}
 #| tangle: geogfm/core/config.py
@@ -118,7 +117,7 @@ class TrainConfig:
     device: str = "cpu"
 ```
 
-### 2) Normalization Transform
+### 2) Normalization Transform → `geogfm/data/transforms/normalization.py`
 
 ```{python}
 #| tangle: geogfm/data/transforms/normalization.py
@@ -168,7 +167,7 @@ def zscore_normalize(data: Array, global_mean: Optional[Array] = None, global_st
 ```
 
 
-### 4) Minimal STAC-like Dataset
+### 4) Minimal STAC-like Dataset → `geogfm/data/datasets/stac_dataset.py`
 
 ```{python}
 #| tangle: geogfm/data/datasets/stac_dataset.py
@@ -225,7 +224,7 @@ class StacLikeDataset(Dataset):
         return torch.from_numpy(arr)
 ```
 
-### 5) DataLoader Builders
+### 5) DataLoader Builders → `geogfm/data/loaders.py`
 
 ```{python}
 #| tangle: geogfm/data/loaders.py

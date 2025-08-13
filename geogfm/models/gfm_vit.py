@@ -1,5 +1,5 @@
 # geogfm.models.gfm_vit — GeoViT backbone (Week 3). PatchEmbedding + sinusoidal positional encodings + TransformerBlock stack.
-# Tangled on 2025-08-12T17:20:17
+# Tangled on 2025-08-12T18:59:32
 
 from __future__ import annotations
 from dataclasses import dataclass

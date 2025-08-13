@@ -4,11 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is a **geoAI** repository for developing **GEOG 288KC: Geospatial Foundation Models and Applications** (Fall 2025). The repository contains a template structure and build system for creating educational materials on state-of-the-art geospatial foundation models (GFMs) for remote sensing and environmental monitoring.
+This is a **geoAI** repository for developing **GEOG 288KC: Geospatial Foundation Models and Applications** (Fall 2025). The repository contains course materials and build system for creating educational content on state-of-the-art geospatial foundation models (GFMs) for remote sensing and environmental monitoring.
 
 **Repository Structure**:
-- **`example_course/`**: Complete template structure from EDS 217 showing how to organize course materials using Quarto
-- **Target**: Adapt this template to create GEOG 288KC course materials following the syllabus structure
+- **`book/`**: Main course materials built with Quarto containing chapters, cheatsheets, and examples
+- **`geogfm/`**: Python package with core modules for geospatial ML
+- **`installation/`**: Setup guides and environment configuration files
 
 ## Course Context (GEOG 288KC)
 
@@ -34,37 +35,37 @@ This is a **geoAI** repository for developing **GEOG 288KC: Geospatial Foundatio
 ### Building and Documentation
 ```bash
 # Build the course website (incremental build - only changed files)
-python example_course/build_docs.py
+cd book
+python build_docs.py
 
 # Full rebuild of all files
-python example_course/build_docs.py --full
+python build_docs.py --full
 
 # Build and serve locally for preview
-python example_course/build_docs.py --serve
+python build_docs.py --serve
 
 # Clean intermediate files (HTML, _files/, etc.) from course materials
-python example_course/build_docs.py --clean
+python build_docs.py --clean
 
 # Clean and full rebuild
-python example_course/build_docs.py --clean --full
+python build_docs.py --clean --full
 ```
 
 ### Environment Management
 ```bash
 # Create the conda environment for the course
-cd example_course
 conda env create -f environment.yml
 
 # Or for faster installation with mamba
 mamba env create -f environment.yml
 
 # Activate the environment (build script does this automatically)
-conda activate eds217_2025
+conda activate geoAI
 ```
 
 ### Manual Quarto Commands
 ```bash
-cd example_course
+cd book
 quarto render                    # Build entire site
 quarto preview                   # Build and serve locally
 quarto render specific_file.qmd  # Build specific file
@@ -73,37 +74,38 @@ quarto render specific_file.qmd  # Build specific file
 ## Project Architecture
 
 ### High-Level Structure
-- **`example_course/`**: Complete Python course materials built with Quarto
+- **`book/`**: Main course materials built with Quarto
+- **`geogfm/`**: Python package for geospatial foundation models
 - **Root level**: Container repository for geoAI educational content
 
-### Template Structure (example_course/)
-The template provides a complete organizational framework that should be adapted for GEOG 288KC:
+### Course Structure (book/)
+The course materials are organized for GEOG 288KC's weekly format:
 
-**Current Template Structure**:
-- **`course-materials/`**: All teaching content organized by type:
-  - `day1.qmd` through `day9.qmd`: Daily lesson plans and overviews
-  - `interactive-sessions/`: Live coding sessions and demonstrations  
-  - `coding-colabs/`: Collaborative coding exercises
-  - `lectures/`: Formal lecture content (.ipynb and .qmd files)
-  - `live-coding/`: Real-time coding demonstrations with student data
-  - `eod-practice/`: End-of-day practice exercises
-  - `answer-keys/`: Solution files for exercises
-  - `cheatsheets/`: Quick reference materials
+**Current Course Structure**:
+- **`chapters/`**: Weekly session content (c01 through c10):
+  - Foundation model architectures and deep learning
+  - Geospatial data foundations and preprocessing
+  - Spatial-temporal attention mechanisms
+  - Complete GFM architecture implementation
+  - Training, evaluation, and deployment strategies
+- **`extras/`**: Supporting materials organized by type:
+  - `cheatsheets/`: Quick reference materials for tools and concepts
+  - `examples/`: Practical implementation examples
+  - `projects/`: Templates for proposals and MVP presentations
+  - `resources/`: Course resources and references
 - **`docs/`**: Generated static website (GitHub Pages output)
-- **`nbs/`**: Additional Jupyter notebooks (excluded from builds)
-- **`data/`**: Course datasets and data generation scripts
+- **`data/`**: Course datasets and sample files
 - **`images/`**: Course imagery and visual assets
 
-**Adaptation for GEOG 288KC**:
-- Replace daily structure with 10 weekly modules (Week 0-10)
-- Focus content on geospatial foundation models instead of Python fundamentals
-- Maintain project-driven approach with deliverable tracking
-- Include resources for Earth Engine, TorchGeo, and UCSB AI Sandbox
+**Key Features**:
+- Project-driven approach with deliverable tracking (Proposals, MVPs, Final Presentations)
+- Integration with UCSB AI Sandbox computational environment
+- Focus on hands-on labs with geospatial foundation models, Earth Engine, and TorchGeo
 
 ### Build System
 The course uses a sophisticated Python-based build system (`build_docs.py`) with:
 - **Incremental builds**: Only rebuilds changed files using git diff
-- **Smart environment handling**: Automatically activates `eds217_2025` conda environment
+- **Smart environment handling**: Automatically activates `geoAI` conda environment
 - **Progress tracking**: Detailed build progress with timing and ETA
 - **Cleaning capabilities**: Removes intermediate files to prevent conflicts
 
@@ -116,18 +118,18 @@ The course uses a sophisticated Python-based build system (`build_docs.py`) with
 ## Development Workflow
 
 ### Standard Content Updates
-1. Edit `.qmd` or `.ipynb` files in `example_course/course-materials/`
-2. Run `python build_docs.py --serve` for quick preview
+1. Edit `.qmd` or `.ipynb` files in `book/chapters/` or `book/extras/`
+2. Run `cd book && python build_docs.py --serve` for quick preview
 3. Review changes in browser
 4. Commit and push changes
 
 ### Major Changes or Troubleshooting
-1. Run `python build_docs.py --clean --full` for complete rebuild
+1. Run `cd book && python build_docs.py --clean --full` for complete rebuild
 2. Check `docs/` directory for correct output
 3. Verify all course materials render properly
 
 ### Environment Requirements
-- **Python 3.11** with pandas, numpy, matplotlib, seaborn, jupyter, jupyterlab
+- **Python 3.11+** with pandas, numpy, matplotlib, seaborn, jupyter, jupyterlab
 - **Quarto** for static site generation
 - **Git** for incremental build detection
 - **Conda/Mamba** for environment management
@@ -140,32 +142,28 @@ The course uses a sophisticated Python-based build system (`build_docs.py`) with
 - Access to UCSB AI Sandbox for computational resources
 
 **Technical Requirements**:
-- **Python 3.11** with pandas, numpy, matplotlib, seaborn, jupyter, jupyterlab (for example_course materials)
+- **Python 3.11+** with PyTorch, Earth Engine, TorchGeo, and ML libraries
 - **Quarto** for static site generation (if building documentation)
 - **Git** for version control and incremental builds
 - **Conda/Mamba** for environment management
-- **PyTorch, Earth Engine, TorchGeo** likely needed for main course work
+- **CUDA-capable GPU** recommended for model training (available via UCSB AI Sandbox)
 
 ## Development Approach
 
-**Template-Based Development**:
-- Use `example_course/` as the structural template for building GEOG 288KC materials
-- The sophisticated build system and Quarto setup can be directly reused
-- Adapt content organization from daily lessons to weekly modules
-- Maintain the same development workflow and build commands
-
 **Content Development Strategy**:
-- Week-by-week content development following the syllabus timeline
+- Week-by-week content development following the syllabus timeline (Weeks 0-10)
 - Project-centric approach with deliverable milestones (Proposals, MVPs, Final Presentations)
 - Integration with UCSB AI Sandbox computational environment
-- Focus on hands-on labs with geospatial foundation models
+- Focus on hands-on labs with geospatial foundation models, Earth Engine, and TorchGeo
+- Maintain code visibility in chapter content (no code folding for instructional materials)
 
 ## Important Notes
 
-- The `example_course/` serves as a complete template for organizing and building GEOG 288KC course materials
-- The build system (`build_docs.py`) can be reused as-is for the new course
-- Course content should focus on geospatial foundation models, Earth Engine, TorchGeo, and cloud-based analysis
+- The `book/` directory contains all course materials organized for GEOG 288KC
+- The build system (`build_docs.py`) handles environment activation and incremental builds
+- Course content focuses on geospatial foundation models, Earth Engine, TorchGeo, and cloud-based analysis
 - Projects are central - students work on applied GFM projects throughout the semester with specific deliverable deadlines
 - Course uses UCSB AI Sandbox for computational resources
 - Assessment is pass/fail based on attendance, participation, and deliverable submission
 - Students may optionally submit projects to Hugging Face or GitHub for broader visibility
+- Chapter content should have code blocks visible (no code folding) for better instructional clarity

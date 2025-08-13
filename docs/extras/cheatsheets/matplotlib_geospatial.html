@@ -389,7 +389,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-to-geospatial-plotting" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-geospatial-plotting">Introduction to Geospatial Plotting</h2>
 <p>Matplotlib provides powerful tools for visualizing geospatial data, including satellite imagery, raster data, and cartographic projections.</p>
-<div id="0d8c1e10" class="cell" data-execution_count="1">
+<div id="fba9c743" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.patches <span class="im">as</span> patches</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.colors <span class="im">import</span> LinearSegmentedColormap, Normalize, LogNorm</span>
@@ -415,7 +415,7 @@ Cartopy available: ✗</code></pre>
 <h2 class="anchored" data-anchor-id="basic-satellite-imagery-visualization">Basic Satellite Imagery Visualization</h2>
 <section id="single-band-plotting" class="level3">
 <h3 class="anchored" data-anchor-id="single-band-plotting">Single band plotting</h3>
-<div id="22bff818" class="cell" data-execution_count="2">
+<div id="88f079f3" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_sample_satellite_data():</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Generate sample multi-band satellite data"""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -511,7 +511,7 @@ Cartopy available: ✗</code></pre>
 </section>
 <section id="multi-band-comparison" class="level3">
 <h3 class="anchored" data-anchor-id="multi-band-comparison">Multi-band comparison</h3>
-<div id="616f2ec7" class="cell" data-execution_count="3">
+<div id="7faea78b" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_band_comparison(bands, band_names, ncols<span class="op">=</span><span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>)):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plot multiple bands for comparison"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -578,7 +578,7 @@ Cartopy available: ✗</code></pre>
 <h2 class="anchored" data-anchor-id="rgb-and-false-color-composites">RGB and False Color Composites</h2>
 <section id="rgb-composite" class="level3">
 <h3 class="anchored" data-anchor-id="rgb-composite">RGB composite</h3>
-<div id="fbca55fe" class="cell" data-execution_count="4">
+<div id="850b6f97" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_rgb_composite(red, green, blue, enhance<span class="op">=</span><span class="va">True</span>, gamma<span class="op">=</span><span class="fl">1.0</span>):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create RGB composite from individual bands"""</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -648,7 +648,7 @@ Cartopy available: ✗</code></pre>
 </section>
 <section id="multiple-composite-comparison" class="level3">
 <h3 class="anchored" data-anchor-id="multiple-composite-comparison">Multiple composite comparison</h3>
-<div id="d4a71797" class="cell" data-execution_count="5">
+<div id="11f8cc72" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_composite_comparison(bands, composite_configs, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>)):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plot multiple composite configurations"""</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -717,7 +717,7 @@ Cartopy available: ✗</code></pre>
 <h2 class="anchored" data-anchor-id="advanced-visualization-techniques">Advanced Visualization Techniques</h2>
 <section id="spectral-indices-calculation-and-plotting" class="level3">
 <h3 class="anchored" data-anchor-id="spectral-indices-calculation-and-plotting">Spectral indices calculation and plotting</h3>
-<div id="b3f92f2a" class="cell" data-execution_count="6">
+<div id="6a61b234" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_ndvi(nir, red):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Calculate Normalized Difference Vegetation Index"""</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (nir <span class="op">-</span> red) <span class="op">/</span> (nir <span class="op">+</span> red <span class="op">+</span> <span class="fl">1e-8</span>)  <span class="co"># Add small value to avoid division by zero</span></span>
@@ -780,7 +780,7 @@ Cartopy available: ✗</code></pre>
 </section>
 <section id="thematic-classification-visualization" class="level3">
 <h3 class="anchored" data-anchor-id="thematic-classification-visualization">Thematic classification visualization</h3>
-<div id="439081e4" class="cell" data-execution_count="7">
+<div id="2043ace1" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_landcover_classification(indices, rgb_composite):</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create simple land cover classification"""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -890,7 +890,7 @@ Bare Soil: 51,932 pixels (19.8%)</code></pre>
 <h2 class="anchored" data-anchor-id="cartographic-projections-with-cartopy">Cartographic Projections with Cartopy</h2>
 <section id="basic-map-projections" class="level3">
 <h3 class="anchored" data-anchor-id="basic-map-projections">Basic map projections</h3>
-<div id="3706f70b" class="cell" data-execution_count="8">
+<div id="fc797328" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_different_projections(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>)):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Demonstrate different map projections"""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -3039,7 +3039,7 @@ invalid value encountered in create_collection
 </section>
 <section id="regional-focus-maps" class="level3">
 <h3 class="anchored" data-anchor-id="regional-focus-maps">Regional focus maps</h3>
-<div id="b027de34" class="cell" data-execution_count="9">
+<div id="087c5585" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_regional_satellite_data(center_lon<span class="op">=</span><span class="dv">0</span>, center_lat<span class="op">=</span><span class="dv">45</span>, extent<span class="op">=</span><span class="dv">20</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">8</span>)):</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plot regional satellite data with geographic context"""</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -3234,7 +3234,7 @@ invalid value encountered in create_collection
 <h2 class="anchored" data-anchor-id="multi-panel-complex-layouts">Multi-panel Complex Layouts</h2>
 <section id="dashboard-style-visualization" class="level3">
 <h3 class="anchored" data-anchor-id="dashboard-style-visualization">Dashboard-style visualization</h3>
-<div id="e353ea79" class="cell" data-execution_count="10">
+<div id="bcf81372" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_satellite_dashboard(bands, indices, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">12</span>)):</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create a comprehensive satellite data dashboard"""</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -3337,7 +3337,7 @@ invalid value encountered in create_collection
 <span id="cb22-100"><a href="#cb22-100" aria-hidden="true" tabindex="-1"></a><span class="co"># Create dashboard</span></span>
 <span id="cb22-101"><a href="#cb22-101" aria-hidden="true" tabindex="-1"></a>dashboard_fig <span class="op">=</span> create_satellite_dashboard(bands, indices)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/bs/x9tn9jz91cv6hb3q6p4djbmw0000gn/T/ipykernel_23215/2054560415.py:95: UserWarning:
+<pre><code>/var/folders/bs/x9tn9jz91cv6hb3q6p4djbmw0000gn/T/ipykernel_53947/2054560415.py:95: UserWarning:
 
 This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
 </code></pre>
@@ -3353,7 +3353,7 @@ This figure includes Axes that are not compatible with tight_layout, so results 
 </section>
 <section id="time-series-visualization" class="level3">
 <h3 class="anchored" data-anchor-id="time-series-visualization">Time series visualization</h3>
-<div id="56b4962c" class="cell" data-execution_count="11">
+<div id="e505514e" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_time_series_plot(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>)):</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create time series visualization of satellite indices"""</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -3447,7 +3447,7 @@ This figure includes Axes that are not compatible with tight_layout, so results 
 <h2 class="anchored" data-anchor-id="publication-ready-styling">Publication-Ready Styling</h2>
 <section id="professional-styling" class="level3">
 <h3 class="anchored" data-anchor-id="professional-styling">Professional styling</h3>
-<div id="a1f4dc3b" class="cell" data-execution_count="12">
+<div id="288eeccf" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_publication_figure(bands, indices, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">8</span>)):</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create publication-ready figure with professional styling"""</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -3603,7 +3603,7 @@ This figure includes Axes that are not compatible with tight_layout, so results 
 <h2 class="anchored" data-anchor-id="custom-colormaps-and-advanced-styling">Custom Colormaps and Advanced Styling</h2>
 <section id="custom-colormap-creation" class="level3">
 <h3 class="anchored" data-anchor-id="custom-colormap-creation">Custom colormap creation</h3>
-<div id="f929b265" class="cell" data-execution_count="13">
+<div id="c446a87a" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_custom_colormaps():</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create custom colormaps for different geospatial applications"""</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -3830,7 +3830,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/kellycaylor\.github\.io\/geoAI");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
@@ -5105,7 +5105,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
+<figcaption>Department of Geography logo</figcaption>
+</figure>
+</div>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

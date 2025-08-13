@@ -29,7 +29,7 @@ STAC_ARGS = --stac-url $(STAC_URL) --collections $(COLLS) \
             --stratify $(STRATIFY)
 
 # -------- targets --------
-.PHONY: help env install install-dev kernelspec test docs docs-full preview clean data-dryrun data checksums data-course-dryrun data-course geogfm-clean geogfm-clean-all
+.PHONY: help env install install-dev kernelspec test test-shortcode docs docs-full docs-one preview clean data-dryrun data checksums data-course-dryrun data-course geogfm-clean geogfm-clean-all
 
 help:
 	@echo "Targets:"
@@ -40,6 +40,7 @@ help:
 	@echo "  make test          # run pytest"
 	@echo "  make docs          # incremental docs build"
 	@echo "  make docs-full     # full docs build (clears cache)"
+	@echo "  make docs-one FILE=path.qmd  # render only the specified file (or FILES=\"a.qmd b.qmd\")"
 	@echo "  make bootstrap-lib # render foundational pages in order"
 	@echo "  make preview       # quarto preview (in book/)"
 	@echo "  make clean         # remove data/out or clean docs intermediates"
@@ -82,11 +83,23 @@ test:
 	  fi; \
 	fi
 
+test-shortcode:  ## Test path shortcode filter functionality
+	@echo "🧪 Testing path shortcode filter..."
+	@pytest -xvs tests/test_path_shortcode_filter.py
+
 docs:
 	cd book && $(PY) build_docs.py
 
 docs-full:
 	cd book && $(PY) build_docs.py --full
+
+docs-one:
+	@if [ -z "$(FILE)$(FILES)" ]; then \
+	  echo "Usage: make docs-one FILE=chapters/your_file.qmd"; \
+	  echo "   or: make docs-one FILES=\"chapters/a.qmd chapters/b.qmd\""; \
+	  exit 2; \
+	fi
+	cd book && $(PY) build_docs.py --only $(if $(FILES),$(FILES),$(FILE))
 
 bootstrap-lib:
 	cd book && $(PY) build_docs.py --bootstrap

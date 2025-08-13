@@ -8,7 +8,6 @@ format:
   html:
     toc: true
     toc-depth: 3
-    code-fold: true
 ---
 
 ## Course Roadmap Mapping
@@ -31,7 +30,7 @@ This week’s work in the broader GFM plan.
   - Reconstruction of masked patches → `ReconstructionHead`
   - Loss on masked tokens only → `modules/losses/mae_loss.py`
 
-### 1) MAE Loss (masked MSE)
+### 1) MAE Loss (masked MSE) → `geogfm/modules/losses/mae_loss.py`
 
 ```{python}
 #| tangle: geogfm/modules/losses/mae_loss.py
@@ -56,7 +55,7 @@ def masked_mse_loss(pred: torch.Tensor, target: torch.Tensor, mask: torch.Tensor
     return (diff ** 2).mean()
 ```
 
-### 2) Masked Autoencoder Wrapper
+### 2) Masked Autoencoder Wrapper → `geogfm/models/gfm_mae.py`
 
 ```{python}
 #| tangle: geogfm/models/gfm_mae.py

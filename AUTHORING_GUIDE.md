@@ -1,215 +1,207 @@
-# Authoring Guide for GEOG 288KC (geoAI)
+# Quick Start Guide for Course Authors
 
-This guide outlines best practices and code patterns for developing interactive sessions, cheatsheets, lectures, and other chapters in this repository.
+*A practical guide for instructional staff to edit GEOG 288KC course materials*
 
-Goals: high-clarity pedagogy, reproducible execution, fast local rendering, and consistent outputs across environments (AI Sandbox, local laptops, CI).
+## 🚀 TLDR - Get Started in 3 Steps
 
-## Contents
-- Content types and structure
-- Quarto authoring guidelines
-- Deterministic and reproducible code
-- Data handling and sample datasets
-- Device and environment patterns (CPU/MPS/CUDA)
-- Visualization and logging
-- Performance and execution time
-- Common pitfalls and anti-patterns
+1. **Setup Environment**: `make setup` (installs everything you need)
+2. **Edit Content**: Modify `.qmd` files in `book/chapters/` and `book/extras/`
+3. **Preview Changes**: `make preview` (builds and opens in browser)
+
+Need help? Check [TROUBLESHOOTING.md](installation/TROUBLESHOOTING.md) or ask on Slack.
 
 ---
 
-## Content Types and Structure
+## 🎯 What You Need to Know
 
-- Interactive sessions (hands-on): weekly pages under `chapters/` (e.g., `chapters/c0N-<topic>.qmd`)
-  - Sections: Introduction → Setup → Data → Core tasks → Wrap-up
-  - Include runnable, minimal examples with clear printed outputs
-- Cheatsheets: `chapters/extras/cheatsheets/<topic>.qmd`
-  - Quick reference, copy-paste friendly; prioritize short code blocks and tables
-- Weekly materials: `chapters/c0N-*.qmd`
-  - Link to the corresponding interactive session; no timing/scheduling
-- Lectures: `chapters/extras/lectures/lectureN_<topic>.qmd`
-  - Conceptual content; minimal execution; use figures/tables/callouts
+### Our Build System (The Magic)
+- **Quarto** converts `.qmd` files → HTML website
+- **Tangle filter** extracts code from `.qmd` → actual Python files in `geogfm/`  
+- **Build pipeline** processes everything → `docs/` folder for GitHub Pages
+
+**Why this matters**: When you edit course content, you're simultaneously:
+1. Creating instructional material (HTML pages)
+2. Building the actual Python package (`geogfm/`) students will use
+
+### Key Concepts for Non-Quarto Users
+- **`.qmd` files** = Markdown + executable Python code blocks
+- **Code blocks with `#| tangle:`** = get extracted to real Python files
+- **Rendered site** = lives in `docs/` and gets pushed to GitHub Pages
+- **`make` commands** = our shortcuts for common tasks
 
 ---
 
-## Quarto Authoring Guidelines
+## 📁 File Structure You Care About
 
-- Executable code blocks are for functional, instructive code only; use callouts/tables for narrative or pseudo-code
-- Prefer:
-  - `toc: true`, `toc-depth: 3` on longer pages
-  - `code-fold: true|show` based on context
-- Use callouts for emphasis:
-  - `::: {.callout-note}`, `.tip`, `.warning`, `.important`
-- Keep code chunks small and focused; avoid long, monolithic cells
-- Avoid embedding meeting times/schedules in weekly docs; timing lives only in the syllabus
-- Follow site navigation and file organization; don’t craft ad‑hoc menus inside pages
-
-### Tangling code to repo files (literate export)
-
-To keep pedagogy first while avoiding copy‑paste into `geogfm/`, you can export code blocks from `.qmd` during render using the `tangle` filter (already enabled in `book/_quarto.yml`).
-
-Two ways to opt‑in per code chunk:
-
-1) Attributes in the fence header (preferred for clarity):
-
-````
-```{python tangle="../geogfm/data/tiles.py" tangle-append="true"}
-from pathlib import Path
-
-def tiles_from_aoi(aoi_path: str, patch_size: int):
-    ...
 ```
-````
-
-2) Hash‑pipe directives inside the cell:
-
-```python
-#| tangle: ../geogfm/data/tiles.py
-#| tangle-append: true
-from pathlib import Path
-
-def tiles_from_aoi(aoi_path: str, patch_size: int):
-    ...
+book/
+├── chapters/           # Weekly sessions (c01-*, c02-*, etc.)
+├── extras/
+│   ├── cheatsheets/   # Quick reference materials  
+│   ├── examples/      # Practical examples
+│   └── projects/      # Project templates
+└── _quarto.yml        # Site configuration
 ```
 
-Options:
-- `tangle`: relative path (from the current `.qmd` directory)
-- `tangle-append`: `true|false` (append vs overwrite)
-- `tangle-marker`: custom first-line header comment
-
-Best practices:
-- Keep exported cells small and composable; mirror import boundaries you’d expect in modules
-- Use a reset block (no append) first, then append in subsequent blocks for stable ordering
-- Printed outputs in the page should remain minimal; exports are independent of visible output
-- Never tangle to absolute paths; keep targets within this repo (e.g., `../geogfm/...`)
+**Most of your edits happen in `book/chapters/`**
 
 ---
 
-## Deterministic and Reproducible Code
+## ⚡ Essential Commands
 
-Always write code to generate consistent output across environments:
+```bash
+# First time setup
+make setup              # Install conda env + register Jupyter kernel
 
-- Set fixed seeds at the start of executable sections:
+# Daily workflow  
+make preview            # Build + serve locally (auto-refreshes)
+make docs              # Quick build (only changed files)
+make docs-full         # Complete rebuild (when things break)
 
+# Troubleshooting
+make clean             # Clear cache/temp files
+make kernelspec        # Fix Jupyter kernel issues
+```
+
+**Pro tip**: Use `make preview` while editing - it rebuilds automatically when you save files.
+
+---
+
+## ✏️ Editing Course Content
+
+### Basic .qmd Structure
+```markdown
+---
+title: "Your Session Title"  
+subtitle: "Week N: Specific Topic"
+jupyter: geoai
+---
+
+## Section Heading
+
+Regular markdown text, explanations, etc.
+
+### Code Block → `geogfm/some/module.py`
+
+```{python}
+#| tangle: geogfm/some/module.py
+# This code gets extracted to the actual Python file
+def some_function():
+    return "Hello from geogfm package!"
+```
+
+More explanation text...
+```
+
+### The Tangle System (Code Extraction)
+
+**What it does**: Code blocks with `#| tangle:` directives get written to real Python files.
+
+**Why it's awesome**: Students see the instructional content AND get a working Python package built from the same source.
+
+**How to use it**:
 ```python
-# Reproducibility seeds
-import os, random
+# This creates/overwrites geogfm/data/loaders.py
+#| tangle: geogfm/data/loaders.py
+
+# This appends to the same file  
+#| tangle: geogfm/data/loaders.py
+#| mode: append
+```
+
+**Section headings**: Always include the target file path in your headings:
+```markdown
+### Data Loaders → `geogfm/data/loaders.py`
+```
+This helps students understand what files they're building.
+
+---
+
+## 🎨 Content Best Practices
+
+### Do ✅
+- **Small, focused code blocks** - one concept per block
+- **Clear section headings** with file paths (e.g., `### Attention Module → geogfm/modules/attention.py`)
+- **Executable examples** that actually work
+- **Fixed random seeds** for reproducible outputs
+- **Relative paths** (`../../data/sample.tif`)
+
+### Avoid ❌
+- **Huge code blocks** - break them up
+- **Absolute paths** (`/Users/yourname/...`)
+- **Time-dependent content** - no "today" or "this week"
+- **Installation commands** in code blocks - use environment setup instead
+
+### Reproducible Code Pattern
+```python
+# Always start with this for consistent results
 import numpy as np
+import torch
 
 SEED = 42
-os.environ["PYTHONHASHSEED"] = str(SEED)
-random.seed(SEED)
 np.random.seed(SEED)
-
-try:
-    import torch
-    torch.manual_seed(SEED)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(SEED)
-    # Enable (best-effort) determinism where feasible
-    try:
-        torch.use_deterministic_algorithms(True)
-    except Exception:
-        pass
-except ImportError:
-    pass
+torch.manual_seed(SEED)
 ```
 
-- Avoid time-dependent randomness; do not rely on clock or dataset order without fixing seeds
-- For demos that rely on randomness (e.g., masks), show the seed and print key shapes/summaries
-- If using parallel data loaders, fix `num_workers` or document differences
+---
+
+## 🐛 Common Issues & Solutions
+
+| Problem | Solution |
+|---------|----------|
+| "Kernel not found" | `make kernelspec` |
+| Build fails | `make clean && make docs-full` |
+| Code imports fail | `pip install -e .` (in repo root) |
+| Preview not updating | Check for syntax errors in your `.qmd` |
+| Tangle not working | Verify `#\| tangle:` syntax and file paths |
 
 ---
 
-## Data Handling and Sample Datasets
+## 🔍 Testing Your Changes
 
-- Prefer small sample data in `data/` and load via `Path("../../data")` from within chapters
-- If downloading, use stable URLs (e.g., raw GitHub) and cache to `data/`:
+### Before Committing
+1. **Local preview works**: `make preview` 
+2. **Full build passes**: `make docs-full`
+3. **Code imports correctly**: Test in Python/Jupyter
+4. **No broken links**: Check all relative links work
 
-```python
-from pathlib import Path
-import urllib.request
-
-data_dir = Path("../../data")
-data_dir.mkdir(exist_ok=True)
-url = "https://raw.githubusercontent.com/kellycaylor/geoAI/main/data/landcover_sample.tif"
-sample_file = data_dir / "landcover_sample.tif"
-if not sample_file.exists():
-    urllib.request.urlretrieve(url, sample_file)
+### Quick Test Pattern
+```bash
+# Make your edits
+make preview          # Check in browser
+make docs-full        # Verify clean build  
+git add . && git commit -m "Update session X"
 ```
 
-- When realistic data is too large/unavailable, generate synthetic but plausible data and document the assumptions
-- Never write outside the repo or to absolute paths; keep all outputs ephemeral or under `data/` (small) or `docs/` (build targets)
-- Attribute data sources in `data/README.md` when adding new assets
+---
+
+## 📚 Getting Help
+
+- **Setup Issues**: [installation/TROUBLESHOOTING.md](installation/TROUBLESHOOTING.md)
+- **Quarto Basics**: [Quarto Guide](https://quarto.org/docs/guide/)
+- **Build Problems**: Check `book/build_docs.py --help`
+- **Tangle Filter**: See examples in existing `chapters/*.qmd` files
+- **Questions**: Ask Kelly or Anna, or post in course Slack
 
 ---
 
-## Device and Environment Patterns (CPU/MPS/CUDA)
+## 💡 Quick Reference
 
-Make code run anywhere; degrade gracefully:
+### File Types
+- **`.qmd`** - Course content (Quarto markdown + Python)
+- **`.py`** - Generated package files (don't edit directly!)
+- **`.yml`** - Configuration files
 
-```python
-try:
-    import torch
-    if torch.cuda.is_available():
-        device = torch.device("cuda")
-    elif getattr(torch.backends, "mps", None) and torch.backends.mps.is_available():
-        device = torch.device("mps")
-    else:
-        device = torch.device("cpu")
-except ImportError:
-    device = "cpu"
+### Important Paths  
+- `book/chapters/` - Your main editing area
+- `geogfm/` - Generated Python package  
+- `docs/` - Generated website (don't edit)
+- `data/` - Sample datasets
 
-print(f"Using device: {device}")
-```
+### Make Commands
+- `make setup` - Initial setup
+- `make preview` - Edit + preview workflow  
+- `make docs` - Quick build
+- `make clean` - Fix problems
 
-- Avoid hard failures on missing GPU; reduce batch sizes when on CPU
-- Keep memory usage low; prefer small tensors/examples in executed cells
-
----
-
-## Visualization and Logging
-
-- Fix figure sizes and styles for consistent rendering:
-
-```python
-import matplotlib.pyplot as plt
-plt.rcParams.update({"figure.figsize": (6, 4), "figure.dpi": 110})
-```
-
-- Print concise summaries (shapes, dtypes, min/max) instead of entire arrays
-- Use deterministic colormaps and limits when appropriate (e.g., `vmin`, `vmax`)
-
----
-
-## Performance and Execution Time
-
-- Keep individual chunk runtime under ~10–15 seconds where possible
-- Prefer precomputed constants or small subsamples for demonstration
-- Avoid network calls inside many separate chunks; download once then reuse
-- Do not spawn background jobs or servers in executed chunks within course pages
-
----
-
-## Common Pitfalls and Anti‑patterns
-
-- Hard‑coded absolute paths (e.g., `/Users/...`) — use `Path` and repo‑relative paths
-- Non‑deterministic examples — always fix seeds and parameters
-- Large outputs in the page — summarize; hide verbose logs
-- Installing packages at render time — rely on environment
-- Writing artifacts outside `docs/` during render — let Quarto manage outputs
-- Ignoring site excludes — builds must respect `_quarto.yml` render rules
-
----
-
-## Quick Checklist (per page)
-
-- [ ] Titles/subtitles match course structure
-- [ ] Functional code only in executable chunks; narrative in callouts/tables
-- [ ] Seeds set; outputs deterministic across runs
-- [ ] Data loaded from `data/` or generated reproducibly
-- [ ] Device handling works on CPU-only machines
-- [ ] Figures have fixed sizes and reproducible appearance
-- [ ] Chunk runtimes reasonable; no heavy downloads in loops
-- [ ] Links and paths are relative; images resolve
-
-
-Happy authoring! Keep materials clear, minimal, and reproducible.
+**Remember**: The build system handles the complexity. Focus on creating clear, executable educational content!

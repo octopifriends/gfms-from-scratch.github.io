@@ -576,6 +576,11 @@ def parse_arguments():
         nargs="*",
         help="Optional explicit list of .qmd pages to render in order (relative to book dir)"
     )
+    parser.add_argument(
+        "--only",
+        nargs="+",
+        help="Render only the specified file(s) (paths relative to the book directory)"
+    )
     return parser.parse_args()
 
 def serve_locally():
@@ -643,14 +648,17 @@ def main():
             clear_quarto_cache()
         
         files_to_build = None
-        if not args.full:
+        # Highest precedence: explicit list provided via --only
+        if args.only:
+            files_to_build = args.only
+        elif not args.full:
             # Determine which files need to be built
             changed_files = get_changed_files()
             if changed_files is not None:
                 files_to_build = changed_files
                 if not files_to_build:
                     print("✅ No files have changed since last commit - skipping build")
-                    print("   Use --full flag to force a complete rebuild")
+                    print("   Use --full flag to force a complete rebuild or --only to render specific file(s)")
                     if args.clean:
                         clean_intermediate_files()
                     return
@@ -658,7 +666,9 @@ def main():
         if args.clean:
             clean_intermediate_files()
         
-        clean_docs()
+        # Only clean the site output directory for full builds; keep it for incremental or --only renders
+        if args.full:
+            clean_docs()
         # Always bootstrap foundational pages first on full builds to avoid ordering issues
         if args.full:
             from tools.bootstrap_lib import bootstrap
@@ -682,10 +692,10 @@ def main():
             print("")
             print("🌐 To preview locally, you can run:")
             print("   quarto preview")
-            print("   Or use: python build_docs.py --serve")
+            print("   Or use: make preview")
             if not args.full:
                 print("")
-                print("💡 Tip: Use --full flag for complete rebuild when needed")
+                print("💡 Tip: Use make docs-full for complete rebuild when needed")
         
     except KeyboardInterrupt:
         print("\n❌ Build cancelled by user")

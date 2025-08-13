@@ -1,230 +1,282 @@
-# Building Geospatial Foundation Models
+# GEOG 288KC: Geospatial Foundation Models
 
-A complete educational resource and implementation framework for building geospatial foundation models (GFMs) from scratch.
+*Learn to build geospatial foundation models from scratch through hands-on implementation*
 
-## 📁 Repository Structure
-
-This repository is organized to support both **educational content** (book materials) and **practical implementation** (GFM code):
-
-```
-geoAI/
-├── book/                           # 📖 Educational content (course → book)
-│   ├── chapters/                   # 📚 Chapters (weeks) and supporting materials
-│   │   ├── c0X-*.qmd              # 💻 Weekly interactive sessions (10 weeks)
-│   │   └── extras/                # 📖 Appendix materials
-│   │       ├── cheatsheets/       # 📋 Quick reference guides
-│   │       ├── examples/          # 🎯 Practical examples
-│   │       ├── lectures/          # 🎓 Presentation materials  
-│   │       ├── projects/          # 📁 Project templates
-│   │       └── resources/         # 📚 Additional resources
-│   ├── docs/                      # 🌐 Compiled website
-│   ├── images/                    # 🖼️ Site images
-│   ├── index.qmd                  # 🏠 Homepage
-│   ├── _quarto.yml               # ⚙️ Book configuration
-│   └── build_docs.py             # 🔨 Book building script
-├── geogfm/                        # 🧠 GFM implementation code
-├── data/                          # 📊 Sample datasets
-├── installation/                  # 🔧 Setup & environment
-└── tests/                         # 🧪 Test suite
-```
-
-## 🚀 Quick Start
-
-### For Students/Learners
-
-1. **View the book online**: [Building Geospatial Foundation Models](https://kellycaylor.github.io/geoAI)
-2. **Set up your environment**: Follow the [installation guide](installation/README.md)
-3. **Start with Week 1**: Begin with [geospatial data foundations](book/chapters/c01-geospatial-data-foundations.qmd)
-
-### For Developers
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/kellycaylor/geoAI.git
-   cd geoAI
-   ```
-
-2. **Set up the environment**:
-   ```bash
-   conda env create -f environment.yml
-   conda activate geoAI
-   ```
-
-3. **Install GFM package** (development mode):
-   ```bash
-   # Editable install so tangled code in geogfm/ is importable by Quarto
-   pip install -e .
-
-4. (Optional) Register the Jupyter kernel name used by Quarto:
-   ```bash
-   make kernelspec
-   ```
-
-5. Build docs:
-   ```bash
-   make docs       # incremental
-   make docs-full  # full build (clears cache)
-   ```
-   ```
-
-## 📖 About the Book
-
-This educational resource teaches you to build geospatial foundation models from scratch through a 10-week journey:
-
-### 🏗️ Stage 1: Build Architecture (Weeks 1-3)
-- **Week 1**: Geospatial data foundations
-- **Week 2**: Spatial-temporal attention mechanisms
-- **Week 3**: Complete GFM architecture
-
-### 🚀 Stage 2: Train Models (Weeks 4-7)
-- **Week 4**: Pretraining implementation
-- **Week 5**: Training loop optimization
-- **Week 6**: Model evaluation & analysis
-- **Week 7**: Integration with existing models
-
-### 🎯 Stage 3: Apply & Deploy (Weeks 8-10)
-- **Week 8**: Task-specific fine-tuning
-- **Week 9**: Model deployment
-- **Week 10**: Project presentations
-
-## 🛠️ Building the Book
-
-The book is built using [Quarto](https://quarto.org/) and outputs to the repository's `docs/` folder for GitHub Pages hosting. Quarto executes with the Jupyter kernel named `geoai` (configured in `book/_quarto.yml`) which should point to the `geoAI` conda environment.
-
-```bash
-# Navigate to the book directory
-cd book
-
-make docs-full
-make docs
-python book/build_docs.py --serve
-```
-
-### ✂️ Literate Code Export (Quarto tangle)
-
-You can export code blocks from Quarto pages in `book/` directly into Python modules in the repo during build (similar to nbdev, but with `.qmd`). Tangling is enabled by the custom filter configured in `book/_quarto.yml`.
-
-Basic usage inside a code block (hash‑pipe directives):
-
-```python
-#| tangle: ../geogfm/models/attention.py
-#| mode: append
-def scaled_dot_product(q, k, v):
-    ...
-```
-
-Key options:
-- **tangle**: relative output path (from the `.qmd` file location)
-- **mode**: `append | overwrite | concat` (default: concat)
-
-Recommended pattern for multi-block modules:
-1) First block: `tangle: <path>` + `mode: overwrite` to reset file
-2) Subsequent blocks: `tangle: <same path>` + `mode: append`
-
-Exports occur whenever Quarto renders the page, so remember to commit updated files in `geogfm/` after builds.
-
-### 🧩 Why conda + editable install?
-
-- Heavy geospatial and DL dependencies (GDAL, PROJ, PyTorch) are reliably managed by conda.
-- Keeping `pyproject.toml` minimal avoids pip/conda conflicts; `pip install -e .` only installs the `geogfm` Python package into the active env.
-- As you tangle code from lessons into `geogfm/`, the editable install makes those updates immediately importable during Quarto execution.
-
-## 📊 Building Course Datasets
-
-The repository includes a powerful Makefile-based pipeline for creating reproducible satellite datasets from STAC APIs.
-
-### Key Features
-
-- **STAC Integration**: Query Microsoft Planetary Computer and other STAC APIs
-- **Flexible Filtering**: By AOI, date range, cloud cover, and collection type
-- **Stratified Splitting**: Deterministic train/val/test splits with balanced temporal/spatial distribution
-- **Scene Capping**: Optional downsampling to target dataset sizes for course use
-- **Reproducible**: Fixed random seeds ensure consistent results across builds
-
-### Quick Commands
-
-```bash
-# Preview course dataset (120 scenes total)
-make data-course-dryrun COURSE_TARGET=120
-
-# Build course dataset with scene cap
-make data-course COURSE_TARGET=120
-
-# Build full dataset (no scene limit)
-make data-course
-
-# Custom dataset with different parameters
-make data-dryrun AOI=my_area.geojson START=2023-01-01 END=2023-12-31 CLOUD=20
-```
-
-### Configuration Options
-
-The Makefile supports flexible configuration through environment variables:
-
-- `COURSE_TARGET`: Global scene cap (default: 0 = unlimited)
-- `COURSE_AOI`: Area of interest GeoJSON file 
-- `COURSE_START`/`COURSE_END`: Date range
-- `COURSE_CLOUD`: Maximum cloud cover percentage
-- `COURSE_MAX`: Max scenes per AOI
-- `COURSE_COLLS`: Satellite collections (e.g., sentinel-2-l2a)
-- `COURSE_STRATIFY`: Stratification strategy (month, aoi, or both)
-
-### Output Structure
-
-Datasets are built under `data/out/`:
-```
-data/out/
-├── meta/
-│   ├── scenes.parquet          # Complete scene manifest
-│   └── splits/
-│       ├── train_scenes.txt    # Training scene IDs
-│       ├── val_scenes.txt      # Validation scene IDs  
-│       └── test_scenes.txt     # Test scene IDs
-└── CHECKSUMS.md               # File integrity verification
-```
-
-### 🌐 GitHub Pages Setup
-
-1. **Build the site**: Run `cd book && python build_docs.py --full`
-2. **Commit and push** the changes (including the `docs/` folder)
-3. **Enable GitHub Pages**: 
-   - Go to repository Settings → Pages
-   - Set source to "Deploy from a branch"
-   - Choose "main" branch and "/docs" folder
-   - Click Save
-
-Your site will be available at `https://yourusername.github.io/geoAI`
-
-## 🧠 GFM Implementation
-
-The `geogfm/` package contains:
-
-- **Core architectures**: Vision transformers for geospatial data
-- **Data pipelines**: Efficient loading and preprocessing
-- **Training utilities**: Pretraining, fine-tuning, evaluation
-- **Deployment tools**: API endpoints and inference interfaces
-
-## 🤝 Contributing
-
-This project welcomes contributions! Whether you're:
-
-- 🐛 **Fixing bugs** in the code or content
-- ✨ **Adding features** to the GFM implementation  
-- 📚 **Improving documentation** or tutorials
-- 🎯 **Creating examples** or use cases
-
-Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Built with [Quarto](https://quarto.org/) for reproducible publishing
-- Powered by [PyTorch](https://pytorch.org/) and [TorchGeo](https://github.com/microsoft/torchgeo)
-- Inspired by foundation models like [Prithvi](https://github.com/NASA-IMPACT/Prithvi-100M) and [SatMAE](https://github.com/microsoft/SatMAE)
+**🌐 [View Course Website](https://kellycaylor.github.io/geoAI)** | **📚 [Installation Guide](installation/README.md)** | **🤝 [Contributing](CONTRIBUTING.md)**
 
 ---
 
-*This project supports GEOG 288KC: Building Geospatial Foundation Models at UC Santa Barbara.*
+## 🚀 Quick Start
+
+### I'm a Student 
+1. **Browse the course**: [kellycaylor.github.io/geoAI](https://kellycaylor.github.io/geoAI)
+2. **Set up your environment**: Follow [installation/README.md](installation/README.md)  
+3. **Start learning**: Begin with [Week 1: Geospatial Data Foundations](https://kellycaylor.github.io/geoAI/chapters/c01-geospatial-data-foundations.html)
+
+### I'm an Instructor/TA
+1. **Get the code**: `git clone https://github.com/kellycaylor/geoAI.git && cd geoAI`
+2. **Setup everything**: `make setup` (installs conda env, kernel, etc.)
+3. **Edit content**: Modify `.qmd` files in `book/chapters/`, preview with `make preview`
+4. **See our guides**: [AUTHORING_GUIDE.md](AUTHORING_GUIDE.md) and [CONTRIBUTING.md](CONTRIBUTING.md)
+
+### I'm a Developer
+```bash
+git clone https://github.com/kellycaylor/geoAI.git
+cd geoAI
+make setup              # Full environment setup
+make preview            # Build and serve locally
+```
+
+**Need help?** Check [installation/TROUBLESHOOTING.md](installation/TROUBLESHOOTING.md) or course Slack.
+
+---
+
+## 🎯 What This Course Teaches
+
+Build **geospatial foundation models** from scratch in 10 weeks - from raw satellite data to deployable ML models.
+
+### 📚 Course Structure (10 Weeks)
+
+**🏗️ Weeks 1-3: Build the Architecture**
+- **Week 1**: Handle geospatial data (STAC, normalization, patches)
+- **Week 2**: Implement attention mechanisms for satellite imagery  
+- **Week 3**: Assemble complete Vision Transformer for geospatial data
+
+**🔥 Weeks 4-7: Train Foundation Models**
+- **Week 4**: Masked autoencoder pretraining (like MAE, but for Earth data)
+- **Week 5**: Optimize training loops and hyperparameters
+- **Week 6**: Evaluate and visualize model performance
+- **Week 7**: Load and fine-tune existing models (Prithvi, SatMAE)
+
+**🚀 Weeks 8-10: Deploy and Apply**
+- **Week 8**: Fine-tune for specific tasks (classification, segmentation)
+- **Week 9**: Build inference pipelines and deployment tools
+- **Week 10**: Present final projects
+
+### 🧠 What You'll Build
+- **Python package** (`geogfm/`) with complete GFM implementation
+- **Working models** trained on real satellite data
+- **Deployment tools** for running inference at scale
+- **Course website** with all materials and examples
+
+---
+
+## 🏗️ How Our System Works
+
+### The Magic: Literate Programming  
+We use **Quarto** + **tangle filter** to create both educational content AND working code from the same source.
+
+```
+book/chapters/c01-*.qmd  →  [Build Process]  →  📖 Course Website (docs/)
+                        →                   →  🐍 Python Package (geogfm/)
+```
+
+**Why this is awesome:**
+- **Students get**: Beautiful course website + working Python package
+- **Instructors get**: One source of truth (no copy-paste hell)
+- **Everyone wins**: Content and code always stay in sync
+
+### Key Directories
+```
+geoAI/
+├── book/                    # 📖 Course content (.qmd files)
+│   ├── chapters/           # 💻 Weekly sessions (c01-c10)
+│   └── extras/             # 📚 Cheatsheets, examples, projects  
+├── geogfm/                 # 🧠 Generated Python package
+├── docs/                   # 🌐 Generated website
+├── data/                   # 📊 Sample datasets  
+└── installation/           # 🔧 Setup scripts
+```
+
+**What to edit:** `book/` directory (`.qmd` files)  
+**What gets generated:** `geogfm/` and `docs/` (don't edit these!)
+
+---
+
+## ⚡ Essential Commands
+
+```bash
+# First time setup
+make setup              # Install conda env, register kernel, etc.
+
+# Daily workflow (instructors)
+make preview            # Edit content + preview in browser
+make docs              # Quick build (changed files only)
+make docs-full         # Complete rebuild (when things break)
+
+# Troubleshooting  
+make clean             # Clear cache and temp files
+make kernelspec        # Fix Jupyter kernel issues
+```
+
+**Most useful:** `make preview` rebuilds automatically as you edit!
+
+---
+
+## 📝 Editing Course Content
+
+### Basic Structure
+```markdown
+---
+title: "Session Title"
+subtitle: "Week N: Specific Topic"
+jupyter: geoai
+---
+
+## Overview
+What students will learn...
+
+### Data Loader → `geogfm/data/loaders.py`
+
+```{python}
+#| tangle: geogfm/data/loaders.py
+# This code gets extracted to the Python package!
+def create_dataloader(dataset, batch_size=32):
+    return DataLoader(dataset, batch_size=batch_size)
+```
+
+Explanation of the code...
+```
+
+### The Tangle System
+- **`#| tangle: path/to/file.py`** → Code block gets written to that file
+- **`#| mode: overwrite`** → Replace file contents  
+- **`#| mode: append`** → Add to existing file
+- **Section headings** should include file paths for clarity
+
+### Example Code Block
+````markdown
+### Attention Module → `geogfm/modules/attention.py`
+
+```{python}
+#| tangle: geogfm/modules/attention.py
+import torch.nn as nn
+
+class MultiHeadAttention(nn.Module):
+    def __init__(self, embed_dim, num_heads):
+        super().__init__()
+        self.embed_dim = embed_dim
+        self.num_heads = num_heads
+```
+````
+
+Students see this content in the course website AND get working code in the `geogfm` package!
+
+---
+
+## 🧪 Course Data Pipeline
+
+We include a powerful system for building reproducible satellite datasets:
+
+```bash
+# Quick dataset for course (120 scenes)
+make data-course COURSE_TARGET=120
+
+# Preview what would be downloaded
+make data-course-dryrun COURSE_TARGET=120
+
+# Full dataset (no limits)  
+make data-course
+```
+
+**Features:**
+- Queries STAC APIs (Microsoft Planetary Computer, etc.)
+- Filters by area, date, cloud cover
+- Creates balanced train/val/test splits
+- Reproducible with fixed random seeds
+
+---
+
+## 🐛 Common Issues & Solutions
+
+| Problem | Solution |
+|---------|----------|
+| Build fails | `make clean && make docs-full` |
+| "Kernel not found" | `make kernelspec` |
+| Import errors | `pip install -e .` |
+| Preview not updating | Check syntax errors in `.qmd` files |
+| Environment issues | `conda activate geoAI` |
+
+**Pro tip:** Most problems are solved with `make clean && make setup`
+
+---
+
+## 📚 For Different Audiences
+
+### Students
+- **Start here**: [Course website](https://kellycaylor.github.io/geoAI)
+- **Get help**: [Installation guide](installation/README.md) and [Troubleshooting](installation/TROUBLESHOOTING.md)
+- **Ask questions**: Course Slack or office hours
+
+### Instructors/TAs  
+- **Content editing**: [AUTHORING_GUIDE.md](AUTHORING_GUIDE.md)
+- **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Technical issues**: [installation/TROUBLESHOOTING.md](installation/TROUBLESHOOTING.md)
+
+### Developers
+- **Package code**: Browse `geogfm/` for ML implementations
+- **Build system**: Check `book/build_docs.py` and `Makefile`
+- **Data pipeline**: See `data/build_from_stac.py`
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Whether you're:
+
+- 🐛 **Fixing bugs** in content or code
+- ✨ **Adding examples** or explanations
+- 📚 **Improving documentation**
+- 🎯 **Creating new exercises**
+
+**Process:**
+1. Fork the repo and create a branch
+2. Make your changes in `book/` directory
+3. Test with `make preview` and `make docs-full`
+4. Submit PR with clear description
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+---
+
+## 🚀 Deployment
+
+### GitHub Pages (Automatic)
+1. Push changes to `main` branch
+2. GitHub Actions builds the site automatically  
+3. Site available at: `https://kellycaylor.github.io/geoAI`
+
+### Manual Build
+```bash
+cd book
+python build_docs.py --full    # Build everything
+git add docs/ && git commit -m "Update site"
+git push origin main           # Deploy
+```
+
+---
+
+## 🧠 Technologies Used
+
+- **[Quarto](https://quarto.org/)**: Reproducible publishing system
+- **[PyTorch](https://pytorch.org/)**: Deep learning framework
+- **[TorchGeo](https://github.com/microsoft/torchgeo)**: Geospatial ML utilities  
+- **[STAC](https://stacspec.org/)**: SpatioTemporal Asset Catalog for data discovery
+- **Custom tangle filter**: Exports code from course content to Python package
+
+---
+
+## 📄 License & Acknowledgments
+
+**License:** MIT License - see [LICENSE](LICENSE) file
+
+**Inspired by:**
+- [Prithvi](https://github.com/NASA-IMPACT/Prithvi-100M) - NASA's geospatial foundation model
+- [SatMAE](https://github.com/microsoft/SatMAE) - Microsoft's satellite masked autoencoder  
+- [timm](https://github.com/huggingface/pytorch-image-models) - PyTorch image models
+
+**Course:** GEOG 288KC at UC Santa Barbara, Fall 2025
+
+---
+
+**🌟 Ready to build your own geospatial foundation model? [Get started now!](https://kellycaylor.github.io/geoAI)**

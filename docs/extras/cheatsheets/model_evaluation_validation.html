@@ -374,7 +374,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-to-model-evaluation" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-model-evaluation">Introduction to Model Evaluation</h2>
 <p>Model evaluation in geospatial AI requires specialized metrics and validation strategies that account for spatial dependencies, temporal variations, and domain-specific requirements. This cheatsheet covers comprehensive evaluation approaches.</p>
-<div id="c0f7766d" class="cell" data-execution_count="1">
+<div id="cf31c48d" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -396,7 +396,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="evaluation-metrics-for-different-task-types">Evaluation Metrics for Different Task Types</h2>
 <section id="classification-metrics" class="level3">
 <h3 class="anchored" data-anchor-id="classification-metrics">Classification Metrics</h3>
-<div id="9c3b2299" class="cell" data-execution_count="2">
+<div id="37017103" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> comprehensive_classification_evaluation():</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Demonstrate comprehensive classification evaluation metrics"""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -567,7 +567,7 @@ Bareland     0.532      0.717      0.611      0.717      0.985      46        </
 </section>
 <section id="regression-metrics" class="level3">
 <h3 class="anchored" data-anchor-id="regression-metrics">Regression Metrics</h3>
-<div id="479e0e3e" class="cell" data-execution_count="3">
+<div id="dccccbde" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> comprehensive_regression_evaluation():</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Demonstrate comprehensive regression evaluation metrics"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -750,7 +750,7 @@ Median error: 0.0596
 95th percentile error: 0.1929</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/bs/x9tn9jz91cv6hb3q6p4djbmw0000gn/T/ipykernel_22866/1856061205.py:133: MatplotlibDeprecationWarning:
+<pre><code>/var/folders/bs/x9tn9jz91cv6hb3q6p4djbmw0000gn/T/ipykernel_53516/1856061205.py:133: MatplotlibDeprecationWarning:
 
 The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
 </code></pre>
@@ -766,7 +766,7 @@ The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplot
 </section>
 <section id="segmentation-metrics" class="level3">
 <h3 class="anchored" data-anchor-id="segmentation-metrics">Segmentation Metrics</h3>
-<div id="f39884f3" class="cell" data-execution_count="4">
+<div id="c6bd53f0" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> comprehensive_segmentation_evaluation():</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Demonstrate comprehensive segmentation evaluation metrics"""</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -987,7 +987,7 @@ Urban        0.932    0.965    0.960      0.970      0.965   </code></pre>
 <h2 class="anchored" data-anchor-id="spatial-validation-strategies">Spatial Validation Strategies</h2>
 <section id="cross-validation-with-spatial-awareness" class="level3">
 <h3 class="anchored" data-anchor-id="cross-validation-with-spatial-awareness">Cross-Validation with Spatial Awareness</h3>
-<div id="2fd2b19e" class="cell" data-execution_count="5">
+<div id="b0e6563d" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> demonstrate_spatial_cross_validation():</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Demonstrate spatial cross-validation strategies"""</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1232,7 +1232,7 @@ Spatial Buffer CV    0.268      0.079      0.067      0.012      5     </code></
 <h2 class="anchored" data-anchor-id="temporal-validation">Temporal Validation</h2>
 <section id="time-series-cross-validation" class="level3">
 <h3 class="anchored" data-anchor-id="time-series-cross-validation">Time Series Cross-Validation</h3>
-<div id="b731d854" class="cell" data-execution_count="6">
+<div id="b028ee4d" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> demonstrate_temporal_validation():</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Demonstrate temporal validation strategies for time series data"""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1493,7 +1493,7 @@ Seasonal Validation  -0.213     0.000      0.306      0.000      1     </code></
 <h2 class="anchored" data-anchor-id="model-uncertainty-quantification">Model Uncertainty Quantification</h2>
 <section id="uncertainty-estimation-methods" class="level3">
 <h3 class="anchored" data-anchor-id="uncertainty-estimation-methods">Uncertainty Estimation Methods</h3>
-<div id="d40fb062" class="cell" data-execution_count="7">
+<div id="77de2ab6" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> demonstrate_uncertainty_quantification():</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Demonstrate uncertainty quantification methods"""</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1773,7 +1773,7 @@ Method               MAE      RMSE     R²       Coverage   Uncert.Corr
 ------------------------------------------------------------
 Bootstrap            0.289    0.380    0.960    0.633      0.207       
 Quantile Reg.        0.279    0.366    0.963    0.900      0.000       
-MC Dropout           0.865    1.086    0.677    0.000      0.163       </code></pre>
+MC Dropout           0.899    1.103    0.667    0.000      0.233       </code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
@@ -1938,7 +1938,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/kellycaylor\.github\.io\/geoAI");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
@@ -3554,7 +3554,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
+<figcaption>Department of Geography logo</figcaption>
+</figure>
+</div>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

@@ -319,7 +319,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-left">
-      <div class="quarto-title-block"><div><h1 class="title">Week 3 Interactive Session: Complete GFM Architecture</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+      <div class="quarto-title-block"><div><h1 class="title">Week 3 Interactive Session: Complete GFM Architecture</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
             <p class="subtitle lead">Assembling Vision Transformer architecture for geospatial data</p>
                       </div>
   </div>
@@ -348,8 +348,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#session-outline-and-tangled-code" id="toc-session-outline-and-tangled-code" class="nav-link" data-scroll-target="#session-outline-and-tangled-code">Session Outline (and Tangled Code)</a>
   <ul class="collapse">
   <li><a href="#package-inits" id="toc-package-inits" class="nav-link" data-scroll-target="#package-inits">Package inits</a></li>
-  <li><a href="#geovit-backbone" id="toc-geovit-backbone" class="nav-link" data-scroll-target="#geovit-backbone">1) GeoViT Backbone</a></li>
-  <li><a href="#reconstruction-head" id="toc-reconstruction-head" class="nav-link" data-scroll-target="#reconstruction-head">2) Reconstruction Head</a></li>
+  <li><a href="#geovit-backbone-geogfmmodelsgfm_vit.py" id="toc-geovit-backbone-geogfmmodelsgfm_vit.py" class="nav-link" data-scroll-target="#geovit-backbone-geogfmmodelsgfm_vit.py">1) GeoViT Backbone → <code>geogfm/models/gfm_vit.py</code></a></li>
+  <li><a href="#reconstruction-head-geogfmmodulesheadsreconstruction_head.py" id="toc-reconstruction-head-geogfmmodulesheadsreconstruction_head.py" class="nav-link" data-scroll-target="#reconstruction-head-geogfmmodulesheadsreconstruction_head.py">2) Reconstruction Head → <code>geogfm/modules/heads/reconstruction_head.py</code></a></li>
   <li><a href="#quick-forward-check-non-tangled" id="toc-quick-forward-check-non-tangled" class="nav-link" data-scroll-target="#quick-forward-check-non-tangled">Quick Forward Check (non-tangled)</a></li>
   </ul></li>
   </ul>
@@ -416,19 +416,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <section id="package-inits" class="level3">
 <h3 class="anchored" data-anchor-id="package-inits">Package inits</h3>
-<div id="0a06155e" class="cell" data-header="geogfm.models — package init (Week 3). Exposes model namespaces for GFM architectures." data-tangle="geogfm/models/__init__.py" data-execution_count="1">
-<details class="code-fold">
-<summary>Code</summary>
+<div id="900da84c" class="cell" data-header="geogfm.models — package init (Week 3). Exposes model namespaces for GFM architectures." data-tangle="geogfm/models/__init__.py" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># geogfm.models</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Package init for model modules</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
-<section id="geovit-backbone" class="level3">
-<h3 class="anchored" data-anchor-id="geovit-backbone">1) GeoViT Backbone</h3>
-<div id="f87d16fe" class="cell" data-header="geogfm.models.gfm_vit — GeoViT backbone (Week 3). PatchEmbedding + sinusoidal positional encodings + TransformerBlock stack." data-tangle="geogfm/models/gfm_vit.py" data-execution_count="2">
-<details class="code-fold">
-<summary>Code</summary>
+<section id="geovit-backbone-geogfmmodelsgfm_vit.py" class="level3">
+<h3 class="anchored" data-anchor-id="geovit-backbone-geogfmmodelsgfm_vit.py">1) GeoViT Backbone → <code>geogfm/models/gfm_vit.py</code></h3>
+<div id="0a7cc3be" class="cell" data-header="geogfm.models.gfm_vit — GeoViT backbone (Week 3). PatchEmbedding + sinusoidal positional encodings + TransformerBlock stack." data-tangle="geogfm/models/gfm_vit.py" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> List</span>
@@ -471,14 +466,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>            tokens <span class="op">=</span> blk(tokens)</span>
 <span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> <span class="va">self</span>.norm(tokens)</span>
 <span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> tokens  <span class="co"># (B, N, D)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
-<section id="reconstruction-head" class="level3">
-<h3 class="anchored" data-anchor-id="reconstruction-head">2) Reconstruction Head</h3>
-<div id="d75949d8" class="cell" data-header="geogfm.modules.heads.reconstruction_head — Token-wise MLP decoder for MAE-style reconstruction (Week 3)." data-tangle="geogfm/modules/heads/reconstruction_head.py" data-execution_count="3">
-<details class="code-fold">
-<summary>Code</summary>
+<section id="reconstruction-head-geogfmmodulesheadsreconstruction_head.py" class="level3">
+<h3 class="anchored" data-anchor-id="reconstruction-head-geogfmmodulesheadsreconstruction_head.py">2) Reconstruction Head → <code>geogfm/modules/heads/reconstruction_head.py</code></h3>
+<div id="edac2a8b" class="cell" data-header="geogfm.modules.heads.reconstruction_head — Token-wise MLP decoder for MAE-style reconstruction (Week 3)." data-tangle="geogfm/modules/heads/reconstruction_head.py" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
@@ -502,14 +494,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.linear(tokens)</span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> x.view(b, n, <span class="va">self</span>.out_channels, <span class="va">self</span>.patch_size, <span class="va">self</span>.patch_size)</span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="quick-forward-check-non-tangled" class="level3">
 <h3 class="anchored" data-anchor-id="quick-forward-check-non-tangled">Quick Forward Check (non-tangled)</h3>
-<div id="ffc44ea7" class="cell" data-execution_count="4">
-<details class="code-fold">
-<summary>Code</summary>
+<div id="41fd9bc1" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Use locally defined classes in this session (avoid importing from geogfm here)</span></span>
@@ -519,7 +508,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>head <span class="op">=</span> ReconstructionHead(embed_dim<span class="op">=</span><span class="dv">128</span>, out_channels<span class="op">=</span><span class="dv">3</span>, patch_size<span class="op">=</span><span class="dv">16</span>)</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>recon <span class="op">=</span> head(latent)</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"latent:"</span>, latent.shape, <span class="st">"recon:"</span>, recon.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>latent: torch.Size([2, 16, 128]) recon: torch.Size([2, 16, 3, 16, 16])</code></pre>
 </div>
@@ -675,7 +663,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/kellycaylor\.github\.io\/geoAI");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
@@ -1013,138 +1001,142 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 3</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## Course Roadmap Mapping</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>This week’s work in the broader GFM plan.</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>|------|-------|-------|--------------------------|---------------|---------|</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>| 3 | Stage 1: Build GFM Architecture | Complete Architecture | <span class="in">`models/gfm_vit.py`</span>; <span class="in">`modules/heads/reconstruction_head.py`</span> | <span class="in">`torch.nn`</span> (timm as reference) | Encoder assembled; end-to-end forward on dummy input |</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="fu">### Weekly goals</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Wire blocks into a GeoViT-style encoder</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Add a simple reconstruction head</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Run end-to-end forward pass on dummy input</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="fu">## Session Outline (and Tangled Code)</span></span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Concepts → Components mapping</span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Token pipeline → <span class="in">`PatchEmbedding`</span> + positional encoding + stack of <span class="in">`TransformerBlock`</span>s</span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Encoder backbone → <span class="in">`models/gfm_vit.py`</span></span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Decoder/readout for MAE → <span class="in">`modules/heads/reconstruction_head.py`</span></span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="fu">### Package inits</span></span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="co">#| tangle: geogfm/models/__init__.py</span></span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a><span class="co">#| header: "geogfm.models — package init (Week 3). Exposes model namespaces for GFM architectures."</span></span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a><span class="co"># geogfm.models</span></span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Package init for model modules</span></span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1) GeoViT Backbone</span></span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| tangle: geogfm/models/gfm_vit.py</span></span>
-<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| header: "geogfm.models.gfm_vit — GeoViT backbone (Week 3). PatchEmbedding + sinusoidal positional encodings + TransformerBlock stack."</span></span>
-<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations</span>
-<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
-<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> List</span>
-<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
-<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
-<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm.modules.embeddings.patch_embedding <span class="im">import</span> PatchEmbedding, PatchEmbedConfig</span>
-<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm.modules.embeddings.positional_encoding <span class="im">import</span> sinusoidal_positional_encoding</span>
-<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm.modules.blocks.transformer_block <span class="im">import</span> TransformerBlock</span>
-<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a><span class="at">@dataclass</span></span>
-<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ViTBackboneConfig:</span>
-<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>    in_channels: <span class="bu">int</span> <span class="op">=</span> <span class="dv">3</span></span>
-<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>    image_size: <span class="bu">int</span> <span class="op">=</span> <span class="dv">224</span></span>
-<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>    patch_size: <span class="bu">int</span> <span class="op">=</span> <span class="dv">16</span></span>
-<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>    embed_dim: <span class="bu">int</span> <span class="op">=</span> <span class="dv">256</span></span>
-<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>    depth: <span class="bu">int</span> <span class="op">=</span> <span class="dv">8</span></span>
-<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>    num_heads: <span class="bu">int</span> <span class="op">=</span> <span class="dv">8</span></span>
-<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>    mlp_ratio: <span class="bu">float</span> <span class="op">=</span> <span class="fl">4.0</span></span>
-<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GeoViTBackbone(nn.Module):</span>
-<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, cfg: ViTBackboneConfig):</span>
-<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.cfg <span class="op">=</span> cfg</span>
-<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Tokenization: Conv2d-based patchify + linear projection</span></span>
-<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.patch_embed <span class="op">=</span> PatchEmbedding(PatchEmbedConfig(cfg.in_channels, cfg.embed_dim, cfg.patch_size))</span>
-<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>        num_patches <span class="op">=</span> (cfg.image_size <span class="op">//</span> cfg.patch_size) <span class="op">**</span> <span class="dv">2</span></span>
-<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Fixed positional encodings for stability and speed in the session</span></span>
-<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.pos_embed <span class="op">=</span> nn.Parameter(sinusoidal_positional_encoding(num_patches, cfg.embed_dim), requires_grad<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Encoder: stack of PreNorm Transformer blocks</span></span>
-<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.blocks <span class="op">=</span> nn.ModuleList([</span>
-<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>            TransformerBlock(cfg.embed_dim, cfg.num_heads, mlp_ratio<span class="op">=</span>cfg.mlp_ratio) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(cfg.depth)</span>
-<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>        ])</span>
-<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.norm <span class="op">=</span> nn.LayerNorm(cfg.embed_dim)</span>
-<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: torch.Tensor) <span class="op">-&gt;</span> torch.Tensor:</span>
-<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Return latent token sequence of shape (batch, num_tokens, embed_dim)."""</span></span>
-<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> <span class="va">self</span>.patch_embed(x)  <span class="co"># (B, N, D)</span></span>
-<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> tokens <span class="op">+</span> <span class="va">self</span>.pos_embed.unsqueeze(<span class="dv">0</span>)</span>
-<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> blk <span class="kw">in</span> <span class="va">self</span>.blocks:</span>
-<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>            tokens <span class="op">=</span> blk(tokens)</span>
-<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> <span class="va">self</span>.norm(tokens)</span>
-<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> tokens  <span class="co"># (B, N, D)</span></span>
-<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2) Reconstruction Head</span></span>
-<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a><span class="co">#| tangle: geogfm/modules/heads/reconstruction_head.py</span></span>
-<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a><span class="co">#| header: "geogfm.modules.heads.reconstruction_head — Token-wise MLP decoder for MAE-style reconstruction (Week 3)."</span></span>
-<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations</span>
-<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
-<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
-<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ReconstructionHead(nn.Module):</span>
-<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Token-wise MLP to reconstruct patch pixels from latent tokens."""</span></span>
-<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, embed_dim: <span class="bu">int</span>, out_channels: <span class="bu">int</span>, patch_size: <span class="bu">int</span>):</span>
-<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.out_channels <span class="op">=</span> out_channels</span>
-<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.patch_size <span class="op">=</span> patch_size</span>
-<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Two-layer MLP mapping from token dim D -&gt; (C * P * P)</span></span>
-<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear <span class="op">=</span> nn.Sequential(</span>
-<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>            nn.Linear(embed_dim, embed_dim),</span>
-<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>            nn.GELU(),</span>
-<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a>            nn.Linear(embed_dim, out_channels <span class="op">*</span> patch_size <span class="op">*</span> patch_size),</span>
-<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, tokens: torch.Tensor) <span class="op">-&gt;</span> torch.Tensor:</span>
-<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Transform tokens: (B, N, D) -&gt; (B, N, C*P*P) -&gt; (B, N, C, P, P)</span></span>
-<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a>        b, n, d <span class="op">=</span> tokens.shape</span>
-<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.linear(tokens)</span>
-<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> x.view(b, n, <span class="va">self</span>.out_channels, <span class="va">self</span>.patch_size, <span class="va">self</span>.patch_size)</span>
-<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x</span>
-<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a><span class="fu">### Quick Forward Check (non-tangled)</span></span>
-<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
-<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a><span class="co"># Use locally defined classes in this session (avoid importing from geogfm here)</span></span>
-<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">64</span>, <span class="dv">64</span>)</span>
-<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a>vit <span class="op">=</span> GeoViTBackbone(ViTBackboneConfig(in_channels<span class="op">=</span><span class="dv">3</span>, image_size<span class="op">=</span><span class="dv">64</span>, patch_size<span class="op">=</span><span class="dv">16</span>, embed_dim<span class="op">=</span><span class="dv">128</span>, depth<span class="op">=</span><span class="dv">2</span>, num_heads<span class="op">=</span><span class="dv">4</span>))</span>
-<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a>latent <span class="op">=</span> vit(x)</span>
-<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a>head <span class="op">=</span> ReconstructionHead(embed_dim<span class="op">=</span><span class="dv">128</span>, out_channels<span class="op">=</span><span class="dv">3</span>, patch_size<span class="op">=</span><span class="dv">16</span>)</span>
-<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a>recon <span class="op">=</span> head(latent)</span>
-<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"latent:"</span>, latent.shape, <span class="st">"recon:"</span>, recon.shape)</span>
-<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Course Roadmap Mapping</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>This week’s work in the broader GFM plan.</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>|------|-------|-------|--------------------------|---------------|---------|</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>| 3 | Stage 1: Build GFM Architecture | Complete Architecture | <span class="in">`models/gfm_vit.py`</span>; <span class="in">`modules/heads/reconstruction_head.py`</span> | <span class="in">`torch.nn`</span> (timm as reference) | Encoder assembled; end-to-end forward on dummy input |</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="fu">### Weekly goals</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Wire blocks into a GeoViT-style encoder</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Add a simple reconstruction head</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Run end-to-end forward pass on dummy input</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## Session Outline (and Tangled Code)</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Concepts → Components mapping</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Token pipeline → <span class="in">`PatchEmbedding`</span> + positional encoding + stack of <span class="in">`TransformerBlock`</span>s</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Encoder backbone → <span class="in">`models/gfm_vit.py`</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Decoder/readout for MAE → <span class="in">`modules/heads/reconstruction_head.py`</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="fu">### Package inits</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="co">#| tangle: geogfm/models/__init__.py</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="co">#| header: "geogfm.models — package init (Week 3). Exposes model namespaces for GFM architectures."</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a><span class="co"># geogfm.models</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Package init for model modules</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1) GeoViT Backbone → `geogfm/models/gfm_vit.py`</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a><span class="co">#| tangle: geogfm/models/gfm_vit.py</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| header: "geogfm.models.gfm_vit — GeoViT backbone (Week 3). PatchEmbedding + sinusoidal positional encodings + TransformerBlock stack."</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> List</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm.modules.embeddings.patch_embedding <span class="im">import</span> PatchEmbedding, PatchEmbedConfig</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm.modules.embeddings.positional_encoding <span class="im">import</span> sinusoidal_positional_encoding</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm.modules.blocks.transformer_block <span class="im">import</span> TransformerBlock</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a><span class="at">@dataclass</span></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ViTBackboneConfig:</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>    in_channels: <span class="bu">int</span> <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>    image_size: <span class="bu">int</span> <span class="op">=</span> <span class="dv">224</span></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>    patch_size: <span class="bu">int</span> <span class="op">=</span> <span class="dv">16</span></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>    embed_dim: <span class="bu">int</span> <span class="op">=</span> <span class="dv">256</span></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>    depth: <span class="bu">int</span> <span class="op">=</span> <span class="dv">8</span></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>    num_heads: <span class="bu">int</span> <span class="op">=</span> <span class="dv">8</span></span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>    mlp_ratio: <span class="bu">float</span> <span class="op">=</span> <span class="fl">4.0</span></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GeoViTBackbone(nn.Module):</span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, cfg: ViTBackboneConfig):</span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.cfg <span class="op">=</span> cfg</span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Tokenization: Conv2d-based patchify + linear projection</span></span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.patch_embed <span class="op">=</span> PatchEmbedding(PatchEmbedConfig(cfg.in_channels, cfg.embed_dim, cfg.patch_size))</span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>        num_patches <span class="op">=</span> (cfg.image_size <span class="op">//</span> cfg.patch_size) <span class="op">**</span> <span class="dv">2</span></span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Fixed positional encodings for stability and speed in the session</span></span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.pos_embed <span class="op">=</span> nn.Parameter(sinusoidal_positional_encoding(num_patches, cfg.embed_dim), requires_grad<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Encoder: stack of PreNorm Transformer blocks</span></span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.blocks <span class="op">=</span> nn.ModuleList([</span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>            TransformerBlock(cfg.embed_dim, cfg.num_heads, mlp_ratio<span class="op">=</span>cfg.mlp_ratio) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(cfg.depth)</span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>        ])</span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.norm <span class="op">=</span> nn.LayerNorm(cfg.embed_dim)</span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: torch.Tensor) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Return latent token sequence of shape (batch, num_tokens, embed_dim)."""</span></span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> <span class="va">self</span>.patch_embed(x)  <span class="co"># (B, N, D)</span></span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> tokens <span class="op">+</span> <span class="va">self</span>.pos_embed.unsqueeze(<span class="dv">0</span>)</span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> blk <span class="kw">in</span> <span class="va">self</span>.blocks:</span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>            tokens <span class="op">=</span> blk(tokens)</span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> <span class="va">self</span>.norm(tokens)</span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> tokens  <span class="co"># (B, N, D)</span></span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2) Reconstruction Head → `geogfm/modules/heads/reconstruction_head.py`</span></span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a><span class="co">#| tangle: geogfm/modules/heads/reconstruction_head.py</span></span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a><span class="co">#| header: "geogfm.modules.heads.reconstruction_head — Token-wise MLP decoder for MAE-style reconstruction (Week 3)."</span></span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations</span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ReconstructionHead(nn.Module):</span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Token-wise MLP to reconstruct patch pixels from latent tokens."""</span></span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, embed_dim: <span class="bu">int</span>, out_channels: <span class="bu">int</span>, patch_size: <span class="bu">int</span>):</span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.out_channels <span class="op">=</span> out_channels</span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.patch_size <span class="op">=</span> patch_size</span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Two-layer MLP mapping from token dim D -&gt; (C * P * P)</span></span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear <span class="op">=</span> nn.Sequential(</span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>            nn.Linear(embed_dim, embed_dim),</span>
+<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>            nn.GELU(),</span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>            nn.Linear(embed_dim, out_channels <span class="op">*</span> patch_size <span class="op">*</span> patch_size),</span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, tokens: torch.Tensor) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Transform tokens: (B, N, D) -&gt; (B, N, C*P*P) -&gt; (B, N, C, P, P)</span></span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a>        b, n, d <span class="op">=</span> tokens.shape</span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.linear(tokens)</span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> x.view(b, n, <span class="va">self</span>.out_channels, <span class="va">self</span>.patch_size, <span class="va">self</span>.patch_size)</span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x</span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a><span class="fu">### Quick Forward Check (non-tangled)</span></span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a><span class="co"># Use locally defined classes in this session (avoid importing from geogfm here)</span></span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">64</span>, <span class="dv">64</span>)</span>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a>vit <span class="op">=</span> GeoViTBackbone(ViTBackboneConfig(in_channels<span class="op">=</span><span class="dv">3</span>, image_size<span class="op">=</span><span class="dv">64</span>, patch_size<span class="op">=</span><span class="dv">16</span>, embed_dim<span class="op">=</span><span class="dv">128</span>, depth<span class="op">=</span><span class="dv">2</span>, num_heads<span class="op">=</span><span class="dv">4</span>))</span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a>latent <span class="op">=</span> vit(x)</span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a>head <span class="op">=</span> ReconstructionHead(embed_dim<span class="op">=</span><span class="dv">128</span>, out_channels<span class="op">=</span><span class="dv">3</span>, patch_size<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a>recon <span class="op">=</span> head(latent)</span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"latent:"</span>, latent.shape, <span class="st">"recon:"</span>, recon.shape)</span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a></span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
+<figcaption>Department of Geography logo</figcaption>
+</figure>
+</div>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

@@ -4,7 +4,8 @@ subtitle: "LLMs vs. Geospatial Foundation Models (GFMs)"
 jupyter: geoai
 format:
   html:
-    code-fold: false
+    toc: true
+    toc-depth: 3
 ---
 
 ## Introduction to Foundation Model Architectures

@@ -8,7 +8,6 @@ format:
   html:
     toc: true
     toc-depth: 3
-    code-fold: true
 ---
 
 ## Course Roadmap Mapping
@@ -76,7 +75,7 @@ This week’s work in the broader GFM plan.
 # geogfm.modules.losses
 ```
 
-### 1) Patch Embedding
+### 1) Patch Embedding → `geogfm/modules/embeddings/patch_embedding.py`
 
 ```{python}
 #| tangle: geogfm/modules/embeddings/patch_embedding.py
@@ -112,7 +111,7 @@ class PatchEmbedding(nn.Module):
         return x
 ```
 
-### 2) Positional Encoding (Sinusoidal)
+### 2) Positional Encoding (Sinusoidal) → `geogfm/modules/embeddings/positional_encoding.py`
 
 ```{python}
 #| tangle: geogfm/modules/embeddings/positional_encoding.py
@@ -145,7 +144,7 @@ def sinusoidal_positional_encoding_2d(height: int, width: int, dim: int, device:
     return pe
 ```
 
-### 3) Multihead Self-Attention
+### 3) Multihead Self-Attention → `geogfm/modules/attention/multihead_attention.py`
 
 ```{python}
 #| tangle: geogfm/modules/attention/multihead_attention.py
@@ -188,7 +187,7 @@ class MultiheadSelfAttention(nn.Module):
         return out
 ```
 
-### 4) MLP and Transformer Block (PreNorm)
+### 4) MLP and Transformer Block (PreNorm) → `geogfm/modules/blocks/`
 
 ```{python}
 #| tangle: geogfm/modules/blocks/mlp.py

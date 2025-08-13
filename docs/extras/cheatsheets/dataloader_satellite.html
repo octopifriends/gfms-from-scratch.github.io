@@ -380,7 +380,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-to-satellite-data-loading" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-satellite-data-loading">Introduction to Satellite Data Loading</h2>
 <p>Efficient data loading is crucial for satellite imagery analysis due to large file sizes, multiple spectral bands, and complex geospatial metadata.</p>
-<div id="d5abfe8d" class="cell" data-execution_count="1">
+<div id="a855ee5c" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> Dataset, DataLoader</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -402,7 +402,7 @@ Rasterio version: 1.4.3</code></pre>
 <h2 class="anchored" data-anchor-id="basic-dataset-patterns">Basic Dataset Patterns</h2>
 <section id="simple-satellite-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="simple-satellite-dataset">Simple satellite dataset</h3>
-<div id="2d271a5c" class="cell" data-execution_count="2">
+<div id="8cbaec54" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SatelliteDataset(Dataset):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Basic satellite imagery dataset"""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -472,7 +472,7 @@ Image shape: torch.Size([4, 256, 256])</code></pre>
 </section>
 <section id="multi-temporal-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="multi-temporal-dataset">Multi-temporal dataset</h3>
-<div id="6304bc97" class="cell" data-execution_count="3">
+<div id="db5d965a" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TemporalSatelliteDataset(Dataset):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Dataset for temporal satellite imagery sequences"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -542,7 +542,7 @@ Sequence ID: tile_000</code></pre>
 <h2 class="anchored" data-anchor-id="memory-efficient-loading">Memory-Efficient Loading</h2>
 <section id="windowed-reading-for-large-files" class="level3">
 <h3 class="anchored" data-anchor-id="windowed-reading-for-large-files">Windowed reading for large files</h3>
-<div id="2e608420" class="cell" data-execution_count="4">
+<div id="34571f86" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> WindowedSatelliteDataset(Dataset):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Dataset that reads windows from large satellite images"""</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -613,7 +613,7 @@ Window bounds: (0, 0, 512, 512)</code></pre>
 </section>
 <section id="lazy-loading-with-caching" class="level3">
 <h3 class="anchored" data-anchor-id="lazy-loading-with-caching">Lazy loading with caching</h3>
-<div id="98a7ada5" class="cell" data-execution_count="5">
+<div id="2b57e776" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> functools <span class="im">import</span> lru_cache</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> threading <span class="im">import</span> Lock</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -691,13 +691,13 @@ Window bounds: (0, 0, 512, 512)</code></pre>
 <span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Cache statistics: </span><span class="sc">{</span>cached_dataset<span class="sc">.</span>cache_info()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Loading image1.tif into cache...
-Sample 0: bands=12, image_idx=0, patch_idx=0
-Sample 1: bands=12, image_idx=0, patch_idx=1
-Sample 2: bands=12, image_idx=0, patch_idx=2
-Sample 3: bands=12, image_idx=0, patch_idx=3
+Sample 0: bands=8, image_idx=0, patch_idx=0
+Sample 1: bands=8, image_idx=0, patch_idx=1
+Sample 2: bands=8, image_idx=0, patch_idx=2
+Sample 3: bands=8, image_idx=0, patch_idx=3
 Loading image2.tif into cache...
-Sample 4: bands=4, image_idx=1, patch_idx=0
-Sample 5: bands=4, image_idx=1, patch_idx=1
+Sample 4: bands=12, image_idx=1, patch_idx=0
+Sample 5: bands=12, image_idx=1, patch_idx=1
 Cache statistics: CacheInfo(hits=4, misses=2, maxsize=10, currsize=2)</code></pre>
 </div>
 </div>
@@ -707,7 +707,7 @@ Cache statistics: CacheInfo(hits=4, misses=2, maxsize=10, currsize=2)</code></pr
 <h2 class="anchored" data-anchor-id="advanced-data-loading-strategies">Advanced Data Loading Strategies</h2>
 <section id="multi-resolution-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="multi-resolution-dataset">Multi-resolution dataset</h3>
-<div id="da05e46a" class="cell" data-execution_count="6">
+<div id="8d101882" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultiResolutionDataset(Dataset):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Dataset providing multiple resolutions of the same data"""</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -777,7 +777,7 @@ image_512: torch.Size([4, 512, 512])</code></pre>
 </section>
 <section id="balanced-sampling-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="balanced-sampling-dataset">Balanced sampling dataset</h3>
-<div id="6df15835" class="cell" data-execution_count="7">
+<div id="ec2e3e33" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BalancedSatelliteDataset(Dataset):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Dataset with balanced sampling across different conditions"""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -878,7 +878,7 @@ Balanced dataset size: 117</code></pre>
 <h2 class="anchored" data-anchor-id="dataloader-optimization">DataLoader Optimization</h2>
 <section id="custom-collate-functions" class="level3">
 <h3 class="anchored" data-anchor-id="custom-collate-functions">Custom collate functions</h3>
-<div id="e9890c4d" class="cell" data-execution_count="8">
+<div id="8e1fe4c9" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> satellite_collate_fn(batch):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Custom collate function for satellite imagery batches"""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -979,7 +979,7 @@ Paths: 3</code></pre>
 </section>
 <section id="performance-optimization" class="level3">
 <h3 class="anchored" data-anchor-id="performance-optimization">Performance optimization</h3>
-<div id="68c7c09e" class="cell" data-execution_count="9">
+<div id="a0cd5043" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_optimized_dataloader(dataset, batch_size<span class="op">=</span><span class="dv">32</span>, num_workers<span class="op">=</span><span class="dv">4</span>):</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create optimized dataloader for satellite imagery"""</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1031,7 +1031,7 @@ Paths: 3</code></pre>
 <h2 class="anchored" data-anchor-id="real-world-integration-examples">Real-World Integration Examples</h2>
 <section id="integration-with-preprocessing-pipeline" class="level3">
 <h3 class="anchored" data-anchor-id="integration-with-preprocessing-pipeline">Integration with preprocessing pipeline</h3>
-<div id="f550a016" class="cell" data-execution_count="10">
+<div id="636c3b3e" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PreprocessingSatelliteDataset(Dataset):</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Dataset with integrated preprocessing pipeline"""</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -1282,7 +1282,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/kellycaylor\.github\.io\/geoAI");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
@@ -2312,7 +2312,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>&lt;img src=“{{&lt; path images/geog-logo.png &gt;}}” alt=“The Department of Geography logo” width=“250”/&gt;</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/geog-logo.png" class="img-fluid figure-img" width="250"></p>
+<figcaption>Department of Geography logo</figcaption>
+</figure>
+</div>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
