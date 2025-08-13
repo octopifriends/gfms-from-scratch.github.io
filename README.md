@@ -9,7 +9,7 @@
 ## 🚀 Quick Start
 
 ### I'm a Student 
-1. **Browse the course**: [kellycaylor.github.io/geoAI](https://kellycaylor.github.io/geoAI)
+1. **Browse the course**: [https://gfms-from-scratch.github.io](https://gfms-from-scratch.github.io)
 2. **Set up your environment**: Follow [installation/README.md](installation/README.md)  
 3. **Start learning**: Begin with [Week 1: Geospatial Data Foundations](https://kellycaylor.github.io/geoAI/chapters/c01-geospatial-data-foundations.html)
 
