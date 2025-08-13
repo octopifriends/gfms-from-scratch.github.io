@@ -2,7 +2,7 @@
 
 *Learn to build geospatial foundation models from scratch through hands-on implementation*
 
-**🌐 [View Course Website](https://kellycaylor.github.io/geoAI)** | **📚 [Installation Guide](installation/README.md)** | **🤝 [Contributing](CONTRIBUTING.md)**
+**🌐 [View Course Website](https://gfms-from-scratch.github.io))** | **📚 [Installation Guide](installation/README.md)** | **🤝 [Contributing](CONTRIBUTING.md)**
 
 ---
 
