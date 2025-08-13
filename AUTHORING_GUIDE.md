@@ -90,9 +90,6 @@ def some_function():
     return "Hello from geogfm package!"
 ```
 
-More explanation text...
-```
-
 ### The Tangle System (Code Extraction)
 
 **What it does**: Code blocks with `#| tangle:` directives get written to real Python files.
