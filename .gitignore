@@ -74,7 +74,9 @@ ehthumbs.db
 _site/
 .quarto/
 _freeze/
-*_files/
+# Note: *_files/ directories in docs/ contain important generated content and should be tracked
+# Only ignore _files/ in the source (book/) directory
+book/*_files/
 
 # Data files (add specific patterns as needed)
 *.h5
@@ -97,11 +99,15 @@ temp/
 *.tmp
 *.log
 
-# Documentation build
+# Documentation build - ignore build artifacts in docs/ but keep final HTML output
 docs/_site/
 docs/.quarto/
 docs/_freeze/
 *_cache/
+
+# Explicitly track all files in docs/ directory (GitHub Pages output)
+!docs/
+!docs/**
 
 # Cloud credentials
 *credentials*.json
