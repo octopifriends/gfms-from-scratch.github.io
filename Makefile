@@ -6,6 +6,22 @@ ENV_NAME ?= geoAI
 CONDA_RUN ?= conda run -n $(ENV_NAME)
 CONDA_RUN_PY ?= $(CONDA_RUN) python
 
+# Auto-detect environment file (CPU vs GPU)
+OS_UNAME := $(shell uname -s)
+HAS_NVIDIA := $(shell if command -v nvidia-smi >/dev/null 2>&1; then echo 1; else echo 0; fi)
+GPU_ENV_FILE ?= installation/environment-gpu.yml
+CPU_ENV_FILE ?= environment.yml
+
+ifeq ($(OS_UNAME),Darwin)
+  ENV_FILE := $(CPU_ENV_FILE)
+else
+  ifeq ($(HAS_NVIDIA),1)
+    ENV_FILE := $(GPU_ENV_FILE)
+  else
+    ENV_FILE := $(CPU_ENV_FILE)
+  endif
+endif
+
 # Minimum required Python version (must match pyproject.toml [project].requires-python)
 PY_MIN_MAJOR ?= 3
 PY_MIN_MINOR ?= 10
@@ -44,8 +60,8 @@ STAC_ARGS = --stac-url $(STAC_URL) --collections $(COLLS) \
 help:
 	@echo "Targets:"
 	@echo "  make env           # Reminder to activate conda env (geoAI)"
-	@echo "  make install       # pip install -e . (editable geogfm)"
-	@echo "  make install-dev   # editable install + pytest"
+	@echo "  make install       # pip install -e . (editable geogfm); auto-selects CPU/GPU conda env"
+	@echo "  make install-dev   # editable install + pytest; auto-selects CPU/GPU conda env"
 	@echo "  make kernelspec    # register Jupyter kernel 'geoai' for the env"
 	@echo "  make test          # run pytest"
 	@echo "  make docs          # incremental docs build"
@@ -74,8 +90,13 @@ env:
 # Ensure the conda environment exists (idempotent)
 ensure-env:
 	@conda env list | grep -q "$(ENV_NAME)" \
-		&& echo "Conda env '$(ENV_NAME)' exists" \
-		|| (echo "Creating conda env '$(ENV_NAME)' from environment.yml..." && conda env create -f environment.yml -n $(ENV_NAME))
+		&& echo "Conda env '$(ENV_NAME)' exists (ENV_FILE=$(ENV_FILE))" \
+		|| (echo "Creating conda env '$(ENV_NAME)' from $(ENV_FILE)..." && conda env create -f $(ENV_FILE) -n $(ENV_NAME))
+
+# Update the conda environment to match the selected spec (safe if already up-to-date)
+update-env:
+	@echo "Updating conda env '$(ENV_NAME)' from $(ENV_FILE) ..."
+	@conda env update -f $(ENV_FILE) -n $(ENV_NAME) --prune | cat
 
 # Guard: ensure the selected Python interpreter meets the minimum version
 check-python:
@@ -86,11 +107,11 @@ check-python:
 	print('Hint: Use make install-dev to create/update the geoAI conda env, or activate it with conda activate geoAI.'), \
 	s.exit(1)))"
 
-install: ensure-env
+install: ensure-env update-env
 	@$(MAKE) check-python PY="$(CONDA_RUN_PY)"
 	$(CONDA_RUN_PY) -m pip install -e .
 
-install-dev: ensure-env
+install-dev: ensure-env update-env
 	@$(MAKE) check-python PY="$(CONDA_RUN_PY)"
 	$(CONDA_RUN_PY) -m pip install -e .
 	$(CONDA_RUN_PY) -m pip install -U pytest
