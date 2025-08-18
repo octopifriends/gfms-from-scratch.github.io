@@ -76,17 +76,12 @@ ensure-env:
 
 # Guard: ensure the selected Python interpreter meets the minimum version
 check-python:
-	@$(PY) - <<'PY'
-import sys
-required = (int("${PY_MIN_MAJOR}"), int("${PY_MIN_MINOR}"))
-cur = sys.version_info
-if cur < required:
-    print(f"Error: Python {required[0]}.{required[1]}+ is required, found {cur.major}.{cur.minor}.{cur.micro} at: {sys.executable}")
-    print("Hint: Use 'make install-dev' to create/update the 'geoAI' conda env, or activate it with 'conda activate geoAI'.")
-    raise SystemExit(1)
-else:
-    print(f"Python version OK: {cur.major}.{cur.minor}.{cur.micro} ({sys.executable})")
-PY
+	@$(PY) -c "import sys; req=(int('${PY_MIN_MAJOR}'),int('${PY_MIN_MINOR}')); cur=sys.version_info; \
+	import sys as s; \
+	(print(f'Python version OK: {cur.major}.{cur.minor}.{cur.micro} ({sys.executable})') if cur>=req else ( \
+	print(f'Error: Python {req[0]}.{req[1]}+ is required, found {cur.major}.{cur.minor}.{cur.micro} at: {sys.executable}'), \
+	print('Hint: Use make install-dev to create/update the geoAI conda env, or activate it with conda activate geoAI.'), \
+	s.exit(1)))"
 
 install: ensure-env
 	@$(MAKE) check-python PY="$(CONDA_RUN_PY)"

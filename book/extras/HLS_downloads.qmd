@@ -315,15 +315,22 @@ def download_hls_samples(
                     northern = lat_center >= 0
                 epsg_val = (32600 if northern else 32700) + int(utm_zone)
 
+            # Select bands required by the demo in reflectance units
+            export_bands = (
+                ["B02", "B03", "B04", "B8A", "B11", "B12"]
+                if hls_collection.upper().startswith("HLSS30")
+                else ["B02", "B03", "B04", "B05", "B06", "B07"]
+            )
+
             da = stack(
                 [it_signed],
-                assets=list(bands),
+                assets=export_bands,
                 chunksize=1024,
                 resolution=resolution,
                 epsg=epsg_val,
-                dtype="uint16",
-                rescale=False,
-                fill_value=np.uint16(0),
+                dtype="float32",
+                rescale=True,
+                fill_value=np.nan,
             )
 
             da = da.compute()
@@ -331,16 +338,16 @@ def download_hls_samples(
                 # Use the first (and only) time slice when stacking a single item
                 da = da.isel(time=0, drop=True)
             da = da.transpose("band", "y", "x")
-            da = da.assign_coords(band=("band", list(bands)))
+            da = da.assign_coords(band=("band", export_bands))
             # Ensure CRS is set to target EPSG and clip using AOI polygon
             da = da.rio.write_crs(f"EPSG:{epsg_val}", inplace=True)
             da_clipped = da.rio.clip([aoi.__geo_interface__], crs="EPSG:4326", drop=False)
 
             da_clipped.rio.to_raster(
                 out_path,
-                dtype="uint16",
+                dtype="float32",
                 compress="deflate",
-                predictor=2,
+                predictor=3,
                 tiled=True,
                 BIGTIFF="IF_SAFER",
             )
