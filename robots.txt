@@ -1,1 +1,1 @@
-Sitemap: https://kellycaylor.github.io/geoAI/sitemap.xml
+Sitemap: https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/sitemap.xml
