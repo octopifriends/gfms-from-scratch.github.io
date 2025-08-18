@@ -280,3 +280,39 @@ git push origin main           # Deploy
 ---
 
 **🌟 Ready to build your own geospatial foundation model? [Get started now!](https://kellycaylor.github.io/geoAI)**
+
+---
+
+## 🔀 Branching Strategy
+
+We are re-architecting the course materials for the upcoming term, while preserving the current “from scratch” book and package implementation.
+
+- **Archive branch**: `from_scratch_book`
+  - Snapshot of the current end-to-end book and `geogfm/` package built during spring/summer development
+  - Safe place to cherry-pick examples and utilities as the new architecture evolves
+  - CI and the site can be built from this branch if needed
+
+- **Active development**: `main`
+  - All work for the Fall course runs on `main`
+  - Feel free to copy or cherry-pick small, self-contained edits from `from_scratch_book`
+
+Common flows:
+
+```bash
+# Switch to archived implementation
+git fetch origin
+git switch from_scratch_book
+
+# Cherry-pick a specific commit back into main
+git switch main
+git cherry-pick <commit_sha>
+
+# Create a PR comparing the archive to main
+git switch -c compare-archive
+git merge --no-ff origin/from_scratch_book  # or use GitHub's compare UI
+```
+
+Notes:
+- Keep new work on `main` focused on the revised structure and APIs.
+- When migrating lessons, prefer incremental PRs and ensure `make docs` and tests pass.
+- If you need to rebuild the archived site: `git switch from_scratch_book && make docs-full`.
