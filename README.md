@@ -2,28 +2,30 @@
 
 *Learn to build geospatial foundation models from scratch through hands-on implementation*
 
-**🌐 [View Course Website](https://gfms-from-scratch.github.io))** | **📚 [Installation Guide](installation/README.md)** | **🤝 [Contributing](CONTRIBUTING.md)**
+**🌐 [View Course Website](https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models)** | **📚 [Installation Guide](installation/README.md)** | **🤝 [Contributing](CONTRIBUTING.md)**
 
 ---
 
 ## 🚀 Quick Start
 
 ### I'm a Student 
-1. **Browse the course**: [https://gfms-from-scratch.github.io](https://gfms-from-scratch.github.io)
+1. **Browse the course**: [https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models](https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models)
 2. **Set up your environment**: Follow [installation/README.md](installation/README.md)  
-3. **Start learning**: Begin with [Week 1: Geospatial Data Foundations](https://gfms-from-scratch.github.io/chapters/c01-geospatial-data-foundations.html)
+3. **Start learning**: Begin with [Week 1: Geospatial Data Foundations](https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c01-geospatial-data-foundations.html)
 
 ### I'm an Instructor/TA
-1. **Get the code**: `git clone https://github.com/kellycaylor/geoAI.git && cd geoAI`
-2. **Setup everything**: `make setup` (installs conda env, kernel, etc.)
-3. **Edit content**: Modify `.qmd` files in `book/chapters/`, preview with `make preview`
+1. **Get the code**: `git clone https://github.com/kcaylor/GEOG-288KC-geospatial-foundation-models.git && cd GEOG-288KC-geospatial-foundation-models`
+2. **Install dev env**: `make install-dev` (creates/updates the conda env and installs in editable mode)
+3. **Register kernel**: `make kernelspec` (once, to add the `geoai` Jupyter kernel)
+4. **Edit content**: Modify `.qmd` files in `book/chapters/`, preview with `make preview`
 4. **See our guides**: [AUTHORING_GUIDE.md](AUTHORING_GUIDE.md) and [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ### I'm a Developer
 ```bash
-git clone https://github.com/kellycaylor/geoAI.git
-cd geoAI
-make setup              # Full environment setup
+git clone https://github.com/kcaylor/GEOG-288KC-geospatial-foundation-models.git
+cd GEOG-288KC-geospatial-foundation-models
+make install-dev        # Create/update env and install package
+make kernelspec         # Register Jupyter kernel (one time)
 make preview            # Build and serve locally
 ```
 
@@ -97,7 +99,8 @@ geoAI/
 
 ```bash
 # First time setup
-make setup              # Install conda env, register kernel, etc.
+make install-dev        # Create/update env and install package
+make kernelspec         # Register Jupyter kernel
 
 # Daily workflow (instructors)
 make preview            # Edit content + preview in browser
@@ -197,14 +200,14 @@ make data-course
 | Preview not updating | Check syntax errors in `.qmd` files |
 | Environment issues | `conda activate geoAI` |
 
-**Pro tip:** Most problems are solved with `make clean && make setup`
+**Pro tip:** Most problems are solved with `make clean && make install-dev`
 
 ---
 
 ## 📚 For Different Audiences
 
 ### Students
-- **Start here**: [Course website](https://kellycaylor.github.io/geoAI)
+- **Start here**: [Course website](https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models)
 - **Get help**: [Installation guide](installation/README.md) and [Troubleshooting](installation/TROUBLESHOOTING.md)
 - **Ask questions**: Course Slack or office hours
 
@@ -244,7 +247,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 ### GitHub Pages (Automatic)
 1. Push changes to `main` branch
 2. GitHub Actions builds the site automatically  
-3. Site available at: `https://kellycaylor.github.io/geoAI`
+3. Site available at: `https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models`
 
 ### Manual Build
 ```bash
@@ -279,7 +282,7 @@ git push origin main           # Deploy
 
 ---
 
-**🌟 Ready to build your own geospatial foundation model? [Get started now!](https://kellycaylor.github.io/geoAI)**
+**🌟 Ready to build your own geospatial foundation model? [Get started now!](https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models)**
 
 ---
 

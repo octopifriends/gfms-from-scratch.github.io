@@ -418,7 +418,7 @@ python installation/scripts/validate_environment.py
 
 2. **Technical Support:**
    - UCSB GRIT: Submit ticket at grit.ucsb.edu
-   - Course GitHub Issues: https://github.com/kellycaylor/geoAI/issues
+   - Course GitHub Issues: https://github.com/kcaylor/GEOG-288KC-geospatial-foundation-models/issues
 
 3. **Student Support:**
    - Course Slack channel for peer help

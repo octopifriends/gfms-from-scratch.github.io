@@ -1,5 +1,13 @@
 # -------- config knobs --------
 PY ?= python
+
+# Conda environment settings
+ENV_NAME ?= geoAI
+CONDA_RUN_PY ?= conda run -n $(ENV_NAME) python
+
+# Minimum required Python version (must match pyproject.toml [project].requires-python)
+PY_MIN_MAJOR ?= 3
+PY_MIN_MINOR ?= 10
 OUT_DIR ?= data/out
 STAC_URL ?= https://planetarycomputer.microsoft.com/api/stac/v1
 COLLS ?= sentinel-2-l2a
@@ -29,7 +37,7 @@ STAC_ARGS = --stac-url $(STAC_URL) --collections $(COLLS) \
             --stratify $(STRATIFY)
 
 # -------- targets --------
-.PHONY: help env install install-dev kernelspec test test-shortcode docs docs-full docs-one preview clean data-dryrun data checksums data-course-dryrun data-course geogfm-clean geogfm-clean-all
+.PHONY: help env ensure-env check-python install install-dev kernelspec test test-shortcode docs docs-full docs-one preview clean data-dryrun data checksums data-course-dryrun data-course geogfm-clean geogfm-clean-all
 
 help:
 	@echo "Targets:"
@@ -60,15 +68,37 @@ help:
 env:
 	@echo "Use: conda activate geoAI"
 
-install:
-	$(PY) -m pip install -e .
+# Ensure the conda environment exists (idempotent)
+ensure-env:
+	@conda env list | grep -q "$(ENV_NAME)" \
+		&& echo "Conda env '$(ENV_NAME)' exists" \
+		|| (echo "Creating conda env '$(ENV_NAME)' from environment.yml..." && conda env create -f environment.yml -n $(ENV_NAME))
 
-install-dev:
-	$(PY) -m pip install -e .
-	$(PY) -m pip install -U pytest
+# Guard: ensure the selected Python interpreter meets the minimum version
+check-python:
+	@$(PY) - <<'PY'
+import sys
+required = (int("${PY_MIN_MAJOR}"), int("${PY_MIN_MINOR}"))
+cur = sys.version_info
+if cur < required:
+    print(f"Error: Python {required[0]}.{required[1]}+ is required, found {cur.major}.{cur.minor}.{cur.micro} at: {sys.executable}")
+    print("Hint: Use 'make install-dev' to create/update the 'geoAI' conda env, or activate it with 'conda activate geoAI'.")
+    raise SystemExit(1)
+else:
+    print(f"Python version OK: {cur.major}.{cur.minor}.{cur.micro} ({sys.executable})")
+PY
 
-kernelspec:
-	$(PY) -m ipykernel install --user --name geoai --display-name "geoai"
+install: ensure-env
+	@$(MAKE) check-python PY="$(CONDA_RUN_PY)"
+	$(CONDA_RUN_PY) -m pip install -e .
+
+install-dev: ensure-env
+	@$(MAKE) check-python PY="$(CONDA_RUN_PY)"
+	$(CONDA_RUN_PY) -m pip install -e .
+	$(CONDA_RUN_PY) -m pip install -U pytest
+
+kernelspec: ensure-env
+	$(CONDA_RUN_PY) -m ipykernel install --user --name geoai --display-name "geoai"
 
 test:
 	@echo "Running pytest $(if $(TESTS),for '$(TESTS)',for all tests) with verbose output..."

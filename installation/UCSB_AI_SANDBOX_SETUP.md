@@ -14,8 +14,8 @@ The UCSB AI Sandbox is a high-performance computing environment managed by Gener
 
 ```bash
 # Clone the course repository
-git clone https://github.com/kellycaylor/geoAI.git
-cd geoAI
+git clone https://github.com/kcaylor/GEOG-288KC-geospatial-foundation-models.git
+cd GEOG-288KC-geospatial-foundation-models
 
 # Run the automated setup script
 bash scripts/setup_ai_sandbox.sh
@@ -60,8 +60,8 @@ The course uses a specialized conda environment optimized for GPU-accelerated ge
 ```bash
 # Clone course repository
 cd ~/
-git clone https://github.com/kellycaylor/geoAI.git
-cd geoAI
+git clone https://github.com/kcaylor/GEOG-288KC-geospatial-foundation-models.git
+cd GEOG-288KC-geospatial-foundation-models
 
 # Create the environment from the GPU-optimized specification
 conda env create -f environment-gpu.yml

@@ -4,7 +4,7 @@
 
 ## 🚀 TLDR - Get Started in 3 Steps
 
-1. **Setup Environment**: `make setup` (installs everything you need)
+1. **Setup Environment**: `make install-dev && make kernelspec` (creates env and registers kernel)
 2. **Edit Content**: Modify `.qmd` files in `book/chapters/` and `book/extras/`
 3. **Preview Changes**: `make preview` (builds and opens in browser)
 
@@ -51,7 +51,8 @@ book/
 
 ```bash
 # First time setup
-make setup              # Install conda env + register Jupyter kernel
+make install-dev        # Create/update env and install package
+make kernelspec         # Register Jupyter kernel
 
 # Daily workflow  
 make preview            # Build + serve locally (auto-refreshes)
@@ -196,7 +197,7 @@ git add . && git commit -m "Update session X"
 - `data/` - Sample datasets
 
 ### Make Commands
-- `make setup` - Initial setup
+- `make install-dev && make kernelspec` - Initial setup
 - `make preview` - Edit + preview workflow  
 - `make docs` - Quick build
 - `make clean` - Fix problems

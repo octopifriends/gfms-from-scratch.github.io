@@ -13,7 +13,7 @@ project:
     - "!*_PLAN.md"
 
 website:
-  site-url: https://kellycaylor.github.io/geoAI
+  site-url: https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models
   navbar:
     title: "GEOG 288KC"
     right:
@@ -111,7 +111,7 @@ website:
         target: _blank
   page-footer:
     background: dark
-    right: This website is built with [{{< fa brands github title="the github octocat logo" >}}](https://github.com/environmental-data-science/geog-288kc-geospatial-foundation-models) and [Quarto](https://quarto.org/)
+    right: This website is built with [{{< fa brands github title="the github octocat logo" >}}](https://github.com/kcaylor/GEOG-288KC-geospatial-foundation-models) and [Quarto](https://quarto.org/)
     left: |
       ![Department of Geography logo](/images/geog-logo.png){.img-fluid width=250px}
 format:

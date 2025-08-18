@@ -5,7 +5,7 @@
 ## 🚀 Quick Start for Contributors
 
 **Never contributed before?**
-1. `make setup` - Install environment
+1. `make install-dev` - Create/update environment and install package
 2. Create branch: `git checkout -b week-3-updates`  
 3. Edit files in `book/chapters/`
 4. Test: `make preview`
@@ -18,10 +18,20 @@
 ## 🔄 Standard Workflow
 
 ### 1. Before You Start
+
+MacOS prerequisite: Make targets require Apple's Xcode Command Line Tools (provides `make`, `gcc`, and headers). Install/verify first:
+```bash
+# Install (opens a GUI prompt)
+xcode-select --install
+
+# Verify installation path (should print a directory)
+xcode-select -p
+```
 ```bash
 git checkout main
 git pull origin main
-make setup                    # First time only
+make install-dev              # First time only (creates/updates env)
+make kernelspec               # One time (register Jupyter kernel)
 conda activate geoAI         # Every session
 ```
 
@@ -264,7 +274,8 @@ grep -r "/Users\|/home" book/    # Check for absolute paths
 
 ```bash
 # Setup (first time)
-make setup
+make install-dev
+make kernelspec
 
 # Daily workflow
 conda activate geoAI

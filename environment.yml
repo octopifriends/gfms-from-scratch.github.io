@@ -39,6 +39,7 @@ dependencies:
   - pyproj>=3.7
   - xarray>=2025.7
   - netcdf4>=1.6
+  - rioxarray>=0.15
 
   # Geospatial visualization
   - folium>=0.20
@@ -46,6 +47,7 @@ dependencies:
 
   # Earth observation
   - earthengine-api>=1.6
+  - pystac-client>=0.7
 
   # Deep learning for geospatial
   - torchgeo>=0.7
@@ -104,6 +106,9 @@ dependencies:
     - mapclassify>=2.10.0
     - rtree>=1.4.0
     - contextily>=1.6.0
+    - planetary-computer>=1.0.0
+    - stackstac>=0.5.0
+    - rich>=13.7.1
 
     # Hydra for configuration management
     - hydra-core>=1.3.2
