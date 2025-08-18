@@ -65,6 +65,8 @@ website:
           - text: "🗺️ Geospatial Data & Remote Sensing"
           - text: Geospatial Data & Remote Sensing
             href: extras/cheatsheets/geospatial_data_remote_sensing.qmd
+          - text: GEO-Bench Datasets
+            href: extras/cheatsheets/geobench_datasets.qmd
           - text: STAC APIs
             href: extras/cheatsheets/stac_apis.qmd
           - text: Rasterio Basics
@@ -101,6 +103,8 @@ website:
             href: extras/examples/text_encoder.qmd
           - text: Tiling and Patches
             href: extras/examples/tiling-and-patches.qmd
+          - text: TerraTorch Workflows
+            href: extras/examples/terratorch_workflows.qmd
           - text: "📁 Project Templates"
           - text: Project Proposal Template
             href: extras/projects/project-proposal-template.qmd

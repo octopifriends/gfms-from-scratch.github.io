@@ -7,6 +7,7 @@ This directory contains installation files and scripts for setting up the GeoAI 
 | File | Description |
 |------|-------------|
 | `environment.yml` | General conda environment configuration |
+| `GRIT_SETUP.md` | Step-by-step GRIT installation playbook (this is your primary runbook) |
 | `environment-mac-gpu.yml` | **Mac-specific environment with GPU support** |
 | `requirements.txt` | Pip requirements file (Mac GPU compatible) |
 | `setup_geoai_mac.sh` | **Automated setup script for Mac** |
@@ -31,6 +32,12 @@ This script will:
 - Install all required packages
 - Set up the Jupyter kernel
 - Test GPU functionality
+
+For GRIT or Linux GPU servers, follow the comprehensive runbook:
+
+```bash
+open GRIT_SETUP.md
+```
 
 ## 🔧 Manual Setup Options
 

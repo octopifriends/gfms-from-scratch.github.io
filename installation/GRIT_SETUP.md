@@ -1,31 +1,19 @@
-## UCSB AI Sandbox Installation Playbook (GeoAI Course)
+## GRIT Installation Playbook (GeoAI Course)
 
-This playbook is for GRIT to provision UCSB AI Sandbox hosts for the GeoAI course. It reuses our repo’s environment files, Makefile targets, and validation scripts, and adds steps for GEO-Bench and TerraTorch backbones (Prithvi, SatMAE, TIMM).
+This playbook is for UCSB GRIT to provision machines for the GeoAI course. It reuses our existing environment files, Makefile targets, and validation scripts, and adds steps for GEO-Bench and TerraTorch backbones (Prithvi, SatMAE, TIMM).
 
 ### Outcomes
-- Conda installed; `geoAI` environment created (Linux CUDA)
+- Conda installed; System-wide (or class-wide) `geoAI` environment created (macOS MPS or Linux CUDA)
 - `geogfm` installed editable; Jupyter kernel `geoai` registered
-- GEO-Bench CLI available and datasets stored in shared storage
-- TerraTorch and TIMM backbones available; Prithvi and SatMAE downloaded
+- Class-wide installation of GEO-Bench CLI available and datasets stored in a shared path
+- Class-wide TerraTorch and TIMM backbones available; Prithvi and SatMAE downloaded
 - Validation scripts pass on target hosts
 
-## 1) Access and pre-checks
+## 1) Install Conda (Miniforge)
 
-```bash
-ssh your_username@ai-sandbox.ucsb.edu
+Conda is needed for all users, and the class environment (geoAI) should be available to all users via `conda activate geoAI`.
 
-# Verify NVIDIA driver & GPUs
-nvidia-smi
-
-# Optional: CUDA toolkit version
-nvcc --version || true
-
-# Check available storage for datasets/models
-df -h
-```
-
-## 2) Install Conda (Miniforge)
-
+Linux (CUDA servers):
 ```bash
 curl -L https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-$(uname -m).sh -o ~/miniforge.sh
 bash ~/miniforge.sh -b -p $HOME/miniforge
@@ -33,15 +21,23 @@ source $HOME/miniforge/bin/activate
 conda init bash
 ```
 
-## 3) Clone the course repository
+Prereq on Linux GPU: `nvidia-smi` must work and show at least one GPU.
 
+## 2) Clone the course repository
 ```bash
 git clone https://github.com/kcaylor/GEOG-288KC-geospatial-foundation-models.git ~/geoAI
 cd ~/geoAI
 ```
 
-## 4) Create the `geoAI` conda environment (CUDA)
+## 3) Create the `geoAI` conda environment
 
+macOS (MPS):
+```bash
+conda env create -f environment.yml -n geoAI
+conda activate geoAI
+```
+
+Linux (CUDA 11.8):
 ```bash
 conda env create -f installation/environment-gpu.yml -n geoAI
 conda activate geoAI
@@ -52,37 +48,33 @@ Idempotent guard (optional):
 make ensure-env ENV_NAME=geoAI
 ```
 
-## 5) Install our package and Jupyter kernel
-
+## 4) Install our package and Jupyter kernel
 ```bash
 make install ENV_NAME=geoAI
 make kernelspec ENV_NAME=geoAI
 ```
 
-## 6) Install TerraTorch and GEO-Bench CLI
-
+## 5) Install TerraTorch and GEO-Bench CLI
 ```bash
 conda activate geoAI
 pip install terratorch geobench
 ```
 
-## 7) Download GEO-Bench data to shared storage
-
-Choose a shared path with sufficient space (e.g., `/shared/datasets/geobench`, 100+ GB if pulling multiple suites):
+## 6) Download GEO-Bench data to shared storage
+Pick a shared path with sufficient space (≥100 GB if pulling multiple suites):
 ```bash
-export GEO_BENCH_DIR="/shared/datasets/geobench"
+export GEO_BENCH_DIR="/srv/datasets/geobench"
 mkdir -p "$GEO_BENCH_DIR"
 make geobench ENV_NAME=geoAI GEO_BENCH_DIR="$GEO_BENCH_DIR"
 ```
 
 Persist for users (recommended):
 ```bash
-sudo bash -lc 'echo export GEO_BENCH_DIR="/shared/datasets/geobench" > /etc/profile.d/geoai.sh'
+sudo bash -lc 'echo export GEO_BENCH_DIR="/srv/datasets/geobench" > /etc/profile.d/geoai.sh'
 sudo chmod 644 /etc/profile.d/geoai.sh
 ```
 
-## 8) Install foundation model backbones (Prithvi, SatMAE, CLIP)
-
+## 7) Install foundation model backbones (Prithvi, SatMAE, CLIP)
 ```bash
 # Prefer non-interactive HF login on shared servers (create token in your HF account)
 huggingface-cli login --token "$HF_TOKEN"
@@ -92,9 +84,9 @@ bash installation/scripts/install_foundation_models.sh
 
 This downloads and verifies models, creates `~/geoAI/models/model_registry.json`, and adds simple usage examples under `~/geoAI/examples/`.
 
-## 9) GPU and environment validation (must pass)
+## 8) GPU and environment validation (must pass)
 
-Universal GPU test (works on Linux CUDA and Mac MPS):
+Universal GPU test (Mac MPS or Linux CUDA):
 ```bash
 python installation/test_gpu_setup_universal.py
 ```
@@ -109,7 +101,7 @@ Course verification (package groups + GPU + kernel):
 python installation/verify_geoai_setup.py
 ```
 
-## 10) TerraTorch and backbone smoke tests
+## 9) TerraTorch and backbone smoke tests
 
 TerraTorch + TIMM:
 ```bash
@@ -143,28 +135,24 @@ Optional example config for later workflows:
 cat book/extras/examples/terratorch-configs/classification_eurosat.yaml
 ```
 
-## 11) GEO-Bench sanity check
-
+## 10) GEO-Bench sanity check
 ```bash
 test -d "$GEO_BENCH_DIR" && find "$GEO_BENCH_DIR" -maxdepth 2 -type d | sed -n '1,20p'
 ```
 
-## 12) Optional docs and repo tests
-
+## 11) Optional docs and repo tests
 ```bash
 make docs
 make test
 ```
 
-## 13) Common issues
-
-- No GPU visible: ensure `nvidia-smi` works and the host is assigned a GPU.
-- PyTorch CPU-only: recreate env from `installation/environment-gpu.yml`.
-- HF auth in non-interactive shells: `huggingface-cli login --token "$HF_TOKEN"` before model install.
-- GEO-Bench not found: set `GEO_BENCH_DIR` globally or per-session before launching Jupyter.
+## 12) Common issues
+- Linux GPU: `nvidia-smi` must work; ensure env created from `installation/environment-gpu.yml`.
+- Mac MPS: macOS ≥ 12.3 and PyTorch ≥ 2.0 required; Apple Silicon only.
+- HF auth in non-interactive shells: run `huggingface-cli login --token "$HF_TOKEN"` before model install.
+- GEO-Bench not found: set `GEO_BENCH_DIR` globally or per-session.
 
 ## Final verification checklist
-
 ```bash
 conda activate geoAI && python -V
 python installation/test_gpu_setup_universal.py
@@ -176,3 +164,5 @@ PY
 bash installation/scripts/install_foundation_models.sh
 echo "$GEO_BENCH_DIR" && ls -1 "$GEO_BENCH_DIR" | sed -n '1,10p'
 ```
+
+

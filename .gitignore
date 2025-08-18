@@ -84,6 +84,7 @@ book/*_files/
 *.nc
 *.zarr/
 large_datasets/
+data/geobench
 
 # Generated data manifests and splits
 data/out/

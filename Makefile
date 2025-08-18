@@ -3,12 +3,14 @@ PY ?= python
 
 # Conda environment settings
 ENV_NAME ?= geoAI
-CONDA_RUN_PY ?= conda run -n $(ENV_NAME) python
+CONDA_RUN ?= conda run -n $(ENV_NAME)
+CONDA_RUN_PY ?= $(CONDA_RUN) python
 
 # Minimum required Python version (must match pyproject.toml [project].requires-python)
 PY_MIN_MAJOR ?= 3
 PY_MIN_MINOR ?= 10
 OUT_DIR ?= data/out
+GEO_BENCH_DIR ?= data/geobench
 STAC_URL ?= https://planetarycomputer.microsoft.com/api/stac/v1
 COLLS ?= sentinel-2-l2a
 AOI ?= data/aois/central_coast_inland.geojson
@@ -37,7 +39,7 @@ STAC_ARGS = --stac-url $(STAC_URL) --collections $(COLLS) \
             --stratify $(STRATIFY)
 
 # -------- targets --------
-.PHONY: help env ensure-env check-python install install-dev kernelspec test test-shortcode docs docs-full docs-one preview clean data-dryrun data checksums data-course-dryrun data-course geogfm-clean geogfm-clean-all
+.PHONY: help env ensure-env check-python install install-dev kernelspec test test-shortcode docs docs-full docs-one preview clean data-dryrun data checksums data-course-dryrun data-course geogfm-clean geogfm-clean-all geobench
 
 help:
 	@echo "Targets:"
@@ -52,6 +54,7 @@ help:
 	@echo "  make bootstrap-lib # render foundational pages in order"
 	@echo "  make preview       # quarto preview (in book/)"
 	@echo "  make clean         # remove data/out or clean docs intermediates"
+	@echo "  make geobench      # create data/geobench, download GEO-Bench there, and print setup instructions"
 	@echo "  make geogfm-clean   # delete generated .py under geogfm/ (keeps __init__.py)"
 	@echo "  make geogfm-clean-all # delete ALL .py under geogfm/ (dangerous)"
 	@echo "  (Tangling is now handled during Quarto render via the Python panflute filter)"
@@ -185,3 +188,16 @@ geogfm-clean:
 geogfm-clean-all:
 	@echo "DELETING ALL Python files under $(GEOGFM_DIR) (including __init__.py)..."
 	@find $(GEOGFM_DIR) -type f -name "*.py" -print -delete || true
+
+# ===== GEO-Bench data setup =====
+geobench:
+	@mkdir -p $(GEO_BENCH_DIR)
+	@echo "📦 Downloading GEO-Bench into $(GEO_BENCH_DIR) ..."
+	@GEO_BENCH_DIR="$(PWD)/$(GEO_BENCH_DIR)" $(CONDA_RUN) geobench-download | cat
+	@echo ""
+	@echo "To use GEO-Bench in notebooks, set the environment variable in-session:"
+	@echo "  >>> import os; os.environ['GEO_BENCH_DIR'] = '$(PWD)/$(GEO_BENCH_DIR)'"
+	@echo "Or in your shell before launching Jupyter:"
+	@echo "  export GEO_BENCH_DIR='$(PWD)/$(GEO_BENCH_DIR)'"
+	@echo ""
+	@echo "Done. If you encounter permission or network issues, re-run: make geobench"
