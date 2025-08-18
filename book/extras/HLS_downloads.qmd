@@ -328,7 +328,7 @@ def download_hls_samples(
                 chunksize=1024,
                 resolution=resolution,
                 epsg=epsg_val,
-                dtype="float32",
+                dtype="float64",
                 rescale=True,
                 fill_value=np.nan,
             )
@@ -345,7 +345,7 @@ def download_hls_samples(
 
             da_clipped.rio.to_raster(
                 out_path,
-                dtype="float32",
+                dtype="float64",
                 compress="deflate",
                 predictor=3,
                 tiled=True,
