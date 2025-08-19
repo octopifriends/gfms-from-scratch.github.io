@@ -96,13 +96,7 @@ make install ENV_NAME=geoAI
 make kernelspec ENV_NAME=geoAI
 ```
 
-## 5) Install TerraTorch and GEO-Bench CLI
-```bash
-conda activate geoAI
-pip install terratorch geobench
-```
-
-## 6) Download GEO-Bench data to shared storage that is accessible to the entire class.
+## 5) Download GEO-Bench data to shared storage that is accessible to the entire class.
 Pick a shared path with sufficient space (≥100 GB if pulling multiple suites):
 ```bash
 export GEO_BENCH_DIR="/srv/datasets/geobench"
@@ -116,7 +110,7 @@ sudo bash -lc 'echo export GEO_BENCH_DIR="/srv/datasets/geobench" > /etc/profile
 sudo chmod 644 /etc/profile.d/geoai.sh
 ```
 
-## 7) Install foundation model backbones (Prithvi, SatMAE, CLIP)
+## 6) Install foundation model backbones (Prithvi, SatMAE, CLIP)
 ```bash
 # Prefer non-interactive HF login on shared servers (create token in your HF account)
 huggingface-cli login --token "$HF_TOKEN"
@@ -143,7 +137,7 @@ bash installation/scripts/install_foundation_models.sh --models prithvi-100m,sat
 
 - The installer reads `installation/models_catalog.yml` (Prithvi-100M, Prithvi EO v2 300M/600M, SatMAE, CLIP B/32 and L/14, Clay, DINOv2-Base, SAM ViT-B). You can extend this catalog to add more models.
 
-## 8) GPU and environment validation (must pass)
+## 7) GPU and environment validation (must pass)
 
 Universal GPU test (Mac MPS or Linux CUDA):
 ```bash
@@ -155,7 +149,7 @@ Full environment validation (imports, GPU, EE auth, HF, models, kernel, perf):
 python installation/verify_geoai_setup.py
 ```
 
-## 9) TerraTorch and backbone smoke tests
+## 8) TerraTorch and backbone smoke tests
 
 TerraTorch + TIMM:
 ```bash
@@ -189,18 +183,18 @@ Optional example config for later workflows:
 cat book/extras/examples/terratorch-configs/classification_eurosat.yaml
 ```
 
-## 10) GEO-Bench sanity check
+## 9) GEO-Bench sanity check
 ```bash
 test -d "$GEO_BENCH_DIR" && find "$GEO_BENCH_DIR" -maxdepth 2 -type d | sed -n '1,20p'
 ```
 
-## 11) Optional docs and repo tests
+## 10) Optional docs and repo tests
 ```bash
 make docs
 make test
 ```
 
-## 12) Common issues
+## 11) Common issues
 - Linux GPU: `nvidia-smi` must work; ensure env created from `installation/environment-gpu.yml`.
 - Mac MPS: macOS ≥ 12.3 and PyTorch ≥ 2.0 required; Apple Silicon only.
 - HF auth in non-interactive shells: run `huggingface-cli login --token "$HF_TOKEN"` before model install.
