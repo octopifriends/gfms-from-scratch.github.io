@@ -226,6 +226,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">Geospatial Data &amp; Remote Sensing</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="./extras/cheatsheets/geobench_datasets.html">
+ <span class="dropdown-text">GEO-Bench Datasets</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="./extras/cheatsheets/stac_apis.html">
  <span class="dropdown-text">STAC APIs</span></a>
   </li>  
@@ -295,6 +299,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li>
     <a class="dropdown-item" href="./extras/examples/tiling-and-patches.html">
  <span class="dropdown-text">Tiling and Patches</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./extras/examples/terratorch_workflows.html">
+ <span class="dropdown-text">TerraTorch Workflows</span></a>
   </li>  
         <li class="dropdown-header">📁 Project Templates</li>
         <li>
@@ -374,7 +382,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="getting-started-with-the-ucsb-ai-sandbox" class="level2">
 <h2 class="anchored" data-anchor-id="getting-started-with-the-ucsb-ai-sandbox">Getting Started with the UCSB AI Sandbox</h2>
-<p><a href="../installation/UCSB_AI_SANDBOX_SETUP.md">Here</a> are detailed instructions for setting up your environment on the UCSB AI Sandbox, including foundation model installation and GPU optimization.</p>
+<p><a href="../installation/GRIT_SETUP.md">Here</a> are detailed instructions for setting up the class environment on the UCSB AI Sandbox, including foundation model installation and GPU optimization. This should all be taken care of for the class, but could be helpful if you are interested in deploying our class infrastructure on a different server or a local machine.</p>
 </section>
 <section id="course-structure-3-stages-10-weeks" class="level2">
 <h2 class="anchored" data-anchor-id="course-structure-3-stages-10-weeks">Course Structure: 3 Stages, 10 Weeks</h2>
@@ -635,7 +643,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/kellycaylor\.github\.io\/geoAI");
+      var filterRegex = new RegExp("https:\/\/kcaylor\.github\.io\/GEOG-288KC-geospatial-foundation-models");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
@@ -992,7 +1000,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started with the UCSB AI Sandbox</span></span>
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Here</span><span class="co">](../installation/UCSB_AI_SANDBOX_SETUP.md)</span> are detailed instructions for setting up your environment on the UCSB AI Sandbox, including foundation model installation and GPU optimization.</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Here</span><span class="co">](../installation/GRIT_SETUP.md)</span> are detailed instructions for setting up the class environment on the UCSB AI Sandbox, including foundation model installation and GPU optimization. This should all be taken care of for the class, but could be helpful if you are interested in deploying our class infrastructure on a different server or a local machine. </span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## Course Structure: 3 Stages, 10 Weeks</span></span>
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
@@ -1104,7 +1112,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       &nbsp;
     </div>
     <div class="nav-footer-right">
-<p>This website is built with <a href="https://github.com/environmental-data-science/geog-288kc-geospatial-foundation-models"><i class="fa-brands fa-github" title="the github octocat logo" aria-label="github"></i></a> and <a href="https://quarto.org/">Quarto</a></p>
+<p>This website is built with <a href="https://github.com/kcaylor/GEOG-288KC-geospatial-foundation-models"><i class="fa-brands fa-github" title="the github octocat logo" aria-label="github"></i></a> and <a href="https://quarto.org/">Quarto</a></p>
 </div>
   </div>
 </footer>

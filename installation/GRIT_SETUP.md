@@ -1,6 +1,48 @@
 ## GRIT Installation Playbook (GeoAI Course)
 
+### Installation footprint (approximate)
+
+| Component | Description | Estimated size | Notes |
+|---|---|---:|---|
+| Conda env (macOS, MPS) | `environment.yml` (CPU/MPS stack, geospatial libs) | 6–8 GB | Depends on platform and solver; includes GDAL, Rasterio, GeoPandas, Torch (CPU/MPS) |
+| Conda env (Linux, CUDA) | `installation/environment-gpu.yml` (CUDA 11.8, PyTorch, geospatial libs) | 10–15 GB | Includes `cudatoolkit`, `pytorch-cuda`, NCCL, cuDNN |
+| GEO-Bench datasets | CLI-managed dataset store | 50–150+ GB | Varies by suites selected; allocate ≥100 GB for multiple suites |
+| Prithvi-100M | Foundation model | ~2.5 GB | Catalog key: `prithvi-100m` |
+| Prithvi EO v2 300M | Foundation model | ~3.8 GB | Catalog key: `prithvi-eo-v2-300m` |
+| Prithvi EO v2 600M | Foundation model | ~7.5 GB | Catalog key: `prithvi-eo-v2-600m` |
+| SatMAE fMoW | MAE | ~1.5 GB | Catalog key: `satmae-fmow` |
+| CLIP ViT-B/32 | Vision-lang | ~0.5 GB | Catalog key: `clip-vit-base-patch32` |
+| CLIP ViT-L/14 | Vision-lang | ~1.8 GB | Catalog key: `clip-vit-large-patch14` |
+| Clay | Remote sensing LMM | ~8.0 GB | Catalog key: `clay` |
+| DINOv2-Base | Vision foundation | ~0.9 GB | Catalog key: `dinov2-base` |
+| SAM ViT-B | Segmentation | ~1.1 GB | Catalog key: `sam-vit-base` |
+
+- Typical model subsets: Prithvi-100M + SatMAE + CLIP-B/32 ≈ 4.5 GB; adding Prithvi EO v2 300M ≈ 8.3 GB total.
+- Full catalog (all entries above) ≈ 27–28 GB. Use the installer `--dryrun` to plan precisely on your host.
+
+
 This playbook is for UCSB GRIT to provision machines for the GeoAI course. It reuses our existing environment files, Makefile targets, and validation scripts, and adds steps for GEO-Bench and TerraTorch backbones (Prithvi, SatMAE, TIMM).
+
+### Class-wide paths (shared storage)
+
+Set these environment variables before running dataset/model installs to use shared, class-wide locations:
+
+```bash
+# GEO-Bench dataset root used by CLI and our Makefile targets
+export GEO_BENCH_DIR="/srv/datasets/geobench"   # adjust to shared storage path
+
+# Hugging Face cache (snapshots) for all students (optional but recommended)
+export HUGGINGFACE_HUB_CACHE="/srv/models/hf-cache"  # or set HF_HOME=/srv/models/hf and it will use $HF_HOME/hub
+
+# Course model installation root (where models get materialized by the installer)
+export GEOAI_MODELS_DIR="/srv/models/geoAI"
+
+mkdir -p "$GEO_BENCH_DIR" "$HUGGINGFACE_HUB_CACHE" "$GEOAI_MODELS_DIR"
+```
+
+Notes:
+- The model installer honors `GEOAI_MODELS_DIR` and `HUGGINGFACE_HUB_CACHE` (or `HF_HOME`). If not set, it falls back to user-local paths under `~/geoAI` and `~/.cache/huggingface/hub`.
+- The GEO-Bench Makefile target uses `GEO_BENCH_DIR` if present.
 
 ### Outcomes
 - Conda installed; System-wide (or class-wide) `geoAI` environment created (macOS MPS or Linux CUDA)
@@ -60,7 +102,7 @@ conda activate geoAI
 pip install terratorch geobench
 ```
 
-## 6) Download GEO-Bench data to shared storage
+## 6) Download GEO-Bench data to shared storage that is accessible to the entire class.
 Pick a shared path with sufficient space (≥100 GB if pulling multiple suites):
 ```bash
 export GEO_BENCH_DIR="/srv/datasets/geobench"
@@ -84,6 +126,23 @@ bash installation/scripts/install_foundation_models.sh
 
 This downloads and verifies models, creates `~/geoAI/models/model_registry.json`, and adds simple usage examples under `~/geoAI/examples/`.
 
+Common options and catalog:
+
+```bash
+# Show all available models (from YAML catalog) with sizes and params
+bash installation/scripts/install_foundation_models.sh --info
+
+# Estimate total size without downloading (all or a subset)
+bash installation/scripts/install_foundation_models.sh --dryrun --all
+bash installation/scripts/install_foundation_models.sh --dryrun --models prithvi-100m,prithvi-eo-v2-300m,clay
+
+# Install all catalog models, or a selected subset by key
+bash installation/scripts/install_foundation_models.sh --all
+bash installation/scripts/install_foundation_models.sh --models prithvi-100m,satmae-fmow
+```
+
+- The installer reads `installation/models_catalog.yml` (Prithvi-100M, Prithvi EO v2 300M/600M, SatMAE, CLIP B/32 and L/14, Clay, DINOv2-Base, SAM ViT-B). You can extend this catalog to add more models.
+
 ## 8) GPU and environment validation (must pass)
 
 Universal GPU test (Mac MPS or Linux CUDA):
@@ -92,11 +151,6 @@ python installation/test_gpu_setup_universal.py
 ```
 
 Full environment validation (imports, GPU, EE auth, HF, models, kernel, perf):
-```bash
-python installation/scripts/validate_environment.py
-```
-
-Course verification (package groups + GPU + kernel):
 ```bash
 python installation/verify_geoai_setup.py
 ```
@@ -151,12 +205,12 @@ make test
 - Mac MPS: macOS ≥ 12.3 and PyTorch ≥ 2.0 required; Apple Silicon only.
 - HF auth in non-interactive shells: run `huggingface-cli login --token "$HF_TOKEN"` before model install.
 - GEO-Bench not found: set `GEO_BENCH_DIR` globally or per-session.
+- Model installs: use `--info` and `--dryrun` to plan disk usage; select with `--models` or `--all`.
 
 ## Final verification checklist
 ```bash
 conda activate geoAI && python -V
 python installation/test_gpu_setup_universal.py
-python installation/scripts/validate_environment.py
 python installation/verify_geoai_setup.py
 python - << 'PY'
 import terratorch, timm, torch; print(terratorch.__version__, timm.__version__, torch.__version__)

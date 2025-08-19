@@ -179,7 +179,7 @@
     "href": "index.html#getting-started-with-the-ucsb-ai-sandbox",
     "title": "Building Geospatial Foundation Models",
     "section": "Getting Started with the UCSB AI Sandbox",
-    "text": "Getting Started with the UCSB AI Sandbox\nHere are detailed instructions for setting up your environment on the UCSB AI Sandbox, including foundation model installation and GPU optimization."
+    "text": "Getting Started with the UCSB AI Sandbox\nHere are detailed instructions for setting up the class environment on the UCSB AI Sandbox, including foundation model installation and GPU optimization. This should all be taken care of for the class, but could be helpful if you are interested in deploying our class infrastructure on a different server or a local machine."
   },
   {
     "objectID": "index.html#course-structure-3-stages-10-weeks",

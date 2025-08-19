@@ -6,10 +6,25 @@
 
 set -e  # Exit on any error
 
-# Configuration
-MODELS_DIR="${HOME}/geoAI/models"
-CACHE_DIR="${HOME}/.cache/huggingface/hub"
+# Configuration (honor shared class dirs if provided)
+# MODELS_DIR: where installed models are stored
+# CACHE_DIR: Hugging Face cache root for downloads (maps to huggingface_hub snapshot cache)
+MODELS_DIR="${GEOAI_MODELS_DIR:-${HOME}/geoAI/models}"
+if [[ -n "${HUGGINGFACE_HUB_CACHE:-}" ]]; then
+  CACHE_DIR="${HUGGINGFACE_HUB_CACHE}"
+elif [[ -n "${HF_HOME:-}" ]]; then
+  CACHE_DIR="${HF_HOME%/}/hub"
+else
+  CACHE_DIR="${HOME}/.cache/huggingface/hub"
+fi
 LOG_FILE="${HOME}/geoAI/installation.log"
+CATALOG_FILE="$(cd "$(dirname "$0")" && pwd)/../models_catalog.yml"
+
+# Flags / args
+DRYRUN=0
+INFO_ONLY=0
+SELECT_ALL=0
+SELECT_MODELS=""
 
 # Colors for output
 RED='\033[0;31m'
@@ -44,6 +59,149 @@ print_error() {
     log "ERROR: $1"
 }
 
+usage() {
+    cat <<USAGE
+Usage: $(basename "$0") [--dryrun] [--info] [--all] [--models name1,name2]
+
+Options:
+  --dryrun                Show disk space and total download size for selected models; do not download
+  --info                  Show details for all available models from the catalog (size, params, repo)
+  --all                   Install all models listed in the catalog
+  --models list           Comma-separated list of model keys from the catalog to install
+
+Examples:
+  $(basename "$0") --info
+  $(basename "$0") --dryrun --all
+  $(basename "$0") --models prithvi-100m,satmae-fmow
+USAGE
+}
+
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --dryrun)
+        DRYRUN=1; shift ;;
+      --info)
+        INFO_ONLY=1; shift ;;
+      --all)
+        SELECT_ALL=1; shift ;;
+      --models)
+        SELECT_MODELS="$2"; shift 2 ;;
+      -h|--help)
+        usage; exit 0 ;;
+      *)
+        print_warning "Unknown option: $1"; usage; exit 2 ;;
+    esac
+  done
+}
+
+require_catalog() {
+  if [[ ! -f "$CATALOG_FILE" ]]; then
+    print_error "Model catalog not found: $CATALOG_FILE"
+    echo "Create it or re-install the repository."
+    exit 2
+  fi
+}
+
+list_models_info() {
+  require_catalog
+  python - <<'PY'
+import sys, yaml
+from pathlib import Path
+cat = Path("""$CATALOG_FILE""")
+with cat.open() as f:
+    data = yaml.safe_load(f)
+models = data.get('models', {})
+print("Available models (from catalog):\n")
+for key, m in models.items():
+    name = m.get('name', key)
+    repo = m.get('repo_id', 'unknown')
+    size = m.get('size_gb', 'unknown')
+    params = m.get('params_m', 'unknown')
+    desc = m.get('description', '')
+    print(f"- key: {key}\n  name: {name}\n  repo: {repo}\n  size_gb: {size}\n  params_m: {params}\n  {desc}\n")
+PY
+}
+
+compute_selected_total_size() {
+  require_catalog
+  SEL="$1"
+  python - <<PY
+import sys, yaml
+from pathlib import Path
+sel = set(x.strip() for x in """$SEL""".split(',') if x.strip())
+cat = Path("""$CATALOG_FILE""")
+with cat.open() as f:
+    data = yaml.safe_load(f)
+models = data.get('models', {})
+if not sel:
+    sel = set(models.keys())
+total = 0.0
+missing = []
+rows = []
+for k in sel:
+    m = models.get(k)
+    if not m:
+        missing.append(k); continue
+    size = float(m.get('size_gb', 0) or 0)
+    total += size
+    rows.append((k, m.get('name', k), size))
+print("Selected models:")
+for k, name, size in rows:
+    print(f"  - {k:20s} {name:35s} ~{size:.2f} GB")
+print(f"\nEstimated total download size: ~{total:.2f} GB")
+if missing:
+    print("\nWarning: missing keys in catalog:", ', '.join(missing))
+PY
+}
+
+install_selected_models() {
+  require_catalog
+  SEL_KEYS="$1"
+  MODELS_DIR="$MODELS_DIR" CACHE_DIR="$CACHE_DIR" python - <<'PY'
+import os, sys, yaml
+from pathlib import Path
+from huggingface_hub import snapshot_download
+
+MODELS_DIR = os.environ.get('MODELS_DIR')
+CACHE_DIR = os.environ.get('CACHE_DIR')
+CATALOG_FILE = os.path.abspath("""$CATALOG_FILE""")
+SEL = set(x.strip() for x in """$SEL_KEYS""".split(',') if x.strip())
+
+with open(CATALOG_FILE, 'r') as f:
+    data = yaml.safe_load(f)
+models = data.get('models', {})
+if not SEL:
+    SEL = set(models.keys())
+
+to_install = []
+for key in SEL:
+    m = models.get(key)
+    if not m:
+        print(f"[WARN] Unknown model key in catalog: {key}")
+        continue
+    repo = m.get('repo_id')
+    dest = m.get('dest', key)
+    local_dir = os.path.join(MODELS_DIR, dest)
+    to_install.append((key, repo, local_dir))
+
+for key, repo, local_dir in to_install:
+    if not repo:
+        print(f"[WARN] Skipping {key}: missing repo_id in catalog")
+        continue
+    if os.path.isdir(local_dir):
+        print(f"[SKIP] {key}: already exists at {local_dir}")
+        continue
+    os.makedirs(local_dir, exist_ok=True)
+    print(f"[DL ] {key} from {repo} → {local_dir}")
+    try:
+        snapshot_download(repo_id=repo, cache_dir=CACHE_DIR, local_dir=local_dir, local_dir_use_symlinks=False)
+        print(f"[OK ] {key}: installed")
+    except Exception as e:
+        print(f"[ERR] {key}: {e}")
+PY
+}
+
 # Check if running in correct environment
 check_environment() {
     print_status "Checking environment..."
@@ -55,7 +213,7 @@ check_environment() {
     fi
     
     # Check for required packages
-    python -c "import torch, transformers, huggingface_hub" 2>/dev/null || {
+    python -c "import torch, transformers, huggingface_hub, yaml" 2>/dev/null || {
         print_error "Required packages not found. Please install requirements first:"
         print_error "pip install -r installation/requirements-gpu.txt"
         exit 1
@@ -379,56 +537,44 @@ EOF
     print_success "Sample datasets downloaded"
 }
 
-# Create model registry and configuration
+# Create model registry and configuration (based on catalog and what exists)
 create_model_registry() {
-    print_status "Creating model registry..."
-    
-    python << EOF
-import json
-import os
+    print_status "Creating model registry from catalog..."
+    python - <<'PY'
+import os, json, yaml
 from datetime import datetime
+from pathlib import Path
 
-# Create model registry
-registry = {
-    "created": datetime.now().isoformat(),
-    "environment": "geoAI",
-    "models": {
-        "prithvi": {
-            "path": "$MODELS_DIR/prithvi/Prithvi-100M",
-            "type": "foundation_model",
-            "domain": "earth_observation",
-            "parameters": "100M",
-            "input_bands": 6,
-            "description": "NASA-IBM Prithvi foundation model for Earth observation"
-        },
-        "satmae": {
-            "path": "$MODELS_DIR/satmae/SatMAE", 
-            "type": "masked_autoencoder",
-            "domain": "satellite_imagery",
-            "description": "Satellite Masked Autoencoder for self-supervised learning"
-        },
-        "clip_base": {
-            "path": "$MODELS_DIR/clip/clip-vit-base-patch32",
-            "type": "vision_language",
-            "domain": "multimodal",
-            "description": "CLIP base model for vision-language tasks"
-        },
-        "clip_large": {
-            "path": "$MODELS_DIR/clip/clip-vit-large-patch14",
-            "type": "vision_language", 
-            "domain": "multimodal",
-            "description": "CLIP large model for vision-language tasks"
+MODELS_DIR = os.environ.get('MODELS_DIR')
+CATALOG_FILE = os.path.abspath("""$CATALOG_FILE""")
+with open(CATALOG_FILE, 'r') as f:
+    data = yaml.safe_load(f)
+
+models = {}
+for key, m in data.get('models', {}).items():
+    dest = m.get('dest', key)
+    path = os.path.join(MODELS_DIR, dest)
+    if os.path.isdir(path):
+        models[key] = {
+            'path': path,
+            'type': m.get('type', 'model'),
+            'domain': m.get('domain', ''),
+            'parameters': f"{m.get('params_m', 'unknown')}M",
+            'description': m.get('description', ''),
         }
-    }
+
+registry = {
+    'created': datetime.now().isoformat(),
+    'environment': 'geoAI',
+    'models': models,
 }
 
-registry_path = "$MODELS_DIR/model_registry.json"
-with open(registry_path, "w") as f:
+out = os.path.join(MODELS_DIR, 'model_registry.json')
+os.makedirs(MODELS_DIR, exist_ok=True)
+with open(out, 'w') as f:
     json.dump(registry, f, indent=2)
-    
-print(f"Model registry created at: {registry_path}")
-EOF
-    
+print(f"Model registry written to: {out}")
+PY
     print_success "Model registry created"
 }
 
@@ -551,24 +697,51 @@ EOF
 
 # Main installation function
 main() {
+    parse_args "$@"
     print_status "Starting Foundation Model Installation for GEOG 288KC"
     print_status "This process may take 30-60 minutes depending on network speed"
     
+    # Info / Dryrun quick paths
+    if [[ $INFO_ONLY -eq 1 ]]; then
+        list_models_info
+        exit 0
+    fi
+
     # Pre-flight checks
     check_environment
     setup_directories
     check_disk_space
+
+    # Dryrun: estimate size for selected models and exit
+    if [[ $DRYRUN -eq 1 ]]; then
+        if [[ $SELECT_ALL -eq 1 ]]; then
+            compute_selected_total_size ""
+        else
+            compute_selected_total_size "$SELECT_MODELS"
+        fi
+        print_status "Dry run complete. No models downloaded."
+        exit 0
+    fi
     
     # HuggingFace setup
     setup_huggingface
     
     # Install foundation models
     print_status "Beginning model downloads..."
-    
-    install_prithvi
-    install_satmae  
-    install_clip_rs
-    install_additional_models
+
+    if [[ $SELECT_ALL -eq 1 || -n "$SELECT_MODELS" ]]; then
+        if [[ $SELECT_ALL -eq 1 ]]; then
+            install_selected_models ""
+        else
+            install_selected_models "$SELECT_MODELS"
+        fi
+    else
+        # Back-compat default bundle
+        install_prithvi
+        install_satmae
+        install_clip_rs
+        install_additional_models
+    fi
     
     # Setup supporting materials
     download_sample_data
@@ -585,7 +758,7 @@ main() {
     done
     
     print_status "Next steps:"
-    echo "  1. Run validation script: python installation/scripts/validate_environment.py"
+    echo "  1. Run validation script: python installation/verify_geoai_setup.py"
     echo "  2. Test models: python examples/load_prithvi.py"
     echo "  3. Check course materials: ls course-materials/"
     

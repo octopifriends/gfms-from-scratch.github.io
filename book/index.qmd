@@ -27,7 +27,7 @@ By the end of the course, students will be able to:
 
 ## Getting Started with the UCSB AI Sandbox
 
-[Here](../installation/UCSB_AI_SANDBOX_SETUP.md) are detailed instructions for setting up your environment on the UCSB AI Sandbox, including foundation model installation and GPU optimization.
+[Here](../installation/GRIT_SETUP.md) are detailed instructions for setting up the class environment on the UCSB AI Sandbox, including foundation model installation and GPU optimization. This should all be taken care of for the class, but could be helpful if you are interested in deploying our class infrastructure on a different server or a local machine. 
 
 ## Course Structure: 3 Stages, 10 Weeks
 
