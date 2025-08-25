@@ -96,21 +96,88 @@ make install ENV_NAME=geoAI
 make kernelspec ENV_NAME=geoAI
 ```
 
-## 5) Download GEO-Bench data to shared storage that is accessible to the entire class.
+## 5) Setup Jupyter Lab for Student Access
+
+Ensure Jupyter Lab is properly configured with the geoAI kernel and class-wide data access:
+
+```bash
+# Install/update the Jupyter kernel in the geoAI environment
+conda activate geoAI
+python -m ipykernel install --user --name geoai --display-name "GeoAI Course"
+
+# Verify kernel installation
+jupyter kernelspec list | grep geoai
+```
+
+### Configure environment variables for class-wide access
+Create a system-wide environment setup that all students can access:
+
+```bash
+# Create global environment configuration for the class
+sudo tee /etc/profile.d/geoai-course.sh << 'EOF'
+#!/bin/bash
+# GeoAI Course Environment Configuration
+
+# GEO-Bench dataset root used by CLI and our Makefile targets
+export GEO_BENCH_DIR="/srv/datasets/geobench"
+
+# Hugging Face cache (snapshots) for all students
+export HUGGINGFACE_HUB_CACHE="/srv/models/hf-cache"
+export HF_HOME="/srv/models/hf"
+
+# Course model installation root (where models get materialized by the installer)
+export GEOAI_MODELS_DIR="/srv/models/geoAI"
+
+# Course data directory
+export GEOAI_DATA_DIR="/srv/datasets/geoAI"
+
+# Add to Python path for notebook imports
+export PYTHONPATH="/home/shared/geoAI:$PYTHONPATH"
+EOF
+
+sudo chmod 644 /etc/profile.d/geoai-course.sh
+```
+
+### Setup Jupyter Lab as a system service (optional)
+For a class-wide Jupyter Lab installation accessible to all students:
+
+```bash
+# Create jupyter service user (optional)
+sudo useradd -r -s /bin/false jupyter-service
+
+# Create Jupyter config directory
+sudo mkdir -p /etc/jupyter
+sudo tee /etc/jupyter/jupyter_lab_config.py << 'EOF'
+# Jupyter Lab Configuration for GeoAI Course
+c.ServerApp.ip = '0.0.0.0'
+c.ServerApp.port = 8888
+c.ServerApp.open_browser = False
+c.ServerApp.token = ''  # Disable token for class use (configure authentication as needed)
+c.ServerApp.password = ''  # Set password hash if needed
+c.ServerApp.allow_root = True
+c.ServerApp.notebook_dir = '/home'
+c.ServerApp.allow_remote_access = True
+
+# Enable extensions
+c.LabApp.check_for_updates_class = 'disabled'
+EOF
+```
+
+## 6) Download GEO-Bench data to shared storage that is accessible to the entire class.
 Pick a shared path with sufficient space (≥100 GB if pulling multiple suites):
 ```bash
-export GEO_BENCH_DIR="/srv/datasets/geobench"
-mkdir -p "$GEO_BENCH_DIR"
+# Load the environment variables
+source /etc/profile.d/geoai-course.sh
+
+# Create directories with proper permissions
+sudo mkdir -p "$GEO_BENCH_DIR" "$HUGGINGFACE_HUB_CACHE" "$GEOAI_MODELS_DIR" "$GEOAI_DATA_DIR"
+sudo chmod 755 "$GEO_BENCH_DIR" "$HUGGINGFACE_HUB_CACHE" "$GEOAI_MODELS_DIR" "$GEOAI_DATA_DIR"
+
+# Download GEO-Bench
 make geobench ENV_NAME=geoAI GEO_BENCH_DIR="$GEO_BENCH_DIR"
 ```
 
-Persist for users (recommended):
-```bash
-sudo bash -lc 'echo export GEO_BENCH_DIR="/srv/datasets/geobench" > /etc/profile.d/geoai.sh'
-sudo chmod 644 /etc/profile.d/geoai.sh
-```
-
-## 6) Install foundation model backbones (Prithvi, SatMAE, CLIP)
+## 7) Install foundation model backbones (Prithvi, SatMAE, CLIP)
 ```bash
 # Prefer non-interactive HF login on shared servers (create token in your HF account)
 huggingface-cli login --token "$HF_TOKEN"
@@ -137,7 +204,7 @@ bash installation/scripts/install_foundation_models.sh --models prithvi-100m,sat
 
 - The installer reads `installation/models_catalog.yml` (Prithvi-100M, Prithvi EO v2 300M/600M, SatMAE, CLIP B/32 and L/14, Clay, DINOv2-Base, SAM ViT-B). You can extend this catalog to add more models.
 
-## 7) GPU and environment validation (must pass)
+## 8) GPU and environment validation (must pass)
 
 Universal GPU test (Mac MPS or Linux CUDA):
 ```bash
@@ -149,7 +216,7 @@ Full environment validation (imports, GPU, EE auth, HF, models, kernel, perf):
 python installation/verify_geoai_setup.py
 ```
 
-## 8) TerraTorch and backbone smoke tests
+## 9) TerraTorch and backbone smoke tests
 
 TerraTorch + TIMM:
 ```bash
@@ -183,23 +250,88 @@ Optional example config for later workflows:
 cat book/extras/examples/terratorch-configs/classification_eurosat.yaml
 ```
 
-## 9) GEO-Bench sanity check
+## 10) GEO-Bench sanity check
 ```bash
 test -d "$GEO_BENCH_DIR" && find "$GEO_BENCH_DIR" -maxdepth 2 -type d | sed -n '1,20p'
 ```
 
-## 10) Optional docs and repo tests
+## 11) Run comprehensive Jupyter notebook smoke test
+
+Create and run a comprehensive notebook test that students can execute:
+
+```bash
+# Run the comprehensive environment test notebook
+cd ~/geoAI
+jupyter lab installation/geoai_environment_smoketest.ipynb
+```
+
+This notebook tests:
+- All package imports and versions
+- GPU/MPS functionality 
+- Data and model accessibility
+- Jupyter kernel functionality
+- Path configurations
+- Sample model loading and inference
+
+Students should run this notebook from their home directory to verify their setup.
+
+## 12) Optional docs and repo tests
 ```bash
 make docs
 make test
 ```
 
-## 11) Common issues
+## 13) Common issues
 - Linux GPU: `nvidia-smi` must work; ensure env created from `installation/environment-gpu.yml`.
 - Mac MPS: macOS ≥ 12.3 and PyTorch ≥ 2.0 required; Apple Silicon only.
 - HF auth in non-interactive shells: run `huggingface-cli login --token "$HF_TOKEN"` before model install.
 - GEO-Bench not found: set `GEO_BENCH_DIR` globally or per-session.
 - Model installs: use `--info` and `--dryrun` to plan disk usage; select with `--models` or `--all`.
+
+## 14) Student Jupyter Lab Access Instructions
+
+For students accessing the system:
+
+### Starting Jupyter Lab
+```bash
+# Method 1: Personal Jupyter Lab instance
+conda activate geoAI
+cd ~
+jupyter lab --port=8889 --no-browser
+
+# Method 2: Using class-wide Jupyter Lab (if configured)
+# Access via web browser at http://server-ip:8888
+```
+
+### Verifying Environment in Notebook
+Students should run this code in their first notebook cell:
+
+```python
+# Environment verification for students
+import os
+import sys
+
+print(f"Python version: {sys.version}")
+print(f"Current working directory: {os.getcwd()}")
+print(f"Conda environment: {os.environ.get('CONDA_DEFAULT_ENV', 'unknown')}")
+
+# Check environment variables
+env_vars = ['GEO_BENCH_DIR', 'GEOAI_MODELS_DIR', 'GEOAI_DATA_DIR', 'HUGGINGFACE_HUB_CACHE']
+for var in env_vars:
+    value = os.environ.get(var, 'NOT SET')
+    print(f"{var}: {value}")
+    if value != 'NOT SET' and os.path.exists(value):
+        print(f"  ✅ Path exists")
+    elif value != 'NOT SET':
+        print(f"  ❌ Path does not exist")
+
+# Test basic imports
+try:
+    import torch, torchvision, transformers, rasterio, geopandas
+    print("✅ Core packages imported successfully")
+except ImportError as e:
+    print(f"❌ Import error: {e}")
+```
 
 ## Final verification checklist
 ```bash
