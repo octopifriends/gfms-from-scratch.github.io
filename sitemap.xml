@@ -170,7 +170,7 @@
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/Syllabus.html</loc>
-    <lastmod>2025-08-09T00:56:09.672Z</lastmod>
+    <lastmod>2025-09-20T23:30:20.040Z</lastmod>
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/examples/terratorch_workflows.html</loc>
@@ -182,6 +182,30 @@
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/index.html</loc>
-    <lastmod>2025-08-18T23:58:48.777Z</lastmod>
+    <lastmod>2025-09-20T23:29:49.490Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c04-pretraining-implementation.html</loc>
+    <lastmod>2025-09-20T22:20:51.707Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c06-model-evaluation-analysis.html</loc>
+    <lastmod>2025-09-20T22:34:36.251Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c02-spatial-temporal-attention-mechanisms.html</loc>
+    <lastmod>2025-09-20T22:36:30.446Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/examples/segmentation_tutorial.html</loc>
+    <lastmod>2025-08-18T23:03:40.518Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c01-geospatial-data-foundations.html</loc>
+    <lastmod>2025-09-21T04:47:18.856Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c03-complete-gfm-architecture.html</loc>
+    <lastmod>2025-09-20T22:20:45.038Z</lastmod>
   </url>
 </urlset>
