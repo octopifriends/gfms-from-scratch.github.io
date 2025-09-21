@@ -71,6 +71,51 @@ quarto preview                   # Build and serve locally
 quarto render specific_file.qmd  # Build specific file
 ```
 
+## Course Content Quality Assurance
+
+### /preview Command System
+
+The `/preview` command provides flexible content validation and preview capabilities for course development:
+
+```bash
+# Individual file preview and validation
+/preview file=chapters/c01-geospatial-data-foundations.qmd
+
+# Directory preview (all .qmd files in directory)
+/preview dir=chapters/
+
+# Full site preview
+/preview site
+
+# Code snippet testing (embedded .qmd content)
+/preview code="
+```{python}
+import numpy as np
+print('Hello World')
+```
+"
+
+# Preview with specific validation focus
+/preview file=chapters/c01-geospatial-data-foundations.qmd focus=code-execution
+/preview file=chapters/c01-geospatial-data-foundations.qmd focus=build-only
+/preview file=chapters/c01-geospatial-data-foundations.qmd focus=performance
+```
+
+#### Command Options:
+- `file=<path>` - Preview specific .qmd file
+- `dir=<path>` - Preview all .qmd files in directory
+- `site` - Preview entire site
+- `code="<content>"` - Test code snippet in isolation
+- `focus=<type>` - Validation focus area:
+  - `code-execution` - Python code testing only
+  - `build-only` - Quarto rendering only
+  - `performance` - Build time and memory analysis
+  - `educational` - Learning objective alignment
+  - `full` - Complete validation (default)
+
+#### Integration with course-content-debugger Agent:
+The `/preview` command automatically invokes the `course-content-debugger` agent with the appropriate testing scope and provides structured feedback for course development.
+
 ## Project Architecture
 
 ### High-Level Structure
@@ -167,3 +212,29 @@ The course uses a sophisticated Python-based build system (`build_docs.py`) with
 - Assessment is pass/fail based on attendance, participation, and deliverable submission
 - Students may optionally submit projects to Hugging Face or GitHub for broader visibility
 - Chapter content should have code blocks visible (no code folding) for better instructional clarity
+
+# CRITICAL CODE QUALITY RULES
+
+**ALWAYS USE THE SIMPLEST SOLUTION** - Not "sometimes" or "usually" - ALWAYS.
+
+**FORBIDDEN PATTERNS IN COURSE MATERIALS:**
+- ❌ Code-as-strings: `code = '''def func(): pass'''`
+- ❌ Dynamic code execution: `exec()`, `eval()`, `compile()`
+- ❌ String-based code generation: Building functions with f.write() calls
+- ❌ Template-based code creation: Any programmatic function generation
+- ❌ "Clever" solutions that obscure the educational point
+
+**REQUIRED PATTERNS:**
+- ✅ Define functions directly in code blocks
+- ✅ Write the actual implementation, not generated code
+- ✅ Use the most obvious, direct approach
+- ✅ Show students clean, simple examples they can understand immediately
+
+**QUALITY CHECK:** Before writing any code, ask:
+1. Is this the simplest possible solution?
+2. Can a student read and understand this immediately?
+3. Am I generating code instead of writing it directly?
+
+If the answer to #3 is yes, STOP and rewrite using direct function definitions.
+
+**THE GOLDEN RULE:** If you need a function, just write the function. Never generate it.

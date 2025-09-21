@@ -1,0 +1,38 @@
+# Bandit security configuration for geoAI repository
+# https://bandit.readthedocs.io/en/latest/config.html
+
+# List of test IDs to skip
+skips:
+  - B101  # assert_used - we use asserts in tests
+  - B601  # paramiko_calls - may be needed for SSH operations
+  - B602  # subprocess_popen_with_shell_equals_true - may be needed for shell commands
+  - B603  # subprocess_without_shell_equals_true - may be needed for commands
+  - B607  # start_process_with_partial_path - acceptable for known system commands
+
+# List of test IDs to run (empty means run all except skipped)
+tests: []
+
+# Exclude paths
+exclude_dirs:
+  - '/tests'
+  - '/LLMs-from-scratch'
+  - '/_extensions'
+  - '/.claude'
+
+# Plugin settings
+plugins:
+  - 'B601'  # Enable paramiko detection
+  - 'B602'  # Enable subprocess detection
+  - 'B603'  # Enable subprocess detection
+  - 'B604'  # Enable any_other_function_with_shell_equals_true
+  - 'B605'  # Enable start_process_with_a_shell
+  - 'B606'  # Enable start_process_with_no_shell
+  - 'B607'  # Enable start_process_with_partial_path
+
+# Confidence levels: LOW, MEDIUM, HIGH
+# Only report issues with MEDIUM or HIGH confidence
+confidence: MEDIUM
+
+# Severity levels: LOW, MEDIUM, HIGH
+# Report all severity levels
+severity: LOW

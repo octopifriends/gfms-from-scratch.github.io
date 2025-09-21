@@ -4,7 +4,7 @@ subtitle: "GEOG 288KC: Geospatial Foundation Models and Applications"
 format: html
 ---
 
-## Project Proposal (Due: Week 3)
+## Project Proposal (Due: End of Week 5)
 
 **Student Name**: [Your Name]  
 **Project Title**: [Descriptive Project Title]  
@@ -61,11 +61,7 @@ format: html
 
 ### Timeline and Milestones
 
-**Week 4-5**: [Specific goals and deliverables]
-**Week 6**: [Specific goals and deliverables]  
-**Week 7 (MVP)**: [What will your MVP demonstration include?]
-**Week 8-9**: [Final implementation goals]
-**Week 10**: [Final presentation preparation]
+**Week 6**: [Project implementation - data pipeline, model setup, initial training]
 
 ### Evaluation Strategy
 
@@ -88,7 +84,7 @@ format: html
 **Resource Requirements**:
 - **Computational**: [GPU hours, memory requirements, storage]
 - **Data**: [Download time, storage space, preprocessing time]
-- **Time**: [Realistic assessment of scope given 10-week timeframe]
+- **Time**: [Realistic assessment of scope given 6-week accelerated timeframe]
 
 **Backup Plans**:
 - [What will you do if primary approach doesn't work?]

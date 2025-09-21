@@ -1,10 +1,10 @@
 ---
-title: "Initial MVP Template"
+title: "Project Results Template"
 subtitle: "GEOG 288KC: Geospatial Foundation Models and Applications"
 format: html
 ---
 
-## Initial MVP Presentation (Due: Week 7)
+## Final Project Results (Week 6)
 
 **Student Name**: [Your Name]  
 **Project Title**: [Your Project Title]  
@@ -88,20 +88,19 @@ Data Input → Preprocessing → Model → Post-processing → Output
 - [What are the current limitations of your system?]
 - [What assumptions are you making?]
 
-### Next Steps and Timeline (1-2 minutes)
+### Future Work and Extensions (1-2 minutes)
 
-**Immediate Goals (Week 8)**:
-- [ ] [Specific technical improvement]
-- [ ] [Additional evaluation or validation]
-- [ ] [User interface or API development]
+**Potential Improvements**:
+- [ ] [How could this work be extended beyond the course?]
+- [ ] [Additional datasets or geographic regions]
+- [ ] [Advanced modeling techniques or optimizations]
 
-**Final Implementation Goals (Week 9-10)**:
-- [ ] [Advanced features or optimizations]
-- [ ] [Comprehensive evaluation and comparison]
-- [ ] [Documentation and reproducibility]
+**Real-World Applications**:
+- [How could this work be used in practice?]
+- [What are the broader implications and potential impact?]
 
-**Risks and Contingencies**:
-- [What could go wrong? How will you adapt?]
+**Next Steps for Deployment**:
+- [What would be needed to make this production-ready?]
 
 ### Questions for Feedback (1 minute)
 
@@ -115,7 +114,7 @@ Data Input → Preprocessing → Model → Post-processing → Output
 
 ---
 
-## MVP Demonstration Checklist
+## Project Presentation Checklist
 
 ### Before Your Presentation:
 - [ ] Test all code and demos on presentation computer

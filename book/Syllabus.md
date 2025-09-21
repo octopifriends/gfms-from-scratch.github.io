@@ -1,72 +1,74 @@
-## **GEOG 288KC: Building Geospatial Foundation Models**
+## **GEOG 288KC: Geospatial Foundation Models and Applications**
 
-**Fall 2025**  
+**Fall 2025**
 **Fridays 9am-12pm \+ optional lab office hours Fridays 2pm-5pm**
 
 ---
 
 ### **Course Overview**
 
-This course teaches students to build geospatial foundation models (GFMs) from scratch for remote sensing and environmental monitoring. Following the framework from "Build a Large Language Model (From Scratch)" by Sebastian Raschka, students will implement every component of the foundation model pipeline—from data geospatial embedding and attention mechanisms to training loops and  deployment—while developing their own working foundation model. We will also download and use frontier GFMs such as Prithvi.
+This accelerated, hands-on seminar provides practical skills for working with state-of-the-art geospatial foundation models. Students learn to access, process, and analyze satellite imagery using modern tools, apply foundation models to real-world problems, and implement independent projects in environmental monitoring and analysis. The course emphasizes immediately applicable skills rather than theoretical foundations.
 
 ---
 
 ### **Prerequisites**
 
-* Students should have some experience with remote sensing, geospatial data, or ML (e.g., Python, Earth Engine, PyTorch). 
-
-* Because this is a project-driven seminar, students should have a topic area in which they are interested in applying GeoFMs. 
+* Students should have some experience with remote sensing, geospatial data, or ML (e.g., Python, Earth Engine, PyTorch)
+* Access to UCSB AI Sandbox for computational resources
+* Basic familiarity with satellite imagery and environmental applications
 
 ---
 
 ### **Applications**
 
-To apply, students should submit a paragraph at the [form link](https://forms.gle/Q1iDp2kuZuX1avMPA) below describing their past experience with remote sensing, geospatial data, and ML, as well as their interest in building (not just using) Geospatial Foundation Models. They should describe a specific geospatial problem they want to solve by building a custom foundation model. The more clearly defined the target application and any existing datasets the better, though students will refine their approach as they learn to build complete GFM pipelines. 
+To apply, students should submit a paragraph at the [form link](https://forms.gle/Q1iDp2kuZuX1avMPA) below describing their past experience with remote sensing, geospatial data, and ML, as well as their interest in applying Geospatial Foundation Models to practical problems. They should describe a specific geospatial application area they want to explore. The more clearly defined the target application and any existing datasets the better.
 
 [https://forms.gle/Q1iDp2kuZuX1avMPA](https://forms.gle/Q1iDp2kuZuX1avMPA)
 
 ### ---
 
-### **Course Structure: 3 Stages, 9 Steps**
+### **Course Structure: 10-Week Format**
 
-#### **🏗️ Stage 1: Build GFM Architecture (Weeks 1-3)**
-* **Week 1**: Geospatial Data Foundations *(Step 1: Data preparation and sampling)*
-* **Week 2**: Spatial-Temporal Attention Mechanisms *(Step 2: Attention mechanism)*  
-* **Week 3**: Complete GFM Architecture *(Step 3: LLM Architecture)*
+#### **📚 Phase 1: Structured Learning (Weeks 1-5)**
+* **Week 1**: Core Tools and Data Access *(STAC APIs, satellite data visualization)*
+* **Week 2**: Remote Sensing Preprocessing *(Cloud masking, reprojection, compositing)*
+* **Week 3**: Machine Learning on Remote Sensing *(CNN training, land cover classification)*
+* **Week 4**: Foundation Models in Practice *(Loading pretrained models, feature extraction)*
+* **Week 5**: Fine-Tuning & Transfer Learning *(Linear probing vs. full fine-tuning, adaptation strategies)*
 
-#### **🚀 Stage 2: Training a Foundation Model (Weeks 4-7)**
-* **Week 4**: Pretraining Implementation *(Step 4: Pretraining)*
-* **Week 5**: Training Loop Optimization *(Step 5: Training loop)*
-* **Week 6**: Model Evaluation & Analysis *(Step 6: Model evaluation)*
-* **Week 7**: Integration with Existing Models *(Step 7: Load pretrained weights)*
-
-#### **🎯 Stage 3: Model Application (Weeks 8-10)**
-* **Week 8**: Task-Specific Fine-tuning *(Step 8: Fine-tuning)*
-* **Week 9**: Model Implementation & Deployment *(Step 9: Model implementation)*
-* **Week 10**: Project Presentations & Future Directions *(Integration and synthesis)*
+#### **🎯 Phase 2: Independent Project Development (Weeks 6-10)**
+* **Week 6**: Project Proposals & Planning *(Define scope, methodology, expected outcomes)*
+* **Week 7**: Initial Implementation *(Develop minimum viable product, early results)*
+* **Week 8**: Development & Refinement *(Expand functionality, optimize performance)*
+* **Week 9**: Analysis & Results *(Generate final results, prepare visualizations)*
+* **Week 10**: Final Presentations *(Present completed projects, peer review, submission)*
 
 ---
 
 ### **Deliverables**
 
-**Stage 1: Architecture (Weeks 1-3)**
-* **Week 1**: Geospatial data pipeline with tokenization strategy
-* **Week 3**: Working GFM architecture (~10M parameters)
+**Phase 1: Structured Learning (Weeks 1-5)**
+* **Week 1**: Working data access pipeline using STAC APIs
+* **Week 2**: Complete preprocessing workflow for satellite imagery
+* **Week 3**: Trained CNN model for land cover classification
+* **Week 4**: Working foundation model integration and feature extraction
+* **Week 5**: Fine-tuning implementation and project proposal
 
-**Stage 2: Training (Weeks 4-7)**
-* **Week 4**: Active pretraining pipeline with monitoring
-* **Week 6**: Comprehensive model evaluation report
-* **Week 7**: Integration with existing models (Prithvi comparison)
+**Phase 2: Independent Project Development (Weeks 6-10)**
+* **Week 6**: Detailed project proposal with methodology and timeline
+* **Week 7**: Minimum viable product (MVP) with initial results
+* **Week 8-9**: Iterative development, analysis, and documentation
+* **Week 10**: Final presentation, complete project code, and written report
 
-**Stage 3: Application (Weeks 8-10)**
-* **Week 8**: Fine-tuned model for specific geospatial task
-* **Week 9**: Deployable model with API and documentation
-* **Week 10**: Final presentation of complete GFM pipeline (15 min demo + Q&A)
-
-**Optional**: Submit our foundation model to Hugging Face for broader visibility
+**Optional**: Submit project results to GitHub, Hugging Face, or present at student showcase
 
 ---
 
 ### **Grading**
 
-This course will be assessed on a pass/fail basis. Passing requires consistent attendance and participation and submission of all deliverables.
+This course will be assessed on a pass/fail basis. Passing requires:
+* Consistent attendance and participation (Weeks 1-5)
+* Submission of all structured learning deliverables (Weeks 1-5)
+* Project proposal submission (Week 6)
+* MVP demonstration (Week 7)
+* Final project presentation and submission (Week 10)

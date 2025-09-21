@@ -124,3 +124,17 @@ service-account*.json
 data/raw/
 data/processed/large/
 /.luarc.json
+
+# Generated output directories
+**/week1_output/
+**/week*_output/
+
+# Test files
+*test*.py
+execute_test.py
+quick_test.py
+run_test.sh
+
+# Temporary Quarto configs
+*_quarto_test.yml
+

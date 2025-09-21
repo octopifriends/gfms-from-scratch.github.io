@@ -1,6 +1,6 @@
 ---
-title: "Building Geospatial Foundation Models"
-subtitle: "Department of Geography"
+title: "Practical Applications and Approaches in GeoAI"
+subtitle: "GEOG 288KC: Geospatial Foundation Models and Applications"
 description: "Fall 2025"
 title-block-banner: false
 toc: false
@@ -10,75 +10,73 @@ toc: false
 
 
 ::: {.gray-text .center-text}
-*Advancing environmental monitoring through AI*
+*Practical skills for geospatial AI applications*
 :::
 
 ## Course Description
 
-This project-driven seminar teaches students to build geospatial foundation models (GFMs) from scratch. Students implement every layer of the pipeline—from data pipelines and tokenization through attention mechanisms, full architectures, pretraining, evaluation, and deployment—culminating in a working end-to-end GFM tailored to a chosen geospatial application.
+This accelerated, hands-on seminar provides practical skills for working with state-of-the-art geospatial foundation models. Students learn to access, process, and analyze satellite imagery using modern tools, apply foundation models to real-world problems, and implement independent projects in environmental monitoring and analysis.
 
 By the end of the course, students will be able to:
 
-- Design and implement geospatial data pipelines for multi-spectral, spatial, and temporal data
-- Build attention mechanisms and assemble transformer-based architectures for geospatial inputs
-- Pretrain using masked autoencoding and evaluate learned representations
-- Fine-tune models for specific Earth observation tasks
-- Deploy models via APIs and interactive interfaces with honest performance analysis
+- Access and process satellite imagery using STAC APIs and cloud platforms
+- Apply preprocessing pipelines for multi-temporal remote sensing data
+- Train custom CNN models for land cover classification and change detection
+- Load and fine-tune pretrained geospatial foundation models
+- Implement spatiotemporal analysis for environmental monitoring applications
+- Design and execute independent research projects using geospatial AI
 
 ## Getting Started with the UCSB AI Sandbox
 
 [Here](../installation/GRIT_SETUP.md) are detailed instructions for setting up the class environment on the UCSB AI Sandbox, including foundation model installation and GPU optimization. This should all be taken care of for the class, but could be helpful if you are interested in deploying our class infrastructure on a different server or a local machine. 
 
-## Course Structure: 3 Stages, 10 Weeks
+## Course Structure: 10-Week Format
 
 ```{mermaid}
 flowchart TD
-    subgraph Stage1 ["🏗️ Stage 1: Build GFM Architecture"]
+    subgraph Phase1 ["📚 Phase 1: Structured Learning (Weeks 1-5)"]
         direction LR
-        W1["📊<br/>Week 1<br/>Data Foundations<br/>Pipelines & Tokenization"] --> W2["🧠<br/>Week 2<br/>Attention Mechanisms<br/>Spatial-Temporal Focus"]
-        W2 --> W3["🏛️<br/>Week 3<br/>Complete Architecture<br/>Vision Transformer"]
+        W1["🚀<br/>Week 1<br/>Core Tools<br/>Data Access"] --> W2["⚡<br/>Week 2<br/>Preprocessing<br/>Cloud Processing"]
+        W2 --> W3["🤖<br/>Week 3<br/>ML & CNNs<br/>Classification"]
+        W3 --> W4["🏗️<br/>Week 4<br/>Foundation Models<br/>Feature Extraction"]
+        W4 --> W5["🔧<br/>Week 5<br/>Fine-Tuning<br/>Transfer Learning"]
     end
-    
-    subgraph Stage2 ["🚀 Stage 2: Train Foundation Model"]
+
+    subgraph Phase2 ["🎯 Phase 2: Independent Project Development (Weeks 6-10)"]
         direction LR
-        W4["🎭<br/>Week 4<br/>Pretraining<br/>Masked Autoencoder"] --> W5["⚡<br/>Week 5<br/>Training Optimization<br/>Stability & Efficiency"]
-        W5 --> W6["📈<br/>Week 6<br/>Evaluation & Analysis<br/>Embeddings & Probing"]
-        W6 --> W7["🔗<br/>Week 7<br/>Model Integration<br/>Prithvi, SatMAE"]
+        W6["📋<br/>Week 6<br/>Project Proposals<br/>Planning"] --> W7["🔬<br/>Week 7<br/>Initial Implementation<br/>MVPs"]
+        W7 --> W8["⚙️<br/>Week 8<br/>Development<br/>Refinement"]
+        W8 --> W9["📊<br/>Week 9<br/>Analysis<br/>Results"]
+        W9 --> W10["🎉<br/>Week 10<br/>Final Presentations<br/>Deliverables"]
     end
-    
-    subgraph Stage3 ["🎯 Stage 3: Apply & Deploy"]
-        direction LR
-        W8["🎯<br/>Week 8<br/>Fine-tuning<br/>Task-Specific Training"] --> W9["🚀<br/>Week 9<br/>Deployment<br/>APIs & Interfaces"]
-        W9 --> W10["🎤<br/>Week 10<br/>Presentations<br/>Project Synthesis"]
-    end
-    
-    Stage1 --> Stage2
-    Stage2 --> Stage3
-    
-    style Stage1 fill:#e3f2fd
-    style Stage2 fill:#fff3e0  
-    style Stage3 fill:#e8f5e8
+
+    Phase1 --> Phase2
+
+    style Phase1 fill:#e3f2fd
+    style Phase2 fill:#fff3e0
     style W1 fill:#bbdefb
-    style W4 fill:#ffe0b2
-    style W8 fill:#c8e6c8
+    style W3 fill:#bbdefb
+    style W5 fill:#bbdefb
+    style W6 fill:#ffe0b2
+    style W8 fill:#ffe0b2
+    style W10 fill:#c8e6c8
 ```
 
+### 📚 Phase 1: Hands-On Practice (Weeks 1-5)
 
-### 🏗️ Stage 1: Build GFM Architecture (Weeks 1-3)
-- Week 1: Geospatial Data Foundations (data pipelines, tokenization, loaders)
-- Week 2: Spatial-Temporal Attention Mechanisms (from-scratch implementation)
-- Week 3: Complete GFM Architecture (Vision Transformer for geospatial)
+- **Week 1: Core Tools and Data Access** - STAC APIs, satellite data visualization, NDVI calculation
+- **Week 2: Remote Sensing Preprocessing** - Cloud masking, reprojection, temporal compositing
+- **Week 3: Machine Learning on Remote Sensing** - CNN training, land cover classification, model comparison
+- **Week 4: Foundation Models in Practice** - Loading pretrained models, feature extraction, practical applications
+- **Week 5: Fine-Tuning & Transfer Learning** - Linear probing vs. full fine-tuning, adaptation strategies
 
-### 🚀 Stage 2: Train a Foundation Model (Weeks 4-7)
-- Week 4: Pretraining Implementation (masked autoencoder)
-- Week 5: Training Loop Optimization (stability, efficiency, mixed precision)
-- Week 6: Model Evaluation & Analysis (embeddings, probing, reconstructions)
-- Week 7: Integration with Existing Models (Prithvi, SatMAE)
+### 🎯 Phase 2: Independent Project Development (Weeks 6-10)
 
-### 🎯 Stage 3: Apply & Deploy (Weeks 8-10)
-- Week 8: Task-Specific Fine-tuning (efficient strategies, few-shot)
-- Week 9: Model Implementation & Deployment (APIs, UI, benchmarking)
-- Week 10: Project Presentations & Synthesis
+- **Week 6: Project Proposals & Planning** - Define scope, methodology, and expected outcomes
+- **Week 7: Initial Implementation** - Develop minimum viable product (MVP), early results
+- **Week 8: Development & Refinement** - Expand functionality, optimize performance
+- **Week 9: Analysis & Results** - Generate final results, prepare visualizations
+- **Week 10: Final Presentations** - Present completed projects, peer review, submission of deliverables
 
 ## Course Sessions
 
