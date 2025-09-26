@@ -30,6 +30,7 @@ To apply, students should submit a paragraph at the [form link](https://forms.gl
 ### **Course Structure: 10-Week Format**
 
 #### **📚 Phase 1: Structured Learning (Weeks 1-5)**
+
 * **Week 1**: Core Tools and Data Access *(STAC APIs, satellite data visualization)*
 * **Week 2**: Remote Sensing Preprocessing *(Cloud masking, reprojection, compositing)*
 * **Week 3**: Machine Learning on Remote Sensing *(CNN training, land cover classification)*
@@ -37,6 +38,7 @@ To apply, students should submit a paragraph at the [form link](https://forms.gl
 * **Week 5**: Fine-Tuning & Transfer Learning *(Linear probing vs. full fine-tuning, adaptation strategies)*
 
 #### **🎯 Phase 2: Independent Project Development (Weeks 6-10)**
+
 * **Week 6**: Project Proposals & Planning *(Define scope, methodology, expected outcomes)*
 * **Week 7**: Initial Implementation *(Develop minimum viable product, early results)*
 * **Week 8**: Development & Refinement *(Expand functionality, optimize performance)*
@@ -48,6 +50,7 @@ To apply, students should submit a paragraph at the [form link](https://forms.gl
 ### **Deliverables**
 
 **Phase 1: Structured Learning (Weeks 1-5)**
+
 * **Week 1**: Working data access pipeline using STAC APIs
 * **Week 2**: Complete preprocessing workflow for satellite imagery
 * **Week 3**: Trained CNN model for land cover classification
@@ -55,6 +58,7 @@ To apply, students should submit a paragraph at the [form link](https://forms.gl
 * **Week 5**: Fine-tuning implementation and project proposal
 
 **Phase 2: Independent Project Development (Weeks 6-10)**
+
 * **Week 6**: Detailed project proposal with methodology and timeline
 * **Week 7**: Minimum viable product (MVP) with initial results
 * **Week 8-9**: Iterative development, analysis, and documentation
@@ -67,6 +71,7 @@ To apply, students should submit a paragraph at the [form link](https://forms.gl
 ### **Grading**
 
 This course will be assessed on a pass/fail basis. Passing requires:
+
 * Consistent attendance and participation (Weeks 1-5)
 * Submission of all structured learning deliverables (Weeks 1-5)
 * Project proposal submission (Week 6)
