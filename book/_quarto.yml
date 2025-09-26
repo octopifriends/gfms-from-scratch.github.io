@@ -58,7 +58,7 @@ website:
           - text: Project Results Template
             href: extras/projects/mvp-template.qmd
       - icon: github
-        href: https://github.com/kcaylor/GEOG-288KC-geospatial-foundation-models
+        href: https://github.com/gfms-from-scratch/gfms-from-scratch.github.io
         target: _blank
   page-footer:
     background: dark
