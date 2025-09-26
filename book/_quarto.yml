@@ -39,13 +39,12 @@ website:
         href: cheatsheets.qmd
       - text: 🧩 explainers
         menu:
-          - text: AI/ML/DL/FM Hierarchy
+          - text: "1️⃣ Week 1"
+          - text: "🤖 AI/ML/DL/FM Hierarchy"
             href: extras/ai-ml-dl-fm-hierarchy.qmd
-          - text: Geospatial Foundation Model Predictions
-            href: extras/geospatial-foundation-model-predictions.qmd
-          - text: GFM Predictions (Standalone)
+          - text: "🎯 GFM Predictions (Standalone)"
             href: extras/geospatial-foundation-model-predictions-standalone.qmd
-          - text: Geospatial Prediction Hierarchy
+          - text: "✅ Geospatial Task/Prediction Types"
             href: extras/geospatial-prediction-hierarchy.qmd
       - text: 📖 extras
         menu:
