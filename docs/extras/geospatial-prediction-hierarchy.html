@@ -310,6 +310,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#code-example-unified-prediction-framework" id="toc-code-example-unified-prediction-framework" class="nav-link" data-scroll-target="#code-example-unified-prediction-framework">Code Example: Unified Prediction Framework</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
   </ul>
 </nav>
     </div>
@@ -357,11 +358,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>When working with continuous pixel values, we encounter two primary prediction paradigms:</p>
 <section id="temporal-prediction-next-value" class="level3">
 <h3 class="anchored" data-anchor-id="temporal-prediction-next-value">Temporal Prediction (Next Value)</h3>
-<p><strong>Task</strong>: Predict future pixel values based on historical time series <strong>Approach</strong>: Autoregressive models (GPT-like architectures) <strong>Example Applications</strong>:</p>
 <ul>
-<li>Vegetation phenology forecasting</li>
-<li>Surface temperature prediction</li>
-<li>Crop yield estimation</li>
+<li><p><strong>Task</strong>: Predict future pixel values based on historical time series</p></li>
+<li><p><strong>Approach</strong>: Autoregressive models (GPT-like architectures)</p></li>
+<li><p><strong>Example Applications</strong>:</p></li>
+<li><p>Vegetation phenology forecasting</p></li>
+<li><p>Surface temperature prediction</p></li>
+<li><p>Crop yield estimation</p></li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Conceptual example</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
@@ -387,12 +390,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="spatial-prediction-missing-values" class="level3">
 <h3 class="anchored" data-anchor-id="spatial-prediction-missing-values">Spatial Prediction (Missing Values)</h3>
-<p><strong>Task</strong>: Fill in missing pixel values based on spatial context <strong>Approach</strong>: Masked modeling (BERT-like architectures) <strong>Example Applications</strong>:</p>
 <ul>
-<li>Cloud gap filling</li>
-<li>Sensor failure recovery</li>
-<li>Super-resolution</li>
-<li>Data fusion across sensors</li>
+<li><p><strong>Task</strong>: Fill in missing pixel values based on spatial context</p></li>
+<li><p><strong>Approach</strong>: Masked modeling (BERT-like architectures)</p></li>
+<li><p><strong>Example Applications</strong>:</p></li>
+<li><p>Cloud gap filling</p></li>
+<li><p>Sensor failure recovery</p></li>
+<li><p>Super-resolution</p></li>
+<li><p>Data fusion across sensors</p></li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SpatialPixelPredictor(nn.Module):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""BERT-style spatial prediction for missing pixels"""</span></span>
@@ -420,19 +425,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Working with labels introduces a hierarchy of complexity from image-level to pixel-level granularity:</p>
 <section id="image-classification" class="level3">
 <h3 class="anchored" data-anchor-id="image-classification">1. Image Classification</h3>
-<p><strong>Granularity</strong>: Entire image/scene <strong>Input</strong>: Full image (H × W × Bands) <strong>Output</strong>: Single label per image <strong>Example</strong>: “This Sentinel-2 tile contains urban area”</p>
+<ul>
+<li><strong>Granularity</strong>: Entire image/scene</li>
+<li><strong>Input</strong>: Full image (H × W × Bands)</li>
+<li><strong>Output</strong>: Single label per image</li>
+<li><strong>Example</strong>: “This Sentinel-2 tile contains urban area”</li>
+</ul>
 </section>
 <section id="pixel-wise-classification" class="level3">
 <h3 class="anchored" data-anchor-id="pixel-wise-classification">2. Pixel-wise Classification</h3>
-<p><strong>Granularity</strong>: Individual pixels <strong>Input</strong>: Image patches or full image <strong>Output</strong>: Label map (H × W × Classes) <strong>Example</strong>: Land cover mapping where each pixel gets a class</p>
+<ul>
+<li><strong>Granularity</strong>: Individual pixels</li>
+<li><strong>Input</strong>: Image patches or full image</li>
+<li><strong>Output</strong>: Label map (H × W × Classes)</li>
+<li><strong>Example</strong>: Land cover mapping where each pixel gets a class</li>
+</ul>
 </section>
 <section id="object-detection" class="level3">
 <h3 class="anchored" data-anchor-id="object-detection">3. Object Detection</h3>
-<p><strong>Granularity</strong>: Bounding boxes <strong>Input</strong>: Full image <strong>Output</strong>: List of [bbox, class, confidence] <strong>Example</strong>: Detecting buildings, vehicles, or agricultural fields</p>
+<ul>
+<li><strong>Granularity</strong>: Bounding boxes</li>
+<li><strong>Input</strong>: Full image</li>
+<li><strong>Output</strong>: List of [bbox, class, confidence]</li>
+<li><strong>Example</strong>: Detecting buildings, vehicles, or agricultural fields</li>
+</ul>
 </section>
 <section id="object-segmentation" class="level3">
 <h3 class="anchored" data-anchor-id="object-segmentation">4. Object Segmentation</h3>
-<p><strong>Granularity</strong>: Precise object boundaries <strong>Input</strong>: Full image <strong>Output</strong>: Instance masks + classes <strong>Example</strong>: Delineating individual tree crowns or building footprints</p>
+<ul>
+<li><strong>Granularity</strong>: Precise object boundaries</li>
+<li><strong>Input</strong>: Full image</li>
+<li><strong>Output</strong>: Instance masks + classes</li>
+<li><strong>Example</strong>: Delineating individual tree crowns or building footprints</li>
+</ul>
 </section>
 </section>
 <section id="regression-for-novel-variable-prediction" class="level2">
@@ -746,6 +771,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><a href="https://github.com/facebookresearch/segment-anything">Segment Anything Model (SAM)</a></li>
 <li><a href="https://github.com/google-research/timesfm">TimesFM: Time Series Foundation Model</a></li>
 </ul>
+</section>
+<section id="exercises" class="level2">
+<h2 class="anchored" data-anchor-id="exercises">Exercises</h2>
+<ol type="1">
+<li><p><strong>Task Comparison</strong>: Implement the same vegetation mapping problem as:</p>
+<ul>
+<li>Image classification (healthy/stressed)</li>
+<li>Pixel classification (detailed vegetation types)</li>
+<li>Regression (NDVI prediction)</li>
+</ul></li>
+<li><p><strong>Multi-Modal Integration</strong>: Combine optical and radar data for:</p>
+<ul>
+<li>Cloud gap filling (spatial interpolation)</li>
+<li>Crop yield prediction (temporal regression)</li>
+</ul></li>
+<li><p><strong>Foundation Model Adaptation</strong>: Fine-tune Prithvi for:</p>
+<ul>
+<li>Local land cover classification</li>
+<li>Biophysical parameter estimation</li>
+</ul></li>
+</ol>
 
 
 <!-- -->
@@ -1298,9 +1344,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a><span class="fu">### Temporal Prediction (Next Value)</span></span>
 <span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>**Task**: Predict future pixel values based on historical time series</span>
-<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>**Approach**: Autoregressive models (GPT-like architectures)</span>
-<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>**Example Applications**:</span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Task**: Predict future pixel values based on historical time series</span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Approach**: Autoregressive models (GPT-like architectures)</span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Example Applications**:</span>
 <span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Vegetation phenology forecasting</span>
 <span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Surface temperature prediction</span>
@@ -1332,9 +1378,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a><span class="fu">### Spatial Prediction (Missing Values)</span></span>
 <span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>**Task**: Fill in missing pixel values based on spatial context</span>
-<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>**Approach**: Masked modeling (BERT-like architectures)</span>
-<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>**Example Applications**:</span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Task**: Fill in missing pixel values based on spatial context</span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Approach**: Masked modeling (BERT-like architectures)</span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Example Applications**:</span>
 <span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Cloud gap filling</span>
 <span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sensor failure recovery</span>
@@ -1369,31 +1415,31 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Image Classification</span></span>
 <span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a>**Granularity**: Entire image/scene</span>
-<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a>**Input**: Full image (H × W × Bands)</span>
-<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a>**Output**: Single label per image</span>
-<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a>**Example**: "This Sentinel-2 tile contains urban area"</span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Granularity**: Entire image/scene</span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Input**: Full image (H × W × Bands)</span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Output**: Single label per image</span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Example**: "This Sentinel-2 tile contains urban area"</span>
 <span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Pixel-wise Classification</span></span>
 <span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a>**Granularity**: Individual pixels</span>
-<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a>**Input**: Image patches or full image</span>
-<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a>**Output**: Label map (H × W × Classes)</span>
-<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a>**Example**: Land cover mapping where each pixel gets a class</span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Granularity**: Individual pixels</span>
+<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Input**: Image patches or full image</span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Output**: Label map (H × W × Classes)</span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Example**: Land cover mapping where each pixel gets a class</span>
 <span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. Object Detection</span></span>
 <span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a>**Granularity**: Bounding boxes</span>
-<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a>**Input**: Full image</span>
-<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a>**Output**: List of <span class="co">[</span><span class="ot">bbox, class, confidence</span><span class="co">]</span></span>
-<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a>**Example**: Detecting buildings, vehicles, or agricultural fields</span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Granularity**: Bounding boxes</span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Input**: Full image</span>
+<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Output**: List of <span class="co">[</span><span class="ot">bbox, class, confidence</span><span class="co">]</span></span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Example**: Detecting buildings, vehicles, or agricultural fields</span>
 <span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4. Object Segmentation</span></span>
 <span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a>**Granularity**: Precise object boundaries</span>
-<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a>**Input**: Full image</span>
-<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>**Output**: Instance masks + classes</span>
-<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a>**Example**: Delineating individual tree crowns or building footprints</span>
+<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Granularity**: Precise object boundaries</span>
+<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Input**: Full image</span>
+<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Output**: Instance masks + classes</span>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Example**: Delineating individual tree crowns or building footprints</span>
 <span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regression for Novel Variable Prediction</span></span>
 <span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a></span>
@@ -1630,6 +1676,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb6-406"><a href="#cb6-406" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">SatMAE: Masked Autoencoders for Satellite Imagery</span><span class="co">](https://github.com/sustainlab-group/SatMAE)</span></span>
 <span id="cb6-407"><a href="#cb6-407" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Segment Anything Model (SAM)</span><span class="co">](https://github.com/facebookresearch/segment-anything)</span></span>
 <span id="cb6-408"><a href="#cb6-408" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">TimesFM: Time Series Foundation Model</span><span class="co">](https://github.com/google-research/timesfm)</span></span>
+<span id="cb6-409"><a href="#cb6-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-410"><a href="#cb6-410" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb6-411"><a href="#cb6-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-412"><a href="#cb6-412" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Task Comparison**: Implement the same vegetation mapping problem as:</span>
+<span id="cb6-413"><a href="#cb6-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-414"><a href="#cb6-414" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Image classification (healthy/stressed)</span>
+<span id="cb6-415"><a href="#cb6-415" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Pixel classification (detailed vegetation types)</span>
+<span id="cb6-416"><a href="#cb6-416" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Regression (NDVI prediction)</span>
+<span id="cb6-417"><a href="#cb6-417" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb6-418"><a href="#cb6-418" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Multi-Modal Integration**: Combine optical and radar data for:</span>
+<span id="cb6-419"><a href="#cb6-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-420"><a href="#cb6-420" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Cloud gap filling (spatial interpolation)</span>
+<span id="cb6-421"><a href="#cb6-421" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Crop yield prediction (temporal regression)</span>
+<span id="cb6-422"><a href="#cb6-422" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb6-423"><a href="#cb6-423" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Foundation Model Adaptation**: Fine-tune Prithvi for:</span>
+<span id="cb6-424"><a href="#cb6-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-425"><a href="#cb6-425" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Local land cover classification</span>
+<span id="cb6-426"><a href="#cb6-426" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Biophysical parameter estimation</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
