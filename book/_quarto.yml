@@ -37,10 +37,8 @@ website:
             href: chapters/c06-model-evaluation-analysis.qmd
       - text: 👀 Cheatsheets
         href: cheatsheets.qmd
-      - text: 📖 extras
+      - text: 🧩 explainers
         menu:
-          - text: "🧩 Explainers"
-          - text: "Week 1"
           - text: AI/ML/DL/FM Hierarchy
             href: extras/ai-ml-dl-fm-hierarchy.qmd
           - text: Geospatial Foundation Model Predictions
@@ -49,8 +47,8 @@ website:
             href: extras/geospatial-foundation-model-predictions-standalone.qmd
           - text: Geospatial Prediction Hierarchy
             href: extras/geospatial-prediction-hierarchy.qmd
-          - text: "📚 Reference Materials"
-            href: extras/resources/course_resources.qmd
+      - text: 📖 extras
+        menu:
           - text: "🎯 Practical Examples"
           - text: Normalization Comparison
             href: extras/examples/normalization_comparison.qmd
@@ -62,6 +60,8 @@ website:
             href: extras/examples/tiling-and-patches.qmd
           - text: TerraTorch Workflows
             href: extras/examples/terratorch_workflows.qmd
+          - text: "📚 Reference Materials"
+            href: extras/resources/course_resources.qmd
           - text: "📁 Project Templates"
           - text: Project Proposal Template
             href: extras/projects/project-proposal-template.qmd

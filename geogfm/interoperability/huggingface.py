@@ -1,5 +1,5 @@
 # geogfm.interoperability.huggingface — Lightweight HF Hub helpers (Week 7).
-# Tangled on 2025-09-26T08:43:57
+# Tangled on 2025-09-26T12:48:44
 
 from __future__ import annotations
 from typing import Any, Dict

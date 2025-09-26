@@ -5,3 +5,5 @@
 # Exposes config schemas
 # registry will be added here
 # registry will be added here
+# registry will be added here
+# registry will be added here

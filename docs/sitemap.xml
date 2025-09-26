@@ -65,12 +65,20 @@
     <lastmod>2025-08-13T00:44:41.653Z</lastmod>
   </url>
   <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/index.html</loc>
-    <lastmod>2025-09-20T23:29:49.490Z</lastmod>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c00b-introduction-to-deeplearning-architecture.html</loc>
+    <lastmod>2025-08-13T00:44:41.631Z</lastmod>
   </url>
   <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/cheatsheets/geobench_datasets.html</loc>
-    <lastmod>2025-08-18T21:53:34.614Z</lastmod>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/geospatial-foundation-model-predictions.html</loc>
+    <lastmod>2025-09-26T19:22:09.110Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/cheatsheets/gfm_architecture.html</loc>
+    <lastmod>2025-08-10T19:57:08.152Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/ai-ml-dl-fm-hierarchy.html</loc>
+    <lastmod>2025-09-26T19:22:05.710Z</lastmod>
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/projects/project-proposal-template.html</loc>
@@ -125,12 +133,20 @@
     <lastmod>2025-08-06T18:25:23.826Z</lastmod>
   </url>
   <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/cheatsheets/gfm_architecture.html</loc>
-    <lastmod>2025-08-10T19:57:08.152Z</lastmod>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/cheatsheets/geobench_datasets.html</loc>
+    <lastmod>2025-08-18T21:53:34.614Z</lastmod>
   </url>
   <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c00b-introduction-to-deeplearning-architecture.html</loc>
-    <lastmod>2025-08-13T00:44:41.631Z</lastmod>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/geospatial-foundation-model-predictions-standalone.html</loc>
+    <lastmod>2025-09-26T19:28:44.014Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/index.html</loc>
+    <lastmod>2025-09-20T23:29:49.490Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/geospatial-prediction-hierarchy.html</loc>
+    <lastmod>2025-09-26T19:26:35.316Z</lastmod>
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c05-training-loop-optimization.html</loc>
@@ -191,21 +207,5 @@
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c01-geospatial-data-foundations.html</loc>
     <lastmod>2025-09-21T16:52:37.818Z</lastmod>
-  </url>
-  <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/geospatial-foundation-model-predictions.html</loc>
-    <lastmod>2025-09-26T19:22:09.110Z</lastmod>
-  </url>
-  <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/geospatial-foundation-model-predictions-standalone.html</loc>
-    <lastmod>2025-09-26T19:26:36.649Z</lastmod>
-  </url>
-  <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/ai-ml-dl-fm-hierarchy.html</loc>
-    <lastmod>2025-09-26T19:22:05.710Z</lastmod>
-  </url>
-  <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/geospatial-prediction-hierarchy.html</loc>
-    <lastmod>2025-09-26T19:26:18.216Z</lastmod>
   </url>
 </urlset>
