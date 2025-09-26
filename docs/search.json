@@ -1890,13 +1890,6 @@
     "text": "Further Reading\n\nPrithvi: NASA-IBM Geospatial Foundation Model\nSatMAE: Masked Autoencoders for Satellite Imagery\nSegment Anything Model (SAM)\nTimesFM: Time Series Foundation Model"
   },
   {
-    "objectID": "extras/geospatial-prediction-hierarchy.html#exercises",
-    "href": "extras/geospatial-prediction-hierarchy.html#exercises",
-    "title": "Hierarchy of Geospatial Prediction Tasks",
-    "section": "Exercises",
-    "text": "Exercises\n\nTask Comparison: Implement the same vegetation mapping problem as:\n\nImage classification (healthy/stressed)\nPixel classification (detailed vegetation types)\nRegression (NDVI prediction)\n\nMulti-Modal Integration: Combine optical and radar data for:\n\nCloud gap filling (spatial interpolation)\nCrop yield prediction (temporal regression)\n\nFoundation Model Adaptation: Fine-tune Prithvi for:\n\nLocal land cover classification\nBiophysical parameter estimation"
-  },
-  {
     "objectID": "chapters/c05-training-loop-optimization.html",
     "href": "chapters/c05-training-loop-optimization.html",
     "title": "Week 5: Fine-Tuning & Transfer Learning",
