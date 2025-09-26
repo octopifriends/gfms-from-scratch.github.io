@@ -53,12 +53,14 @@ At the core of geospatial analysis, we work with two fundamental types of data:
 ![Overview of prediction task hierarchy in geospatial analysis](images/prediction_hierarchy_overview.png)
 
 ### 1. **Pixel Values** (Continuous Data)
+
 - Raw spectral measurements from sensors
 - Physical quantities (temperature, reflectance, radiance)
 - Derived indices (NDVI, EVI, moisture indices)
 - Can be predicted, interpolated, or forecasted
 
 ### 2. **Labels** (Categorical/Discrete Data)
+
 - Human-assigned categories
 - Land cover classes
 - Object boundaries and types
@@ -69,9 +71,11 @@ At the core of geospatial analysis, we work with two fundamental types of data:
 When working with continuous pixel values, we encounter two primary prediction paradigms:
 
 ### Temporal Prediction (Next Value)
+
 **Task**: Predict future pixel values based on historical time series
 **Approach**: Autoregressive models (GPT-like architectures)
 **Example Applications**:
+
 - Vegetation phenology forecasting
 - Surface temperature prediction
 - Crop yield estimation
@@ -101,9 +105,11 @@ class TemporalPixelPredictor(nn.Module):
 ```
 
 ### Spatial Prediction (Missing Values)
+
 **Task**: Fill in missing pixel values based on spatial context
 **Approach**: Masked modeling (BERT-like architectures)
 **Example Applications**:
+
 - Cloud gap filling
 - Sensor failure recovery
 - Super-resolution
@@ -136,24 +142,28 @@ class SpatialPixelPredictor(nn.Module):
 Working with labels introduces a hierarchy of complexity from image-level to pixel-level granularity:
 
 ### 1. Image Classification
+
 **Granularity**: Entire image/scene
 **Input**: Full image (H × W × Bands)
 **Output**: Single label per image
 **Example**: "This Sentinel-2 tile contains urban area"
 
 ### 2. Pixel-wise Classification
+
 **Granularity**: Individual pixels
 **Input**: Image patches or full image
 **Output**: Label map (H × W × Classes)
 **Example**: Land cover mapping where each pixel gets a class
 
 ### 3. Object Detection
+
 **Granularity**: Bounding boxes
 **Input**: Full image
 **Output**: List of [bbox, class, confidence]
 **Example**: Detecting buildings, vehicles, or agricultural fields
 
 ### 4. Object Segmentation
+
 **Granularity**: Precise object boundaries
 **Input**: Full image
 **Output**: Instance masks + classes
@@ -166,18 +176,21 @@ Beyond classification, regression tasks predict continuous variables that may no
 ### Pixel-wise Regression Applications
 
 1. **Biophysical Parameter Estimation**
+
    - Leaf Area Index (LAI)
    - Chlorophyll content
    - Soil moisture
    - Biomass
 
 2. **Environmental Variable Prediction**
+
    - Air quality indices
    - Surface temperature
    - Precipitation estimates
    - Carbon flux
 
 3. **Socioeconomic Indicators**
+
    - Population density
    - Economic activity
    - Energy consumption
@@ -224,18 +237,21 @@ class GeospatialRegressor(nn.Module):
 ## Choosing the Right Approach
 
 ### Use Traditional ML When:
+
 - Limited training data available
 - Interpretability is crucial
 - Computational resources are constrained
 - Working with tabular features
 
 ### Use Deep Learning When:
+
 - Large labeled datasets available
 - Complex spatial patterns exist
 - High accuracy is priority
 - GPU resources available
 
 ### Use Foundation Models When:
+
 - Limited task-specific labels
 - Need zero/few-shot capabilities
 - Working across multiple sensors/resolutions
@@ -280,21 +296,25 @@ Many geospatial problems benefit from joint learning:
 ## Best Practices and Recommendations
 
 ### 1. Start Simple, Scale Up
+
 - Begin with traditional ML baselines
 - Move to deep learning with sufficient data
 - Consider foundation models for generalization
 
 ### 2. Leverage Pretrained Models
+
 - Use ImageNet pretrained encoders as starting points
 - Fine-tune geospatial foundation models (Prithvi, SatMAE)
 - Apply transfer learning from similar domains
 
 ### 3. Handle Geospatial Specifics
+
 - Account for coordinate systems and projections
 - Preserve spatial autocorrelation in train/test splits
 - Consider atmospheric and seasonal effects
 
 ### 4. Validate Appropriately
+
 - Use spatial and temporal holdouts
 - Employ domain-specific metrics
 - Validate against ground truth when available
@@ -385,17 +405,3 @@ As the field evolves, foundation models increasingly bridge these task types, of
 - [Segment Anything Model (SAM)](https://github.com/facebookresearch/segment-anything)
 - [TimesFM: Time Series Foundation Model](https://github.com/google-research/timesfm)
 
-## Exercises
-
-1. **Task Comparison**: Implement the same vegetation mapping problem as:
-   - Image classification (healthy/stressed)
-   - Pixel classification (detailed vegetation types)
-   - Regression (NDVI prediction)
-   
-2. **Multi-Modal Integration**: Combine optical and radar data for:
-   - Cloud gap filling (spatial interpolation)
-   - Crop yield prediction (temporal regression)
-   
-3. **Foundation Model Adaptation**: Fine-tune Prithvi for:
-   - Local land cover classification
-   - Biophysical parameter estimation

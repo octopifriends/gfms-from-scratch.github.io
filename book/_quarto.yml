@@ -35,7 +35,7 @@ website:
             href: chapters/c05-training-loop-optimization.qmd
           - text: Week 6 - ⏰ Spatiotemporal Modeling & Projects
             href: chapters/c06-model-evaluation-analysis.qmd
-      - text: 👀 Cheatsheets
+      - text: 👀 cheatsheets
         href: cheatsheets.qmd
       - text: 🧩 explainers
         menu:
