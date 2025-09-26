@@ -178,24 +178,24 @@ def create_comparison_matrix():
     # Categories and criteria
     categories = ['AI/Rule-Based', 'Classical ML', 'Deep Learning', 'Foundation Models']
     criteria = [
-        'Data Requirements',
-        'Computational Cost',
+        'Data Efficiency',  # Changed from Data Requirements (inverted)
+        'Computational Efficiency',  # Changed from Computational Cost (inverted)
         'Interpretability',
         'Accuracy Potential',
         'Generalization',
-        'Development Time'
+        'Development Speed'  # Changed from Development Time (inverted)
     ]
     
-    # Scores (1-5 scale)
+    # Scores (1-5 scale) - now higher is always better
     scores = np.array([
-        [1, 2, 5, 3, 2, 1],  # AI/Rule-Based
+        [5, 4, 5, 3, 2, 5],  # AI/Rule-Based
         [3, 3, 4, 3, 3, 3],  # Classical ML
-        [5, 4, 2, 4, 4, 4],  # Deep Learning
-        [2, 5, 1, 5, 5, 2],  # Foundation Models (less data needed for fine-tuning)
+        [1, 2, 2, 4, 4, 2],  # Deep Learning
+        [4, 1, 1, 5, 5, 4],  # Foundation Models (less data needed for fine-tuning)
     ])
     
-    # Color map
-    colors = plt.cm.RdYlGn_r
+    # Color map - now green is good, red is bad
+    colors = plt.cm.RdYlGn
     
     # Create matrix
     for i, category in enumerate(categories):
@@ -219,17 +219,17 @@ def create_comparison_matrix():
                 ha='center', va='top', fontsize=11, weight='bold', rotation=45)
     
     # Add title
-    ax.text(3, 4.5, 'Comparison Matrix: AI Hierarchy Levels',
+    ax.text(3, 4.5, 'Comparison Matrix: Computational Hierarchy Levels',
             ha='center', fontsize=16, weight='bold')
     
     # Add legend
     legend_elements = [
         mlines.Line2D([0], [0], marker='s', color='w', 
-                     markerfacecolor=colors(1/5), markersize=15, label='1 = Low/Poor'),
+                     markerfacecolor=colors(1/5), markersize=15, label='1 = Poor'),
         mlines.Line2D([0], [0], marker='s', color='w',
-                     markerfacecolor=colors(3/5), markersize=15, label='3 = Medium'),
+                     markerfacecolor=colors(3/5), markersize=15, label='3 = Moderate'),
         mlines.Line2D([0], [0], marker='s', color='w',
-                     markerfacecolor=colors(5/5), markersize=15, label='5 = High/Excellent')
+                     markerfacecolor=colors(5/5), markersize=15, label='5 = Excellent')
     ]
     ax.legend(handles=legend_elements, loc='upper right', bbox_to_anchor=(1.2, 1))
     
