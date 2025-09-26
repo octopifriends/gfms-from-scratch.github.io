@@ -2644,5 +2644,376 @@
     "title": "Week 1: Core Tools and Data Access",
     "section": "Essential Resources",
     "text": "Essential Resources\n\nData Sources\n\nMicrosoft Planetary Computer Catalog - Free satellite data\nSTAC Browser - Explore STAC catalogs\nEarth Engine Data Catalog - Alternative data source\n\n\n\nTechnical Documentation\n\nRasterio Documentation - Geospatial I/O\nXarray Tutorial - Multi-dimensional arrays\nSTAC Specification - Metadata standards\nFolium Examples - Interactive mapping\n\n\n\nCommunity\n\nPangeo Community - Open source geoscience\nSTAC Discord - STAC community support\nPyData Geospatial - Python geospatial ecosystem\n\nRemember: Your helper functions are now your superpower! 🦸 Use them to explore any area on Earth with just a few lines of code."
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions.html",
+    "href": "extras/geospatial-foundation-model-predictions.html",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "",
+    "text": "Geospatial Foundation Models (GFMs) represent a paradigm shift in how we process and analyze Earth observation data. Like their counterparts in natural language processing (e.g., GPT) and computer vision (e.g., CLIP), GFMs learn powerful representations from vast amounts of unlabeled satellite imagery that can be adapted for numerous downstream tasks.\nThis document explores the journey from raw satellite data to specific predictions, explaining how pre-training and fine-tuning enable diverse applications in Earth observation."
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions.html#overview",
+    "href": "extras/geospatial-foundation-model-predictions.html#overview",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "",
+    "text": "Geospatial Foundation Models (GFMs) represent a paradigm shift in how we process and analyze Earth observation data. Like their counterparts in natural language processing (e.g., GPT) and computer vision (e.g., CLIP), GFMs learn powerful representations from vast amounts of unlabeled satellite imagery that can be adapted for numerous downstream tasks.\nThis document explores the journey from raw satellite data to specific predictions, explaining how pre-training and fine-tuning enable diverse applications in Earth observation."
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions.html#the-foundation-model-architecture",
+    "href": "extras/geospatial-foundation-model-predictions.html#the-foundation-model-architecture",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "The Foundation Model Architecture",
+    "text": "The Foundation Model Architecture\n\nInput Data Structure\nGeospatial data presents unique challenges compared to traditional computer vision:\n\nSpatial dimensions: Typically patches of 100×100 to 224×224 pixels\nSpectral dimensions: Multiple bands beyond RGB (e.g., NIR, SWIR, thermal)\nTemporal dimensions: Time series of observations (e.g., weekly, monthly)\n\nFor example, a typical input might be structured as:\n3 bands × 100×100 pixels × 12 time steps\nThis creates a high-dimensional data cube that captures how Earth’s surface changes across space, spectrum, and time.\n\n\nThe Encoder-Decoder Framework\n\n\n\n\n\nflowchart LR\n    A[\"Satellite Data&lt;br&gt;Spatial×Spectral×Temporal\"] --&gt; B[\"Encoder&lt;br&gt;Deep Learning\"]\n    B --&gt; C[\"Embedding&lt;br&gt;Learned Vector&lt;br&gt;Representation\"]\n    C --&gt; D[\"Decoder&lt;br&gt;Deep Learning\"]\n    D --&gt; E[\"Task-Specific&lt;br&gt;Output\"]\n    \n    C --&gt; F[\"Alternative:&lt;br&gt;Traditional ML&lt;br&gt;e.g., Lasso Regression\"]\n    F --&gt; G[\"Simple&lt;br&gt;Predictions\"]\n\n\n\n\n\n\nThe foundation model architecture consists of:\n\nEncoder: Transforms high-dimensional satellite data into compact, information-rich embeddings\nEmbedding: A learned vector representation (think of it as a “deep learning version of PCA”)\nDecoder: Transforms embeddings back into meaningful outputs"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions.html#pre-training-learning-without-labels",
+    "href": "extras/geospatial-foundation-model-predictions.html#pre-training-learning-without-labels",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Pre-training: Learning Without Labels",
+    "text": "Pre-training: Learning Without Labels\nThe power of foundation models comes from self-supervised pre-training on massive unlabeled datasets. Unlike traditional supervised learning, these approaches create training signals from the data itself.\n\nCommon Pre-training Objectives\n\n1. Masked Autoencoding (MAE)\n\nTask: Randomly mask patches of the input and predict the missing content\nIntuition: Forces the model to understand spatial context and relationships\nExample: Hide 75% of image patches and reconstruct them\n\n# Conceptual example\nmasked_input = mask_random_patches(satellite_image, mask_ratio=0.75)\nembedding = encoder(masked_input)\nreconstruction = decoder(embedding)\nloss = MSE(reconstruction, original_patches)\n\n\n2. Temporal Prediction\n\nTask: Predict the next time step or fill in missing temporal observations\nIntuition: Learns seasonal patterns and temporal dynamics\nExample: Given January-June data, predict July\n\n\n\n3. Multi-modal Alignment\n\nTask: Align embeddings from different sensors or modalities\nIntuition: Learns invariant features across different data sources\nExample: Match Sentinel-2 optical with Sentinel-1 SAR data\n\n\n\n4. Contrastive Learning\n\nTask: Learn similar embeddings for nearby locations/times\nIntuition: Captures spatial and temporal continuity\nExample: Patches from the same field should have similar embeddings"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions.html#downstream-tasks-from-general-to-specific",
+    "href": "extras/geospatial-foundation-model-predictions.html#downstream-tasks-from-general-to-specific",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Downstream Tasks: From General to Specific",
+    "text": "Downstream Tasks: From General to Specific\nOnce pre-trained, GFMs can be adapted for various Earth observation tasks through fine-tuning or as feature extractors.\n\nTask Categories\n\n1. Pixel-Level Predictions (Semantic Segmentation)\nLand Cover Classification - Input: Multi-spectral satellite imagery - Output: Per-pixel class labels (forest, urban, water, etc.) - Fine-tuning: Add segmentation head, train on labeled maps\nChange Detection - Input: Multi-temporal image pairs - Output: Binary change masks or change type maps - Fine-tuning: Modify decoder for temporal comparisons\nCloud/Shadow Masking - Input: Multi-spectral imagery - Output: Binary masks for clouds and shadows - Fine-tuning: Lightweight decoder trained on quality masks\n\n\n2. Image-Level Predictions\nScene Classification - Input: Image patches - Output: Single label per patch (agricultural, residential, etc.) - Fine-tuning: Replace decoder with classification head\nRegression Tasks - Input: Image patches - Output: Continuous values (biomass, yield, poverty indicators) - Fine-tuning: Linear probe or shallow MLP on embeddings\n\n\n3. Time Series Analysis\nCrop Type Mapping - Input: Temporal sequence of observations - Output: Crop type per pixel/parcel - Fine-tuning: Temporal attention mechanisms\nPhenology Detection - Input: Time series data - Output: Key dates (green-up, peak, senescence) - Fine-tuning: Specialized temporal decoders\n\n\n4. Multi-modal Fusion\nData Gap Filling - Input: Partial observations from multiple sensors - Output: Complete, harmonized time series - Fine-tuning: Cross-attention between modalities\nSuper-resolution - Input: Low-resolution imagery - Output: High-resolution reconstruction - Fine-tuning: Specialized upsampling decoders"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions.html#fine-tuning-strategies",
+    "href": "extras/geospatial-foundation-model-predictions.html#fine-tuning-strategies",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Fine-tuning Strategies",
+    "text": "Fine-tuning Strategies\n\n1. Full Fine-tuning\n\nUpdate all model parameters\nBest for: Large labeled datasets, significant domain shift\nDrawback: Computationally expensive, risk of overfitting\n\n\n\n2. Linear Probing\n\nFreeze encoder, train only classification head\nBest for: Limited labeled data, similar domains\nBenefit: Fast, prevents overfitting\n\n\n\n3. Adapter Layers\n\nInsert small trainable modules between frozen layers\nBest for: Multiple tasks, parameter efficiency\nBenefit: Task-specific adaptation with minimal parameters\n\n\n\n4. Prompt Tuning\n\nLearn task-specific input modifications\nBest for: Very limited data, zero-shot scenarios\nBenefit: Extremely parameter efficient"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions.html#example-from-pre-training-to-land-cover-mapping",
+    "href": "extras/geospatial-foundation-model-predictions.html#example-from-pre-training-to-land-cover-mapping",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Example: From Pre-training to Land Cover Mapping",
+    "text": "Example: From Pre-training to Land Cover Mapping\nLet’s trace the journey for a land cover classification task:\n\nPre-training Phase\n# Masked autoencoding on unlabeled Sentinel-2 data\nfor batch in massive_unlabeled_dataset:\n    masked_input = random_mask(batch)\n    embedding = encoder(masked_input)\n    reconstruction = decoder(embedding)\n    optimize(reconstruction_loss)\nFine-tuning Phase\n# Freeze encoder, add segmentation head\nencoder.freeze()\nsegmentation_head = SegmentationDecoder(num_classes=10)\n\n# Train on labeled land cover data\nfor image, label_map in labeled_dataset:\n    embedding = encoder(image)\n    prediction = segmentation_head(embedding)\n    optimize(cross_entropy_loss(prediction, label_map))\nInference Phase\n# Apply to new imagery\nnew_image = load_sentinel2_scene()\nembedding = encoder(new_image)\nland_cover_map = segmentation_head(embedding)"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions.html#why-this-approach-works",
+    "href": "extras/geospatial-foundation-model-predictions.html#why-this-approach-works",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Why This Approach Works",
+    "text": "Why This Approach Works\n\n1. Data Efficiency\nPre-training on abundant unlabeled data reduces the need for expensive labeled datasets.\n\n\n2. Transfer Learning\nFeatures learned from global data transfer to local applications.\n\n\n3. Multi-task Capability\nOne pre-trained model can be adapted for numerous downstream tasks.\n\n\n4. Robustness\nExposure to diverse data during pre-training improves generalization.\n\n\n5. Temporal Understanding\nUnlike traditional CNN approaches, GFMs can natively handle time series."
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions.html#practical-considerations",
+    "href": "extras/geospatial-foundation-model-predictions.html#practical-considerations",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Practical Considerations",
+    "text": "Practical Considerations\n\nChoosing Pre-training Objectives\n\nFor agricultural applications: Prioritize temporal objectives\nFor urban mapping: Focus on spatial detail and multi-scale features\nFor climate monitoring: Emphasize long-term temporal patterns\n\n\n\nData Requirements\n\nPre-training: Terabytes of unlabeled imagery\nFine-tuning: Can work with hundreds to thousands of labeled samples\nInference: Real-time processing possible with optimized models\n\n\n\nComputational Resources\n\nPre-training: Requires significant GPU resources (days to weeks)\nFine-tuning: Feasible on single GPUs (hours to days)\nInference: Can be optimized for edge deployment"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions.html#future-directions",
+    "href": "extras/geospatial-foundation-model-predictions.html#future-directions",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Future Directions",
+    "text": "Future Directions\n\nFoundation Models for Specific Domains\n\nAgriculture-specific models\nUrban-focused architectures\nOcean and coastal specialists\n\nMulti-modal Foundation Models\n\nCombining optical, SAR, and hyperspectral data\nIntegration with weather and climate data\nFusion with ground-based sensors\n\nEfficient Architectures\n\nLightweight models for edge computing\nQuantization and pruning techniques\nNeural architecture search for Earth observation\n\nInterpretability\n\nUnderstanding what features the model learns\nExplainable predictions for decision support\nUncertainty quantification"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions.html#summary",
+    "href": "extras/geospatial-foundation-model-predictions.html#summary",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Summary",
+    "text": "Summary\nGeospatial Foundation Models represent a powerful approach to Earth observation, transforming how we extract information from satellite data. Through self-supervised pre-training on massive unlabeled datasets, these models learn rich representations that can be efficiently adapted for diverse downstream tasks. Whether predicting land cover, detecting changes, or monitoring crop growth, GFMs provide a flexible and powerful framework for understanding our changing planet.\nThe key insight is that the expensive process of learning good representations can be done once on unlabeled data, then reused many times for different applications with minimal additional training. This democratizes access to advanced Earth observation capabilities and accelerates the development of new applications.\nAs we continue to accumulate Earth observation data at unprecedented rates, foundation models will become increasingly important for transforming this data deluge into actionable insights for science, policy, and society."
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions.html#visualization-resources",
+    "href": "extras/geospatial-foundation-model-predictions.html#visualization-resources",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Visualization Resources",
+    "text": "Visualization Resources\nTo generate architectural diagrams for this explainer, you can run the provided visualization script:\ncd book/extras/scripts\npython visualize_gfm_architecture.py\nThis will create three diagrams in the book/extras/images/ directory:\n\ngfm_architecture.png: Overview of the encoder-decoder architecture\ngfm_pretraining_tasks.png: Examples of self-supervised pre-training objectives\ngfm_task_hierarchy.png: Taxonomy of downstream tasks enabled by GFMs"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions-standalone.html",
+    "href": "extras/geospatial-foundation-model-predictions-standalone.html",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "",
+    "text": "Geospatial Foundation Models (GFMs) represent a paradigm shift in how we process and analyze Earth observation data. Like their counterparts in natural language processing (e.g., GPT) and computer vision (e.g., CLIP), GFMs learn powerful representations from vast amounts of unlabeled satellite imagery that can be adapted for numerous downstream tasks.\nThis document explores the journey from raw satellite data to specific predictions, explaining how pre-training and fine-tuning enable diverse applications in Earth observation."
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions-standalone.html#overview",
+    "href": "extras/geospatial-foundation-model-predictions-standalone.html#overview",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "",
+    "text": "Geospatial Foundation Models (GFMs) represent a paradigm shift in how we process and analyze Earth observation data. Like their counterparts in natural language processing (e.g., GPT) and computer vision (e.g., CLIP), GFMs learn powerful representations from vast amounts of unlabeled satellite imagery that can be adapted for numerous downstream tasks.\nThis document explores the journey from raw satellite data to specific predictions, explaining how pre-training and fine-tuning enable diverse applications in Earth observation."
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions-standalone.html#the-foundation-model-architecture",
+    "href": "extras/geospatial-foundation-model-predictions-standalone.html#the-foundation-model-architecture",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "The Foundation Model Architecture",
+    "text": "The Foundation Model Architecture\n\nInput Data Structure\nGeospatial data presents unique challenges compared to traditional computer vision:\n\nSpatial dimensions: Typically patches of 100×100 to 224×224 pixels\nSpectral dimensions: Multiple bands beyond RGB (e.g., NIR, SWIR, thermal)\nTemporal dimensions: Time series of observations (e.g., weekly, monthly)\n\nFor example, a typical input might be structured as:\n3 bands × 100×100 pixels × 12 time steps\nThis creates a high-dimensional data cube that captures how Earth’s surface changes across space, spectrum, and time.\n\n\nThe Encoder-Decoder Framework\n\n\n\n\n\nflowchart LR\n    A[\"Satellite Data&lt;br&gt;Spatial×Spectral×Temporal\"] --&gt; B[\"Encoder&lt;br&gt;Deep Learning\"]\n    B --&gt; C[\"Embedding&lt;br&gt;Learned Vector&lt;br&gt;Representation\"]\n    C --&gt; D[\"Decoder&lt;br&gt;Deep Learning\"]\n    D --&gt; E[\"Task-Specific&lt;br&gt;Output\"]\n    \n    C --&gt; F[\"Alternative:&lt;br&gt;Traditional ML&lt;br&gt;e.g., Lasso Regression\"]\n    F --&gt; G[\"Simple&lt;br&gt;Predictions\"]\n\n\n\n\n\n\nThe foundation model architecture consists of:\n\nEncoder: Transforms high-dimensional satellite data into compact, information-rich embeddings\nEmbedding: A learned vector representation (think of it as a “deep learning version of PCA”)\nDecoder: Transforms embeddings back into meaningful outputs"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions-standalone.html#pre-training-learning-without-labels",
+    "href": "extras/geospatial-foundation-model-predictions-standalone.html#pre-training-learning-without-labels",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Pre-training: Learning Without Labels",
+    "text": "Pre-training: Learning Without Labels\nThe power of foundation models comes from self-supervised pre-training on massive unlabeled datasets. Unlike traditional supervised learning, these approaches create training signals from the data itself.\n\nCommon Pre-training Objectives\n\n1. Masked Autoencoding (MAE)\n\nTask: Randomly mask patches of the input and predict the missing content\nIntuition: Forces the model to understand spatial context and relationships\nExample: Hide 75% of image patches and reconstruct them\n\n# Conceptual example\nmasked_input = mask_random_patches(satellite_image, mask_ratio=0.75)\nembedding = encoder(masked_input)\nreconstruction = decoder(embedding)\nloss = MSE(reconstruction, original_patches)\n\n\n2. Temporal Prediction\n\nTask: Predict the next time step or fill in missing temporal observations\nIntuition: Learns seasonal patterns and temporal dynamics\nExample: Given January-June data, predict July\n\n\n\n3. Multi-modal Alignment\n\nTask: Align embeddings from different sensors or modalities\nIntuition: Learns invariant features across different data sources\nExample: Match Sentinel-2 optical with Sentinel-1 SAR data\n\n\n\n4. Contrastive Learning\n\nTask: Learn similar embeddings for nearby locations/times\nIntuition: Captures spatial and temporal continuity\nExample: Patches from the same field should have similar embeddings"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions-standalone.html#downstream-tasks-from-general-to-specific",
+    "href": "extras/geospatial-foundation-model-predictions-standalone.html#downstream-tasks-from-general-to-specific",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Downstream Tasks: From General to Specific",
+    "text": "Downstream Tasks: From General to Specific\nOnce pre-trained, GFMs can be adapted for various Earth observation tasks through fine-tuning or as feature extractors.\n\nTask Categories\n\n1. Pixel-Level Predictions (Semantic Segmentation)\nLand Cover Classification\n\nInput: Multi-spectral satellite imagery\nOutput: Per-pixel class labels (forest, urban, water, etc.)\nFine-tuning: Add segmentation head, train on labeled maps\n\nChange Detection\n\nInput: Multi-temporal image pairs\nOutput: Binary change masks or change type maps\nFine-tuning: Modify decoder for temporal comparisons\n\nCloud/Shadow Masking\n\nInput: Multi-spectral imagery\nOutput: Binary masks for clouds and shadows\nFine-tuning: Lightweight decoder trained on quality masks\n\n\n\n2. Image-Level Predictions\nScene Classification\n\nInput: Image patches\nOutput: Single label per patch (agricultural, residential, etc.)\nFine-tuning: Replace decoder with classification head\n\nRegression Tasks\n\nInput: Image patches\nOutput: Continuous values (biomass, yield, poverty indicators)\nFine-tuning: Linear probe or shallow MLP on embeddings\n\n\n\n3. Time Series Analysis\nCrop Type Mapping\n\nInput: Temporal sequence of observations\nOutput: Crop type per pixel/parcel\nFine-tuning: Temporal attention mechanisms\n\nPhenology Detection\n\nInput: Time series data\nOutput: Key dates (green-up, peak, senescence)\nFine-tuning: Specialized temporal decoders\n\n\n\n4. Multi-modal Fusion\nData Gap Filling\n\nInput: Partial observations from multiple sensors\nOutput: Complete, harmonized time series\nFine-tuning: Cross-attention between modalities\n\nSuper-resolution\n\nInput: Low-resolution imagery\nOutput: High-resolution reconstruction\nFine-tuning: Specialized upsampling decoders"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions-standalone.html#fine-tuning-strategies",
+    "href": "extras/geospatial-foundation-model-predictions-standalone.html#fine-tuning-strategies",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Fine-tuning Strategies",
+    "text": "Fine-tuning Strategies\n\n1. Full Fine-tuning\n\nUpdate all model parameters\nBest for: Large labeled datasets, significant domain shift\nDrawback: Computationally expensive, risk of overfitting\n\n\n\n2. Linear Probing\n\nFreeze encoder, train only classification head\nBest for: Limited labeled data, similar domains\nBenefit: Fast, prevents overfitting\n\n\n\n3. Adapter Layers\n\nInsert small trainable modules between frozen layers\nBest for: Multiple tasks, parameter efficiency\nBenefit: Task-specific adaptation with minimal parameters\n\n\n\n4. Prompt Tuning\n\nLearn task-specific input modifications\nBest for: Very limited data, zero-shot scenarios\nBenefit: Extremely parameter efficient"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions-standalone.html#example-from-pre-training-to-land-cover-mapping",
+    "href": "extras/geospatial-foundation-model-predictions-standalone.html#example-from-pre-training-to-land-cover-mapping",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Example: From Pre-training to Land Cover Mapping",
+    "text": "Example: From Pre-training to Land Cover Mapping\nLet’s trace the journey for a land cover classification task:\n\nPre-training Phase\n# Masked autoencoding on unlabeled Sentinel-2 data\nfor batch in massive_unlabeled_dataset:\n    masked_input = random_mask(batch)\n    embedding = encoder(masked_input)\n    reconstruction = decoder(embedding)\n    optimize(reconstruction_loss)\nFine-tuning Phase\n# Freeze encoder, add segmentation head\nencoder.freeze()\nsegmentation_head = SegmentationDecoder(num_classes=10)\n\n# Train on labeled land cover data\nfor image, label_map in labeled_dataset:\n    embedding = encoder(image)\n    prediction = segmentation_head(embedding)\n    optimize(cross_entropy_loss(prediction, label_map))\nInference Phase\n# Apply to new imagery\nnew_image = load_sentinel2_scene()\nembedding = encoder(new_image)\nland_cover_map = segmentation_head(embedding)"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions-standalone.html#why-this-approach-works",
+    "href": "extras/geospatial-foundation-model-predictions-standalone.html#why-this-approach-works",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Why This Approach Works",
+    "text": "Why This Approach Works\n\n1. Data Efficiency\nPre-training on abundant unlabeled data reduces the need for expensive labeled datasets.\n\n\n2. Transfer Learning\nFeatures learned from global data transfer to local applications.\n\n\n3. Multi-task Capability\nOne pre-trained model can be adapted for numerous downstream tasks.\n\n\n4. Robustness\nExposure to diverse data during pre-training improves generalization.\n\n\n5. Temporal Understanding\nUnlike traditional CNN approaches, GFMs can natively handle time series."
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions-standalone.html#practical-considerations",
+    "href": "extras/geospatial-foundation-model-predictions-standalone.html#practical-considerations",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Practical Considerations",
+    "text": "Practical Considerations\n\nChoosing Pre-training Objectives\n\nFor agricultural applications: Prioritize temporal objectives\nFor urban mapping: Focus on spatial detail and multi-scale features\nFor climate monitoring: Emphasize long-term temporal patterns\n\n\n\nData Requirements\n\nPre-training: Terabytes of unlabeled imagery\nFine-tuning: Can work with hundreds to thousands of labeled samples\nInference: Real-time processing possible with optimized models\n\n\n\nComputational Resources\n\nPre-training: Requires significant GPU resources (days to weeks)\nFine-tuning: Feasible on single GPUs (hours to days)\nInference: Can be optimized for edge deployment"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions-standalone.html#future-directions",
+    "href": "extras/geospatial-foundation-model-predictions-standalone.html#future-directions",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Future Directions",
+    "text": "Future Directions\n\nFoundation Models for Specific Domains\n\nAgriculture-specific models\nUrban-focused architectures\nOcean and coastal specialists\n\nMulti-modal Foundation Models\n\nCombining optical, SAR, and hyperspectral data\nIntegration with weather and climate data\nFusion with ground-based sensors\n\nEfficient Architectures\n\nLightweight models for edge computing\nQuantization and pruning techniques\nNeural architecture search for Earth observation\n\nInterpretability\n\nUnderstanding what features the model learns\nExplainable predictions for decision support\nUncertainty quantification"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions-standalone.html#summary",
+    "href": "extras/geospatial-foundation-model-predictions-standalone.html#summary",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Summary",
+    "text": "Summary\nGeospatial Foundation Models represent a powerful approach to Earth observation, transforming how we extract information from satellite data. Through self-supervised pre-training on massive unlabeled datasets, these models learn rich representations that can be efficiently adapted for diverse downstream tasks. Whether predicting land cover, detecting changes, or monitoring crop growth, GFMs provide a flexible and powerful framework for understanding our changing planet.\nThe key insight is that the expensive process of learning good representations can be done once on unlabeled data, then reused many times for different applications with minimal additional training. This democratizes access to advanced Earth observation capabilities and accelerates the development of new applications.\nAs we continue to accumulate Earth observation data at unprecedented rates, foundation models will become increasingly important for transforming this data deluge into actionable insights for science, policy, and society."
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions-standalone.html#visualization-resources",
+    "href": "extras/geospatial-foundation-model-predictions-standalone.html#visualization-resources",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Visualization Resources",
+    "text": "Visualization Resources\nTo generate architectural diagrams for this explainer, you can run the provided visualization script:\ncd book/extras/scripts\npython visualize_gfm_architecture.py\nThis will create three diagrams in the book/extras/images/ directory:\n\ngfm_architecture.png: Overview of the encoder-decoder architecture\ngfm_pretraining_tasks.png: Examples of self-supervised pre-training objectives\ngfm_task_hierarchy.png: Taxonomy of downstream tasks enabled by GFMs"
+  },
+  {
+    "objectID": "extras/ai-ml-dl-fm-hierarchy.html",
+    "href": "extras/ai-ml-dl-fm-hierarchy.html",
+    "title": "The AI Hierarchy: From Algorithms to Foundation Models in Geospatial Science",
+    "section": "",
+    "text": "Visual Resources\n\n\n\nThis explainer includes visualization diagrams. To generate them, run:\ncd book/extras/scripts\npython visualize_ai_hierarchy.py"
+  },
+  {
+    "objectID": "extras/ai-ml-dl-fm-hierarchy.html#overview",
+    "href": "extras/ai-ml-dl-fm-hierarchy.html#overview",
+    "title": "The AI Hierarchy: From Algorithms to Foundation Models in Geospatial Science",
+    "section": "Overview",
+    "text": "Overview\nIn geospatial data science, we often encounter terms like AI, Machine Learning, Deep Learning, and Foundation Models. These concepts form a nested hierarchy, where each level represents a more specialized subset of the previous one. This explainer clarifies these relationships and provides concrete examples from remote sensing and Earth observation."
+  },
+  {
+    "objectID": "extras/ai-ml-dl-fm-hierarchy.html#the-hierarchy-explained",
+    "href": "extras/ai-ml-dl-fm-hierarchy.html#the-hierarchy-explained",
+    "title": "The AI Hierarchy: From Algorithms to Foundation Models in Geospatial Science",
+    "section": "The Hierarchy Explained",
+    "text": "The Hierarchy Explained\n\n\n\n\n\nflowchart TD\n    A[\"&lt;b&gt;Artificial Intelligence (AI)&lt;/b&gt;&lt;br&gt;Any computational algorithm&lt;br&gt;that processes data intelligently\"] \n    B[\"&lt;b&gt;Machine Learning (ML)&lt;/b&gt;&lt;br&gt;Algorithms that learn&lt;br&gt;patterns from data\"]\n    C[\"&lt;b&gt;Deep Learning (DL)&lt;/b&gt;&lt;br&gt;Neural networks with&lt;br&gt;multiple layers\"]\n    D[\"&lt;b&gt;Foundation Models (FM)&lt;/b&gt;&lt;br&gt;Large pre-trained models&lt;br&gt;with transfer learning\"]\n    \n    A --&gt; B\n    B --&gt; C\n    C --&gt; D\n    \n    style A fill:#e1f5fe\n    style B fill:#b3e5fc\n    style C fill:#81d4fa\n    style D fill:#4fc3f7\n\n\n\n\n\n\n\nThe Nested Nature\nEach category is a subset of the one above it:\n\nAll Foundation Models are Deep Learning models\nAll Deep Learning is Machine Learning\nAll Machine Learning is Artificial Intelligence\nNot all AI is Machine Learning (some AI uses rules or heuristics)"
+  },
+  {
+    "objectID": "extras/ai-ml-dl-fm-hierarchy.html#level-1-artificial-intelligence-ai",
+    "href": "extras/ai-ml-dl-fm-hierarchy.html#level-1-artificial-intelligence-ai",
+    "title": "The AI Hierarchy: From Algorithms to Foundation Models in Geospatial Science",
+    "section": "Level 1: Artificial Intelligence (AI)",
+    "text": "Level 1: Artificial Intelligence (AI)\nDefinition: Any computational algorithm designed to process data and make decisions or predictions in an intelligent manner.\n\nGeospatial AI Examples\n\nRule-Based Classification\n# Simple threshold-based water detection\ndef detect_water_ndwi(green_band, nir_band):\n    \"\"\"Rule-based water detection using NDWI threshold\"\"\"\n    ndwi = (green_band - nir_band) / (green_band + nir_band)\n    water_mask = ndwi &gt; 0.3  # Fixed threshold rule\n    return water_mask\n\n\nExpert Systems for Land Use\n\nERDAS IMAGINE Knowledge Engineer: Rule-based classification\neCognition Rule Sets: Object-based image analysis with expert rules\nThreshold-based indices: NDVI for vegetation, NDBI for built-up areas\n\n\n\nGeometric Algorithms\n\nViewshed analysis: Line-of-sight calculations\nBuffer operations: Distance-based spatial analysis\nSpatial interpolation: IDW, Kriging (statistical but not ML)"
+  },
+  {
+    "objectID": "extras/ai-ml-dl-fm-hierarchy.html#level-2-machine-learning-ml",
+    "href": "extras/ai-ml-dl-fm-hierarchy.html#level-2-machine-learning-ml",
+    "title": "The AI Hierarchy: From Algorithms to Foundation Models in Geospatial Science",
+    "section": "Level 2: Machine Learning (ML)",
+    "text": "Level 2: Machine Learning (ML)\nDefinition: Algorithms that automatically learn patterns from data without being explicitly programmed for specific rules.\n\nClassical ML in Remote Sensing\n\nSupervised Classification\n# Random Forest for land cover classification\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Traditional approach: hand-crafted features\nfeatures = ['mean_red', 'mean_green', 'mean_blue', 'mean_nir', \n           'ndvi', 'ndwi', 'texture_homogeneity']\n           \nrf_classifier = RandomForestClassifier(n_estimators=100)\nrf_classifier.fit(training_features, training_labels)\n\n\nCommon ML Algorithms in Geospatial\n\nRandom Forest\n\nLand cover classification\nTree species identification\nCrop type mapping\n\nSupport Vector Machines (SVM)\n\nUrban area extraction\nCloud detection\nChange detection\n\nGradient Boosting (XGBoost)\n\nYield prediction\nSoil property mapping\nPoverty estimation\n\nk-Nearest Neighbors (k-NN)\n\nImage classification\nGap filling in time series\nSpatial interpolation\n\n\n\n\nUnsupervised Learning\n\nK-means clustering: Land cover stratification\nISODATA: Automatic cluster determination\nPCA: Dimensionality reduction for hyperspectral data"
+  },
+  {
+    "objectID": "extras/ai-ml-dl-fm-hierarchy.html#level-3-deep-learning-dl",
+    "href": "extras/ai-ml-dl-fm-hierarchy.html#level-3-deep-learning-dl",
+    "title": "The AI Hierarchy: From Algorithms to Foundation Models in Geospatial Science",
+    "section": "Level 3: Deep Learning (DL)",
+    "text": "Level 3: Deep Learning (DL)\nDefinition: Neural networks with multiple layers that can learn hierarchical representations of data.\n\nDeep Learning Architectures in Remote Sensing\n\nConvolutional Neural Networks (CNNs)\n# U-Net for semantic segmentation\nclass UNet(nn.Module):\n    def __init__(self, in_channels, num_classes):\n        super().__init__()\n        # Encoder path\n        self.enc1 = self.conv_block(in_channels, 64)\n        self.enc2 = self.conv_block(64, 128)\n        self.enc3 = self.conv_block(128, 256)\n        \n        # Decoder path with skip connections\n        self.dec3 = self.upconv_block(256, 128)\n        self.dec2 = self.upconv_block(128, 64)\n        self.dec1 = nn.Conv2d(64, num_classes, 1)\n\n\nCommon DL Applications\n\nSemantic Segmentation\n\nBuilding footprint extraction (U-Net)\nRoad network mapping (DeepLab)\nAgricultural field boundary delineation (Mask R-CNN)\n\nObject Detection\n\nVehicle detection (YOLO)\nShip detection in SAR (Faster R-CNN)\nSolar panel identification (RetinaNet)\n\nTime Series Analysis\n\nCrop phenology modeling (LSTM)\nLand cover change prediction (ConvLSTM)\nWeather pattern analysis (Transformer)\n\nSuper-Resolution\n\nPan-sharpening (SRCNN)\nSentinel-2 to high-res (ESRGAN)\nTemporal super-resolution (3D CNNs)"
+  },
+  {
+    "objectID": "extras/ai-ml-dl-fm-hierarchy.html#level-4-foundation-models-fms",
+    "href": "extras/ai-ml-dl-fm-hierarchy.html#level-4-foundation-models-fms",
+    "title": "The AI Hierarchy: From Algorithms to Foundation Models in Geospatial Science",
+    "section": "Level 4: Foundation Models (FMs)",
+    "text": "Level 4: Foundation Models (FMs)\nDefinition: Large-scale neural networks pre-trained on massive datasets that can be adapted for multiple downstream tasks through fine-tuning.\n\nCharacteristics of Geospatial Foundation Models\n\nSelf-Supervised Pre-training\n# Example: Masked Autoencoder for satellite imagery\nclass SatelliteMAE(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.encoder = VisionTransformer(\n            img_size=224,\n            patch_size=16,\n            in_channels=13,  # Sentinel-2 bands\n            embed_dim=768\n        )\n        self.decoder = MAEDecoder(embed_dim=768)\n        \n    def forward(self, x, mask_ratio=0.75):\n        # Mask random patches\n        x_masked, mask = self.random_masking(x, mask_ratio)\n        # Encode visible patches\n        latent = self.encoder(x_masked)\n        # Reconstruct all patches\n        reconstruction = self.decoder(latent, mask)\n        return reconstruction\n\n\nCurrent Geospatial Foundation Models\n\nPrithvi (NASA/IBM)\n\nPre-trained on HLS (Harmonized Landsat Sentinel-2) data\nSupports multiple downstream tasks\n100M parameters\nHugging Face Model\nPaper\n\nSatMAE (Stanford)\n\nMasked autoencoder for satellite imagery\nTemporal and spectral awareness\nFine-tunable for various applications\nPaper\n\nSkySense (Microsoft)\n\nMulti-modal (optical + SAR)\nGlobal coverage pre-training\nZero-shot capabilities\nPart of Microsoft’s Planetary Computer initiative\n\nClay (Clay Foundation)\n\nOpen-source foundation model\nTrained on diverse Earth observation data\nDesigned for environmental monitoring\nDocumentation\nHugging Face\n\nGeoSAM (Various Universities)\n\nSegment Anything Model adapted for geospatial\nInteractive segmentation capabilities\nWorks with various Earth observation data\n\nSpectralGPT (Various Institutions)\n\nFoundation model for spectral remote sensing\nHandles hyperspectral and multispectral data\nPaper\n\n\n\n\n\nFoundation Model Advantages\n\nTransfer Learning\n\nPre-trained on terabytes of unlabeled data\nFine-tune with minimal labeled samples\nGeneralize across geographic regions\n\nMulti-Task Capability\n\nOne model → many applications\nShared representations\nEfficient deployment\n\nFew-Shot Learning\n\nAdapt to new tasks with limited examples\nCrucial for rare event detection\nReduces annotation burden"
+  },
+  {
+    "objectID": "extras/ai-ml-dl-fm-hierarchy.html#practical-implications",
+    "href": "extras/ai-ml-dl-fm-hierarchy.html#practical-implications",
+    "title": "The AI Hierarchy: From Algorithms to Foundation Models in Geospatial Science",
+    "section": "Practical Implications",
+    "text": "Practical Implications\n\nWhen to Use Each Level\n\nUse AI (Rule-Based) When:\n\nDomain knowledge is well-defined\nInterpretability is critical\nComputational resources are limited\nSimple thresholds work well\n\n\n\nUse Classical ML When:\n\nModerate amounts of labeled data available\nHand-crafted features are meaningful\nNeed interpretable models\nWorking with tabular data\n\n\n\nUse Deep Learning When:\n\nLarge labeled datasets available\nSpatial patterns are complex\nEnd-to-end learning is beneficial\nHigh accuracy is priority\n\n\n\nUse Foundation Models When:\n\nLimited labeled data for specific task\nNeed to handle multiple tasks\nWorking across different sensors/regions\nWant state-of-the-art performance"
+  },
+  {
+    "objectID": "extras/ai-ml-dl-fm-hierarchy.html#evolution-of-approaches",
+    "href": "extras/ai-ml-dl-fm-hierarchy.html#evolution-of-approaches",
+    "title": "The AI Hierarchy: From Algorithms to Foundation Models in Geospatial Science",
+    "section": "Evolution of Approaches",
+    "text": "Evolution of Approaches\n\nHistorical Progression in Remote Sensing\n\n1970s-1990s: Rule-Based Era\n\nManual interpretation keys\nSimple band ratios\nExpert systems\n\n1990s-2010s: Classical ML Era\n\nMaximum likelihood classifiers\nDecision trees\nSupport vector machines\n\n2010s-2020s: Deep Learning Revolution\n\nCNNs for image analysis\nTransfer learning from ImageNet\nSpecialized architectures\n\n2020s-Present: Foundation Model Era\n\nSelf-supervised pre-training\nMulti-modal learning\nGeneralist models"
+  },
+  {
+    "objectID": "extras/ai-ml-dl-fm-hierarchy.html#code-example-comparing-approaches",
+    "href": "extras/ai-ml-dl-fm-hierarchy.html#code-example-comparing-approaches",
+    "title": "The AI Hierarchy: From Algorithms to Foundation Models in Geospatial Science",
+    "section": "Code Example: Comparing Approaches",
+    "text": "Code Example: Comparing Approaches\nLet’s compare how different levels handle the same task - land cover classification:\nimport numpy as np\nfrom sklearn.ensemble import RandomForestClassifier\nimport torch\nimport torch.nn as nn\n\n# 1. AI/Rule-Based Approach\ndef classify_rule_based(bands):\n    \"\"\"Simple threshold-based classification\"\"\"\n    ndvi = (bands['nir'] - bands['red']) / (bands['nir'] + bands['red'])\n    \n    if ndvi &gt; 0.6:\n        return 'forest'\n    elif ndvi &gt; 0.3:\n        return 'grassland'\n    elif ndvi &lt; 0:\n        return 'water'\n    else:\n        return 'bare_soil'\n\n# 2. Classical ML Approach\ndef classify_ml(features, model):\n    \"\"\"Random Forest classification with hand-crafted features\"\"\"\n    # Features might include: spectral bands, indices, textures\n    prediction = model.predict(features.reshape(1, -1))\n    return prediction[0]\n\n# 3. Deep Learning Approach\nclass SimpleCNN(nn.Module):\n    def __init__(self, num_bands, num_classes):\n        super().__init__()\n        self.conv1 = nn.Conv2d(num_bands, 64, 3, padding=1)\n        self.conv2 = nn.Conv2d(64, 128, 3, padding=1)\n        self.fc = nn.Linear(128 * 56 * 56, num_classes)\n        \n    def forward(self, x):\n        x = torch.relu(self.conv1(x))\n        x = torch.relu(self.conv2(x))\n        x = x.view(x.size(0), -1)\n        return self.fc(x)\n\n# 4. Foundation Model Approach\ndef classify_foundation_model(image, foundation_model):\n    \"\"\"Use pre-trained foundation model with task-specific head\"\"\"\n    # Extract features using pre-trained encoder\n    features = foundation_model.encode(image)\n    \n    # Apply task-specific classification head\n    prediction = foundation_model.classify_landcover(features)\n    return prediction"
+  },
+  {
+    "objectID": "extras/ai-ml-dl-fm-hierarchy.html#summary",
+    "href": "extras/ai-ml-dl-fm-hierarchy.html#summary",
+    "title": "The AI Hierarchy: From Algorithms to Foundation Models in Geospatial Science",
+    "section": "Summary",
+    "text": "Summary\nThe hierarchy from AI to Foundation Models represents an evolution in capability and complexity:\n\nAI encompasses all intelligent algorithms, including simple rules\nML learns patterns from data without explicit programming\nDL uses neural networks to learn hierarchical representations\nFMs leverage massive pre-training for versatile, adaptable models\n\nIn geospatial applications, each level has its place:\n\nUse simpler approaches when they work well and are interpretable\nAdopt complex methods when the problem demands it\nConsider data availability, computational resources, and deployment constraints\n\nThe future of geospatial AI lies in combining these approaches - using foundation models where they excel while maintaining simpler methods for well-understood problems. The key is choosing the right tool for the specific challenge at hand."
+  },
+  {
+    "objectID": "extras/ai-ml-dl-fm-hierarchy.html#visual-resources-1",
+    "href": "extras/ai-ml-dl-fm-hierarchy.html#visual-resources-1",
+    "title": "The AI Hierarchy: From Algorithms to Foundation Models in Geospatial Science",
+    "section": "Visual Resources",
+    "text": "Visual Resources\nThe following diagrams illustrate key concepts:\n\n\n\nNested hierarchy of AI/ML/DL/FM\n\n\n\n\n\nTimeline evolution of geospatial AI approaches\n\n\n\n\n\nComparison matrix of different AI levels\n\n\n\n\n\nSpecific geospatial examples at each level"
+  },
+  {
+    "objectID": "extras/ai-ml-dl-fm-hierarchy.html#additional-resources",
+    "href": "extras/ai-ml-dl-fm-hierarchy.html#additional-resources",
+    "title": "The AI Hierarchy: From Algorithms to Foundation Models in Geospatial Science",
+    "section": "Additional Resources",
+    "text": "Additional Resources\n\nFoundation Model Repositories and Papers\n\nAwesome Earth Vision Foundation Models - Comprehensive list of remote sensing foundation models\nTorchGeo - PyTorch library for geospatial data with pre-trained models\nTerraTorch - Flexible deep learning library for Earth observation\nRSMamba - State space models for remote sensing\n\n\n\nBenchmarks and Datasets\n\nGEO-Bench - Benchmark for evaluating geospatial foundation models\nSEN12MS - Multi-modal dataset with Sentinel-1/2 data\nBigEarthNet - Large-scale Sentinel-2 benchmark archive\n\n\n\nCommercial and Cloud Platforms\n\nGoogle Earth Engine - Cloud platform with ML capabilities\nMicrosoft Planetary Computer - Cloud platform with ML-ready data\nAWS Earth on AWS - Cloud infrastructure for geospatial ML"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions.html#available-foundation-models",
+    "href": "extras/geospatial-foundation-model-predictions.html#available-foundation-models",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Available Foundation Models",
+    "text": "Available Foundation Models\nSeveral geospatial foundation models are now available for research and application:\n\nOpen Source Models\n\nPrithvi - NASA/IBM’s 100M parameter model trained on HLS data\nClay - Open foundation model for environmental monitoring\nSatMAE - Masked autoencoder for temporal-spatial satellite data\nGeoSAM - Segment Anything adapted for Earth observation\nSpectralGPT - Foundation model for spectral remote sensing\n\n\n\nLibraries and Frameworks\n\nTorchGeo - PyTorch library with pre-trained models\nTerraTorch - Flexible framework for Earth observation deep learning\nMMEARTH - Multi-modal Earth observation models\n\n\n\nResources and Benchmarks\n\nAwesome Remote Sensing Foundation Models - Comprehensive collection\nGEO-Bench - Benchmark for evaluating GFMs\nPhilEO Bench - ESA’s Earth observation benchmark"
+  },
+  {
+    "objectID": "extras/geospatial-foundation-model-predictions-standalone.html#available-foundation-models",
+    "href": "extras/geospatial-foundation-model-predictions-standalone.html#available-foundation-models",
+    "title": "Understanding Geospatial Foundation Model Predictions",
+    "section": "Available Foundation Models",
+    "text": "Available Foundation Models\nSeveral geospatial foundation models are now available for research and application:\n\nOpen Source Models\n\nPrithvi - NASA/IBM’s 100M parameter model trained on HLS data\nClay - Open foundation model for environmental monitoring\nSatMAE - Masked autoencoder for temporal-spatial satellite data\nGeoSAM - Segment Anything adapted for Earth observation\nSpectralGPT - Foundation model for spectral remote sensing\n\n\n\nLibraries and Frameworks\n\nTorchGeo - PyTorch library with pre-trained models\nTerraTorch - Flexible framework for Earth observation deep learning\nMMEARTH - Multi-modal Earth observation models\n\n\n\nResources and Benchmarks\n\nAwesome Remote Sensing Foundation Models - Comprehensive collection\nGEO-Bench - Benchmark for evaluating GFMs\nPhilEO Bench - ESA’s Earth observation benchmark"
+  },
+  {
+    "objectID": "extras/geospatial-prediction-hierarchy.html",
+    "href": "extras/geospatial-prediction-hierarchy.html",
+    "title": "Hierarchy of Geospatial Prediction Tasks",
+    "section": "",
+    "text": "In geospatial data science and remote sensing, prediction tasks form a natural hierarchy from pixel-level analysis to complex object understanding. This document explores the relationships between different prediction tasks, their input-output structures, and the suitability of various machine learning approaches."
+  },
+  {
+    "objectID": "extras/geospatial-prediction-hierarchy.html#overview",
+    "href": "extras/geospatial-prediction-hierarchy.html#overview",
+    "title": "Hierarchy of Geospatial Prediction Tasks",
+    "section": "",
+    "text": "In geospatial data science and remote sensing, prediction tasks form a natural hierarchy from pixel-level analysis to complex object understanding. This document explores the relationships between different prediction tasks, their input-output structures, and the suitability of various machine learning approaches."
+  },
+  {
+    "objectID": "extras/geospatial-prediction-hierarchy.html#the-fundamental-dichotomy-pixel-values-vs.-labels",
+    "href": "extras/geospatial-prediction-hierarchy.html#the-fundamental-dichotomy-pixel-values-vs.-labels",
+    "title": "Hierarchy of Geospatial Prediction Tasks",
+    "section": "The Fundamental Dichotomy: Pixel Values vs. Labels",
+    "text": "The Fundamental Dichotomy: Pixel Values vs. Labels\nAt the core of geospatial analysis, we work with two fundamental types of data:\n\n\n\nOverview of prediction task hierarchy in geospatial analysis\n\n\n\n1. Pixel Values (Continuous Data)\n\nRaw spectral measurements from sensors\nPhysical quantities (temperature, reflectance, radiance)\nDerived indices (NDVI, EVI, moisture indices)\nCan be predicted, interpolated, or forecasted\n\n\n\n2. Labels (Categorical/Discrete Data)\n\nHuman-assigned categories\nLand cover classes\nObject boundaries and types\nBinary masks (water/no water, cloud/clear)"
+  },
+  {
+    "objectID": "extras/geospatial-prediction-hierarchy.html#pixel-value-prediction-tasks",
+    "href": "extras/geospatial-prediction-hierarchy.html#pixel-value-prediction-tasks",
+    "title": "Hierarchy of Geospatial Prediction Tasks",
+    "section": "Pixel Value Prediction Tasks",
+    "text": "Pixel Value Prediction Tasks\nWhen working with continuous pixel values, we encounter two primary prediction paradigms:\n\nTemporal Prediction (Next Value)\nTask: Predict future pixel values based on historical time series Approach: Autoregressive models (GPT-like architectures) Example Applications: - Vegetation phenology forecasting - Surface temperature prediction - Crop yield estimation\n# Conceptual example\nimport torch\nimport torch.nn as nn\n\nclass TemporalPixelPredictor(nn.Module):\n    \"\"\"GPT-style temporal prediction for pixel time series\"\"\"\n    def __init__(self, num_bands, hidden_dim=256):\n        super().__init__()\n        self.embedding = nn.Linear(num_bands, hidden_dim)\n        self.transformer = nn.TransformerEncoder(\n            nn.TransformerEncoderLayer(hidden_dim, nhead=8),\n            num_layers=6\n        )\n        self.predictor = nn.Linear(hidden_dim, num_bands)\n    \n    def forward(self, x):\n        # x shape: (batch, time, bands)\n        embedded = self.embedding(x)\n        # Causal mask for autoregressive prediction\n        features = self.transformer(embedded)\n        return self.predictor(features)\n\n\nSpatial Prediction (Missing Values)\nTask: Fill in missing pixel values based on spatial context Approach: Masked modeling (BERT-like architectures) Example Applications: - Cloud gap filling - Sensor failure recovery - Super-resolution - Data fusion across sensors\nclass SpatialPixelPredictor(nn.Module):\n    \"\"\"BERT-style spatial prediction for missing pixels\"\"\"\n    def __init__(self, num_bands, patch_size=16, hidden_dim=256):\n        super().__init__()\n        self.patch_embed = nn.Linear(num_bands * patch_size**2, hidden_dim)\n        self.transformer = nn.TransformerEncoder(\n            nn.TransformerEncoderLayer(hidden_dim, nhead=8),\n            num_layers=6\n        )\n        self.decoder = nn.Linear(hidden_dim, num_bands * patch_size**2)\n    \n    def forward(self, x, mask):\n        # x shape: (batch, height, width, bands)\n        # mask indicates missing pixels\n        patches = self.patchify(x)\n        embedded = self.patch_embed(patches)\n        # No causal mask - bidirectional attention\n        features = self.transformer(embedded)\n        return self.unpatchify(self.decoder(features))"
+  },
+  {
+    "objectID": "extras/geospatial-prediction-hierarchy.html#label-based-prediction-tasks",
+    "href": "extras/geospatial-prediction-hierarchy.html#label-based-prediction-tasks",
+    "title": "Hierarchy of Geospatial Prediction Tasks",
+    "section": "Label-Based Prediction Tasks",
+    "text": "Label-Based Prediction Tasks\nWorking with labels introduces a hierarchy of complexity from image-level to pixel-level granularity:\n\n1. Image Classification\nGranularity: Entire image/scene Input: Full image (H × W × Bands) Output: Single label per image Example: “This Sentinel-2 tile contains urban area”\n\n\n2. Pixel-wise Classification\nGranularity: Individual pixels Input: Image patches or full image Output: Label map (H × W × Classes) Example: Land cover mapping where each pixel gets a class\n\n\n3. Object Detection\nGranularity: Bounding boxes Input: Full image Output: List of [bbox, class, confidence] Example: Detecting buildings, vehicles, or agricultural fields\n\n\n4. Object Segmentation\nGranularity: Precise object boundaries Input: Full image Output: Instance masks + classes Example: Delineating individual tree crowns or building footprints"
+  },
+  {
+    "objectID": "extras/geospatial-prediction-hierarchy.html#regression-for-novel-variable-prediction",
+    "href": "extras/geospatial-prediction-hierarchy.html#regression-for-novel-variable-prediction",
+    "title": "Hierarchy of Geospatial Prediction Tasks",
+    "section": "Regression for Novel Variable Prediction",
+    "text": "Regression for Novel Variable Prediction\nBeyond classification, regression tasks predict continuous variables that may not be directly observable:\n\nPixel-wise Regression Applications\n\nBiophysical Parameter Estimation\n\nLeaf Area Index (LAI)\nChlorophyll content\nSoil moisture\nBiomass\n\nEnvironmental Variable Prediction\n\nAir quality indices\nSurface temperature\nPrecipitation estimates\nCarbon flux\n\nSocioeconomic Indicators\n\nPopulation density\nEconomic activity\nEnergy consumption\n\n\n\n\nInput-Output Relationships for Regression\n\n\n\nInput-output relationships for different geospatial tasks\n\n\nclass GeospatialRegressor(nn.Module):\n    \"\"\"General framework for pixel-wise regression\"\"\"\n    def __init__(self, input_bands, output_variables):\n        super().__init__()\n        self.encoder = nn.Sequential(\n            nn.Conv2d(input_bands, 64, 3, padding=1),\n            nn.ReLU(),\n            nn.Conv2d(64, 128, 3, padding=1),\n            nn.ReLU(),\n            # ... more layers\n        )\n        self.decoder = nn.Conv2d(128, output_variables, 1)\n    \n    def forward(self, x):\n        # x: (batch, bands, height, width)\n        features = self.encoder(x)\n        # Output: (batch, variables, height, width)\n        return self.decoder(features)"
+  },
+  {
+    "objectID": "extras/geospatial-prediction-hierarchy.html#mldlfm-tool-suitability-matrix",
+    "href": "extras/geospatial-prediction-hierarchy.html#mldlfm-tool-suitability-matrix",
+    "title": "Hierarchy of Geospatial Prediction Tasks",
+    "section": "ML/DL/FM Tool Suitability Matrix",
+    "text": "ML/DL/FM Tool Suitability Matrix\n\n\n\nML/DL/FM suitability matrix for geospatial tasks\n\n\n\n\n\n\n\n\n\n\n\nTask Type\nTraditional ML\nDeep Learning\nFoundation Models\n\n\n\n\nImage Classification\nRandom Forest, SVM on hand-crafted features\nCNNs (ResNet, EfficientNet)\nCLIP, RemoteCLIP\n\n\nPixel Classification\nRandom Forest per pixel\nU-Net, DeepLab\nSegment Anything + prompting\n\n\nObject Detection\nLimited (HOG+SVM)\nYOLO, Faster R-CNN\nDINO, OWL-ViT\n\n\nInstance Segmentation\nVery limited\nMask R-CNN\nSAM, OneFormer\n\n\nTemporal Prediction\nARIMA, Random Forest\nLSTM, Temporal CNN\nTimesFM, Prithvi\n\n\nSpatial Interpolation\nKriging, IDW\nCNN autoencoders\nMAE-based models\n\n\nBiophysical Regression\nRandom Forest, SVR\nCNN, Vision Transformer\nFine-tuned Prithvi, SatMAE"
+  },
+  {
+    "objectID": "extras/geospatial-prediction-hierarchy.html#choosing-the-right-approach",
+    "href": "extras/geospatial-prediction-hierarchy.html#choosing-the-right-approach",
+    "title": "Hierarchy of Geospatial Prediction Tasks",
+    "section": "Choosing the Right Approach",
+    "text": "Choosing the Right Approach\n\nUse Traditional ML When:\n\nLimited training data available\nInterpretability is crucial\nComputational resources are constrained\nWorking with tabular features\n\n\n\nUse Deep Learning When:\n\nLarge labeled datasets available\nComplex spatial patterns exist\nHigh accuracy is priority\nGPU resources available\n\n\n\nUse Foundation Models When:\n\nLimited task-specific labels\nNeed zero/few-shot capabilities\nWorking across multiple sensors/resolutions\nRequire general feature representations"
+  },
+  {
+    "objectID": "extras/geospatial-prediction-hierarchy.html#practical-implementation-considerations",
+    "href": "extras/geospatial-prediction-hierarchy.html#practical-implementation-considerations",
+    "title": "Hierarchy of Geospatial Prediction Tasks",
+    "section": "Practical Implementation Considerations",
+    "text": "Practical Implementation Considerations\n\nData Preparation Pipeline\nclass GeospatialDataPipeline:\n    def __init__(self, task_type):\n        self.task_type = task_type\n        \n    def prepare_data(self, imagery, labels=None):\n        \"\"\"Prepare data based on task requirements\"\"\"\n        if self.task_type == \"temporal_prediction\":\n            # Stack time series\n            return self.create_time_series_sequences(imagery)\n        \n        elif self.task_type == \"spatial_interpolation\":\n            # Create masked inputs\n            return self.create_masked_inputs(imagery)\n        \n        elif self.task_type == \"pixel_classification\":\n            # Create patch-label pairs\n            return self.create_training_patches(imagery, labels)\n        \n        elif self.task_type == \"object_detection\":\n            # Format as COCO-style annotations\n            return self.create_detection_dataset(imagery, labels)\n\n\nMulti-Task Learning Opportunities\nMany geospatial problems benefit from joint learning:\n\nClassification + Regression: Predict land cover type AND vegetation health\nDetection + Segmentation: Locate AND delineate objects\nTemporal + Spatial: Fill gaps AND forecast future values"
+  },
+  {
+    "objectID": "extras/geospatial-prediction-hierarchy.html#best-practices-and-recommendations",
+    "href": "extras/geospatial-prediction-hierarchy.html#best-practices-and-recommendations",
+    "title": "Hierarchy of Geospatial Prediction Tasks",
+    "section": "Best Practices and Recommendations",
+    "text": "Best Practices and Recommendations\n\n1. Start Simple, Scale Up\n\nBegin with traditional ML baselines\nMove to deep learning with sufficient data\nConsider foundation models for generalization\n\n\n\n2. Leverage Pretrained Models\n\nUse ImageNet pretrained encoders as starting points\nFine-tune geospatial foundation models (Prithvi, SatMAE)\nApply transfer learning from similar domains\n\n\n\n3. Handle Geospatial Specifics\n\nAccount for coordinate systems and projections\nPreserve spatial autocorrelation in train/test splits\nConsider atmospheric and seasonal effects\n\n\n\n4. Validate Appropriately\n\nUse spatial and temporal holdouts\nEmploy domain-specific metrics\nValidate against ground truth when available"
+  },
+  {
+    "objectID": "extras/geospatial-prediction-hierarchy.html#code-example-unified-prediction-framework",
+    "href": "extras/geospatial-prediction-hierarchy.html#code-example-unified-prediction-framework",
+    "title": "Hierarchy of Geospatial Prediction Tasks",
+    "section": "Code Example: Unified Prediction Framework",
+    "text": "Code Example: Unified Prediction Framework\nimport torch\nimport torch.nn as nn\nfrom typing import Dict, Optional, Union\n\nclass UnifiedGeospatialPredictor(nn.Module):\n    \"\"\"Flexible architecture for various geospatial tasks\"\"\"\n    \n    def __init__(\n        self,\n        input_channels: int,\n        task_config: Dict[str, any]\n    ):\n        super().__init__()\n        self.task_type = task_config['type']\n        self.input_channels = input_channels\n        \n        # Shared encoder\n        self.encoder = self._build_encoder(input_channels)\n        \n        # Task-specific heads\n        if self.task_type == 'classification':\n            self.head = nn.Conv2d(256, task_config['num_classes'], 1)\n        elif self.task_type == 'regression':\n            self.head = nn.Conv2d(256, task_config['num_outputs'], 1)\n        elif self.task_type == 'detection':\n            self.head = self._build_detection_head(task_config)\n        elif self.task_type == 'temporal':\n            self.head = self._build_temporal_head(task_config)\n            \n    def _build_encoder(self, channels):\n        \"\"\"Build a flexible encoder backbone\"\"\"\n        return nn.Sequential(\n            nn.Conv2d(channels, 64, 3, padding=1),\n            nn.BatchNorm2d(64),\n            nn.ReLU(),\n            nn.Conv2d(64, 128, 3, stride=2, padding=1),\n            nn.BatchNorm2d(128),\n            nn.ReLU(),\n            nn.Conv2d(128, 256, 3, stride=2, padding=1),\n            nn.BatchNorm2d(256),\n            nn.ReLU(),\n        )\n    \n    def forward(\n        self, \n        x: torch.Tensor,\n        temporal_mask: Optional[torch.Tensor] = None,\n        spatial_mask: Optional[torch.Tensor] = None\n    ) -&gt; Union[torch.Tensor, Dict[str, torch.Tensor]]:\n        \"\"\"Forward pass adapts to task type\"\"\"\n        features = self.encoder(x)\n        \n        if self.task_type in ['classification', 'regression']:\n            # Pixel-wise predictions\n            return self.head(features)\n        \n        elif self.task_type == 'detection':\n            # Return dict with boxes, classes, scores\n            return self.head(features)\n        \n        elif self.task_type == 'temporal':\n            # Handle sequential data\n            return self.head(features, temporal_mask)"
+  },
+  {
+    "objectID": "extras/geospatial-prediction-hierarchy.html#summary",
+    "href": "extras/geospatial-prediction-hierarchy.html#summary",
+    "title": "Hierarchy of Geospatial Prediction Tasks",
+    "section": "Summary",
+    "text": "Summary\nThe hierarchy of geospatial prediction tasks spans from coarse image-level classification to fine-grained pixel-wise regression. Understanding this hierarchy helps in:\n\nChoosing appropriate architectures: Matching model complexity to task requirements\nPreparing data correctly: Structuring inputs and outputs for optimal learning\nSelecting suitable tools: Leveraging traditional ML, deep learning, or foundation models based on constraints\nDesigning evaluation strategies: Using task-appropriate metrics and validation schemes\n\nAs the field evolves, foundation models increasingly bridge these task types, offering unified architectures that can adapt to multiple prediction scenarios with minimal modification."
+  },
+  {
+    "objectID": "extras/geospatial-prediction-hierarchy.html#further-reading",
+    "href": "extras/geospatial-prediction-hierarchy.html#further-reading",
+    "title": "Hierarchy of Geospatial Prediction Tasks",
+    "section": "Further Reading",
+    "text": "Further Reading\n\nPrithvi: NASA-IBM Geospatial Foundation Model\nSatMAE: Masked Autoencoders for Satellite Imagery\nSegment Anything Model (SAM)\nTimesFM: Time Series Foundation Model"
+  },
+  {
+    "objectID": "extras/geospatial-prediction-hierarchy.html#exercises",
+    "href": "extras/geospatial-prediction-hierarchy.html#exercises",
+    "title": "Hierarchy of Geospatial Prediction Tasks",
+    "section": "Exercises",
+    "text": "Exercises\n\nTask Comparison: Implement the same vegetation mapping problem as:\n\nImage classification (healthy/stressed)\nPixel classification (detailed vegetation types)\nRegression (NDVI prediction)\n\nMulti-Modal Integration: Combine optical and radar data for:\n\nCloud gap filling (spatial interpolation)\nCrop yield prediction (temporal regression)\n\nFoundation Model Adaptation: Fine-tune Prithvi for:\n\nLocal land cover classification\nBiophysical parameter estimation"
   }
 ]

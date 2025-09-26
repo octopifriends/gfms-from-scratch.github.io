@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/Users/kellycaylor/mambaforge/envs/geoAI/bin/python
 import os
 import io
 import re
