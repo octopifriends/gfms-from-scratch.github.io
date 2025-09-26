@@ -194,7 +194,7 @@
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c02-spatial-temporal-attention-mechanisms.html</loc>
-    <lastmod>2025-09-20T22:36:30.446Z</lastmod>
+    <lastmod>2025-09-21T23:37:50.513Z</lastmod>
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/examples/segmentation_tutorial.html</loc>
@@ -202,10 +202,30 @@
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c01-geospatial-data-foundations.html</loc>
-    <lastmod>2025-09-21T04:47:18.856Z</lastmod>
+    <lastmod>2025-09-21T16:52:37.818Z</lastmod>
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c03-complete-gfm-architecture.html</loc>
     <lastmod>2025-09-20T22:20:45.038Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/cheatsheets.html</loc>
+    <lastmod>2025-09-26T02:18:05.549Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/cheatsheets/earth_engine_basics.html</loc>
+    <lastmod>2025-09-26T02:12:12.125Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/grit-hpc-setup.html</loc>
+    <lastmod>2025-09-26T02:16:40.751Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/grit-hpc-instructor-notes.html</loc>
+    <lastmod>2025-09-26T02:13:08.784Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/grit-hpc-quick-reference.html</loc>
+    <lastmod>2025-09-26T02:13:32.303Z</lastmod>
   </url>
 </urlset>
