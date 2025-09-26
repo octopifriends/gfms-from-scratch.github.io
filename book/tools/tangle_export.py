@@ -36,24 +36,28 @@ def tangle_from_file(qmd_path: Path) -> List[Tuple[Path, str, bool]]:
         if not m:
             i += 1
             continue
-        attrs = parse_attrs(m.group("attrs") or "")
-        tangle = attrs.get("tangle")
-        if not tangle:
-            # skip until end
-            i += 1
-            while i < len(lines) and not CODE_FENCE_END_RE.match(lines[i]):
-                i += 1
-            i += 1
-            continue
-        append_flag = (attrs.get("tangle-append", "false").lower() in {"true", "1", "yes"})
-        # collect code
+        # Check for Quarto-style directives in the next lines
         i += 1
+        tangle = None
+        append_flag = False
         code_lines: List[str] = []
+
+        # Look for #| tangle: directives at the start of the code block
         while i < len(lines) and not CODE_FENCE_END_RE.match(lines[i]):
-            code_lines.append(lines[i])
+            line = lines[i]
+            if line.strip().startswith("#| tangle:"):
+                tangle = line.strip().split(":", 1)[1].strip()
+            elif line.strip().startswith("#| tangle-append:") or line.strip().startswith("#| mode: append"):
+                append_flag = True
+            elif not line.strip().startswith("#|"):
+                # Regular code line, add it to code_lines
+                code_lines.append(line)
             i += 1
-        # move past closing fence
-        i += 1
+
+        if not tangle:
+            # No tangle directive found, skip this block
+            continue
+
         code = "".join(code_lines)
         target = (qmd_path.parent / tangle).resolve()
         # Rebase paths tangled to book/geogfm -> repo_root/geogfm

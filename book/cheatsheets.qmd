@@ -8,6 +8,10 @@ format:
         toc-depth: 2
 ---
 
+## 💻 HPC Installation and setup
+
+- [Setting up HPC Access](extras/grit-hpc-setup.qmd)
+
 ## 🌍 Geospatial Data Fundamentals
 
 - [Working with Rasterio](extras/cheatsheets/rasterio_basics.qmd)
