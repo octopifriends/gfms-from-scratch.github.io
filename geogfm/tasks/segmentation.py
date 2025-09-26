@@ -1,5 +1,5 @@
 # geogfm.tasks.segmentation — Token-wise segmentation head (Week 8).
-# Tangled on 2025-09-20T15:29:01
+# Tangled on 2025-09-26T08:43:56
 
 from __future__ import annotations
 import torch
