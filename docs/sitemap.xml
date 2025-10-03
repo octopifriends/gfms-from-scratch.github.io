@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/examples/text_encoder.html</loc>
-    <lastmod>2025-08-08T19:29:31.724Z</lastmod>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c01-geospatial-data-foundations.html</loc>
+    <lastmod>2025-10-03T03:27:03.862Z</lastmod>
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/examples/normalization_comparison.html</loc>
@@ -18,7 +18,7 @@
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/cheatsheets/folium_basics.html</loc>
-    <lastmod>2025-08-10T18:33:57.678Z</lastmod>
+    <lastmod>2025-10-03T02:56:45.008Z</lastmod>
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c02-spatial-temporal-attention-mechanisms.html</loc>
@@ -78,51 +78,39 @@
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/ai-ml-dl-fm-hierarchy.html</loc>
-    <lastmod>2025-09-26T19:22:05.710Z</lastmod>
+    <lastmod>2025-09-26T20:41:21.879Z</lastmod>
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/projects/project-proposal-template.html</loc>
     <lastmod>2025-09-20T22:06:46.614Z</lastmod>
   </url>
   <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/grit-hpc-setup.html</loc>
-    <lastmod>2025-09-26T02:16:40.751Z</lastmod>
-  </url>
-  <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/grit-hpc-instructor-notes.html</loc>
-    <lastmod>2025-09-26T02:13:08.784Z</lastmod>
-  </url>
-  <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/cheatsheets/earth_engine_basics.html</loc>
-    <lastmod>2025-09-26T02:12:12.125Z</lastmod>
-  </url>
-  <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/debug_test.html</loc>
-    <lastmod>2025-08-13T01:23:14.143Z</lastmod>
-  </url>
-  <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c10-project-presentations-synthesis.html</loc>
-    <lastmod>2025-08-13T01:03:06.614Z</lastmod>
-  </url>
-  <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/Syllabus.html</loc>
-    <lastmod>2025-09-26T15:43:00.862Z</lastmod>
-  </url>
-  <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/cheatsheets.html</loc>
-    <lastmod>2025-09-26T02:18:05.549Z</lastmod>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/examples/resnet.html</loc>
+    <lastmod>2025-08-06T21:15:33.433Z</lastmod>
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/cheatsheets/cloud_scalable_computing.html</loc>
     <lastmod>2025-08-10T18:33:57.627Z</lastmod>
   </url>
   <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/examples/resnet.html</loc>
-    <lastmod>2025-08-06T21:15:33.433Z</lastmod>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/cheatsheets.html</loc>
+    <lastmod>2025-09-26T02:18:05.549Z</lastmod>
   </url>
   <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/grit-hpc-quick-reference.html</loc>
-    <lastmod>2025-09-26T02:13:32.303Z</lastmod>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/Syllabus.html</loc>
+    <lastmod>2025-09-26T15:43:00.862Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c10-project-presentations-synthesis.html</loc>
+    <lastmod>2025-08-13T01:03:06.614Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/debug_test.html</loc>
+    <lastmod>2025-08-13T01:23:14.143Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/cheatsheets/earth_engine_basics.html</loc>
+    <lastmod>2025-09-26T02:12:12.125Z</lastmod>
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/projects/mvp-template.html</loc>
@@ -205,7 +193,7 @@
     <lastmod>2025-08-10T18:33:57.866Z</lastmod>
   </url>
   <url>
-    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c01-geospatial-data-foundations.html</loc>
-    <lastmod>2025-09-21T16:52:37.818Z</lastmod>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/examples/text_encoder.html</loc>
+    <lastmod>2025-08-08T19:29:31.724Z</lastmod>
   </url>
 </urlset>

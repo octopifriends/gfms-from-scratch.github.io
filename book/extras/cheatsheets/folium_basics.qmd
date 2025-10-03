@@ -473,9 +473,9 @@ def create_layered_map():
     
     # Base layers
     folium.TileLayer(
-        tiles='Stamen Terrain',
+        tiles='https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
         name='Terrain',
-        attr='Stamen'
+        attr='&copy; <a href="https://carto.com/attributions">CARTO</a>'
     ).add_to(m)
     
     folium.TileLayer(
