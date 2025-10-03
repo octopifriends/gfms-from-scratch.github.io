@@ -156,6 +156,56 @@ Use a personal prefix for your notebooks:
   - analysis.ipynb (too generic)
 ```
 
+### Handling "Unrelated Histories" Error
+
+If you get an error like `fatal: refusing to merge unrelated histories`, this means Git thinks your fork and the upstream repo don't share a common history. Here's how to fix it:
+
+#### Option 1: Allow Unrelated Histories (Recommended)
+
+```bash
+# Fetch from upstream
+git fetch upstream
+
+# Merge with the --allow-unrelated-histories flag
+git merge upstream/main --allow-unrelated-histories
+
+# Git will open an editor for a merge commit message
+# Save and close the editor to complete the merge
+
+# Push to your fork
+git push origin main
+```
+
+#### Option 2: Rebase Your Fork (Advanced)
+
+If you haven't made significant changes and want a clean history:
+
+```bash
+# Save your work first!
+git stash save "backup before rebase"
+
+# Fetch upstream
+git fetch upstream
+
+# Reset your main to match upstream exactly
+git reset --hard upstream/main
+
+# Push to your fork (requires force push)
+git push origin main --force
+
+# Restore your work
+git stash pop
+```
+
+:::{.callout-warning}
+### ⚠️ Important: Force Push Safety
+
+Only use `git push --force` on **your fork's main branch** if:
+1. You've backed up your work (stash or feature branch)
+2. You understand this will overwrite your fork's history
+3. You're not collaborating with others on your fork
+:::
+
 ### Handling Merge Conflicts
 
 If you get conflicts when merging upstream:
@@ -200,6 +250,11 @@ git fetch upstream           # Get latest from class repo
 git merge upstream/main      # Merge into your local main
 git push origin main         # Update your GitHub fork
 git stash pop               # Restore your work
+
+# Fix unrelated histories error
+git fetch upstream
+git merge upstream/main --allow-unrelated-histories
+git push origin main
 
 # Check sync status
 git fetch upstream
