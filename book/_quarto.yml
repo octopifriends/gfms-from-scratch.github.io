@@ -46,6 +46,11 @@ website:
             href: extras/geospatial-foundation-model-predictions-standalone.qmd
           - text: "✅ Geospatial Task/Prediction Types"
             href: extras/geospatial-prediction-hierarchy.qmd
+          - text: "2️⃣ Week 2"
+          - text: "🏗️ Foundation Model Architectures"
+            href: chapters/c00a-foundation_model_architectures.qmd
+          - text: "🎓 Introduction to Deep Learning Architecture"
+            href: chapters/c00b-introduction-to-deeplearning-architecture.qmd
       - text: 📖 extras
         menu:
           - text: "🎯 Practical Examples"
