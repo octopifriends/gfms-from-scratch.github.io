@@ -52,6 +52,7 @@ You should now see:
 ### Protect Your Work First!
 
 Before syncing, make sure your work is safe:
+
 1. **Commit your changes** to a feature branch (not `main`)
 2. **Push to your fork** regularly
 3. **Never work directly on `main`** - keep it clean for updates
