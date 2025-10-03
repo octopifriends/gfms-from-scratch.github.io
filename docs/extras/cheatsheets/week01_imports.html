@@ -390,7 +390,12 @@ Protect Your Work First!
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Before syncing, make sure your work is safe: 1. <strong>Commit your changes</strong> to a feature branch (not <code>main</code>) 2. <strong>Push to your fork</strong> regularly 3. <strong>Never work directly on <code>main</code></strong> - keep it clean for updates</p>
+<p>Before syncing, make sure your work is safe:</p>
+<ol type="1">
+<li><strong>Commit your changes</strong> to a feature branch (not <code>main</code>)</li>
+<li><strong>Push to your fork</strong> regularly</li>
+<li><strong>Never work directly on <code>main</code></strong> - keep it clean for updates</li>
+</ol>
 </div>
 </div>
 <section id="step-1-save-your-current-work" class="level4">
@@ -588,7 +593,7 @@ Important Notes
 <p>To run the <strong>entire workflow</strong> (Sections 3-10), use this comprehensive setup:</p>
 <section id="step-1-standard-library-imports" class="level3">
 <h3 class="anchored" data-anchor-id="step-1-standard-library-imports">Step 1: Standard Library Imports</h3>
-<div id="8b4a172b" class="cell" data-execution_count="1">
+<div id="896b9cdd" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard library imports</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
@@ -604,7 +609,7 @@ Important Notes
 </section>
 <section id="step-2-core-data-science-libraries" class="level3">
 <h3 class="anchored" data-anchor-id="step-2-core-data-science-libraries">Step 2: Core Data Science Libraries</h3>
-<div id="25e595c8" class="cell" data-execution_count="2">
+<div id="984b79f2" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Core data science libraries</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -618,7 +623,7 @@ Important Notes
 </section>
 <section id="step-3-geospatial-libraries" class="level3">
 <h3 class="anchored" data-anchor-id="step-3-geospatial-libraries">Step 3: Geospatial Libraries</h3>
-<div id="24e296e8" class="cell" data-execution_count="3">
+<div id="391ff1d7" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Geospatial libraries</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span>
@@ -635,7 +640,7 @@ Important Notes
 </section>
 <section id="step-4-interactive-mapping" class="level3">
 <h3 class="anchored" data-anchor-id="step-4-interactive-mapping">Step 4: Interactive Mapping</h3>
-<div id="94e8946b" class="cell" data-execution_count="4">
+<div id="b1f8d071" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Interactive mapping</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> folium</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> folium.plugins <span class="im">import</span> MeasureControl, Fullscreen</span>
@@ -649,7 +654,7 @@ Important Notes
 <section id="step-5-import-week-1-helper-functions" class="level3">
 <h3 class="anchored" data-anchor-id="step-5-import-week-1-helper-functions">Step 5: Import Week 1 Helper Functions</h3>
 <p>This is where the magic happens - all 13+ helper functions in one import!</p>
-<div id="b367b370" class="cell" data-execution_count="5">
+<div id="dca17a53" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import ALL helper functions from tangled Week 1 module</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm.c01 <span class="im">import</span> (</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Environment and authentication (Section 2.1-2.4.1)</span></span>
@@ -692,7 +697,7 @@ Important Notes
 </section>
 <section id="step-6-configure-matplotlib" class="level3">
 <h3 class="anchored" data-anchor-id="step-6-configure-matplotlib">Step 6: Configure Matplotlib</h3>
-<div id="15f3904e" class="cell" data-execution_count="6">
+<div id="2414bd77" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure matplotlib for publication-quality plots</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>plt.rcParams.update({</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'figure.figsize'</span>: (<span class="dv">10</span>, <span class="dv">6</span>),</span>
@@ -713,7 +718,7 @@ Important Notes
 </section>
 <section id="step-7-setup-logging-and-authentication" class="level3">
 <h3 class="anchored" data-anchor-id="step-7-setup-logging-and-authentication">Step 7: Setup Logging and Authentication</h3>
-<div id="9b866bc0" class="cell" data-execution_count="7">
+<div id="56240f76" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure logging</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>logging.basicConfig(</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    level<span class="op">=</span>logging.INFO,</span>
@@ -729,8 +734,8 @@ Important Notes
 <span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!"</span>)</span>
 <span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>2025-10-03 11:04:10,151 - INFO - Using anonymous access (basic rate limits)
-2025-10-03 11:04:10,151 - INFO - Planetary Computer authentication status: Anonymous</code></pre>
+<pre><code>2025-10-03 11:08:02,638 - INFO - Using anonymous access (basic rate limits)
+2025-10-03 11:08:02,638 - INFO - Planetary Computer authentication status: Anonymous</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1515,603 +1520,604 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb44-52"><a href="#cb44-52" aria-hidden="true" tabindex="-1"></a><span class="fu">### Protect Your Work First!</span></span>
 <span id="cb44-53"><a href="#cb44-53" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-54"><a href="#cb44-54" aria-hidden="true" tabindex="-1"></a>Before syncing, make sure your work is safe:</span>
-<span id="cb44-55"><a href="#cb44-55" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Commit your changes** to a feature branch (not <span class="in">`main`</span>)</span>
-<span id="cb44-56"><a href="#cb44-56" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Push to your fork** regularly</span>
-<span id="cb44-57"><a href="#cb44-57" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Never work directly on `main`** - keep it clean for updates</span>
-<span id="cb44-58"><a href="#cb44-58" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb44-59"><a href="#cb44-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-60"><a href="#cb44-60" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Step 1: Save Your Current Work</span></span>
-<span id="cb44-61"><a href="#cb44-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-62"><a href="#cb44-62" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
-<span id="cb44-63"><a href="#cb44-63" aria-hidden="true" tabindex="-1"></a><span class="co"># Check what files you've modified</span></span>
-<span id="cb44-64"><a href="#cb44-64" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status</span>
-<span id="cb44-65"><a href="#cb44-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-66"><a href="#cb44-66" aria-hidden="true" tabindex="-1"></a><span class="co"># If you have uncommitted changes, save them</span></span>
-<span id="cb44-67"><a href="#cb44-67" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add your-notebook.ipynb your-analysis.py</span>
-<span id="cb44-68"><a href="#cb44-68" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"WIP: my analysis work"</span></span>
-<span id="cb44-69"><a href="#cb44-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-70"><a href="#cb44-70" aria-hidden="true" tabindex="-1"></a><span class="co"># Or stash them temporarily</span></span>
-<span id="cb44-71"><a href="#cb44-71" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash save <span class="st">"my current work"</span></span>
-<span id="cb44-72"><a href="#cb44-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-73"><a href="#cb44-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-74"><a href="#cb44-74" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Step 2: Fetch Updates from Upstream</span></span>
-<span id="cb44-75"><a href="#cb44-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-76"><a href="#cb44-76" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
-<span id="cb44-77"><a href="#cb44-77" aria-hidden="true" tabindex="-1"></a><span class="co"># Make sure you're on your main branch</span></span>
-<span id="cb44-78"><a href="#cb44-78" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout main</span>
-<span id="cb44-79"><a href="#cb44-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-80"><a href="#cb44-80" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch all updates from the class repo (upstream)</span></span>
-<span id="cb44-81"><a href="#cb44-81" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch upstream</span>
-<span id="cb44-82"><a href="#cb44-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-83"><a href="#cb44-83" aria-hidden="true" tabindex="-1"></a><span class="co"># See what's new</span></span>
-<span id="cb44-84"><a href="#cb44-84" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">--oneline</span> main..upstream/main</span>
-<span id="cb44-85"><a href="#cb44-85" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-86"><a href="#cb44-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-87"><a href="#cb44-87" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Step 3: Merge Updates into Your Fork</span></span>
-<span id="cb44-88"><a href="#cb44-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-89"><a href="#cb44-89" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
-<span id="cb44-90"><a href="#cb44-90" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge upstream changes into your local main</span></span>
-<span id="cb44-91"><a href="#cb44-91" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge upstream/main</span>
-<span id="cb44-92"><a href="#cb44-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-93"><a href="#cb44-93" aria-hidden="true" tabindex="-1"></a><span class="co"># If there are conflicts, Git will tell you which files need attention</span></span>
-<span id="cb44-94"><a href="#cb44-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-95"><a href="#cb44-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-96"><a href="#cb44-96" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Step 4: Update Your Remote Fork</span></span>
-<span id="cb44-97"><a href="#cb44-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-98"><a href="#cb44-98" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
-<span id="cb44-99"><a href="#cb44-99" aria-hidden="true" tabindex="-1"></a><span class="co"># Push the updated main to your fork on GitHub</span></span>
-<span id="cb44-100"><a href="#cb44-100" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push origin main</span>
-<span id="cb44-101"><a href="#cb44-101" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-102"><a href="#cb44-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-103"><a href="#cb44-103" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Step 5: Restore Your Work (if stashed)</span></span>
-<span id="cb44-104"><a href="#cb44-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-105"><a href="#cb44-105" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
-<span id="cb44-106"><a href="#cb44-106" aria-hidden="true" tabindex="-1"></a><span class="co"># If you stashed changes, restore them</span></span>
-<span id="cb44-107"><a href="#cb44-107" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop</span>
-<span id="cb44-108"><a href="#cb44-108" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-109"><a href="#cb44-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-110"><a href="#cb44-110" aria-hidden="true" tabindex="-1"></a><span class="fu">### Best Practices for Protecting Your Work</span></span>
-<span id="cb44-111"><a href="#cb44-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-112"><a href="#cb44-112" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 1. Use Feature Branches for Your Work</span></span>
-<span id="cb44-113"><a href="#cb44-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-114"><a href="#cb44-114" aria-hidden="true" tabindex="-1"></a>**DO THIS:**</span>
-<span id="cb44-115"><a href="#cb44-115" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
-<span id="cb44-116"><a href="#cb44-116" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a branch for each assignment or analysis</span></span>
-<span id="cb44-117"><a href="#cb44-117" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout <span class="at">-b</span> week01-my-analysis</span>
-<span id="cb44-118"><a href="#cb44-118" aria-hidden="true" tabindex="-1"></a><span class="co"># ... do your work ...</span></span>
-<span id="cb44-119"><a href="#cb44-119" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add my-notebook.ipynb</span>
-<span id="cb44-120"><a href="#cb44-120" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"Complete Week 1 analysis for Santa Barbara"</span></span>
-<span id="cb44-121"><a href="#cb44-121" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push origin week01-my-analysis</span>
-<span id="cb44-122"><a href="#cb44-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-123"><a href="#cb44-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-124"><a href="#cb44-124" aria-hidden="true" tabindex="-1"></a>**NOT THIS:**</span>
-<span id="cb44-125"><a href="#cb44-125" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
-<span id="cb44-126"><a href="#cb44-126" aria-hidden="true" tabindex="-1"></a><span class="co"># DON'T work directly on main</span></span>
-<span id="cb44-127"><a href="#cb44-127" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout main</span>
-<span id="cb44-128"><a href="#cb44-128" aria-hidden="true" tabindex="-1"></a><span class="co"># ... do your work ...  # ❌ This makes syncing harder!</span></span>
-<span id="cb44-129"><a href="#cb44-129" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-130"><a href="#cb44-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-131"><a href="#cb44-131" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 2. Keep Personal Files Out of Git</span></span>
-<span id="cb44-132"><a href="#cb44-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-133"><a href="#cb44-133" aria-hidden="true" tabindex="-1"></a>Create a <span class="in">`.gitignore`</span> file (or add to the existing one) to exclude your personal work:</span>
-<span id="cb44-134"><a href="#cb44-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-135"><a href="#cb44-135" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
-<span id="cb44-136"><a href="#cb44-136" aria-hidden="true" tabindex="-1"></a><span class="co"># Add to .gitignore</span></span>
-<span id="cb44-137"><a href="#cb44-137" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"my-notebooks/"</span> <span class="op">&gt;&gt;</span> .gitignore</span>
-<span id="cb44-138"><a href="#cb44-138" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"my-analysis/"</span> <span class="op">&gt;&gt;</span> .gitignore</span>
-<span id="cb44-139"><a href="#cb44-139" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"*.local.ipynb"</span> <span class="op">&gt;&gt;</span> .gitignore</span>
-<span id="cb44-140"><a href="#cb44-140" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"week1_output/"</span> <span class="op">&gt;&gt;</span> .gitignore</span>
-<span id="cb44-141"><a href="#cb44-141" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-142"><a href="#cb44-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-143"><a href="#cb44-143" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 3. Name Your Files to Avoid Conflicts</span></span>
-<span id="cb44-144"><a href="#cb44-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-145"><a href="#cb44-145" aria-hidden="true" tabindex="-1"></a>Use a personal prefix for your notebooks:</span>
-<span id="cb44-146"><a href="#cb44-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-147"><a href="#cb44-147" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-148"><a href="#cb44-148" aria-hidden="true" tabindex="-1"></a><span class="in">✅ GOOD:</span></span>
-<span id="cb44-149"><a href="#cb44-149" aria-hidden="true" tabindex="-1"></a><span class="in">  - yourname-week01-analysis.ipynb</span></span>
-<span id="cb44-150"><a href="#cb44-150" aria-hidden="true" tabindex="-1"></a><span class="in">  - yourname-santa-barbara-study.ipynb</span></span>
-<span id="cb44-151"><a href="#cb44-151" aria-hidden="true" tabindex="-1"></a><span class="in">  - my-notes.md</span></span>
-<span id="cb44-152"><a href="#cb44-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-153"><a href="#cb44-153" aria-hidden="true" tabindex="-1"></a><span class="in">❌ AVOID:</span></span>
-<span id="cb44-154"><a href="#cb44-154" aria-hidden="true" tabindex="-1"></a><span class="in">  - week01.ipynb (might conflict with class files)</span></span>
-<span id="cb44-155"><a href="#cb44-155" aria-hidden="true" tabindex="-1"></a><span class="in">  - analysis.ipynb (too generic)</span></span>
-<span id="cb44-156"><a href="#cb44-156" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-157"><a href="#cb44-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-158"><a href="#cb44-158" aria-hidden="true" tabindex="-1"></a><span class="fu">### Handling Merge Conflicts</span></span>
-<span id="cb44-159"><a href="#cb44-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-160"><a href="#cb44-160" aria-hidden="true" tabindex="-1"></a>If you get conflicts when merging upstream:</span>
-<span id="cb44-161"><a href="#cb44-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-162"><a href="#cb44-162" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
-<span id="cb44-163"><a href="#cb44-163" aria-hidden="true" tabindex="-1"></a><span class="co"># Git will show you which files have conflicts</span></span>
-<span id="cb44-164"><a href="#cb44-164" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status</span>
-<span id="cb44-165"><a href="#cb44-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-166"><a href="#cb44-166" aria-hidden="true" tabindex="-1"></a><span class="co"># Open each conflicting file and look for conflict markers:</span></span>
-<span id="cb44-167"><a href="#cb44-167" aria-hidden="true" tabindex="-1"></a><span class="co"># &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span></span>
-<span id="cb44-168"><a href="#cb44-168" aria-hidden="true" tabindex="-1"></a><span class="co"># Your changes</span></span>
-<span id="cb44-169"><a href="#cb44-169" aria-hidden="true" tabindex="-1"></a><span class="co"># =======</span></span>
-<span id="cb44-170"><a href="#cb44-170" aria-hidden="true" tabindex="-1"></a><span class="co"># Upstream changes</span></span>
-<span id="cb44-171"><a href="#cb44-171" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt;&gt;&gt;&gt;&gt;&gt;&gt; upstream/main</span></span>
-<span id="cb44-172"><a href="#cb44-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-173"><a href="#cb44-173" aria-hidden="true" tabindex="-1"></a><span class="co"># Edit the file to resolve conflicts, then:</span></span>
-<span id="cb44-174"><a href="#cb44-174" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add resolved-file.ipynb</span>
-<span id="cb44-175"><a href="#cb44-175" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"Merge upstream updates, resolved conflicts"</span></span>
-<span id="cb44-176"><a href="#cb44-176" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-177"><a href="#cb44-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-178"><a href="#cb44-178" aria-hidden="true" tabindex="-1"></a>:::{.callout-warning}</span>
-<span id="cb44-179"><a href="#cb44-179" aria-hidden="true" tabindex="-1"></a><span class="fu">### When Conflicts Happen</span></span>
-<span id="cb44-180"><a href="#cb44-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-181"><a href="#cb44-181" aria-hidden="true" tabindex="-1"></a>If class files (like <span class="in">`geogfm/c01.py`</span>) have conflicts:</span>
-<span id="cb44-182"><a href="#cb44-182" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Keep the upstream version** - this is the latest module code</span>
-<span id="cb44-183"><a href="#cb44-183" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Your personal notebooks should never conflict if you follow naming conventions</span>
-<span id="cb44-184"><a href="#cb44-184" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>If in doubt, ask for help before force-pushing!</span>
-<span id="cb44-185"><a href="#cb44-185" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb44-186"><a href="#cb44-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-187"><a href="#cb44-187" aria-hidden="true" tabindex="-1"></a><span class="fu">### Quick Reference: Common Sync Commands</span></span>
-<span id="cb44-188"><a href="#cb44-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-189"><a href="#cb44-189" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
-<span id="cb44-190"><a href="#cb44-190" aria-hidden="true" tabindex="-1"></a><span class="co"># Quick update (when you have no local changes on main)</span></span>
-<span id="cb44-191"><a href="#cb44-191" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout main</span>
-<span id="cb44-192"><a href="#cb44-192" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> pull upstream main</span>
-<span id="cb44-193"><a href="#cb44-193" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push origin main</span>
-<span id="cb44-194"><a href="#cb44-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-195"><a href="#cb44-195" aria-hidden="true" tabindex="-1"></a><span class="co"># Full workflow (with local work protection)</span></span>
-<span id="cb44-196"><a href="#cb44-196" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout main</span>
-<span id="cb44-197"><a href="#cb44-197" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash                    <span class="co"># Save any uncommitted work</span></span>
-<span id="cb44-198"><a href="#cb44-198" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch upstream           <span class="co"># Get latest from class repo</span></span>
-<span id="cb44-199"><a href="#cb44-199" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge upstream/main      <span class="co"># Merge into your local main</span></span>
-<span id="cb44-200"><a href="#cb44-200" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push origin main         <span class="co"># Update your GitHub fork</span></span>
-<span id="cb44-201"><a href="#cb44-201" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop               <span class="co"># Restore your work</span></span>
-<span id="cb44-202"><a href="#cb44-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-203"><a href="#cb44-203" aria-hidden="true" tabindex="-1"></a><span class="co"># Check sync status</span></span>
-<span id="cb44-204"><a href="#cb44-204" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch upstream</span>
-<span id="cb44-205"><a href="#cb44-205" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">--oneline</span> main..upstream/main  <span class="co"># See what's new upstream</span></span>
-<span id="cb44-206"><a href="#cb44-206" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">--oneline</span> upstream/main..main  <span class="co"># See your commits not in upstream</span></span>
-<span id="cb44-207"><a href="#cb44-207" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-208"><a href="#cb44-208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-209"><a href="#cb44-209" aria-hidden="true" tabindex="-1"></a><span class="fu">### After Syncing: Reinstall the Package</span></span>
-<span id="cb44-210"><a href="#cb44-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-211"><a href="#cb44-211" aria-hidden="true" tabindex="-1"></a>After pulling updates to <span class="in">`geogfm/c01.py`</span> or other module files, the editable install will automatically pick up changes. But to be safe:</span>
-<span id="cb44-212"><a href="#cb44-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-213"><a href="#cb44-213" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb44-214"><a href="#cb44-214" aria-hidden="true" tabindex="-1"></a><span class="co"># In your notebook, restart the kernel or reimport</span></span>
-<span id="cb44-215"><a href="#cb44-215" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> importlib</span>
-<span id="cb44-216"><a href="#cb44-216" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm <span class="im">import</span> c01</span>
-<span id="cb44-217"><a href="#cb44-217" aria-hidden="true" tabindex="-1"></a>importlib.<span class="bu">reload</span>(c01)  <span class="co"># Reload the updated module</span></span>
-<span id="cb44-218"><a href="#cb44-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-219"><a href="#cb44-219" aria-hidden="true" tabindex="-1"></a><span class="co"># Or restart the Jupyter kernel (Kernel → Restart)</span></span>
-<span id="cb44-220"><a href="#cb44-220" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-221"><a href="#cb44-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-222"><a href="#cb44-222" aria-hidden="true" tabindex="-1"></a><span class="fu">## Installation</span></span>
-<span id="cb44-223"><a href="#cb44-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-224"><a href="#cb44-224" aria-hidden="true" tabindex="-1"></a>Before you can import from <span class="in">`geogfm.c01`</span>, you need to install the <span class="in">`geogfm`</span> package in editable mode. This lets Python find the module files.</span>
-<span id="cb44-225"><a href="#cb44-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-226"><a href="#cb44-226" aria-hidden="true" tabindex="-1"></a><span class="fu">### Option 1: Install from Project Root (Recommended)</span></span>
-<span id="cb44-227"><a href="#cb44-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-228"><a href="#cb44-228" aria-hidden="true" tabindex="-1"></a>If you're working in a notebook in the <span class="in">`book/`</span> or <span class="in">`nbs/`</span> directory:</span>
-<span id="cb44-229"><a href="#cb44-229" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-230"><a href="#cb44-230" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb44-231"><a href="#cb44-231" aria-hidden="true" tabindex="-1"></a><span class="co"># Install the geogfm package in editable mode</span></span>
-<span id="cb44-232"><a href="#cb44-232" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">-</span>e ..</span>
-<span id="cb44-233"><a href="#cb44-233" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-234"><a href="#cb44-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-235"><a href="#cb44-235" aria-hidden="true" tabindex="-1"></a><span class="fu">### Option 2: Install with Absolute Path</span></span>
-<span id="cb44-236"><a href="#cb44-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-237"><a href="#cb44-237" aria-hidden="true" tabindex="-1"></a>If you're working from anywhere else, use the absolute path to the project root:</span>
-<span id="cb44-238"><a href="#cb44-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-239"><a href="#cb44-239" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb44-240"><a href="#cb44-240" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace with your actual path to the geoAI directory</span></span>
-<span id="cb44-241"><a href="#cb44-241" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">-</span>e <span class="op">/</span>Users<span class="op">/</span>your<span class="op">-</span>username<span class="op">/</span>dev<span class="op">/</span>geoAI</span>
-<span id="cb44-242"><a href="#cb44-242" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-243"><a href="#cb44-243" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-244"><a href="#cb44-244" aria-hidden="true" tabindex="-1"></a><span class="fu">### Option 3: Install from Terminal</span></span>
-<span id="cb44-245"><a href="#cb44-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-246"><a href="#cb44-246" aria-hidden="true" tabindex="-1"></a>You can also install from the terminal before opening your notebook:</span>
-<span id="cb44-247"><a href="#cb44-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-248"><a href="#cb44-248" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
-<span id="cb44-249"><a href="#cb44-249" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /path/to/geoAI</span>
-<span id="cb44-250"><a href="#cb44-250" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-e</span> .</span>
-<span id="cb44-251"><a href="#cb44-251" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-252"><a href="#cb44-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-253"><a href="#cb44-253" aria-hidden="true" tabindex="-1"></a><span class="fu">### Verify Installation</span></span>
-<span id="cb44-254"><a href="#cb44-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-255"><a href="#cb44-255" aria-hidden="true" tabindex="-1"></a>After installation, verify that the package is available:</span>
-<span id="cb44-256"><a href="#cb44-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-257"><a href="#cb44-257" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb44-258"><a href="#cb44-258" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if geogfm can be imported</span></span>
-<span id="cb44-259"><a href="#cb44-259" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geogfm</span>
-<span id="cb44-260"><a href="#cb44-260" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"✅ geogfm installed at: </span><span class="sc">{</span>geogfm<span class="sc">.</span><span class="va">__file__</span><span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb44-261"><a href="#cb44-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-262"><a href="#cb44-262" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if c01 module exists</span></span>
-<span id="cb44-263"><a href="#cb44-263" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm <span class="im">import</span> c01</span>
-<span id="cb44-264"><a href="#cb44-264" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"✅ c01 module available with </span><span class="sc">{</span><span class="bu">len</span>(<span class="bu">dir</span>(c01))<span class="sc">}</span><span class="ss"> attributes"</span>)</span>
-<span id="cb44-265"><a href="#cb44-265" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-266"><a href="#cb44-266" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-267"><a href="#cb44-267" aria-hidden="true" tabindex="-1"></a>:::{.callout-warning}</span>
-<span id="cb44-268"><a href="#cb44-268" aria-hidden="true" tabindex="-1"></a><span class="fu">### Important Notes</span></span>
-<span id="cb44-269"><a href="#cb44-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-270"><a href="#cb44-270" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The <span class="in">`-e`</span> flag installs in "editable" mode, meaning changes to the source code are immediately available without reinstalling</span>
-<span id="cb44-271"><a href="#cb44-271" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>You only need to install once per environment (unless you switch conda/virtual environments)</span>
-<span id="cb44-272"><a href="#cb44-272" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>If you get import errors, make sure you've run the Week 1 notebook to generate the <span class="in">`geogfm/c01.py`</span> file via tangling</span>
-<span id="cb44-273"><a href="#cb44-273" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb44-274"><a href="#cb44-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-275"><a href="#cb44-275" aria-hidden="true" tabindex="-1"></a><span class="fu">## Complete Setup (Sections 3-10)</span></span>
-<span id="cb44-276"><a href="#cb44-276" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-277"><a href="#cb44-277" aria-hidden="true" tabindex="-1"></a>To run the **entire workflow** (Sections 3-10), use this comprehensive setup:</span>
-<span id="cb44-278"><a href="#cb44-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-279"><a href="#cb44-279" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 1: Standard Library Imports</span></span>
-<span id="cb44-280"><a href="#cb44-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-283"><a href="#cb44-283" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb44-284"><a href="#cb44-284" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard library imports</span></span>
-<span id="cb44-285"><a href="#cb44-285" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
-<span id="cb44-286"><a href="#cb44-286" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
-<span id="cb44-287"><a href="#cb44-287" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb44-288"><a href="#cb44-288" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime, timedelta</span>
-<span id="cb44-289"><a href="#cb44-289" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb44-290"><a href="#cb44-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-291"><a href="#cb44-291" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ Standard library imports complete"</span>)</span>
-<span id="cb44-292"><a href="#cb44-292" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-293"><a href="#cb44-293" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-294"><a href="#cb44-294" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 2: Core Data Science Libraries</span></span>
-<span id="cb44-295"><a href="#cb44-295" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-298"><a href="#cb44-298" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb44-299"><a href="#cb44-299" aria-hidden="true" tabindex="-1"></a><span class="co"># Core data science libraries</span></span>
-<span id="cb44-300"><a href="#cb44-300" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb44-301"><a href="#cb44-301" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb44-302"><a href="#cb44-302" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb44-303"><a href="#cb44-303" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-304"><a href="#cb44-304" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ Data science libraries loaded"</span>)</span>
-<span id="cb44-305"><a href="#cb44-305" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-306"><a href="#cb44-306" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-307"><a href="#cb44-307" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 3: Geospatial Libraries</span></span>
-<span id="cb44-308"><a href="#cb44-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-311"><a href="#cb44-311" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb44-312"><a href="#cb44-312" aria-hidden="true" tabindex="-1"></a><span class="co"># Geospatial libraries</span></span>
-<span id="cb44-313"><a href="#cb44-313" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
-<span id="cb44-314"><a href="#cb44-314" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span>
-<span id="cb44-315"><a href="#cb44-315" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rioxarray</span>
-<span id="cb44-316"><a href="#cb44-316" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pystac_client <span class="im">import</span> Client</span>
-<span id="cb44-317"><a href="#cb44-317" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> planetary_computer <span class="im">as</span> pc</span>
-<span id="cb44-318"><a href="#cb44-318" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> box</span>
-<span id="cb44-319"><a href="#cb44-319" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-320"><a href="#cb44-320" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ Geospatial libraries loaded"</span>)</span>
-<span id="cb44-321"><a href="#cb44-321" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-322"><a href="#cb44-322" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-323"><a href="#cb44-323" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 4: Interactive Mapping</span></span>
-<span id="cb44-324"><a href="#cb44-324" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-327"><a href="#cb44-327" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb44-328"><a href="#cb44-328" aria-hidden="true" tabindex="-1"></a><span class="co"># Interactive mapping</span></span>
-<span id="cb44-329"><a href="#cb44-329" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> folium</span>
-<span id="cb44-330"><a href="#cb44-330" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> folium.plugins <span class="im">import</span> MeasureControl, Fullscreen</span>
-<span id="cb44-331"><a href="#cb44-331" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-332"><a href="#cb44-332" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ Mapping libraries loaded"</span>)</span>
-<span id="cb44-333"><a href="#cb44-333" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-334"><a href="#cb44-334" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-335"><a href="#cb44-335" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 5: Import Week 1 Helper Functions</span></span>
-<span id="cb44-336"><a href="#cb44-336" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-337"><a href="#cb44-337" aria-hidden="true" tabindex="-1"></a>This is where the magic happens - all 13+ helper functions in one import!</span>
-<span id="cb44-338"><a href="#cb44-338" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-341"><a href="#cb44-341" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb44-342"><a href="#cb44-342" aria-hidden="true" tabindex="-1"></a><span class="co"># Import ALL helper functions from tangled Week 1 module</span></span>
-<span id="cb44-343"><a href="#cb44-343" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm.c01 <span class="im">import</span> (</span>
-<span id="cb44-344"><a href="#cb44-344" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Environment and authentication (Section 2.1-2.4.1)</span></span>
-<span id="cb44-345"><a href="#cb44-345" aria-hidden="true" tabindex="-1"></a>    verify_environment,</span>
-<span id="cb44-346"><a href="#cb44-346" aria-hidden="true" tabindex="-1"></a>    setup_planetary_computer_auth,</span>
-<span id="cb44-347"><a href="#cb44-347" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb44-348"><a href="#cb44-348" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Data discovery (Section 2.4.2)</span></span>
-<span id="cb44-349"><a href="#cb44-349" aria-hidden="true" tabindex="-1"></a>    search_sentinel2_scenes,</span>
-<span id="cb44-350"><a href="#cb44-350" aria-hidden="true" tabindex="-1"></a>    search_STAC_scenes,</span>
-<span id="cb44-351"><a href="#cb44-351" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb44-352"><a href="#cb44-352" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Data loading (Section 2.4.3)</span></span>
-<span id="cb44-353"><a href="#cb44-353" aria-hidden="true" tabindex="-1"></a>    load_sentinel2_bands,</span>
-<span id="cb44-354"><a href="#cb44-354" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb44-355"><a href="#cb44-355" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Spatial processing (Section 2.4.4)</span></span>
-<span id="cb44-356"><a href="#cb44-356" aria-hidden="true" tabindex="-1"></a>    get_subset_from_scene,</span>
-<span id="cb44-357"><a href="#cb44-357" aria-hidden="true" tabindex="-1"></a>    get_scene_info,</span>
-<span id="cb44-358"><a href="#cb44-358" aria-hidden="true" tabindex="-1"></a>    create_scene_tiles,</span>
-<span id="cb44-359"><a href="#cb44-359" aria-hidden="true" tabindex="-1"></a>    test_subset_functionality,</span>
-<span id="cb44-360"><a href="#cb44-360" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb44-361"><a href="#cb44-361" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Data processing (Section 2.4.5)</span></span>
-<span id="cb44-362"><a href="#cb44-362" aria-hidden="true" tabindex="-1"></a>    normalize_band,</span>
-<span id="cb44-363"><a href="#cb44-363" aria-hidden="true" tabindex="-1"></a>    create_rgb_composite,</span>
-<span id="cb44-364"><a href="#cb44-364" aria-hidden="true" tabindex="-1"></a>    calculate_ndvi,</span>
-<span id="cb44-365"><a href="#cb44-365" aria-hidden="true" tabindex="-1"></a>    calculate_band_statistics,</span>
-<span id="cb44-366"><a href="#cb44-366" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb44-367"><a href="#cb44-367" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Visualization (Section 2.4.6)</span></span>
-<span id="cb44-368"><a href="#cb44-368" aria-hidden="true" tabindex="-1"></a>    plot_band_comparison,</span>
-<span id="cb44-369"><a href="#cb44-369" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb44-370"><a href="#cb44-370" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Export/Import (Section 2.4.7)</span></span>
-<span id="cb44-371"><a href="#cb44-371" aria-hidden="true" tabindex="-1"></a>    save_geotiff,</span>
-<span id="cb44-372"><a href="#cb44-372" aria-hidden="true" tabindex="-1"></a>    export_analysis_results,</span>
-<span id="cb44-373"><a href="#cb44-373" aria-hidden="true" tabindex="-1"></a>    load_week1_data</span>
-<span id="cb44-374"><a href="#cb44-374" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb44-375"><a href="#cb44-375" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-376"><a href="#cb44-376" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ Week 1 helper functions imported"</span>)</span>
-<span id="cb44-377"><a href="#cb44-377" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-378"><a href="#cb44-378" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-379"><a href="#cb44-379" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 6: Configure Matplotlib</span></span>
-<span id="cb44-380"><a href="#cb44-380" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-383"><a href="#cb44-383" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb44-384"><a href="#cb44-384" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure matplotlib for publication-quality plots</span></span>
-<span id="cb44-385"><a href="#cb44-385" aria-hidden="true" tabindex="-1"></a>plt.rcParams.update({</span>
-<span id="cb44-386"><a href="#cb44-386" aria-hidden="true" tabindex="-1"></a>    <span class="st">'figure.figsize'</span>: (<span class="dv">10</span>, <span class="dv">6</span>),</span>
-<span id="cb44-387"><a href="#cb44-387" aria-hidden="true" tabindex="-1"></a>    <span class="st">'figure.dpi'</span>: <span class="dv">100</span>,</span>
-<span id="cb44-388"><a href="#cb44-388" aria-hidden="true" tabindex="-1"></a>    <span class="st">'font.size'</span>: <span class="dv">10</span>,</span>
-<span id="cb44-389"><a href="#cb44-389" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.titlesize'</span>: <span class="dv">12</span>,</span>
-<span id="cb44-390"><a href="#cb44-390" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.labelsize'</span>: <span class="dv">10</span>,</span>
-<span id="cb44-391"><a href="#cb44-391" aria-hidden="true" tabindex="-1"></a>    <span class="st">'xtick.labelsize'</span>: <span class="dv">9</span>,</span>
-<span id="cb44-392"><a href="#cb44-392" aria-hidden="true" tabindex="-1"></a>    <span class="st">'ytick.labelsize'</span>: <span class="dv">9</span>,</span>
-<span id="cb44-393"><a href="#cb44-393" aria-hidden="true" tabindex="-1"></a>    <span class="st">'legend.fontsize'</span>: <span class="dv">9</span></span>
-<span id="cb44-394"><a href="#cb44-394" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb44-395"><a href="#cb44-395" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-396"><a href="#cb44-396" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ Matplotlib configured"</span>)</span>
-<span id="cb44-397"><a href="#cb44-397" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-398"><a href="#cb44-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-399"><a href="#cb44-399" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 7: Setup Logging and Authentication</span></span>
-<span id="cb44-400"><a href="#cb44-400" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-403"><a href="#cb44-403" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb44-404"><a href="#cb44-404" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure logging</span></span>
-<span id="cb44-405"><a href="#cb44-405" aria-hidden="true" tabindex="-1"></a>logging.basicConfig(</span>
-<span id="cb44-406"><a href="#cb44-406" aria-hidden="true" tabindex="-1"></a>    level<span class="op">=</span>logging.INFO,</span>
-<span id="cb44-407"><a href="#cb44-407" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span><span class="st">'</span><span class="sc">%(asctime)s</span><span class="st"> - </span><span class="sc">%(levelname)s</span><span class="st"> - </span><span class="sc">%(message)s</span><span class="st">'</span></span>
-<span id="cb44-408"><a href="#cb44-408" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb44-409"><a href="#cb44-409" aria-hidden="true" tabindex="-1"></a>logger <span class="op">=</span> logging.getLogger(<span class="va">__name__</span>)</span>
-<span id="cb44-410"><a href="#cb44-410" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-411"><a href="#cb44-411" aria-hidden="true" tabindex="-1"></a><span class="co"># Authenticate to Planetary Computer</span></span>
-<span id="cb44-412"><a href="#cb44-412" aria-hidden="true" tabindex="-1"></a>auth_status <span class="op">=</span> setup_planetary_computer_auth()</span>
-<span id="cb44-413"><a href="#cb44-413" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Planetary Computer authentication status: </span><span class="sc">{</span><span class="st">'Authenticated'</span> <span class="cf">if</span> auth_status <span class="cf">else</span> <span class="st">'Anonymous'</span><span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb44-414"><a href="#cb44-414" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-415"><a href="#cb44-415" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span> <span class="op">+</span> <span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
-<span id="cb44-416"><a href="#cb44-416" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!"</span>)</span>
-<span id="cb44-417"><a href="#cb44-417" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
-<span id="cb44-418"><a href="#cb44-418" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-419"><a href="#cb44-419" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-420"><a href="#cb44-420" aria-hidden="true" tabindex="-1"></a><span class="fu">## Quick Reference: Available Functions</span></span>
-<span id="cb44-421"><a href="#cb44-421" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-422"><a href="#cb44-422" aria-hidden="true" tabindex="-1"></a>Here's what you have available after importing from <span class="in">`geogfm.c01`</span>:</span>
-<span id="cb44-423"><a href="#cb44-423" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-424"><a href="#cb44-424" aria-hidden="true" tabindex="-1"></a><span class="fu">### Authentication &amp; Environment</span></span>
-<span id="cb44-425"><a href="#cb44-425" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`verify_environment()`</span> - Check that required packages are installed</span>
-<span id="cb44-426"><a href="#cb44-426" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`setup_planetary_computer_auth()`</span> - Authenticate to Planetary Computer</span>
-<span id="cb44-427"><a href="#cb44-427" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-428"><a href="#cb44-428" aria-hidden="true" tabindex="-1"></a><span class="fu">### Data Discovery</span></span>
-<span id="cb44-429"><a href="#cb44-429" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`search_sentinel2_scenes()`</span> - Search for Sentinel-2 scenes</span>
-<span id="cb44-430"><a href="#cb44-430" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`search_STAC_scenes()`</span> - General-purpose STAC search</span>
-<span id="cb44-431"><a href="#cb44-431" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-432"><a href="#cb44-432" aria-hidden="true" tabindex="-1"></a><span class="fu">### Data Loading</span></span>
-<span id="cb44-433"><a href="#cb44-433" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`load_sentinel2_bands()`</span> - Load bands with retry logic and subsetting</span>
-<span id="cb44-434"><a href="#cb44-434" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-435"><a href="#cb44-435" aria-hidden="true" tabindex="-1"></a><span class="fu">### Spatial Processing</span></span>
-<span id="cb44-436"><a href="#cb44-436" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`get_subset_from_scene()`</span> - Extract spatial subsets using percentages</span>
-<span id="cb44-437"><a href="#cb44-437" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`get_scene_info()`</span> - Get scene characteristics</span>
-<span id="cb44-438"><a href="#cb44-438" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`create_scene_tiles()`</span> - Create systematic tile grid</span>
-<span id="cb44-439"><a href="#cb44-439" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`test_subset_functionality()`</span> - Test data loading pipeline</span>
-<span id="cb44-440"><a href="#cb44-440" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-441"><a href="#cb44-441" aria-hidden="true" tabindex="-1"></a><span class="fu">### Data Processing</span></span>
-<span id="cb44-442"><a href="#cb44-442" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`normalize_band()`</span> - Percentile-based normalization</span>
-<span id="cb44-443"><a href="#cb44-443" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`create_rgb_composite()`</span> - Create RGB composites</span>
-<span id="cb44-444"><a href="#cb44-444" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`calculate_ndvi()`</span> - Calculate NDVI from NIR and Red bands</span>
-<span id="cb44-445"><a href="#cb44-445" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`calculate_band_statistics()`</span> - Comprehensive band statistics</span>
-<span id="cb44-446"><a href="#cb44-446" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-447"><a href="#cb44-447" aria-hidden="true" tabindex="-1"></a><span class="fu">### Visualization</span></span>
-<span id="cb44-448"><a href="#cb44-448" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`plot_band_comparison()`</span> - Multi-panel band visualization</span>
-<span id="cb44-449"><a href="#cb44-449" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-450"><a href="#cb44-450" aria-hidden="true" tabindex="-1"></a><span class="fu">### Export/Import</span></span>
-<span id="cb44-451"><a href="#cb44-451" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`save_geotiff()`</span> - Export georeferenced GeoTIFF</span>
-<span id="cb44-452"><a href="#cb44-452" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`export_analysis_results()`</span> - Save complete analysis results</span>
-<span id="cb44-453"><a href="#cb44-453" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`load_week1_data()`</span> - Reload processed data</span>
-<span id="cb44-454"><a href="#cb44-454" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-455"><a href="#cb44-455" aria-hidden="true" tabindex="-1"></a><span class="fu">## Complete Copy-Paste Block</span></span>
-<span id="cb44-456"><a href="#cb44-456" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-457"><a href="#cb44-457" aria-hidden="true" tabindex="-1"></a>For convenience, here's everything in one block you can copy-paste:</span>
-<span id="cb44-458"><a href="#cb44-458" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-459"><a href="#cb44-459" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb44-460"><a href="#cb44-460" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard library imports</span></span>
-<span id="cb44-461"><a href="#cb44-461" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
-<span id="cb44-462"><a href="#cb44-462" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
-<span id="cb44-463"><a href="#cb44-463" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb44-464"><a href="#cb44-464" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime, timedelta</span>
-<span id="cb44-465"><a href="#cb44-465" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb44-466"><a href="#cb44-466" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-467"><a href="#cb44-467" aria-hidden="true" tabindex="-1"></a><span class="co"># Core data science libraries</span></span>
-<span id="cb44-468"><a href="#cb44-468" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb44-469"><a href="#cb44-469" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb44-470"><a href="#cb44-470" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb44-471"><a href="#cb44-471" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-472"><a href="#cb44-472" aria-hidden="true" tabindex="-1"></a><span class="co"># Geospatial libraries</span></span>
-<span id="cb44-473"><a href="#cb44-473" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
-<span id="cb44-474"><a href="#cb44-474" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span>
-<span id="cb44-475"><a href="#cb44-475" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rioxarray</span>
-<span id="cb44-476"><a href="#cb44-476" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pystac_client <span class="im">import</span> Client</span>
-<span id="cb44-477"><a href="#cb44-477" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> planetary_computer <span class="im">as</span> pc</span>
-<span id="cb44-478"><a href="#cb44-478" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> box</span>
-<span id="cb44-479"><a href="#cb44-479" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-480"><a href="#cb44-480" aria-hidden="true" tabindex="-1"></a><span class="co"># Interactive mapping</span></span>
-<span id="cb44-481"><a href="#cb44-481" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> folium</span>
-<span id="cb44-482"><a href="#cb44-482" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> folium.plugins <span class="im">import</span> MeasureControl, Fullscreen</span>
-<span id="cb44-483"><a href="#cb44-483" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-484"><a href="#cb44-484" aria-hidden="true" tabindex="-1"></a><span class="co"># Import ALL helper functions from tangled Week 1 module</span></span>
-<span id="cb44-485"><a href="#cb44-485" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm.c01 <span class="im">import</span> (</span>
-<span id="cb44-486"><a href="#cb44-486" aria-hidden="true" tabindex="-1"></a>    verify_environment, setup_planetary_computer_auth,</span>
-<span id="cb44-487"><a href="#cb44-487" aria-hidden="true" tabindex="-1"></a>    search_sentinel2_scenes, search_STAC_scenes,</span>
-<span id="cb44-488"><a href="#cb44-488" aria-hidden="true" tabindex="-1"></a>    load_sentinel2_bands,</span>
-<span id="cb44-489"><a href="#cb44-489" aria-hidden="true" tabindex="-1"></a>    get_subset_from_scene, get_scene_info, create_scene_tiles, test_subset_functionality,</span>
-<span id="cb44-490"><a href="#cb44-490" aria-hidden="true" tabindex="-1"></a>    normalize_band, create_rgb_composite, calculate_ndvi, calculate_band_statistics,</span>
-<span id="cb44-491"><a href="#cb44-491" aria-hidden="true" tabindex="-1"></a>    plot_band_comparison,</span>
-<span id="cb44-492"><a href="#cb44-492" aria-hidden="true" tabindex="-1"></a>    save_geotiff, export_analysis_results, load_week1_data</span>
-<span id="cb44-493"><a href="#cb44-493" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb44-494"><a href="#cb44-494" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-495"><a href="#cb44-495" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure matplotlib</span></span>
-<span id="cb44-496"><a href="#cb44-496" aria-hidden="true" tabindex="-1"></a>plt.rcParams.update({</span>
-<span id="cb44-497"><a href="#cb44-497" aria-hidden="true" tabindex="-1"></a>    <span class="st">'figure.figsize'</span>: (<span class="dv">10</span>, <span class="dv">6</span>),</span>
-<span id="cb44-498"><a href="#cb44-498" aria-hidden="true" tabindex="-1"></a>    <span class="st">'figure.dpi'</span>: <span class="dv">100</span>,</span>
-<span id="cb44-499"><a href="#cb44-499" aria-hidden="true" tabindex="-1"></a>    <span class="st">'font.size'</span>: <span class="dv">10</span>,</span>
-<span id="cb44-500"><a href="#cb44-500" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.titlesize'</span>: <span class="dv">12</span>,</span>
-<span id="cb44-501"><a href="#cb44-501" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.labelsize'</span>: <span class="dv">10</span>,</span>
-<span id="cb44-502"><a href="#cb44-502" aria-hidden="true" tabindex="-1"></a>    <span class="st">'xtick.labelsize'</span>: <span class="dv">9</span>,</span>
-<span id="cb44-503"><a href="#cb44-503" aria-hidden="true" tabindex="-1"></a>    <span class="st">'ytick.labelsize'</span>: <span class="dv">9</span>,</span>
-<span id="cb44-504"><a href="#cb44-504" aria-hidden="true" tabindex="-1"></a>    <span class="st">'legend.fontsize'</span>: <span class="dv">9</span></span>
-<span id="cb44-505"><a href="#cb44-505" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb44-506"><a href="#cb44-506" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-507"><a href="#cb44-507" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure logging</span></span>
-<span id="cb44-508"><a href="#cb44-508" aria-hidden="true" tabindex="-1"></a>logging.basicConfig(level<span class="op">=</span>logging.INFO, <span class="bu">format</span><span class="op">=</span><span class="st">'</span><span class="sc">%(asctime)s</span><span class="st"> - </span><span class="sc">%(levelname)s</span><span class="st"> - </span><span class="sc">%(message)s</span><span class="st">'</span>)</span>
-<span id="cb44-509"><a href="#cb44-509" aria-hidden="true" tabindex="-1"></a>logger <span class="op">=</span> logging.getLogger(<span class="va">__name__</span>)</span>
-<span id="cb44-510"><a href="#cb44-510" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-511"><a href="#cb44-511" aria-hidden="true" tabindex="-1"></a><span class="co"># Authenticate to Planetary Computer</span></span>
-<span id="cb44-512"><a href="#cb44-512" aria-hidden="true" tabindex="-1"></a>auth_status <span class="op">=</span> setup_planetary_computer_auth()</span>
-<span id="cb44-513"><a href="#cb44-513" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Authentication: </span><span class="sc">{</span><span class="st">'✅ Authenticated'</span> <span class="cf">if</span> auth_status <span class="cf">else</span> <span class="st">'⚠️ Anonymous'</span><span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb44-514"><a href="#cb44-514" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-515"><a href="#cb44-515" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span> <span class="op">+</span> <span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
-<span id="cb44-516"><a href="#cb44-516" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!"</span>)</span>
-<span id="cb44-517"><a href="#cb44-517" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
-<span id="cb44-518"><a href="#cb44-518" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-519"><a href="#cb44-519" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-520"><a href="#cb44-520" aria-hidden="true" tabindex="-1"></a><span class="fu">## Example Usage</span></span>
-<span id="cb44-521"><a href="#cb44-521" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-522"><a href="#cb44-522" aria-hidden="true" tabindex="-1"></a>Once imported, you can immediately start working with satellite data:</span>
-<span id="cb44-523"><a href="#cb44-523" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-524"><a href="#cb44-524" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb44-525"><a href="#cb44-525" aria-hidden="true" tabindex="-1"></a><span class="co"># Define your area of interest</span></span>
-<span id="cb44-526"><a href="#cb44-526" aria-hidden="true" tabindex="-1"></a>santa_barbara_bbox <span class="op">=</span> [<span class="op">-</span><span class="fl">120.5</span>, <span class="fl">34.3</span>, <span class="op">-</span><span class="fl">119.5</span>, <span class="fl">34.7</span>]</span>
-<span id="cb44-527"><a href="#cb44-527" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-528"><a href="#cb44-528" aria-hidden="true" tabindex="-1"></a><span class="co"># Search for scenes</span></span>
-<span id="cb44-529"><a href="#cb44-529" aria-hidden="true" tabindex="-1"></a>scenes <span class="op">=</span> search_sentinel2_scenes(</span>
-<span id="cb44-530"><a href="#cb44-530" aria-hidden="true" tabindex="-1"></a>    bbox<span class="op">=</span>santa_barbara_bbox,</span>
-<span id="cb44-531"><a href="#cb44-531" aria-hidden="true" tabindex="-1"></a>    date_range<span class="op">=</span><span class="st">"2024-06-01/2024-09-30"</span>,</span>
-<span id="cb44-532"><a href="#cb44-532" aria-hidden="true" tabindex="-1"></a>    cloud_cover_max<span class="op">=</span><span class="dv">20</span>,</span>
-<span id="cb44-533"><a href="#cb44-533" aria-hidden="true" tabindex="-1"></a>    limit<span class="op">=</span><span class="dv">10</span></span>
-<span id="cb44-534"><a href="#cb44-534" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb44-535"><a href="#cb44-535" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-536"><a href="#cb44-536" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Found </span><span class="sc">{</span><span class="bu">len</span>(scenes)<span class="sc">}</span><span class="ss"> scenes!"</span>)</span>
-<span id="cb44-537"><a href="#cb44-537" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-538"><a href="#cb44-538" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the best scene</span></span>
-<span id="cb44-539"><a href="#cb44-539" aria-hidden="true" tabindex="-1"></a>best_scene <span class="op">=</span> scenes[<span class="dv">0</span>]</span>
-<span id="cb44-540"><a href="#cb44-540" aria-hidden="true" tabindex="-1"></a>subset_bbox <span class="op">=</span> get_subset_from_scene(best_scene, x_range<span class="op">=</span>(<span class="dv">30</span>, <span class="dv">70</span>), y_range<span class="op">=</span>(<span class="dv">30</span>, <span class="dv">70</span>))</span>
-<span id="cb44-541"><a href="#cb44-541" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-542"><a href="#cb44-542" aria-hidden="true" tabindex="-1"></a>band_data <span class="op">=</span> load_sentinel2_bands(</span>
-<span id="cb44-543"><a href="#cb44-543" aria-hidden="true" tabindex="-1"></a>    best_scene,</span>
-<span id="cb44-544"><a href="#cb44-544" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">'B04'</span>, <span class="st">'B03'</span>, <span class="st">'B02'</span>, <span class="st">'B08'</span>],</span>
-<span id="cb44-545"><a href="#cb44-545" aria-hidden="true" tabindex="-1"></a>    subset_bbox<span class="op">=</span>subset_bbox</span>
-<span id="cb44-546"><a href="#cb44-546" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb44-547"><a href="#cb44-547" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-548"><a href="#cb44-548" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate NDVI</span></span>
-<span id="cb44-549"><a href="#cb44-549" aria-hidden="true" tabindex="-1"></a>ndvi <span class="op">=</span> calculate_ndvi(band_data[<span class="st">'B08'</span>], band_data[<span class="st">'B04'</span>])</span>
-<span id="cb44-550"><a href="#cb44-550" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-551"><a href="#cb44-551" aria-hidden="true" tabindex="-1"></a><span class="co"># Create RGB composite</span></span>
-<span id="cb44-552"><a href="#cb44-552" aria-hidden="true" tabindex="-1"></a>rgb <span class="op">=</span> create_rgb_composite(band_data[<span class="st">'B04'</span>], band_data[<span class="st">'B03'</span>], band_data[<span class="st">'B02'</span>])</span>
-<span id="cb44-553"><a href="#cb44-553" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-554"><a href="#cb44-554" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ Analysis complete!"</span>)</span>
-<span id="cb44-555"><a href="#cb44-555" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-556"><a href="#cb44-556" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-557"><a href="#cb44-557" aria-hidden="true" tabindex="-1"></a><span class="fu">## Troubleshooting</span></span>
-<span id="cb44-558"><a href="#cb44-558" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-559"><a href="#cb44-559" aria-hidden="true" tabindex="-1"></a><span class="fu">### Import Errors</span></span>
-<span id="cb44-560"><a href="#cb44-560" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-561"><a href="#cb44-561" aria-hidden="true" tabindex="-1"></a>If you get <span class="in">`ModuleNotFoundError: No module named 'geogfm'`</span>:</span>
-<span id="cb44-562"><a href="#cb44-562" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-563"><a href="#cb44-563" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Install the package in editable mode:**</span>
-<span id="cb44-564"><a href="#cb44-564" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
-<span id="cb44-565"><a href="#cb44-565" aria-hidden="true" tabindex="-1"></a>   <span class="op">!</span>pip install <span class="op">-</span>e ..  <span class="co"># If in book/ or nbs/ directory</span></span>
-<span id="cb44-566"><a href="#cb44-566" aria-hidden="true" tabindex="-1"></a>   <span class="co"># OR</span></span>
-<span id="cb44-567"><a href="#cb44-567" aria-hidden="true" tabindex="-1"></a>   <span class="op">!</span>pip install <span class="op">-</span>e <span class="op">/</span>path<span class="op">/</span>to<span class="op">/</span>geoAI  <span class="co"># With absolute path</span></span>
-<span id="cb44-568"><a href="#cb44-568" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
-<span id="cb44-569"><a href="#cb44-569" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-570"><a href="#cb44-570" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Verify installation:**</span>
-<span id="cb44-571"><a href="#cb44-571" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
-<span id="cb44-572"><a href="#cb44-572" aria-hidden="true" tabindex="-1"></a>   <span class="im">import</span> sys</span>
-<span id="cb44-573"><a href="#cb44-573" aria-hidden="true" tabindex="-1"></a>   <span class="bu">print</span>(<span class="st">"Python paths:"</span>)</span>
-<span id="cb44-574"><a href="#cb44-574" aria-hidden="true" tabindex="-1"></a>   <span class="cf">for</span> p <span class="kw">in</span> sys.path:</span>
-<span id="cb44-575"><a href="#cb44-575" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>p<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb44-576"><a href="#cb44-576" aria-hidden="true" tabindex="-1"></a>   </span>
-<span id="cb44-577"><a href="#cb44-577" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Check if geogfm is installed</span></span>
-<span id="cb44-578"><a href="#cb44-578" aria-hidden="true" tabindex="-1"></a>   <span class="op">!</span>pip show geogfm</span>
-<span id="cb44-579"><a href="#cb44-579" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
-<span id="cb44-580"><a href="#cb44-580" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-581"><a href="#cb44-581" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Check your working directory:**</span>
-<span id="cb44-582"><a href="#cb44-582" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
-<span id="cb44-583"><a href="#cb44-583" aria-hidden="true" tabindex="-1"></a>   <span class="im">import</span> os</span>
-<span id="cb44-584"><a href="#cb44-584" aria-hidden="true" tabindex="-1"></a>   <span class="bu">print</span>(<span class="ss">f"Current directory: </span><span class="sc">{</span>os<span class="sc">.</span>getcwd()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb44-585"><a href="#cb44-585" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
-<span id="cb44-586"><a href="#cb44-586" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-587"><a href="#cb44-587" aria-hidden="true" tabindex="-1"></a><span class="fu">### Missing c01.py File</span></span>
-<span id="cb44-588"><a href="#cb44-588" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-589"><a href="#cb44-589" aria-hidden="true" tabindex="-1"></a>If you get <span class="in">`ImportError: cannot import name 'setup_planetary_computer_auth' from 'geogfm.c01'`</span>:</span>
-<span id="cb44-590"><a href="#cb44-590" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-591"><a href="#cb44-591" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Verify the c01.py file exists:**</span>
-<span id="cb44-592"><a href="#cb44-592" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
-<span id="cb44-593"><a href="#cb44-593" aria-hidden="true" tabindex="-1"></a>   <span class="im">import</span> os</span>
-<span id="cb44-594"><a href="#cb44-594" aria-hidden="true" tabindex="-1"></a>   c01_path <span class="op">=</span> <span class="st">"geogfm/c01.py"</span></span>
-<span id="cb44-595"><a href="#cb44-595" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> os.path.exists(c01_path):</span>
-<span id="cb44-596"><a href="#cb44-596" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="ss">f"✅ </span><span class="sc">{</span>c01_path<span class="sc">}</span><span class="ss"> exists"</span>)</span>
-<span id="cb44-597"><a href="#cb44-597" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span>:</span>
-<span id="cb44-598"><a href="#cb44-598" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="ss">f"❌ </span><span class="sc">{</span>c01_path<span class="sc">}</span><span class="ss"> not found - you need to run the Week 1 notebook to generate it"</span>)</span>
-<span id="cb44-599"><a href="#cb44-599" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
-<span id="cb44-600"><a href="#cb44-600" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-601"><a href="#cb44-601" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**The file is generated by "tangling"** - run the Week 1 notebook (<span class="in">`c01-geospatial-data-foundations.qmd`</span>) to generate <span class="in">`geogfm/c01.py`</span> automatically.</span>
-<span id="cb44-602"><a href="#cb44-602" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-603"><a href="#cb44-603" aria-hidden="true" tabindex="-1"></a><span class="fu">### Function Not Found</span></span>
-<span id="cb44-604"><a href="#cb44-604" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-605"><a href="#cb44-605" aria-hidden="true" tabindex="-1"></a>If a specific function isn't available, check that the <span class="in">`geogfm/c01.py`</span> file has been generated by running the tangle process on the Week 1 notebook.</span>
-<span id="cb44-606"><a href="#cb44-606" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-607"><a href="#cb44-607" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb44-608"><a href="#cb44-608" aria-hidden="true" tabindex="-1"></a><span class="co"># Check what's available in c01</span></span>
-<span id="cb44-609"><a href="#cb44-609" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm <span class="im">import</span> c01</span>
-<span id="cb44-610"><a href="#cb44-610" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Available functions:"</span>)</span>
-<span id="cb44-611"><a href="#cb44-611" aria-hidden="true" tabindex="-1"></a>functions <span class="op">=</span> [name <span class="cf">for</span> name <span class="kw">in</span> <span class="bu">dir</span>(c01) <span class="cf">if</span> <span class="kw">not</span> name.startswith(<span class="st">'_'</span>)]</span>
-<span id="cb44-612"><a href="#cb44-612" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> func <span class="kw">in</span> <span class="bu">sorted</span>(functions):</span>
-<span id="cb44-613"><a href="#cb44-613" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  - </span><span class="sc">{</span>func<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb44-614"><a href="#cb44-614" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-615"><a href="#cb44-615" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-616"><a href="#cb44-616" aria-hidden="true" tabindex="-1"></a><span class="fu">### Authentication Issues</span></span>
-<span id="cb44-617"><a href="#cb44-617" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-618"><a href="#cb44-618" aria-hidden="true" tabindex="-1"></a>If Planetary Computer authentication fails, check:</span>
-<span id="cb44-619"><a href="#cb44-619" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-620"><a href="#cb44-620" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Environment variable or .env file:**</span>
-<span id="cb44-621"><a href="#cb44-621" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
-<span id="cb44-622"><a href="#cb44-622" aria-hidden="true" tabindex="-1"></a>   <span class="im">import</span> os</span>
-<span id="cb44-623"><a href="#cb44-623" aria-hidden="true" tabindex="-1"></a>   key <span class="op">=</span> os.getenv(<span class="st">'PC_SDK_SUBSCRIPTION_KEY'</span>) <span class="kw">or</span> os.getenv(<span class="st">'PLANETARY_COMPUTER_API_KEY'</span>)</span>
-<span id="cb44-624"><a href="#cb44-624" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> key:</span>
-<span id="cb44-625"><a href="#cb44-625" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="ss">f"✅ API key found (length: </span><span class="sc">{</span><span class="bu">len</span>(key)<span class="sc">}</span><span class="ss">)"</span>)</span>
-<span id="cb44-626"><a href="#cb44-626" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span>:</span>
-<span id="cb44-627"><a href="#cb44-627" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="st">"❌ No API key found - create a .env file with:"</span>)</span>
-<span id="cb44-628"><a href="#cb44-628" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="st">"   PC_SDK_SUBSCRIPTION_KEY=your_key_here"</span>)</span>
-<span id="cb44-629"><a href="#cb44-629" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
-<span id="cb44-630"><a href="#cb44-630" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-631"><a href="#cb44-631" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Check .env file location:**</span>
-<span id="cb44-632"><a href="#cb44-632" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
-<span id="cb44-633"><a href="#cb44-633" aria-hidden="true" tabindex="-1"></a>   <span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb44-634"><a href="#cb44-634" aria-hidden="true" tabindex="-1"></a>   env_file <span class="op">=</span> Path(<span class="st">'.env'</span>)</span>
-<span id="cb44-635"><a href="#cb44-635" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> env_file.exists():</span>
-<span id="cb44-636"><a href="#cb44-636" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="ss">f"✅ .env file found at: </span><span class="sc">{</span>env_file<span class="sc">.</span>absolute()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb44-637"><a href="#cb44-637" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span>:</span>
-<span id="cb44-638"><a href="#cb44-638" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="ss">f"❌ .env file not found in: </span><span class="sc">{</span>Path<span class="sc">.</span>cwd()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb44-639"><a href="#cb44-639" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
-<span id="cb44-640"><a href="#cb44-640" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-641"><a href="#cb44-641" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Internet connectivity** - Make sure you have an active connection</span>
-<span id="cb44-642"><a href="#cb44-642" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Service status** - Check <span class="co">[</span><span class="ot">Planetary Computer status</span><span class="co">](https://planetarycomputer.microsoft.com/)</span></span>
-<span id="cb44-643"><a href="#cb44-643" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-644"><a href="#cb44-644" aria-hidden="true" tabindex="-1"></a><span class="fu">### Dependency Issues</span></span>
-<span id="cb44-645"><a href="#cb44-645" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-646"><a href="#cb44-646" aria-hidden="true" tabindex="-1"></a>If you're missing required packages:</span>
-<span id="cb44-647"><a href="#cb44-647" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-648"><a href="#cb44-648" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb44-649"><a href="#cb44-649" aria-hidden="true" tabindex="-1"></a><span class="co"># Install all dependencies from the environment file</span></span>
-<span id="cb44-650"><a href="#cb44-650" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install rasterio xarray rioxarray folium pystac<span class="op">-</span>client planetary<span class="op">-</span>computer matplotlib numpy pandas geopandas</span>
-<span id="cb44-651"><a href="#cb44-651" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-652"><a href="#cb44-652" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-653"><a href="#cb44-653" aria-hidden="true" tabindex="-1"></a><span class="fu">## Next Steps</span></span>
-<span id="cb44-654"><a href="#cb44-654" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-655"><a href="#cb44-655" aria-hidden="true" tabindex="-1"></a>Once you have everything imported:</span>
-<span id="cb44-656"><a href="#cb44-656" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-657"><a href="#cb44-657" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Section 3**: Explore STAC catalogs and discover available datasets</span>
-<span id="cb44-658"><a href="#cb44-658" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Section 4**: Define your area of interest with interactive maps</span>
-<span id="cb44-659"><a href="#cb44-659" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Section 5**: Search for and select optimal satellite scenes</span>
-<span id="cb44-660"><a href="#cb44-660" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Section 6**: Load and validate satellite data</span>
-<span id="cb44-661"><a href="#cb44-661" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Section 7**: Create visualizations and calculate indices</span>
-<span id="cb44-662"><a href="#cb44-662" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Section 8**: Build interactive maps with your results</span>
-<span id="cb44-663"><a href="#cb44-663" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>**Section 9**: Export your analysis for future use</span>
-<span id="cb44-664"><a href="#cb44-664" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-665"><a href="#cb44-665" aria-hidden="true" tabindex="-1"></a>Happy analyzing! 🛰️</span>
+<span id="cb44-55"><a href="#cb44-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-56"><a href="#cb44-56" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Commit your changes** to a feature branch (not <span class="in">`main`</span>)</span>
+<span id="cb44-57"><a href="#cb44-57" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Push to your fork** regularly</span>
+<span id="cb44-58"><a href="#cb44-58" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Never work directly on `main`** - keep it clean for updates</span>
+<span id="cb44-59"><a href="#cb44-59" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb44-60"><a href="#cb44-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-61"><a href="#cb44-61" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Step 1: Save Your Current Work</span></span>
+<span id="cb44-62"><a href="#cb44-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-63"><a href="#cb44-63" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb44-64"><a href="#cb44-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Check what files you've modified</span></span>
+<span id="cb44-65"><a href="#cb44-65" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status</span>
+<span id="cb44-66"><a href="#cb44-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-67"><a href="#cb44-67" aria-hidden="true" tabindex="-1"></a><span class="co"># If you have uncommitted changes, save them</span></span>
+<span id="cb44-68"><a href="#cb44-68" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add your-notebook.ipynb your-analysis.py</span>
+<span id="cb44-69"><a href="#cb44-69" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"WIP: my analysis work"</span></span>
+<span id="cb44-70"><a href="#cb44-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-71"><a href="#cb44-71" aria-hidden="true" tabindex="-1"></a><span class="co"># Or stash them temporarily</span></span>
+<span id="cb44-72"><a href="#cb44-72" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash save <span class="st">"my current work"</span></span>
+<span id="cb44-73"><a href="#cb44-73" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-74"><a href="#cb44-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-75"><a href="#cb44-75" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Step 2: Fetch Updates from Upstream</span></span>
+<span id="cb44-76"><a href="#cb44-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-77"><a href="#cb44-77" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb44-78"><a href="#cb44-78" aria-hidden="true" tabindex="-1"></a><span class="co"># Make sure you're on your main branch</span></span>
+<span id="cb44-79"><a href="#cb44-79" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout main</span>
+<span id="cb44-80"><a href="#cb44-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-81"><a href="#cb44-81" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch all updates from the class repo (upstream)</span></span>
+<span id="cb44-82"><a href="#cb44-82" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch upstream</span>
+<span id="cb44-83"><a href="#cb44-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-84"><a href="#cb44-84" aria-hidden="true" tabindex="-1"></a><span class="co"># See what's new</span></span>
+<span id="cb44-85"><a href="#cb44-85" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">--oneline</span> main..upstream/main</span>
+<span id="cb44-86"><a href="#cb44-86" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-87"><a href="#cb44-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-88"><a href="#cb44-88" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Step 3: Merge Updates into Your Fork</span></span>
+<span id="cb44-89"><a href="#cb44-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-90"><a href="#cb44-90" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb44-91"><a href="#cb44-91" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge upstream changes into your local main</span></span>
+<span id="cb44-92"><a href="#cb44-92" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge upstream/main</span>
+<span id="cb44-93"><a href="#cb44-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-94"><a href="#cb44-94" aria-hidden="true" tabindex="-1"></a><span class="co"># If there are conflicts, Git will tell you which files need attention</span></span>
+<span id="cb44-95"><a href="#cb44-95" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-96"><a href="#cb44-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-97"><a href="#cb44-97" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Step 4: Update Your Remote Fork</span></span>
+<span id="cb44-98"><a href="#cb44-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-99"><a href="#cb44-99" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb44-100"><a href="#cb44-100" aria-hidden="true" tabindex="-1"></a><span class="co"># Push the updated main to your fork on GitHub</span></span>
+<span id="cb44-101"><a href="#cb44-101" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push origin main</span>
+<span id="cb44-102"><a href="#cb44-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-103"><a href="#cb44-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-104"><a href="#cb44-104" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Step 5: Restore Your Work (if stashed)</span></span>
+<span id="cb44-105"><a href="#cb44-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-106"><a href="#cb44-106" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb44-107"><a href="#cb44-107" aria-hidden="true" tabindex="-1"></a><span class="co"># If you stashed changes, restore them</span></span>
+<span id="cb44-108"><a href="#cb44-108" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop</span>
+<span id="cb44-109"><a href="#cb44-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-110"><a href="#cb44-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-111"><a href="#cb44-111" aria-hidden="true" tabindex="-1"></a><span class="fu">### Best Practices for Protecting Your Work</span></span>
+<span id="cb44-112"><a href="#cb44-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-113"><a href="#cb44-113" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 1. Use Feature Branches for Your Work</span></span>
+<span id="cb44-114"><a href="#cb44-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-115"><a href="#cb44-115" aria-hidden="true" tabindex="-1"></a>**DO THIS:**</span>
+<span id="cb44-116"><a href="#cb44-116" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb44-117"><a href="#cb44-117" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a branch for each assignment or analysis</span></span>
+<span id="cb44-118"><a href="#cb44-118" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout <span class="at">-b</span> week01-my-analysis</span>
+<span id="cb44-119"><a href="#cb44-119" aria-hidden="true" tabindex="-1"></a><span class="co"># ... do your work ...</span></span>
+<span id="cb44-120"><a href="#cb44-120" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add my-notebook.ipynb</span>
+<span id="cb44-121"><a href="#cb44-121" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"Complete Week 1 analysis for Santa Barbara"</span></span>
+<span id="cb44-122"><a href="#cb44-122" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push origin week01-my-analysis</span>
+<span id="cb44-123"><a href="#cb44-123" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-124"><a href="#cb44-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-125"><a href="#cb44-125" aria-hidden="true" tabindex="-1"></a>**NOT THIS:**</span>
+<span id="cb44-126"><a href="#cb44-126" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb44-127"><a href="#cb44-127" aria-hidden="true" tabindex="-1"></a><span class="co"># DON'T work directly on main</span></span>
+<span id="cb44-128"><a href="#cb44-128" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout main</span>
+<span id="cb44-129"><a href="#cb44-129" aria-hidden="true" tabindex="-1"></a><span class="co"># ... do your work ...  # ❌ This makes syncing harder!</span></span>
+<span id="cb44-130"><a href="#cb44-130" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-131"><a href="#cb44-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-132"><a href="#cb44-132" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 2. Keep Personal Files Out of Git</span></span>
+<span id="cb44-133"><a href="#cb44-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-134"><a href="#cb44-134" aria-hidden="true" tabindex="-1"></a>Create a <span class="in">`.gitignore`</span> file (or add to the existing one) to exclude your personal work:</span>
+<span id="cb44-135"><a href="#cb44-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-136"><a href="#cb44-136" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb44-137"><a href="#cb44-137" aria-hidden="true" tabindex="-1"></a><span class="co"># Add to .gitignore</span></span>
+<span id="cb44-138"><a href="#cb44-138" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"my-notebooks/"</span> <span class="op">&gt;&gt;</span> .gitignore</span>
+<span id="cb44-139"><a href="#cb44-139" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"my-analysis/"</span> <span class="op">&gt;&gt;</span> .gitignore</span>
+<span id="cb44-140"><a href="#cb44-140" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"*.local.ipynb"</span> <span class="op">&gt;&gt;</span> .gitignore</span>
+<span id="cb44-141"><a href="#cb44-141" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"week1_output/"</span> <span class="op">&gt;&gt;</span> .gitignore</span>
+<span id="cb44-142"><a href="#cb44-142" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-143"><a href="#cb44-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-144"><a href="#cb44-144" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 3. Name Your Files to Avoid Conflicts</span></span>
+<span id="cb44-145"><a href="#cb44-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-146"><a href="#cb44-146" aria-hidden="true" tabindex="-1"></a>Use a personal prefix for your notebooks:</span>
+<span id="cb44-147"><a href="#cb44-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-148"><a href="#cb44-148" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-149"><a href="#cb44-149" aria-hidden="true" tabindex="-1"></a><span class="in">✅ GOOD:</span></span>
+<span id="cb44-150"><a href="#cb44-150" aria-hidden="true" tabindex="-1"></a><span class="in">  - yourname-week01-analysis.ipynb</span></span>
+<span id="cb44-151"><a href="#cb44-151" aria-hidden="true" tabindex="-1"></a><span class="in">  - yourname-santa-barbara-study.ipynb</span></span>
+<span id="cb44-152"><a href="#cb44-152" aria-hidden="true" tabindex="-1"></a><span class="in">  - my-notes.md</span></span>
+<span id="cb44-153"><a href="#cb44-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-154"><a href="#cb44-154" aria-hidden="true" tabindex="-1"></a><span class="in">❌ AVOID:</span></span>
+<span id="cb44-155"><a href="#cb44-155" aria-hidden="true" tabindex="-1"></a><span class="in">  - week01.ipynb (might conflict with class files)</span></span>
+<span id="cb44-156"><a href="#cb44-156" aria-hidden="true" tabindex="-1"></a><span class="in">  - analysis.ipynb (too generic)</span></span>
+<span id="cb44-157"><a href="#cb44-157" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-158"><a href="#cb44-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-159"><a href="#cb44-159" aria-hidden="true" tabindex="-1"></a><span class="fu">### Handling Merge Conflicts</span></span>
+<span id="cb44-160"><a href="#cb44-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-161"><a href="#cb44-161" aria-hidden="true" tabindex="-1"></a>If you get conflicts when merging upstream:</span>
+<span id="cb44-162"><a href="#cb44-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-163"><a href="#cb44-163" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb44-164"><a href="#cb44-164" aria-hidden="true" tabindex="-1"></a><span class="co"># Git will show you which files have conflicts</span></span>
+<span id="cb44-165"><a href="#cb44-165" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status</span>
+<span id="cb44-166"><a href="#cb44-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-167"><a href="#cb44-167" aria-hidden="true" tabindex="-1"></a><span class="co"># Open each conflicting file and look for conflict markers:</span></span>
+<span id="cb44-168"><a href="#cb44-168" aria-hidden="true" tabindex="-1"></a><span class="co"># &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span></span>
+<span id="cb44-169"><a href="#cb44-169" aria-hidden="true" tabindex="-1"></a><span class="co"># Your changes</span></span>
+<span id="cb44-170"><a href="#cb44-170" aria-hidden="true" tabindex="-1"></a><span class="co"># =======</span></span>
+<span id="cb44-171"><a href="#cb44-171" aria-hidden="true" tabindex="-1"></a><span class="co"># Upstream changes</span></span>
+<span id="cb44-172"><a href="#cb44-172" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt;&gt;&gt;&gt;&gt;&gt;&gt; upstream/main</span></span>
+<span id="cb44-173"><a href="#cb44-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-174"><a href="#cb44-174" aria-hidden="true" tabindex="-1"></a><span class="co"># Edit the file to resolve conflicts, then:</span></span>
+<span id="cb44-175"><a href="#cb44-175" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add resolved-file.ipynb</span>
+<span id="cb44-176"><a href="#cb44-176" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"Merge upstream updates, resolved conflicts"</span></span>
+<span id="cb44-177"><a href="#cb44-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-178"><a href="#cb44-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-179"><a href="#cb44-179" aria-hidden="true" tabindex="-1"></a>:::{.callout-warning}</span>
+<span id="cb44-180"><a href="#cb44-180" aria-hidden="true" tabindex="-1"></a><span class="fu">### When Conflicts Happen</span></span>
+<span id="cb44-181"><a href="#cb44-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-182"><a href="#cb44-182" aria-hidden="true" tabindex="-1"></a>If class files (like <span class="in">`geogfm/c01.py`</span>) have conflicts:</span>
+<span id="cb44-183"><a href="#cb44-183" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Keep the upstream version** - this is the latest module code</span>
+<span id="cb44-184"><a href="#cb44-184" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Your personal notebooks should never conflict if you follow naming conventions</span>
+<span id="cb44-185"><a href="#cb44-185" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>If in doubt, ask for help before force-pushing!</span>
+<span id="cb44-186"><a href="#cb44-186" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb44-187"><a href="#cb44-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-188"><a href="#cb44-188" aria-hidden="true" tabindex="-1"></a><span class="fu">### Quick Reference: Common Sync Commands</span></span>
+<span id="cb44-189"><a href="#cb44-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-190"><a href="#cb44-190" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb44-191"><a href="#cb44-191" aria-hidden="true" tabindex="-1"></a><span class="co"># Quick update (when you have no local changes on main)</span></span>
+<span id="cb44-192"><a href="#cb44-192" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout main</span>
+<span id="cb44-193"><a href="#cb44-193" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> pull upstream main</span>
+<span id="cb44-194"><a href="#cb44-194" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push origin main</span>
+<span id="cb44-195"><a href="#cb44-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-196"><a href="#cb44-196" aria-hidden="true" tabindex="-1"></a><span class="co"># Full workflow (with local work protection)</span></span>
+<span id="cb44-197"><a href="#cb44-197" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout main</span>
+<span id="cb44-198"><a href="#cb44-198" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash                    <span class="co"># Save any uncommitted work</span></span>
+<span id="cb44-199"><a href="#cb44-199" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch upstream           <span class="co"># Get latest from class repo</span></span>
+<span id="cb44-200"><a href="#cb44-200" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge upstream/main      <span class="co"># Merge into your local main</span></span>
+<span id="cb44-201"><a href="#cb44-201" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push origin main         <span class="co"># Update your GitHub fork</span></span>
+<span id="cb44-202"><a href="#cb44-202" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop               <span class="co"># Restore your work</span></span>
+<span id="cb44-203"><a href="#cb44-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-204"><a href="#cb44-204" aria-hidden="true" tabindex="-1"></a><span class="co"># Check sync status</span></span>
+<span id="cb44-205"><a href="#cb44-205" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch upstream</span>
+<span id="cb44-206"><a href="#cb44-206" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">--oneline</span> main..upstream/main  <span class="co"># See what's new upstream</span></span>
+<span id="cb44-207"><a href="#cb44-207" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">--oneline</span> upstream/main..main  <span class="co"># See your commits not in upstream</span></span>
+<span id="cb44-208"><a href="#cb44-208" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-209"><a href="#cb44-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-210"><a href="#cb44-210" aria-hidden="true" tabindex="-1"></a><span class="fu">### After Syncing: Reinstall the Package</span></span>
+<span id="cb44-211"><a href="#cb44-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-212"><a href="#cb44-212" aria-hidden="true" tabindex="-1"></a>After pulling updates to <span class="in">`geogfm/c01.py`</span> or other module files, the editable install will automatically pick up changes. But to be safe:</span>
+<span id="cb44-213"><a href="#cb44-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-214"><a href="#cb44-214" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb44-215"><a href="#cb44-215" aria-hidden="true" tabindex="-1"></a><span class="co"># In your notebook, restart the kernel or reimport</span></span>
+<span id="cb44-216"><a href="#cb44-216" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> importlib</span>
+<span id="cb44-217"><a href="#cb44-217" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm <span class="im">import</span> c01</span>
+<span id="cb44-218"><a href="#cb44-218" aria-hidden="true" tabindex="-1"></a>importlib.<span class="bu">reload</span>(c01)  <span class="co"># Reload the updated module</span></span>
+<span id="cb44-219"><a href="#cb44-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-220"><a href="#cb44-220" aria-hidden="true" tabindex="-1"></a><span class="co"># Or restart the Jupyter kernel (Kernel → Restart)</span></span>
+<span id="cb44-221"><a href="#cb44-221" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-222"><a href="#cb44-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-223"><a href="#cb44-223" aria-hidden="true" tabindex="-1"></a><span class="fu">## Installation</span></span>
+<span id="cb44-224"><a href="#cb44-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-225"><a href="#cb44-225" aria-hidden="true" tabindex="-1"></a>Before you can import from <span class="in">`geogfm.c01`</span>, you need to install the <span class="in">`geogfm`</span> package in editable mode. This lets Python find the module files.</span>
+<span id="cb44-226"><a href="#cb44-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-227"><a href="#cb44-227" aria-hidden="true" tabindex="-1"></a><span class="fu">### Option 1: Install from Project Root (Recommended)</span></span>
+<span id="cb44-228"><a href="#cb44-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-229"><a href="#cb44-229" aria-hidden="true" tabindex="-1"></a>If you're working in a notebook in the <span class="in">`book/`</span> or <span class="in">`nbs/`</span> directory:</span>
+<span id="cb44-230"><a href="#cb44-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-231"><a href="#cb44-231" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb44-232"><a href="#cb44-232" aria-hidden="true" tabindex="-1"></a><span class="co"># Install the geogfm package in editable mode</span></span>
+<span id="cb44-233"><a href="#cb44-233" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">-</span>e ..</span>
+<span id="cb44-234"><a href="#cb44-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-235"><a href="#cb44-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-236"><a href="#cb44-236" aria-hidden="true" tabindex="-1"></a><span class="fu">### Option 2: Install with Absolute Path</span></span>
+<span id="cb44-237"><a href="#cb44-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-238"><a href="#cb44-238" aria-hidden="true" tabindex="-1"></a>If you're working from anywhere else, use the absolute path to the project root:</span>
+<span id="cb44-239"><a href="#cb44-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-240"><a href="#cb44-240" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb44-241"><a href="#cb44-241" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace with your actual path to the geoAI directory</span></span>
+<span id="cb44-242"><a href="#cb44-242" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">-</span>e <span class="op">/</span>Users<span class="op">/</span>your<span class="op">-</span>username<span class="op">/</span>dev<span class="op">/</span>geoAI</span>
+<span id="cb44-243"><a href="#cb44-243" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-244"><a href="#cb44-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-245"><a href="#cb44-245" aria-hidden="true" tabindex="-1"></a><span class="fu">### Option 3: Install from Terminal</span></span>
+<span id="cb44-246"><a href="#cb44-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-247"><a href="#cb44-247" aria-hidden="true" tabindex="-1"></a>You can also install from the terminal before opening your notebook:</span>
+<span id="cb44-248"><a href="#cb44-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-249"><a href="#cb44-249" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb44-250"><a href="#cb44-250" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /path/to/geoAI</span>
+<span id="cb44-251"><a href="#cb44-251" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-e</span> .</span>
+<span id="cb44-252"><a href="#cb44-252" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-253"><a href="#cb44-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-254"><a href="#cb44-254" aria-hidden="true" tabindex="-1"></a><span class="fu">### Verify Installation</span></span>
+<span id="cb44-255"><a href="#cb44-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-256"><a href="#cb44-256" aria-hidden="true" tabindex="-1"></a>After installation, verify that the package is available:</span>
+<span id="cb44-257"><a href="#cb44-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-258"><a href="#cb44-258" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb44-259"><a href="#cb44-259" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if geogfm can be imported</span></span>
+<span id="cb44-260"><a href="#cb44-260" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geogfm</span>
+<span id="cb44-261"><a href="#cb44-261" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"✅ geogfm installed at: </span><span class="sc">{</span>geogfm<span class="sc">.</span><span class="va">__file__</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb44-262"><a href="#cb44-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-263"><a href="#cb44-263" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if c01 module exists</span></span>
+<span id="cb44-264"><a href="#cb44-264" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm <span class="im">import</span> c01</span>
+<span id="cb44-265"><a href="#cb44-265" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"✅ c01 module available with </span><span class="sc">{</span><span class="bu">len</span>(<span class="bu">dir</span>(c01))<span class="sc">}</span><span class="ss"> attributes"</span>)</span>
+<span id="cb44-266"><a href="#cb44-266" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-267"><a href="#cb44-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-268"><a href="#cb44-268" aria-hidden="true" tabindex="-1"></a>:::{.callout-warning}</span>
+<span id="cb44-269"><a href="#cb44-269" aria-hidden="true" tabindex="-1"></a><span class="fu">### Important Notes</span></span>
+<span id="cb44-270"><a href="#cb44-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-271"><a href="#cb44-271" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The <span class="in">`-e`</span> flag installs in "editable" mode, meaning changes to the source code are immediately available without reinstalling</span>
+<span id="cb44-272"><a href="#cb44-272" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>You only need to install once per environment (unless you switch conda/virtual environments)</span>
+<span id="cb44-273"><a href="#cb44-273" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>If you get import errors, make sure you've run the Week 1 notebook to generate the <span class="in">`geogfm/c01.py`</span> file via tangling</span>
+<span id="cb44-274"><a href="#cb44-274" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb44-275"><a href="#cb44-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-276"><a href="#cb44-276" aria-hidden="true" tabindex="-1"></a><span class="fu">## Complete Setup (Sections 3-10)</span></span>
+<span id="cb44-277"><a href="#cb44-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-278"><a href="#cb44-278" aria-hidden="true" tabindex="-1"></a>To run the **entire workflow** (Sections 3-10), use this comprehensive setup:</span>
+<span id="cb44-279"><a href="#cb44-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-280"><a href="#cb44-280" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 1: Standard Library Imports</span></span>
+<span id="cb44-281"><a href="#cb44-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-284"><a href="#cb44-284" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb44-285"><a href="#cb44-285" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard library imports</span></span>
+<span id="cb44-286"><a href="#cb44-286" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
+<span id="cb44-287"><a href="#cb44-287" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb44-288"><a href="#cb44-288" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb44-289"><a href="#cb44-289" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime, timedelta</span>
+<span id="cb44-290"><a href="#cb44-290" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb44-291"><a href="#cb44-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-292"><a href="#cb44-292" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ Standard library imports complete"</span>)</span>
+<span id="cb44-293"><a href="#cb44-293" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-294"><a href="#cb44-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-295"><a href="#cb44-295" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 2: Core Data Science Libraries</span></span>
+<span id="cb44-296"><a href="#cb44-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-299"><a href="#cb44-299" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb44-300"><a href="#cb44-300" aria-hidden="true" tabindex="-1"></a><span class="co"># Core data science libraries</span></span>
+<span id="cb44-301"><a href="#cb44-301" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb44-302"><a href="#cb44-302" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb44-303"><a href="#cb44-303" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb44-304"><a href="#cb44-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-305"><a href="#cb44-305" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ Data science libraries loaded"</span>)</span>
+<span id="cb44-306"><a href="#cb44-306" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-307"><a href="#cb44-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-308"><a href="#cb44-308" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 3: Geospatial Libraries</span></span>
+<span id="cb44-309"><a href="#cb44-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-312"><a href="#cb44-312" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb44-313"><a href="#cb44-313" aria-hidden="true" tabindex="-1"></a><span class="co"># Geospatial libraries</span></span>
+<span id="cb44-314"><a href="#cb44-314" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
+<span id="cb44-315"><a href="#cb44-315" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span>
+<span id="cb44-316"><a href="#cb44-316" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rioxarray</span>
+<span id="cb44-317"><a href="#cb44-317" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pystac_client <span class="im">import</span> Client</span>
+<span id="cb44-318"><a href="#cb44-318" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> planetary_computer <span class="im">as</span> pc</span>
+<span id="cb44-319"><a href="#cb44-319" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> box</span>
+<span id="cb44-320"><a href="#cb44-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-321"><a href="#cb44-321" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ Geospatial libraries loaded"</span>)</span>
+<span id="cb44-322"><a href="#cb44-322" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-323"><a href="#cb44-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-324"><a href="#cb44-324" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 4: Interactive Mapping</span></span>
+<span id="cb44-325"><a href="#cb44-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-328"><a href="#cb44-328" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb44-329"><a href="#cb44-329" aria-hidden="true" tabindex="-1"></a><span class="co"># Interactive mapping</span></span>
+<span id="cb44-330"><a href="#cb44-330" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> folium</span>
+<span id="cb44-331"><a href="#cb44-331" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> folium.plugins <span class="im">import</span> MeasureControl, Fullscreen</span>
+<span id="cb44-332"><a href="#cb44-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-333"><a href="#cb44-333" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ Mapping libraries loaded"</span>)</span>
+<span id="cb44-334"><a href="#cb44-334" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-335"><a href="#cb44-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-336"><a href="#cb44-336" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 5: Import Week 1 Helper Functions</span></span>
+<span id="cb44-337"><a href="#cb44-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-338"><a href="#cb44-338" aria-hidden="true" tabindex="-1"></a>This is where the magic happens - all 13+ helper functions in one import!</span>
+<span id="cb44-339"><a href="#cb44-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-342"><a href="#cb44-342" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb44-343"><a href="#cb44-343" aria-hidden="true" tabindex="-1"></a><span class="co"># Import ALL helper functions from tangled Week 1 module</span></span>
+<span id="cb44-344"><a href="#cb44-344" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm.c01 <span class="im">import</span> (</span>
+<span id="cb44-345"><a href="#cb44-345" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Environment and authentication (Section 2.1-2.4.1)</span></span>
+<span id="cb44-346"><a href="#cb44-346" aria-hidden="true" tabindex="-1"></a>    verify_environment,</span>
+<span id="cb44-347"><a href="#cb44-347" aria-hidden="true" tabindex="-1"></a>    setup_planetary_computer_auth,</span>
+<span id="cb44-348"><a href="#cb44-348" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb44-349"><a href="#cb44-349" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Data discovery (Section 2.4.2)</span></span>
+<span id="cb44-350"><a href="#cb44-350" aria-hidden="true" tabindex="-1"></a>    search_sentinel2_scenes,</span>
+<span id="cb44-351"><a href="#cb44-351" aria-hidden="true" tabindex="-1"></a>    search_STAC_scenes,</span>
+<span id="cb44-352"><a href="#cb44-352" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb44-353"><a href="#cb44-353" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Data loading (Section 2.4.3)</span></span>
+<span id="cb44-354"><a href="#cb44-354" aria-hidden="true" tabindex="-1"></a>    load_sentinel2_bands,</span>
+<span id="cb44-355"><a href="#cb44-355" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb44-356"><a href="#cb44-356" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Spatial processing (Section 2.4.4)</span></span>
+<span id="cb44-357"><a href="#cb44-357" aria-hidden="true" tabindex="-1"></a>    get_subset_from_scene,</span>
+<span id="cb44-358"><a href="#cb44-358" aria-hidden="true" tabindex="-1"></a>    get_scene_info,</span>
+<span id="cb44-359"><a href="#cb44-359" aria-hidden="true" tabindex="-1"></a>    create_scene_tiles,</span>
+<span id="cb44-360"><a href="#cb44-360" aria-hidden="true" tabindex="-1"></a>    test_subset_functionality,</span>
+<span id="cb44-361"><a href="#cb44-361" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb44-362"><a href="#cb44-362" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Data processing (Section 2.4.5)</span></span>
+<span id="cb44-363"><a href="#cb44-363" aria-hidden="true" tabindex="-1"></a>    normalize_band,</span>
+<span id="cb44-364"><a href="#cb44-364" aria-hidden="true" tabindex="-1"></a>    create_rgb_composite,</span>
+<span id="cb44-365"><a href="#cb44-365" aria-hidden="true" tabindex="-1"></a>    calculate_ndvi,</span>
+<span id="cb44-366"><a href="#cb44-366" aria-hidden="true" tabindex="-1"></a>    calculate_band_statistics,</span>
+<span id="cb44-367"><a href="#cb44-367" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb44-368"><a href="#cb44-368" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Visualization (Section 2.4.6)</span></span>
+<span id="cb44-369"><a href="#cb44-369" aria-hidden="true" tabindex="-1"></a>    plot_band_comparison,</span>
+<span id="cb44-370"><a href="#cb44-370" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb44-371"><a href="#cb44-371" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Export/Import (Section 2.4.7)</span></span>
+<span id="cb44-372"><a href="#cb44-372" aria-hidden="true" tabindex="-1"></a>    save_geotiff,</span>
+<span id="cb44-373"><a href="#cb44-373" aria-hidden="true" tabindex="-1"></a>    export_analysis_results,</span>
+<span id="cb44-374"><a href="#cb44-374" aria-hidden="true" tabindex="-1"></a>    load_week1_data</span>
+<span id="cb44-375"><a href="#cb44-375" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-376"><a href="#cb44-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-377"><a href="#cb44-377" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ Week 1 helper functions imported"</span>)</span>
+<span id="cb44-378"><a href="#cb44-378" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-379"><a href="#cb44-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-380"><a href="#cb44-380" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 6: Configure Matplotlib</span></span>
+<span id="cb44-381"><a href="#cb44-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-384"><a href="#cb44-384" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb44-385"><a href="#cb44-385" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure matplotlib for publication-quality plots</span></span>
+<span id="cb44-386"><a href="#cb44-386" aria-hidden="true" tabindex="-1"></a>plt.rcParams.update({</span>
+<span id="cb44-387"><a href="#cb44-387" aria-hidden="true" tabindex="-1"></a>    <span class="st">'figure.figsize'</span>: (<span class="dv">10</span>, <span class="dv">6</span>),</span>
+<span id="cb44-388"><a href="#cb44-388" aria-hidden="true" tabindex="-1"></a>    <span class="st">'figure.dpi'</span>: <span class="dv">100</span>,</span>
+<span id="cb44-389"><a href="#cb44-389" aria-hidden="true" tabindex="-1"></a>    <span class="st">'font.size'</span>: <span class="dv">10</span>,</span>
+<span id="cb44-390"><a href="#cb44-390" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.titlesize'</span>: <span class="dv">12</span>,</span>
+<span id="cb44-391"><a href="#cb44-391" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.labelsize'</span>: <span class="dv">10</span>,</span>
+<span id="cb44-392"><a href="#cb44-392" aria-hidden="true" tabindex="-1"></a>    <span class="st">'xtick.labelsize'</span>: <span class="dv">9</span>,</span>
+<span id="cb44-393"><a href="#cb44-393" aria-hidden="true" tabindex="-1"></a>    <span class="st">'ytick.labelsize'</span>: <span class="dv">9</span>,</span>
+<span id="cb44-394"><a href="#cb44-394" aria-hidden="true" tabindex="-1"></a>    <span class="st">'legend.fontsize'</span>: <span class="dv">9</span></span>
+<span id="cb44-395"><a href="#cb44-395" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb44-396"><a href="#cb44-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-397"><a href="#cb44-397" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ Matplotlib configured"</span>)</span>
+<span id="cb44-398"><a href="#cb44-398" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-399"><a href="#cb44-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-400"><a href="#cb44-400" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 7: Setup Logging and Authentication</span></span>
+<span id="cb44-401"><a href="#cb44-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-404"><a href="#cb44-404" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb44-405"><a href="#cb44-405" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure logging</span></span>
+<span id="cb44-406"><a href="#cb44-406" aria-hidden="true" tabindex="-1"></a>logging.basicConfig(</span>
+<span id="cb44-407"><a href="#cb44-407" aria-hidden="true" tabindex="-1"></a>    level<span class="op">=</span>logging.INFO,</span>
+<span id="cb44-408"><a href="#cb44-408" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span><span class="st">'</span><span class="sc">%(asctime)s</span><span class="st"> - </span><span class="sc">%(levelname)s</span><span class="st"> - </span><span class="sc">%(message)s</span><span class="st">'</span></span>
+<span id="cb44-409"><a href="#cb44-409" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-410"><a href="#cb44-410" aria-hidden="true" tabindex="-1"></a>logger <span class="op">=</span> logging.getLogger(<span class="va">__name__</span>)</span>
+<span id="cb44-411"><a href="#cb44-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-412"><a href="#cb44-412" aria-hidden="true" tabindex="-1"></a><span class="co"># Authenticate to Planetary Computer</span></span>
+<span id="cb44-413"><a href="#cb44-413" aria-hidden="true" tabindex="-1"></a>auth_status <span class="op">=</span> setup_planetary_computer_auth()</span>
+<span id="cb44-414"><a href="#cb44-414" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Planetary Computer authentication status: </span><span class="sc">{</span><span class="st">'Authenticated'</span> <span class="cf">if</span> auth_status <span class="cf">else</span> <span class="st">'Anonymous'</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb44-415"><a href="#cb44-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-416"><a href="#cb44-416" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span> <span class="op">+</span> <span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
+<span id="cb44-417"><a href="#cb44-417" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!"</span>)</span>
+<span id="cb44-418"><a href="#cb44-418" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
+<span id="cb44-419"><a href="#cb44-419" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-420"><a href="#cb44-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-421"><a href="#cb44-421" aria-hidden="true" tabindex="-1"></a><span class="fu">## Quick Reference: Available Functions</span></span>
+<span id="cb44-422"><a href="#cb44-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-423"><a href="#cb44-423" aria-hidden="true" tabindex="-1"></a>Here's what you have available after importing from <span class="in">`geogfm.c01`</span>:</span>
+<span id="cb44-424"><a href="#cb44-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-425"><a href="#cb44-425" aria-hidden="true" tabindex="-1"></a><span class="fu">### Authentication &amp; Environment</span></span>
+<span id="cb44-426"><a href="#cb44-426" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`verify_environment()`</span> - Check that required packages are installed</span>
+<span id="cb44-427"><a href="#cb44-427" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`setup_planetary_computer_auth()`</span> - Authenticate to Planetary Computer</span>
+<span id="cb44-428"><a href="#cb44-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-429"><a href="#cb44-429" aria-hidden="true" tabindex="-1"></a><span class="fu">### Data Discovery</span></span>
+<span id="cb44-430"><a href="#cb44-430" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`search_sentinel2_scenes()`</span> - Search for Sentinel-2 scenes</span>
+<span id="cb44-431"><a href="#cb44-431" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`search_STAC_scenes()`</span> - General-purpose STAC search</span>
+<span id="cb44-432"><a href="#cb44-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-433"><a href="#cb44-433" aria-hidden="true" tabindex="-1"></a><span class="fu">### Data Loading</span></span>
+<span id="cb44-434"><a href="#cb44-434" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`load_sentinel2_bands()`</span> - Load bands with retry logic and subsetting</span>
+<span id="cb44-435"><a href="#cb44-435" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-436"><a href="#cb44-436" aria-hidden="true" tabindex="-1"></a><span class="fu">### Spatial Processing</span></span>
+<span id="cb44-437"><a href="#cb44-437" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`get_subset_from_scene()`</span> - Extract spatial subsets using percentages</span>
+<span id="cb44-438"><a href="#cb44-438" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`get_scene_info()`</span> - Get scene characteristics</span>
+<span id="cb44-439"><a href="#cb44-439" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`create_scene_tiles()`</span> - Create systematic tile grid</span>
+<span id="cb44-440"><a href="#cb44-440" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`test_subset_functionality()`</span> - Test data loading pipeline</span>
+<span id="cb44-441"><a href="#cb44-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-442"><a href="#cb44-442" aria-hidden="true" tabindex="-1"></a><span class="fu">### Data Processing</span></span>
+<span id="cb44-443"><a href="#cb44-443" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`normalize_band()`</span> - Percentile-based normalization</span>
+<span id="cb44-444"><a href="#cb44-444" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`create_rgb_composite()`</span> - Create RGB composites</span>
+<span id="cb44-445"><a href="#cb44-445" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`calculate_ndvi()`</span> - Calculate NDVI from NIR and Red bands</span>
+<span id="cb44-446"><a href="#cb44-446" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`calculate_band_statistics()`</span> - Comprehensive band statistics</span>
+<span id="cb44-447"><a href="#cb44-447" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-448"><a href="#cb44-448" aria-hidden="true" tabindex="-1"></a><span class="fu">### Visualization</span></span>
+<span id="cb44-449"><a href="#cb44-449" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`plot_band_comparison()`</span> - Multi-panel band visualization</span>
+<span id="cb44-450"><a href="#cb44-450" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-451"><a href="#cb44-451" aria-hidden="true" tabindex="-1"></a><span class="fu">### Export/Import</span></span>
+<span id="cb44-452"><a href="#cb44-452" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`save_geotiff()`</span> - Export georeferenced GeoTIFF</span>
+<span id="cb44-453"><a href="#cb44-453" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`export_analysis_results()`</span> - Save complete analysis results</span>
+<span id="cb44-454"><a href="#cb44-454" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`load_week1_data()`</span> - Reload processed data</span>
+<span id="cb44-455"><a href="#cb44-455" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-456"><a href="#cb44-456" aria-hidden="true" tabindex="-1"></a><span class="fu">## Complete Copy-Paste Block</span></span>
+<span id="cb44-457"><a href="#cb44-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-458"><a href="#cb44-458" aria-hidden="true" tabindex="-1"></a>For convenience, here's everything in one block you can copy-paste:</span>
+<span id="cb44-459"><a href="#cb44-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-460"><a href="#cb44-460" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb44-461"><a href="#cb44-461" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard library imports</span></span>
+<span id="cb44-462"><a href="#cb44-462" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
+<span id="cb44-463"><a href="#cb44-463" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb44-464"><a href="#cb44-464" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb44-465"><a href="#cb44-465" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime, timedelta</span>
+<span id="cb44-466"><a href="#cb44-466" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb44-467"><a href="#cb44-467" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-468"><a href="#cb44-468" aria-hidden="true" tabindex="-1"></a><span class="co"># Core data science libraries</span></span>
+<span id="cb44-469"><a href="#cb44-469" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb44-470"><a href="#cb44-470" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb44-471"><a href="#cb44-471" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb44-472"><a href="#cb44-472" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-473"><a href="#cb44-473" aria-hidden="true" tabindex="-1"></a><span class="co"># Geospatial libraries</span></span>
+<span id="cb44-474"><a href="#cb44-474" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
+<span id="cb44-475"><a href="#cb44-475" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span>
+<span id="cb44-476"><a href="#cb44-476" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rioxarray</span>
+<span id="cb44-477"><a href="#cb44-477" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pystac_client <span class="im">import</span> Client</span>
+<span id="cb44-478"><a href="#cb44-478" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> planetary_computer <span class="im">as</span> pc</span>
+<span id="cb44-479"><a href="#cb44-479" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> box</span>
+<span id="cb44-480"><a href="#cb44-480" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-481"><a href="#cb44-481" aria-hidden="true" tabindex="-1"></a><span class="co"># Interactive mapping</span></span>
+<span id="cb44-482"><a href="#cb44-482" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> folium</span>
+<span id="cb44-483"><a href="#cb44-483" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> folium.plugins <span class="im">import</span> MeasureControl, Fullscreen</span>
+<span id="cb44-484"><a href="#cb44-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-485"><a href="#cb44-485" aria-hidden="true" tabindex="-1"></a><span class="co"># Import ALL helper functions from tangled Week 1 module</span></span>
+<span id="cb44-486"><a href="#cb44-486" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm.c01 <span class="im">import</span> (</span>
+<span id="cb44-487"><a href="#cb44-487" aria-hidden="true" tabindex="-1"></a>    verify_environment, setup_planetary_computer_auth,</span>
+<span id="cb44-488"><a href="#cb44-488" aria-hidden="true" tabindex="-1"></a>    search_sentinel2_scenes, search_STAC_scenes,</span>
+<span id="cb44-489"><a href="#cb44-489" aria-hidden="true" tabindex="-1"></a>    load_sentinel2_bands,</span>
+<span id="cb44-490"><a href="#cb44-490" aria-hidden="true" tabindex="-1"></a>    get_subset_from_scene, get_scene_info, create_scene_tiles, test_subset_functionality,</span>
+<span id="cb44-491"><a href="#cb44-491" aria-hidden="true" tabindex="-1"></a>    normalize_band, create_rgb_composite, calculate_ndvi, calculate_band_statistics,</span>
+<span id="cb44-492"><a href="#cb44-492" aria-hidden="true" tabindex="-1"></a>    plot_band_comparison,</span>
+<span id="cb44-493"><a href="#cb44-493" aria-hidden="true" tabindex="-1"></a>    save_geotiff, export_analysis_results, load_week1_data</span>
+<span id="cb44-494"><a href="#cb44-494" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-495"><a href="#cb44-495" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-496"><a href="#cb44-496" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure matplotlib</span></span>
+<span id="cb44-497"><a href="#cb44-497" aria-hidden="true" tabindex="-1"></a>plt.rcParams.update({</span>
+<span id="cb44-498"><a href="#cb44-498" aria-hidden="true" tabindex="-1"></a>    <span class="st">'figure.figsize'</span>: (<span class="dv">10</span>, <span class="dv">6</span>),</span>
+<span id="cb44-499"><a href="#cb44-499" aria-hidden="true" tabindex="-1"></a>    <span class="st">'figure.dpi'</span>: <span class="dv">100</span>,</span>
+<span id="cb44-500"><a href="#cb44-500" aria-hidden="true" tabindex="-1"></a>    <span class="st">'font.size'</span>: <span class="dv">10</span>,</span>
+<span id="cb44-501"><a href="#cb44-501" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.titlesize'</span>: <span class="dv">12</span>,</span>
+<span id="cb44-502"><a href="#cb44-502" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.labelsize'</span>: <span class="dv">10</span>,</span>
+<span id="cb44-503"><a href="#cb44-503" aria-hidden="true" tabindex="-1"></a>    <span class="st">'xtick.labelsize'</span>: <span class="dv">9</span>,</span>
+<span id="cb44-504"><a href="#cb44-504" aria-hidden="true" tabindex="-1"></a>    <span class="st">'ytick.labelsize'</span>: <span class="dv">9</span>,</span>
+<span id="cb44-505"><a href="#cb44-505" aria-hidden="true" tabindex="-1"></a>    <span class="st">'legend.fontsize'</span>: <span class="dv">9</span></span>
+<span id="cb44-506"><a href="#cb44-506" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb44-507"><a href="#cb44-507" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-508"><a href="#cb44-508" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure logging</span></span>
+<span id="cb44-509"><a href="#cb44-509" aria-hidden="true" tabindex="-1"></a>logging.basicConfig(level<span class="op">=</span>logging.INFO, <span class="bu">format</span><span class="op">=</span><span class="st">'</span><span class="sc">%(asctime)s</span><span class="st"> - </span><span class="sc">%(levelname)s</span><span class="st"> - </span><span class="sc">%(message)s</span><span class="st">'</span>)</span>
+<span id="cb44-510"><a href="#cb44-510" aria-hidden="true" tabindex="-1"></a>logger <span class="op">=</span> logging.getLogger(<span class="va">__name__</span>)</span>
+<span id="cb44-511"><a href="#cb44-511" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-512"><a href="#cb44-512" aria-hidden="true" tabindex="-1"></a><span class="co"># Authenticate to Planetary Computer</span></span>
+<span id="cb44-513"><a href="#cb44-513" aria-hidden="true" tabindex="-1"></a>auth_status <span class="op">=</span> setup_planetary_computer_auth()</span>
+<span id="cb44-514"><a href="#cb44-514" aria-hidden="true" tabindex="-1"></a>logger.info(<span class="ss">f"Authentication: </span><span class="sc">{</span><span class="st">'✅ Authenticated'</span> <span class="cf">if</span> auth_status <span class="cf">else</span> <span class="st">'⚠️ Anonymous'</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb44-515"><a href="#cb44-515" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-516"><a href="#cb44-516" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span> <span class="op">+</span> <span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
+<span id="cb44-517"><a href="#cb44-517" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!"</span>)</span>
+<span id="cb44-518"><a href="#cb44-518" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
+<span id="cb44-519"><a href="#cb44-519" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-520"><a href="#cb44-520" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-521"><a href="#cb44-521" aria-hidden="true" tabindex="-1"></a><span class="fu">## Example Usage</span></span>
+<span id="cb44-522"><a href="#cb44-522" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-523"><a href="#cb44-523" aria-hidden="true" tabindex="-1"></a>Once imported, you can immediately start working with satellite data:</span>
+<span id="cb44-524"><a href="#cb44-524" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-525"><a href="#cb44-525" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb44-526"><a href="#cb44-526" aria-hidden="true" tabindex="-1"></a><span class="co"># Define your area of interest</span></span>
+<span id="cb44-527"><a href="#cb44-527" aria-hidden="true" tabindex="-1"></a>santa_barbara_bbox <span class="op">=</span> [<span class="op">-</span><span class="fl">120.5</span>, <span class="fl">34.3</span>, <span class="op">-</span><span class="fl">119.5</span>, <span class="fl">34.7</span>]</span>
+<span id="cb44-528"><a href="#cb44-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-529"><a href="#cb44-529" aria-hidden="true" tabindex="-1"></a><span class="co"># Search for scenes</span></span>
+<span id="cb44-530"><a href="#cb44-530" aria-hidden="true" tabindex="-1"></a>scenes <span class="op">=</span> search_sentinel2_scenes(</span>
+<span id="cb44-531"><a href="#cb44-531" aria-hidden="true" tabindex="-1"></a>    bbox<span class="op">=</span>santa_barbara_bbox,</span>
+<span id="cb44-532"><a href="#cb44-532" aria-hidden="true" tabindex="-1"></a>    date_range<span class="op">=</span><span class="st">"2024-06-01/2024-09-30"</span>,</span>
+<span id="cb44-533"><a href="#cb44-533" aria-hidden="true" tabindex="-1"></a>    cloud_cover_max<span class="op">=</span><span class="dv">20</span>,</span>
+<span id="cb44-534"><a href="#cb44-534" aria-hidden="true" tabindex="-1"></a>    limit<span class="op">=</span><span class="dv">10</span></span>
+<span id="cb44-535"><a href="#cb44-535" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-536"><a href="#cb44-536" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-537"><a href="#cb44-537" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Found </span><span class="sc">{</span><span class="bu">len</span>(scenes)<span class="sc">}</span><span class="ss"> scenes!"</span>)</span>
+<span id="cb44-538"><a href="#cb44-538" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-539"><a href="#cb44-539" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the best scene</span></span>
+<span id="cb44-540"><a href="#cb44-540" aria-hidden="true" tabindex="-1"></a>best_scene <span class="op">=</span> scenes[<span class="dv">0</span>]</span>
+<span id="cb44-541"><a href="#cb44-541" aria-hidden="true" tabindex="-1"></a>subset_bbox <span class="op">=</span> get_subset_from_scene(best_scene, x_range<span class="op">=</span>(<span class="dv">30</span>, <span class="dv">70</span>), y_range<span class="op">=</span>(<span class="dv">30</span>, <span class="dv">70</span>))</span>
+<span id="cb44-542"><a href="#cb44-542" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-543"><a href="#cb44-543" aria-hidden="true" tabindex="-1"></a>band_data <span class="op">=</span> load_sentinel2_bands(</span>
+<span id="cb44-544"><a href="#cb44-544" aria-hidden="true" tabindex="-1"></a>    best_scene,</span>
+<span id="cb44-545"><a href="#cb44-545" aria-hidden="true" tabindex="-1"></a>    bands<span class="op">=</span>[<span class="st">'B04'</span>, <span class="st">'B03'</span>, <span class="st">'B02'</span>, <span class="st">'B08'</span>],</span>
+<span id="cb44-546"><a href="#cb44-546" aria-hidden="true" tabindex="-1"></a>    subset_bbox<span class="op">=</span>subset_bbox</span>
+<span id="cb44-547"><a href="#cb44-547" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-548"><a href="#cb44-548" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-549"><a href="#cb44-549" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate NDVI</span></span>
+<span id="cb44-550"><a href="#cb44-550" aria-hidden="true" tabindex="-1"></a>ndvi <span class="op">=</span> calculate_ndvi(band_data[<span class="st">'B08'</span>], band_data[<span class="st">'B04'</span>])</span>
+<span id="cb44-551"><a href="#cb44-551" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-552"><a href="#cb44-552" aria-hidden="true" tabindex="-1"></a><span class="co"># Create RGB composite</span></span>
+<span id="cb44-553"><a href="#cb44-553" aria-hidden="true" tabindex="-1"></a>rgb <span class="op">=</span> create_rgb_composite(band_data[<span class="st">'B04'</span>], band_data[<span class="st">'B03'</span>], band_data[<span class="st">'B02'</span>])</span>
+<span id="cb44-554"><a href="#cb44-554" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-555"><a href="#cb44-555" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✅ Analysis complete!"</span>)</span>
+<span id="cb44-556"><a href="#cb44-556" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-557"><a href="#cb44-557" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-558"><a href="#cb44-558" aria-hidden="true" tabindex="-1"></a><span class="fu">## Troubleshooting</span></span>
+<span id="cb44-559"><a href="#cb44-559" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-560"><a href="#cb44-560" aria-hidden="true" tabindex="-1"></a><span class="fu">### Import Errors</span></span>
+<span id="cb44-561"><a href="#cb44-561" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-562"><a href="#cb44-562" aria-hidden="true" tabindex="-1"></a>If you get <span class="in">`ModuleNotFoundError: No module named 'geogfm'`</span>:</span>
+<span id="cb44-563"><a href="#cb44-563" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-564"><a href="#cb44-564" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Install the package in editable mode:**</span>
+<span id="cb44-565"><a href="#cb44-565" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
+<span id="cb44-566"><a href="#cb44-566" aria-hidden="true" tabindex="-1"></a>   <span class="op">!</span>pip install <span class="op">-</span>e ..  <span class="co"># If in book/ or nbs/ directory</span></span>
+<span id="cb44-567"><a href="#cb44-567" aria-hidden="true" tabindex="-1"></a>   <span class="co"># OR</span></span>
+<span id="cb44-568"><a href="#cb44-568" aria-hidden="true" tabindex="-1"></a>   <span class="op">!</span>pip install <span class="op">-</span>e <span class="op">/</span>path<span class="op">/</span>to<span class="op">/</span>geoAI  <span class="co"># With absolute path</span></span>
+<span id="cb44-569"><a href="#cb44-569" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb44-570"><a href="#cb44-570" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-571"><a href="#cb44-571" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Verify installation:**</span>
+<span id="cb44-572"><a href="#cb44-572" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
+<span id="cb44-573"><a href="#cb44-573" aria-hidden="true" tabindex="-1"></a>   <span class="im">import</span> sys</span>
+<span id="cb44-574"><a href="#cb44-574" aria-hidden="true" tabindex="-1"></a>   <span class="bu">print</span>(<span class="st">"Python paths:"</span>)</span>
+<span id="cb44-575"><a href="#cb44-575" aria-hidden="true" tabindex="-1"></a>   <span class="cf">for</span> p <span class="kw">in</span> sys.path:</span>
+<span id="cb44-576"><a href="#cb44-576" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>p<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb44-577"><a href="#cb44-577" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb44-578"><a href="#cb44-578" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Check if geogfm is installed</span></span>
+<span id="cb44-579"><a href="#cb44-579" aria-hidden="true" tabindex="-1"></a>   <span class="op">!</span>pip show geogfm</span>
+<span id="cb44-580"><a href="#cb44-580" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb44-581"><a href="#cb44-581" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-582"><a href="#cb44-582" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Check your working directory:**</span>
+<span id="cb44-583"><a href="#cb44-583" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
+<span id="cb44-584"><a href="#cb44-584" aria-hidden="true" tabindex="-1"></a>   <span class="im">import</span> os</span>
+<span id="cb44-585"><a href="#cb44-585" aria-hidden="true" tabindex="-1"></a>   <span class="bu">print</span>(<span class="ss">f"Current directory: </span><span class="sc">{</span>os<span class="sc">.</span>getcwd()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb44-586"><a href="#cb44-586" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb44-587"><a href="#cb44-587" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-588"><a href="#cb44-588" aria-hidden="true" tabindex="-1"></a><span class="fu">### Missing c01.py File</span></span>
+<span id="cb44-589"><a href="#cb44-589" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-590"><a href="#cb44-590" aria-hidden="true" tabindex="-1"></a>If you get <span class="in">`ImportError: cannot import name 'setup_planetary_computer_auth' from 'geogfm.c01'`</span>:</span>
+<span id="cb44-591"><a href="#cb44-591" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-592"><a href="#cb44-592" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Verify the c01.py file exists:**</span>
+<span id="cb44-593"><a href="#cb44-593" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
+<span id="cb44-594"><a href="#cb44-594" aria-hidden="true" tabindex="-1"></a>   <span class="im">import</span> os</span>
+<span id="cb44-595"><a href="#cb44-595" aria-hidden="true" tabindex="-1"></a>   c01_path <span class="op">=</span> <span class="st">"geogfm/c01.py"</span></span>
+<span id="cb44-596"><a href="#cb44-596" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> os.path.exists(c01_path):</span>
+<span id="cb44-597"><a href="#cb44-597" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="ss">f"✅ </span><span class="sc">{</span>c01_path<span class="sc">}</span><span class="ss"> exists"</span>)</span>
+<span id="cb44-598"><a href="#cb44-598" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span>:</span>
+<span id="cb44-599"><a href="#cb44-599" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="ss">f"❌ </span><span class="sc">{</span>c01_path<span class="sc">}</span><span class="ss"> not found - you need to run the Week 1 notebook to generate it"</span>)</span>
+<span id="cb44-600"><a href="#cb44-600" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb44-601"><a href="#cb44-601" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-602"><a href="#cb44-602" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**The file is generated by "tangling"** - run the Week 1 notebook (<span class="in">`c01-geospatial-data-foundations.qmd`</span>) to generate <span class="in">`geogfm/c01.py`</span> automatically.</span>
+<span id="cb44-603"><a href="#cb44-603" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-604"><a href="#cb44-604" aria-hidden="true" tabindex="-1"></a><span class="fu">### Function Not Found</span></span>
+<span id="cb44-605"><a href="#cb44-605" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-606"><a href="#cb44-606" aria-hidden="true" tabindex="-1"></a>If a specific function isn't available, check that the <span class="in">`geogfm/c01.py`</span> file has been generated by running the tangle process on the Week 1 notebook.</span>
+<span id="cb44-607"><a href="#cb44-607" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-608"><a href="#cb44-608" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb44-609"><a href="#cb44-609" aria-hidden="true" tabindex="-1"></a><span class="co"># Check what's available in c01</span></span>
+<span id="cb44-610"><a href="#cb44-610" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> geogfm <span class="im">import</span> c01</span>
+<span id="cb44-611"><a href="#cb44-611" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Available functions:"</span>)</span>
+<span id="cb44-612"><a href="#cb44-612" aria-hidden="true" tabindex="-1"></a>functions <span class="op">=</span> [name <span class="cf">for</span> name <span class="kw">in</span> <span class="bu">dir</span>(c01) <span class="cf">if</span> <span class="kw">not</span> name.startswith(<span class="st">'_'</span>)]</span>
+<span id="cb44-613"><a href="#cb44-613" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> func <span class="kw">in</span> <span class="bu">sorted</span>(functions):</span>
+<span id="cb44-614"><a href="#cb44-614" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  - </span><span class="sc">{</span>func<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb44-615"><a href="#cb44-615" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-616"><a href="#cb44-616" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-617"><a href="#cb44-617" aria-hidden="true" tabindex="-1"></a><span class="fu">### Authentication Issues</span></span>
+<span id="cb44-618"><a href="#cb44-618" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-619"><a href="#cb44-619" aria-hidden="true" tabindex="-1"></a>If Planetary Computer authentication fails, check:</span>
+<span id="cb44-620"><a href="#cb44-620" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-621"><a href="#cb44-621" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Environment variable or .env file:**</span>
+<span id="cb44-622"><a href="#cb44-622" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
+<span id="cb44-623"><a href="#cb44-623" aria-hidden="true" tabindex="-1"></a>   <span class="im">import</span> os</span>
+<span id="cb44-624"><a href="#cb44-624" aria-hidden="true" tabindex="-1"></a>   key <span class="op">=</span> os.getenv(<span class="st">'PC_SDK_SUBSCRIPTION_KEY'</span>) <span class="kw">or</span> os.getenv(<span class="st">'PLANETARY_COMPUTER_API_KEY'</span>)</span>
+<span id="cb44-625"><a href="#cb44-625" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> key:</span>
+<span id="cb44-626"><a href="#cb44-626" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="ss">f"✅ API key found (length: </span><span class="sc">{</span><span class="bu">len</span>(key)<span class="sc">}</span><span class="ss">)"</span>)</span>
+<span id="cb44-627"><a href="#cb44-627" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span>:</span>
+<span id="cb44-628"><a href="#cb44-628" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="st">"❌ No API key found - create a .env file with:"</span>)</span>
+<span id="cb44-629"><a href="#cb44-629" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="st">"   PC_SDK_SUBSCRIPTION_KEY=your_key_here"</span>)</span>
+<span id="cb44-630"><a href="#cb44-630" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb44-631"><a href="#cb44-631" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-632"><a href="#cb44-632" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Check .env file location:**</span>
+<span id="cb44-633"><a href="#cb44-633" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
+<span id="cb44-634"><a href="#cb44-634" aria-hidden="true" tabindex="-1"></a>   <span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb44-635"><a href="#cb44-635" aria-hidden="true" tabindex="-1"></a>   env_file <span class="op">=</span> Path(<span class="st">'.env'</span>)</span>
+<span id="cb44-636"><a href="#cb44-636" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> env_file.exists():</span>
+<span id="cb44-637"><a href="#cb44-637" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="ss">f"✅ .env file found at: </span><span class="sc">{</span>env_file<span class="sc">.</span>absolute()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb44-638"><a href="#cb44-638" aria-hidden="true" tabindex="-1"></a>   <span class="cf">else</span>:</span>
+<span id="cb44-639"><a href="#cb44-639" aria-hidden="true" tabindex="-1"></a>       <span class="bu">print</span>(<span class="ss">f"❌ .env file not found in: </span><span class="sc">{</span>Path<span class="sc">.</span>cwd()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb44-640"><a href="#cb44-640" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb44-641"><a href="#cb44-641" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-642"><a href="#cb44-642" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Internet connectivity** - Make sure you have an active connection</span>
+<span id="cb44-643"><a href="#cb44-643" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Service status** - Check <span class="co">[</span><span class="ot">Planetary Computer status</span><span class="co">](https://planetarycomputer.microsoft.com/)</span></span>
+<span id="cb44-644"><a href="#cb44-644" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-645"><a href="#cb44-645" aria-hidden="true" tabindex="-1"></a><span class="fu">### Dependency Issues</span></span>
+<span id="cb44-646"><a href="#cb44-646" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-647"><a href="#cb44-647" aria-hidden="true" tabindex="-1"></a>If you're missing required packages:</span>
+<span id="cb44-648"><a href="#cb44-648" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-649"><a href="#cb44-649" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb44-650"><a href="#cb44-650" aria-hidden="true" tabindex="-1"></a><span class="co"># Install all dependencies from the environment file</span></span>
+<span id="cb44-651"><a href="#cb44-651" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install rasterio xarray rioxarray folium pystac<span class="op">-</span>client planetary<span class="op">-</span>computer matplotlib numpy pandas geopandas</span>
+<span id="cb44-652"><a href="#cb44-652" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb44-653"><a href="#cb44-653" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-654"><a href="#cb44-654" aria-hidden="true" tabindex="-1"></a><span class="fu">## Next Steps</span></span>
+<span id="cb44-655"><a href="#cb44-655" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-656"><a href="#cb44-656" aria-hidden="true" tabindex="-1"></a>Once you have everything imported:</span>
+<span id="cb44-657"><a href="#cb44-657" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-658"><a href="#cb44-658" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Section 3**: Explore STAC catalogs and discover available datasets</span>
+<span id="cb44-659"><a href="#cb44-659" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Section 4**: Define your area of interest with interactive maps</span>
+<span id="cb44-660"><a href="#cb44-660" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Section 5**: Search for and select optimal satellite scenes</span>
+<span id="cb44-661"><a href="#cb44-661" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Section 6**: Load and validate satellite data</span>
+<span id="cb44-662"><a href="#cb44-662" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Section 7**: Create visualizations and calculate indices</span>
+<span id="cb44-663"><a href="#cb44-663" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Section 8**: Build interactive maps with your results</span>
+<span id="cb44-664"><a href="#cb44-664" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>**Section 9**: Export your analysis for future use</span>
+<span id="cb44-665"><a href="#cb44-665" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-666"><a href="#cb44-666" aria-hidden="true" tabindex="-1"></a>Happy analyzing! 🛰️</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
