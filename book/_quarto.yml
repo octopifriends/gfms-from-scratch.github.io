@@ -36,7 +36,13 @@ website:
           - text: Week 6 - ⏰ Spatiotemporal Modeling & Projects
             href: chapters/c06-model-evaluation-analysis.qmd
       - text: 👀 cheatsheets
-        href: cheatsheets.qmd
+        menu:
+          - text: "📋 All Cheatsheets"
+            href: cheatsheets.qmd
+          - text: "---"
+          - text: "⚡ Quick Starts"
+          - text: "Week 01: Import Guide"
+            href: extras/cheatsheets/week01_imports.qmd
       - text: 🧩 explainers
         menu:
           - text: "1️⃣ Week 1"

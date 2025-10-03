@@ -8,6 +8,10 @@ format:
         toc-depth: 2
 ---
 
+## 📅 Weekly Quick Start Guides
+
+- [Week 01: Import Cheatsheet](extras/cheatsheets/week01_imports.qmd) - Using the tangled c01.py module
+
 ## 💻 HPC Installation and setup
 
 - [Setting up HPC Access](extras/grit-hpc-setup.qmd)
