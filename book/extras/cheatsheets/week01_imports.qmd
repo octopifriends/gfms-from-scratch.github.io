@@ -72,33 +72,6 @@ print(f"✅ c01 module available with {len(dir(c01))} attributes")
 - If you get import errors, make sure you've run the Week 1 notebook to generate the `geogfm/c01.py` file via tangling
 :::
 
-## Minimal Setup (Section 3 Only)
-
-If you only want to run **Section 3** (Understanding STAC APIs), here's the minimal import:
-
-```{python}
-# Core imports for Section 3: STAC APIs
-import logging
-from pystac_client import Client
-import planetary_computer as pc
-
-# Import authentication helper from Week 1 module
-from geogfm.c01 import setup_planetary_computer_auth
-
-# Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
-
-# Authenticate to Planetary Computer
-auth_status = setup_planetary_computer_auth()
-logger.info(f"Authentication status: {'Authenticated' if auth_status else 'Anonymous'}")
-
-print("✅ Ready to run Section 3!")
-```
-
 ## Complete Setup (Sections 3-10)
 
 To run the **entire workflow** (Sections 3-10), use this comprehensive setup:
