@@ -114,7 +114,7 @@ skips = ["B101", "B601", "B602", "B603", "B607"]
 [tool.pydocstyle]
 convention = "google"
 add-ignore = ["D100", "D101", "D102", "D103", "D104", "D105", "D107"]
-match-dir = "^(?!(LLMs-from-scratch|_extensions|\.claude|tests|scripts)).*"
+match-dir = "^(?!(LLMs-from-scratch|_extensions|\\.claude|tests|scripts)).*"
 
 # Coverage.py configuration
 [tool.coverage.run]
