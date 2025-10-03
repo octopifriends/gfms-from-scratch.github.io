@@ -1,6 +1,6 @@
 ---
 title: "Week 01 Quick Start Guide"
-subtitle: "Using the tangled c01.py module for rapid geospatial analysis"
+subtitle: "Using the tangled `c01.py` module for rapid geospatial analysis"
 jupyter: geoai
 format:
   html:
@@ -258,11 +258,14 @@ After installation, verify that the package is available:
 ```python
 # Check if geogfm can be imported
 import geogfm
-print(f"✅ geogfm installed at: {geogfm.__file__}")
+import logging
+
+logger = logging.getLogger(__name__)
+logger.info(f"✅ geogfm installed at: {geogfm.__file__}")
 
 # Check if c01 module exists
 from geogfm import c01
-print(f"✅ c01 module available with {len(dir(c01))} attributes")
+logger.info(f"✅ c01 module available with {len(dir(c01))} attributes")
 ```
 
 :::{.callout-warning}
@@ -287,7 +290,9 @@ import os
 from datetime import datetime, timedelta
 from pathlib import Path
 
-print("✅ Standard library imports complete")
+# Set up logger
+logger = logging.getLogger(__name__)
+logger.info("✅ Standard library imports complete")
 ```
 
 ### Step 2: Core Data Science Libraries
@@ -298,7 +303,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-print("✅ Data science libraries loaded")
+logger.info("✅ Data science libraries loaded")
 ```
 
 ### Step 3: Geospatial Libraries
@@ -312,7 +317,7 @@ from pystac_client import Client
 import planetary_computer as pc
 from shapely.geometry import box
 
-print("✅ Geospatial libraries loaded")
+logger.info("✅ Geospatial libraries loaded")
 ```
 
 ### Step 4: Interactive Mapping
@@ -322,7 +327,7 @@ print("✅ Geospatial libraries loaded")
 import folium
 from folium.plugins import MeasureControl, Fullscreen
 
-print("✅ Mapping libraries loaded")
+logger.info("✅ Mapping libraries loaded")
 ```
 
 ### Step 5: Import Week 1 Helper Functions
@@ -364,7 +369,7 @@ from geogfm.c01 import (
     load_week1_data
 )
 
-print("✅ Week 1 helper functions imported")
+logger.info("✅ Week 1 helper functions imported")
 ```
 
 ### Step 6: Configure Matplotlib
@@ -382,7 +387,7 @@ plt.rcParams.update({
     'legend.fontsize': 9
 })
 
-print("✅ Matplotlib configured")
+logger.info("✅ Matplotlib configured")
 ```
 
 ### Step 7: Setup Logging and Authentication
@@ -399,9 +404,9 @@ logger = logging.getLogger(__name__)
 auth_status = setup_planetary_computer_auth()
 logger.info(f"Planetary Computer authentication status: {'Authenticated' if auth_status else 'Anonymous'}")
 
-print("\n" + "="*60)
-print("✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!")
-print("="*60)
+logger.info("\n" + "="*60)
+logger.info("✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!")
+logger.info("="*60)
 ```
 
 ## Quick Reference: Available Functions
@@ -409,32 +414,39 @@ print("="*60)
 Here's what you have available after importing from `geogfm.c01`:
 
 ### Authentication & Environment
+
 - `verify_environment()` - Check that required packages are installed
 - `setup_planetary_computer_auth()` - Authenticate to Planetary Computer
 
 ### Data Discovery
+
 - `search_sentinel2_scenes()` - Search for Sentinel-2 scenes
 - `search_STAC_scenes()` - General-purpose STAC search
 
 ### Data Loading
+
 - `load_sentinel2_bands()` - Load bands with retry logic and subsetting
 
 ### Spatial Processing
+
 - `get_subset_from_scene()` - Extract spatial subsets using percentages
 - `get_scene_info()` - Get scene characteristics
 - `create_scene_tiles()` - Create systematic tile grid
 - `test_subset_functionality()` - Test data loading pipeline
 
 ### Data Processing
+
 - `normalize_band()` - Percentile-based normalization
 - `create_rgb_composite()` - Create RGB composites
 - `calculate_ndvi()` - Calculate NDVI from NIR and Red bands
 - `calculate_band_statistics()` - Comprehensive band statistics
 
 ### Visualization
+
 - `plot_band_comparison()` - Multi-panel band visualization
 
 ### Export/Import
+
 - `save_geotiff()` - Export georeferenced GeoTIFF
 - `export_analysis_results()` - Save complete analysis results
 - `load_week1_data()` - Reload processed data
@@ -443,7 +455,7 @@ Here's what you have available after importing from `geogfm.c01`:
 
 For convenience, here's everything in one block you can copy-paste:
 
-```python
+```{python}
 # Standard library imports
 import logging
 import time
@@ -499,16 +511,16 @@ logger = logging.getLogger(__name__)
 auth_status = setup_planetary_computer_auth()
 logger.info(f"Authentication: {'✅ Authenticated' if auth_status else '⚠️ Anonymous'}")
 
-print("\n" + "="*60)
-print("✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!")
-print("="*60)
+logger.info("\n" + "="*60)
+logger.info("✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!")
+logger.info("="*60)
 ```
 
 ## Example Usage
 
 Once imported, you can immediately start working with satellite data:
 
-```python
+```{python}
 # Define your area of interest
 santa_barbara_bbox = [-120.5, 34.3, -119.5, 34.7]
 
@@ -520,7 +532,7 @@ scenes = search_sentinel2_scenes(
     limit=10
 )
 
-print(f"Found {len(scenes)} scenes!")
+logger.info(f"Found {len(scenes)} scenes!")
 
 # Load the best scene
 best_scene = scenes[0]
@@ -538,7 +550,7 @@ ndvi = calculate_ndvi(band_data['B08'], band_data['B04'])
 # Create RGB composite
 rgb = create_rgb_composite(band_data['B04'], band_data['B03'], band_data['B02'])
 
-print("✅ Analysis complete!")
+logger.info("✅ Analysis complete!")
 ```
 
 ## Troubleshooting
@@ -557,9 +569,12 @@ If you get `ModuleNotFoundError: No module named 'geogfm'`:
 2. **Verify installation:**
    ```python
    import sys
-   print("Python paths:")
+   import logging
+   
+   logger = logging.getLogger(__name__)
+   logger.info("Python paths:")
    for p in sys.path:
-       print(f"  {p}")
+       logger.info(f"  {p}")
    
    # Check if geogfm is installed
    !pip show geogfm
@@ -568,7 +583,10 @@ If you get `ModuleNotFoundError: No module named 'geogfm'`:
 3. **Check your working directory:**
    ```python
    import os
-   print(f"Current directory: {os.getcwd()}")
+   import logging
+   
+   logger = logging.getLogger(__name__)
+   logger.info(f"Current directory: {os.getcwd()}")
    ```
 
 ### Missing c01.py File
@@ -578,11 +596,14 @@ If you get `ImportError: cannot import name 'setup_planetary_computer_auth' from
 1. **Verify the c01.py file exists:**
    ```python
    import os
+   import logging
+   
+   logger = logging.getLogger(__name__)
    c01_path = "geogfm/c01.py"
    if os.path.exists(c01_path):
-       print(f"✅ {c01_path} exists")
+       logger.info(f"✅ {c01_path} exists")
    else:
-       print(f"❌ {c01_path} not found - you need to run the Week 1 notebook to generate it")
+       logger.error(f"❌ {c01_path} not found - you need to run the Week 1 notebook to generate it")
    ```
 
 2. **The file is generated by "tangling"** - run the Week 1 notebook (`c01-geospatial-data-foundations.qmd`) to generate `geogfm/c01.py` automatically.
@@ -594,10 +615,13 @@ If a specific function isn't available, check that the `geogfm/c01.py` file has 
 ```python
 # Check what's available in c01
 from geogfm import c01
-print("Available functions:")
+import logging
+
+logger = logging.getLogger(__name__)
+logger.info("Available functions:")
 functions = [name for name in dir(c01) if not name.startswith('_')]
 for func in sorted(functions):
-    print(f"  - {func}")
+    logger.info(f"  - {func}")
 ```
 
 ### Authentication Issues
@@ -607,22 +631,28 @@ If Planetary Computer authentication fails, check:
 1. **Environment variable or .env file:**
    ```python
    import os
+   import logging
+   
+   logger = logging.getLogger(__name__)
    key = os.getenv('PC_SDK_SUBSCRIPTION_KEY') or os.getenv('PLANETARY_COMPUTER_API_KEY')
    if key:
-       print(f"✅ API key found (length: {len(key)})")
+       logger.info(f"✅ API key found (length: {len(key)})")
    else:
-       print("❌ No API key found - create a .env file with:")
-       print("   PC_SDK_SUBSCRIPTION_KEY=your_key_here")
+       logger.error("❌ No API key found - create a .env file with:")
+       logger.error("   PC_SDK_SUBSCRIPTION_KEY=your_key_here")
    ```
 
 2. **Check .env file location:**
    ```python
    from pathlib import Path
+   import logging
+   
+   logger = logging.getLogger(__name__)
    env_file = Path('.env')
    if env_file.exists():
-       print(f"✅ .env file found at: {env_file.absolute()}")
+       logger.info(f"✅ .env file found at: {env_file.absolute()}")
    else:
-       print(f"❌ .env file not found in: {Path.cwd()}")
+       logger.warning(f"❌ .env file not found in: {Path.cwd()}")
    ```
 
 3. **Internet connectivity** - Make sure you have an active connection
