@@ -1,0 +1,170 @@
+/*-- scss:defaults --*/
+
+// Import fonts
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Nunito:wght@300;800&family=Roboto+Mono:wght@300;400&family=Sanchez&display=swap');
+
+// fonts
+$font-family-sans-serif: 'Nunito', sans-serif;
+$font-family-serif: 'Sanchez', serif;
+$font-family-monospace: 'Roboto Mono', monospace;
+
+// colors
+$baby-blue: #d2e3f3;
+$teal: #047C90;
+$dark-blue: #003660;
+$white: #FFFFFF;
+$green: #78A540;
+$magenta: #900C3F;
+$white: #FFFFFF;
+$off-white: #F7F7F7;
+$gray: #ADADAD;
+$dark-gray: #373A3E;
+$peach: #DF8073;
+
+// quarto sass variables
+$navbar-bg: $off-white;
+$navbar-fg: $dark-blue;
+$navbar-hl: $teal;
+$body-bg: $white;
+$body-color: $dark-gray;
+$footer-bg: $dark-blue;
+$link-color: $green;
+
+/*-- scss:rules --*/
+
+// header font & color
+h1, h2, h3, h4 {
+  font-family: $font-family-serif;
+  color: $dark-blue;
+}
+
+// line beneath h2
+h2 {
+  border-bottom: 3px solid $dark-blue;
+  padding-bottom: 0.5rem;
+}
+
+.large-fa-icon {
+  font-size: 2.5em;
+}
+
+// XL body text
+.body-text-xl {
+  font-size: 30px;
+	line-height: 1.7em;
+	margin-bottom: 1em;
+}
+
+// L body text
+.body-text-l {
+  font-size: 25px;
+	line-height: 1.7em;
+	margin-bottom: 1em;
+}
+
+// M body text
+.body-text-m {
+  font-size: 20px;
+	line-height: 1.7em;
+	margin-bottom: 1em;
+}
+
+// S body text
+.body-text-s {
+  font-size: 14px;
+	line-height: 0.3em;
+}
+
+// pink-box
+.pink-box {
+  width: 800px;
+  padding: 10px;
+  border: 5px solid rgba(217, 178, 189, 0.5);
+  margin: 0 auto;
+}
+
+// gray text
+.gray-text {
+  color: $gray;
+}
+
+// teal text
+.teal-text {
+  color: $teal;
+}
+
+// dark blue text
+.dark-blue-text {
+  color: $dark-blue;
+}
+
+// pink text
+.pink-text {
+  color: $magenta;
+}
+
+// peach text
+.peach-text {
+  color: $peach;
+}
+
+// center text (horizontally)
+.center-text{
+  text-align: center;
+}
+
+// btn styling
+.btn {
+  color: $teal;
+  background-color: $white;
+  border-color: $teal;
+}
+
+// button hover styling
+.btn:hover {
+  color: $green;
+  background-color: $white;
+  border-color: $green;
+}
+
+// responsive navbar title styling with hard-coded line break
+.navbar-brand {
+  font-weight: 700 !important;
+  overflow: visible !important;
+  flex-shrink: 0 !important;
+  min-width: fit-content !important;
+  line-height: 1.1 !important;
+  padding-top: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
+  text-align: center !important;
+}
+
+// ensure navbar title doesn't get crushed on narrow screens
+.navbar-nav {
+  flex-wrap: wrap !important;
+}
+
+// ensure the line break renders properly in HTML
+.navbar-brand br {
+  display: block !important;
+}
+
+// Prevent wide tables from colliding with the right-side TOC
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  display: table;
+  width: max-content; /* allow wide tables to exceed container width */
+  max-width: none;
+}
+
+/* On very narrow screens, let tables wrap inside container */
+@media (max-width: 991.98px) {
+  table {
+    width: 100%;
+  }
+}
+

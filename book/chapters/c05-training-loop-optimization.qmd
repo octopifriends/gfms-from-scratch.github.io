@@ -1,0 +1,665 @@
+---
+title: "Week 5: Fine-Tuning & Transfer Learning"
+subtitle: "Adapting foundation models for specific geospatial tasks"
+editor_options:
+  chunk_output_type: console
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+---
+
+## Learning Objectives
+
+By the end of this session, you will be able to:
+
+- Load and fine-tune pretrained geospatial foundation models for new areas of interest (AOI)
+- Compare linear probing vs. full fine-tuning strategies
+- Implement efficient training techniques for limited data scenarios
+- Design and execute transfer learning experiments
+- Define independent project goals and select appropriate datasets
+
+:::{.callout-note}
+## Prerequisites
+This session builds on Weeks 1-4, particularly Week 4's foundation model loading and feature extraction. Ensure you have a working understanding of PyTorch training loops and the foundation models introduced in Week 4.
+:::
+
+## Fine-Tuning Strategies Overview
+
+Fine-tuning adapts pretrained models to new tasks or domains. For geospatial foundation models, common scenarios include:
+
+- **Domain adaptation**: Urban to agricultural areas
+- **Task adaptation**: Land cover to crop type classification
+- **Geographic adaptation**: Temperate to tropical regions
+- **Temporal adaptation**: Historical to current imagery
+
+### Linear Probing vs. Full Fine-Tuning
+
+```{python}
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader
+import numpy as np
+import matplotlib.pyplot as plt
+from pathlib import Path
+import warnings
+warnings.filterwarnings('ignore')
+
+# Set up reproducible results
+torch.manual_seed(42)
+np.random.seed(42)
+
+class FineTuningStrategy:
+    """Base class for different fine-tuning approaches"""
+
+    def __init__(self, foundation_model, num_classes, strategy='linear_probe'):
+        self.foundation_model = foundation_model
+        self.num_classes = num_classes
+        self.strategy = strategy
+
+        # Create the adapted model based on strategy
+        if strategy == 'linear_probe':
+            self.model = self._create_linear_probe()
+        elif strategy == 'full_finetune':
+            self.model = self._create_full_finetune()
+        else:
+            raise ValueError(f"Unknown strategy: {strategy}")
+
+    def _create_linear_probe(self):
+        """Freeze foundation model, only train classifier head"""
+        # Freeze all foundation model parameters
+        for param in self.foundation_model.parameters():
+            param.requires_grad = False
+
+        # Add trainable classification head
+        feature_dim = 768  # Typical for ViT-based models
+        classifier = nn.Sequential(
+            nn.LayerNorm(feature_dim),
+            nn.Linear(feature_dim, self.num_classes)
+        )
+
+        return nn.Sequential(self.foundation_model, classifier)
+
+    def _create_full_finetune(self):
+        """Unfreeze foundation model, train end-to-end"""
+        # Unfreeze all parameters
+        for param in self.foundation_model.parameters():
+            param.requires_grad = True
+
+        # Add classification head
+        feature_dim = 768
+        classifier = nn.Sequential(
+            nn.LayerNorm(feature_dim),
+            nn.Linear(feature_dim, self.num_classes)
+        )
+
+        return nn.Sequential(self.foundation_model, classifier)
+
+    def count_trainable_params(self):
+        """Count number of trainable parameters"""
+        return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
+
+# Example foundation model (simplified)
+class MockFoundationModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.backbone = nn.Sequential(
+            nn.Conv2d(3, 64, 3, padding=1),
+            nn.ReLU(),
+            nn.AdaptiveAvgPool2d(1),
+            nn.Flatten(),
+            nn.Linear(64, 768)
+        )
+
+    def forward(self, x):
+        return self.backbone(x)
+
+# Demonstrate the difference
+base_model = MockFoundationModel()
+num_classes = 5  # e.g., 5 crop types
+
+# Linear probing
+linear_strategy = FineTuningStrategy(base_model, num_classes, 'linear_probe')
+print(f"Linear Probe - Trainable parameters: {linear_strategy.count_trainable_params():,}")
+
+# Full fine-tuning
+full_strategy = FineTuningStrategy(base_model, num_classes, 'full_finetune')
+print(f"Full Fine-tune - Trainable parameters: {full_strategy.count_trainable_params():,}")
+```
+
+## Practical Fine-Tuning Implementation
+
+### Step 1: Data Preparation for New AOI
+
+```{python}
+from torch.utils.data import Dataset, DataLoader
+from torchvision import transforms
+from PIL import Image
+
+class CropTypeDataset(Dataset):
+    """Dataset for crop type classification in a new AOI"""
+
+    def __init__(self, image_paths, labels, transform=None):
+        self.image_paths = image_paths
+        self.labels = labels
+        self.transform = transform
+
+        # Crop type mapping
+        self.crop_types = {
+            0: 'Corn',
+            1: 'Soybean',
+            2: 'Wheat',
+            3: 'Cotton',
+            4: 'Other'
+        }
+
+    def __len__(self):
+        return len(self.image_paths)
+
+    def __getitem__(self, idx):
+        # For demo, create synthetic data
+        # In practice, load from self.image_paths[idx]
+        image = torch.randn(3, 224, 224)  # RGB image
+        label = self.labels[idx]
+
+        if self.transform:
+            image = self.transform(image)
+
+        return image, label
+
+# Create synthetic dataset for demonstration
+n_samples = 1000
+image_paths = [f"crop_image_{i}.tif" for i in range(n_samples)]
+labels = np.random.randint(0, 5, n_samples)
+
+# Data augmentation for fine-tuning
+train_transform = transforms.Compose([
+    transforms.RandomHorizontalFlip(0.5),
+    transforms.RandomVerticalFlip(0.5),
+    transforms.RandomRotation(10),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                        std=[0.229, 0.224, 0.225])
+])
+
+val_transform = transforms.Compose([
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                        std=[0.229, 0.224, 0.225])
+])
+
+# Split data
+train_size = int(0.8 * n_samples)
+train_paths, val_paths = image_paths[:train_size], image_paths[train_size:]
+train_labels, val_labels = labels[:train_size], labels[train_size:]
+
+# Create datasets
+train_dataset = CropTypeDataset(train_paths, train_labels, train_transform)
+val_dataset = CropTypeDataset(val_paths, val_labels, val_transform)
+
+# Create data loaders
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+
+print(f"Training samples: {len(train_dataset)}")
+print(f"Validation samples: {len(val_dataset)}")
+print(f"Number of classes: {len(train_dataset.crop_types)}")
+```
+
+### Step 2: Training Loop with Different Strategies
+
+```{python}
+import torch.optim as optim
+from torch.optim.lr_scheduler import CosineAnnealingLR
+import time
+from collections import defaultdict
+
+class FineTuner:
+    """Fine-tuning trainer with multiple strategies"""
+
+    def __init__(self, model, device='cpu'):
+        self.model = model.to(device)
+        self.device = device
+        self.history = defaultdict(list)
+
+    def train_epoch(self, train_loader, optimizer, criterion):
+        """Train for one epoch"""
+        self.model.train()
+        total_loss = 0
+        correct = 0
+        total = 0
+
+        for batch_idx, (data, target) in enumerate(train_loader):
+            data, target = data.to(self.device), target.to(self.device)
+
+            optimizer.zero_grad()
+            output = self.model(data)
+            loss = criterion(output, target)
+            loss.backward()
+            optimizer.step()
+
+            total_loss += loss.item()
+            pred = output.argmax(dim=1)
+            correct += pred.eq(target).sum().item()
+            total += target.size(0)
+
+        avg_loss = total_loss / len(train_loader)
+        accuracy = 100. * correct / total
+        return avg_loss, accuracy
+
+    def validate(self, val_loader, criterion):
+        """Validate the model"""
+        self.model.eval()
+        total_loss = 0
+        correct = 0
+        total = 0
+
+        with torch.no_grad():
+            for data, target in val_loader:
+                data, target = data.to(self.device), target.to(self.device)
+                output = self.model(data)
+                loss = criterion(output, target)
+
+                total_loss += loss.item()
+                pred = output.argmax(dim=1)
+                correct += pred.eq(target).sum().item()
+                total += target.size(0)
+
+        avg_loss = total_loss / len(val_loader)
+        accuracy = 100. * correct / total
+        return avg_loss, accuracy
+
+    def fit(self, train_loader, val_loader, epochs=10, lr=1e-3, strategy='linear_probe'):
+        """Complete training procedure"""
+        criterion = nn.CrossEntropyLoss()
+
+        # Different learning rates for different strategies
+        if strategy == 'linear_probe':
+            optimizer = optim.Adam(self.model.parameters(), lr=lr)
+        else:  # full fine-tuning
+            optimizer = optim.Adam(self.model.parameters(), lr=lr/10)  # Lower LR for pretrained weights
+
+        scheduler = CosineAnnealingLR(optimizer, epochs)
+
+        print(f"\nTraining with {strategy} strategy...")
+        print(f"Trainable parameters: {sum(p.numel() for p in self.model.parameters() if p.requires_grad):,}")
+
+        for epoch in range(epochs):
+            start_time = time.time()
+
+            # Train
+            train_loss, train_acc = self.train_epoch(train_loader, optimizer, criterion)
+
+            # Validate
+            val_loss, val_acc = self.validate(val_loader, criterion)
+
+            # Update scheduler
+            scheduler.step()
+
+            # Store history
+            self.history['train_loss'].append(train_loss)
+            self.history['train_acc'].append(train_acc)
+            self.history['val_loss'].append(val_loss)
+            self.history['val_acc'].append(val_acc)
+
+            epoch_time = time.time() - start_time
+            print(f"Epoch {epoch+1:2d}/{epochs} | "
+                  f"Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.2f}% | "
+                  f"Val Loss: {val_loss:.4f} | Val Acc: {val_acc:.2f}% | "
+                  f"Time: {epoch_time:.1f}s")
+
+        return self.history
+
+# Demonstrate both strategies
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(f"Using device: {device}")
+
+# Linear probing
+linear_model = FineTuningStrategy(MockFoundationModel(), 5, 'linear_probe').model
+linear_trainer = FineTuner(linear_model, device)
+linear_history = linear_trainer.fit(train_loader, val_loader, epochs=5, strategy='linear_probe')
+
+# Full fine-tuning
+full_model = FineTuningStrategy(MockFoundationModel(), 5, 'full_finetune').model
+full_trainer = FineTuner(full_model, device)
+full_history = full_trainer.fit(train_loader, val_loader, epochs=5, strategy='full_finetune')
+```
+
+### Step 3: Comparing Results
+
+```{python}
+# Plot training curves
+fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 8))
+
+# Training loss
+ax1.plot(linear_history['train_loss'], label='Linear Probe', marker='o')
+ax1.plot(full_history['train_loss'], label='Full Fine-tune', marker='s')
+ax1.set_title('Training Loss')
+ax1.set_xlabel('Epoch')
+ax1.set_ylabel('Loss')
+ax1.legend()
+ax1.grid(True, alpha=0.3)
+
+# Validation loss
+ax2.plot(linear_history['val_loss'], label='Linear Probe', marker='o')
+ax2.plot(full_history['val_loss'], label='Full Fine-tune', marker='s')
+ax2.set_title('Validation Loss')
+ax2.set_xlabel('Epoch')
+ax2.set_ylabel('Loss')
+ax2.legend()
+ax2.grid(True, alpha=0.3)
+
+# Training accuracy
+ax3.plot(linear_history['train_acc'], label='Linear Probe', marker='o')
+ax3.plot(full_history['train_acc'], label='Full Fine-tune', marker='s')
+ax3.set_title('Training Accuracy')
+ax3.set_xlabel('Epoch')
+ax3.set_ylabel('Accuracy (%)')
+ax3.legend()
+ax3.grid(True, alpha=0.3)
+
+# Validation accuracy
+ax4.plot(linear_history['val_acc'], label='Linear Probe', marker='o')
+ax4.plot(full_history['val_acc'], label='Full Fine-tune', marker='s')
+ax4.set_title('Validation Accuracy')
+ax4.set_xlabel('Epoch')
+ax4.set_ylabel('Accuracy (%)')
+ax4.legend()
+ax4.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+# Print final results
+print("\n=== Final Results ===")
+print(f"Linear Probe - Final Val Acc: {linear_history['val_acc'][-1]:.2f}%")
+print(f"Full Fine-tune - Final Val Acc: {full_history['val_acc'][-1]:.2f}%")
+```
+
+## Advanced Fine-Tuning Techniques
+
+### Learning Rate Scheduling
+
+```{python}
+class AdvancedFineTuner(FineTuner):
+    """Enhanced fine-tuning with advanced techniques"""
+
+    def fit_with_warmup(self, train_loader, val_loader, epochs=20,
+                       base_lr=1e-4, warmup_epochs=3):
+        """Training with learning rate warmup and differential rates"""
+        criterion = nn.CrossEntropyLoss()
+
+        # Separate learning rates for backbone and head
+        backbone_params = []
+        head_params = []
+
+        for name, param in self.model.named_parameters():
+            if param.requires_grad:
+                if 'backbone' in name or any(x in name for x in ['conv', 'transformer']):
+                    backbone_params.append(param)
+                else:
+                    head_params.append(param)
+
+        # Differential learning rates
+        optimizer = optim.AdamW([
+            {'params': backbone_params, 'lr': base_lr / 10},  # Lower LR for pretrained
+            {'params': head_params, 'lr': base_lr}            # Higher LR for new head
+        ], weight_decay=0.01)
+
+        # Warmup scheduler
+        def lr_lambda(epoch):
+            if epoch < warmup_epochs:
+                return epoch / warmup_epochs
+            else:
+                return 0.5 * (1 + np.cos(np.pi * (epoch - warmup_epochs) / (epochs - warmup_epochs)))
+
+        scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda)
+
+        print(f"\nAdvanced fine-tuning with warmup...")
+        print(f"Backbone params: {len(backbone_params)}, Head params: {len(head_params)}")
+
+        best_val_acc = 0
+        patience = 5
+        patience_counter = 0
+
+        for epoch in range(epochs):
+            start_time = time.time()
+
+            # Train
+            train_loss, train_acc = self.train_epoch(train_loader, optimizer, criterion)
+
+            # Validate
+            val_loss, val_acc = self.validate(val_loader, criterion)
+
+            # Update scheduler
+            scheduler.step()
+
+            # Early stopping
+            if val_acc > best_val_acc:
+                best_val_acc = val_acc
+                patience_counter = 0
+                # Save best model
+                torch.save(self.model.state_dict(), 'best_model.pth')
+            else:
+                patience_counter += 1
+
+            # Store history
+            self.history['train_loss'].append(train_loss)
+            self.history['train_acc'].append(train_acc)
+            self.history['val_loss'].append(val_loss)
+            self.history['val_acc'].append(val_acc)
+
+            current_lr = optimizer.param_groups[0]['lr']
+            epoch_time = time.time() - start_time
+
+            print(f"Epoch {epoch+1:2d}/{epochs} | "
+                  f"Train: {train_loss:.4f}/{train_acc:.2f}% | "
+                  f"Val: {val_loss:.4f}/{val_acc:.2f}% | "
+                  f"LR: {current_lr:.6f} | Time: {epoch_time:.1f}s")
+
+            if patience_counter >= patience:
+                print(f"Early stopping at epoch {epoch+1}")
+                break
+
+        print(f"Best validation accuracy: {best_val_acc:.2f}%")
+        return self.history
+
+# Demonstrate advanced techniques
+advanced_model = FineTuningStrategy(MockFoundationModel(), 5, 'full_finetune').model
+advanced_trainer = AdvancedFineTuner(advanced_model, device)
+advanced_history = advanced_trainer.fit_with_warmup(train_loader, val_loader, epochs=15)
+```
+
+## Project Definition Workshop
+
+:::{.callout-tip}
+## Independent Project Goals
+This is where you start defining your independent project for the remainder of the course. Consider these elements:
+
+1. **Problem Definition**: What specific geospatial challenge will you address?
+2. **Dataset Selection**: What data sources will you use?
+3. **Model Choice**: Which foundation model best fits your task?
+4. **Evaluation Strategy**: How will you measure success?
+:::
+
+### Project Template
+
+```{python}
+class ProjectPlanner:
+    """Template for defining your independent project"""
+
+    def __init__(self):
+        self.project_template = {
+            'title': '',
+            'problem_statement': '',
+            'dataset': {
+                'name': '',
+                'source': '',
+                'size': '',
+                'spatial_resolution': '',
+                'temporal_coverage': '',
+                'labels': []
+            },
+            'model': {
+                'foundation_model': '',
+                'fine_tuning_strategy': '',
+                'expected_challenges': []
+            },
+            'evaluation': {
+                'metrics': [],
+                'baseline': '',
+                'success_criteria': ''
+            },
+            'timeline': {
+                'week_6': 'Data preparation and initial experiments',
+                'week_7': 'Model fine-tuning and optimization',
+                'week_8': 'Evaluation and comparison',
+                'week_9': 'Final analysis and presentation prep',
+                'week_10': 'Final presentation'
+            }
+        }
+
+    def example_projects(self):
+        """Show example project ideas"""
+        examples = [
+            {
+                'title': 'Crop Disease Detection in Smallholder Farms',
+                'problem': 'Early detection of crop diseases using satellite imagery',
+                'data': 'Sentinel-2 time series + ground truth from field surveys',
+                'model': 'Prithvi with fine-tuning for disease classification'
+            },
+            {
+                'title': 'Urban Heat Island Mapping',
+                'problem': 'Fine-scale temperature prediction in urban areas',
+                'data': 'Landsat thermal + urban morphology data',
+                'model': 'SatMAE with regression head for temperature prediction'
+            },
+            {
+                'title': 'Wildfire Risk Assessment',
+                'problem': 'Predicting wildfire probability from environmental conditions',
+                'data': 'Multi-modal: Sentinel-2, weather, topography, historical fires',
+                'model': 'Multi-modal foundation model with temporal fusion'
+            }
+        ]
+
+        for i, example in enumerate(examples, 1):
+            print(f"\nExample {i}: {example['title']}")
+            print(f"Problem: {example['problem']}")
+            print(f"Data: {example['data']}")
+            print(f"Model: {example['model']}")
+
+        return examples
+
+    def fill_template(self, **kwargs):
+        """Fill in your project details"""
+        for key, value in kwargs.items():
+            if key in self.project_template:
+                self.project_template[key] = value
+        return self.project_template
+
+# Project planning session
+planner = ProjectPlanner()
+print("=== Example Project Ideas ===")
+examples = planner.example_projects()
+
+print("\n=== Your Project Template ===")
+print("Use this template to define your project:")
+for key, value in planner.project_template.items():
+    print(f"{key}: {value}")
+```
+
+## Efficiency Tips & Best Practices
+
+:::{.callout-warning}
+## Resource Management
+Fine-tuning can be computationally expensive. Use these strategies to optimize:
+
+- **Start with linear probing** to establish baseline performance
+- **Use mixed precision training** (`torch.cuda.amp`) to reduce memory usage
+- **Implement gradient accumulation** for larger effective batch sizes
+- **Apply data augmentation** carefully - some transforms may not be appropriate for satellite imagery
+:::
+
+### Memory-Efficient Training
+
+```{python}
+from torch.cuda.amp import autocast, GradScaler
+
+class EfficientFineTuner(FineTuner):
+    """Memory-efficient fine-tuning with mixed precision"""
+
+    def __init__(self, model, device='cpu', use_amp=True):
+        super().__init__(model, device)
+        self.use_amp = use_amp and device.type == 'cuda'
+        self.scaler = GradScaler() if self.use_amp else None
+
+    def train_epoch_efficient(self, train_loader, optimizer, criterion,
+                            accumulation_steps=4):
+        """Memory-efficient training with gradient accumulation"""
+        self.model.train()
+        total_loss = 0
+        correct = 0
+        total = 0
+
+        optimizer.zero_grad()
+
+        for batch_idx, (data, target) in enumerate(train_loader):
+            data, target = data.to(self.device), target.to(self.device)
+
+            with autocast(enabled=self.use_amp):
+                output = self.model(data)
+                loss = criterion(output, target) / accumulation_steps
+
+            if self.use_amp:
+                self.scaler.scale(loss).backward()
+            else:
+                loss.backward()
+
+            if (batch_idx + 1) % accumulation_steps == 0:
+                if self.use_amp:
+                    self.scaler.step(optimizer)
+                    self.scaler.update()
+                else:
+                    optimizer.step()
+                optimizer.zero_grad()
+
+            total_loss += loss.item() * accumulation_steps
+            pred = output.argmax(dim=1)
+            correct += pred.eq(target).sum().item()
+            total += target.size(0)
+
+        avg_loss = total_loss / len(train_loader)
+        accuracy = 100. * correct / total
+        return avg_loss, accuracy
+
+print("\n=== Efficiency Tips ===")
+print("1. Use mixed precision training (AMP) to reduce memory usage")
+print("2. Implement gradient accumulation for larger effective batch sizes")
+print("3. Start with linear probing before full fine-tuning")
+print("4. Use appropriate data augmentation for satellite imagery")
+print("5. Monitor GPU memory usage and adjust batch size accordingly")
+```
+
+## Assignment: Define Your Project
+
+:::{.callout-note}
+## Week 5 Deliverable
+By the end of this week, complete your project proposal including:
+
+1. **Problem Statement**: Clear description of the geospatial challenge you'll address
+2. **Dataset Plan**: Identify and access your target dataset
+3. **Model Strategy**: Choose foundation model and fine-tuning approach
+4. **Evaluation Plan**: Define metrics and success criteria
+5. **Timeline**: Map tasks to remaining weeks
+
+Submit a 1-2 page project proposal by end of week.
+:::
+
+### Next Steps
+
+- **Week 6**: Begin implementing your project with spatiotemporal modeling techniques
+- **Week 7**: Scale up analysis using cloud platforms and optimization
+- **Week 8**: Build deployment pipeline and evaluation framework
+- **Week 9**: Finalize analysis and prepare presentation
+- **Week 10**: Final project presentations
+
+The foundation model fine-tuning techniques you've learned this week will be essential for adapting pretrained models to your specific use case and geographic area of interest.

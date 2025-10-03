@@ -1,0 +1,683 @@
+---
+title: "Week 01 Quick Start Guide"
+subtitle: "Using the tangled `c01.py` module for rapid geospatial analysis"
+jupyter: geoai
+format:
+  html:
+    code-fold: false
+    toc: true
+    toc-depth: 3
+---
+
+## Overview
+
+This guide shows you how to use the pre-built helper functions from Week 1 without needing to copy-paste all the code from Section 2. All the functions are already available in the `geogfm.c01` module!
+
+:::{.callout-tip}
+### Why Use the Tangled Module?
+
+The Week 1 session defines 13+ helper functions in Section 2. Instead of re-running all those cells every time, you can simply import them from `geogfm.c01` and start analyzing data immediately!
+:::
+
+## Syncing Your Fork with Class Updates
+
+If you've forked and cloned the class repository, you'll need to periodically sync your fork with the upstream (original class repo) to get the latest module code and updates.
+
+### One-Time Setup: Add Upstream Remote
+
+First, check if you already have the upstream remote configured:
+
+```bash
+# Check your current remotes
+git remote -v
+```
+
+If you only see `origin` (your fork), add the upstream remote:
+
+```bash
+# Add the upstream remote (original class repo)
+git remote add upstream https://github.com/kcaylor/GEOG-288KC-geospatial-foundation-models.git
+
+# Verify it was added
+git remote -v
+```
+
+You should now see:
+- `origin` - your fork (where you push your work)
+- `upstream` - the original class repo (where you pull updates)
+
+### Updating Your Fork: Recommended Workflow
+
+:::{.callout-tip}
+### Protect Your Work First!
+
+Before syncing, make sure your work is safe:
+
+1. **Commit your changes** to a feature branch (not `main`)
+2. **Push to your fork** regularly
+3. **Never work directly on `main`** - keep it clean for updates
+:::
+
+#### Step 1: Save Your Current Work
+
+```bash
+# Check what files you've modified
+git status
+
+# If you have uncommitted changes, save them
+git add your-notebook.ipynb your-analysis.py
+git commit -m "WIP: my analysis work"
+
+# Or stash them temporarily
+git stash save "my current work"
+```
+
+#### Step 2: Fetch Updates from Upstream
+
+```bash
+# Make sure you're on your main branch
+git checkout main
+
+# Fetch all updates from the class repo (upstream)
+git fetch upstream
+
+# See what's new
+git log --oneline main..upstream/main
+```
+
+#### Step 3: Merge Updates into Your Fork
+
+```bash
+# Merge upstream changes into your local main
+git merge upstream/main
+
+# If there are conflicts, Git will tell you which files need attention
+```
+
+#### Step 4: Update Your Remote Fork
+
+```bash
+# Push the updated main to your fork on GitHub
+git push origin main
+```
+
+#### Step 5: Restore Your Work (if stashed)
+
+```bash
+# If you stashed changes, restore them
+git stash pop
+```
+
+### Best Practices for Protecting Your Work
+
+#### 1. Use Feature Branches for Your Work
+
+**DO THIS:**
+```bash
+# Create a branch for each assignment or analysis
+git checkout -b week01-my-analysis
+# ... do your work ...
+git add my-notebook.ipynb
+git commit -m "Complete Week 1 analysis for Santa Barbara"
+git push origin week01-my-analysis
+```
+
+**NOT THIS:**
+```bash
+# DON'T work directly on main
+git checkout main
+# ... do your work ...  # ❌ This makes syncing harder!
+```
+
+#### 2. Keep Personal Files Out of Git
+
+Create a `.gitignore` file (or add to the existing one) to exclude your personal work:
+
+```bash
+# Add to .gitignore
+echo "my-notebooks/" >> .gitignore
+echo "my-analysis/" >> .gitignore
+echo "*.local.ipynb" >> .gitignore
+echo "week1_output/" >> .gitignore
+```
+
+#### 3. Name Your Files to Avoid Conflicts
+
+Use a personal prefix for your notebooks:
+
+```
+✅ GOOD:
+  - yourname-week01-analysis.ipynb
+  - yourname-santa-barbara-study.ipynb
+  - my-notes.md
+
+❌ AVOID:
+  - week01.ipynb (might conflict with class files)
+  - analysis.ipynb (too generic)
+```
+
+### Handling Merge Conflicts
+
+If you get conflicts when merging upstream:
+
+```bash
+# Git will show you which files have conflicts
+git status
+
+# Open each conflicting file and look for conflict markers:
+# <<<<<<< HEAD
+# Your changes
+# =======
+# Upstream changes
+# >>>>>>> upstream/main
+
+# Edit the file to resolve conflicts, then:
+git add resolved-file.ipynb
+git commit -m "Merge upstream updates, resolved conflicts"
+```
+
+:::{.callout-warning}
+### When Conflicts Happen
+
+If class files (like `geogfm/c01.py`) have conflicts:
+1. **Keep the upstream version** - this is the latest module code
+2. Your personal notebooks should never conflict if you follow naming conventions
+3. If in doubt, ask for help before force-pushing!
+:::
+
+### Quick Reference: Common Sync Commands
+
+```bash
+# Quick update (when you have no local changes on main)
+git checkout main
+git pull upstream main
+git push origin main
+
+# Full workflow (with local work protection)
+git checkout main
+git stash                    # Save any uncommitted work
+git fetch upstream           # Get latest from class repo
+git merge upstream/main      # Merge into your local main
+git push origin main         # Update your GitHub fork
+git stash pop               # Restore your work
+
+# Check sync status
+git fetch upstream
+git log --oneline main..upstream/main  # See what's new upstream
+git log --oneline upstream/main..main  # See your commits not in upstream
+```
+
+### After Syncing: Reinstall the Package
+
+After pulling updates to `geogfm/c01.py` or other module files, the editable install will automatically pick up changes. But to be safe:
+
+```python
+# In your notebook, restart the kernel or reimport
+import importlib
+from geogfm import c01
+importlib.reload(c01)  # Reload the updated module
+
+# Or restart the Jupyter kernel (Kernel → Restart)
+```
+
+## Installation
+
+Before you can import from `geogfm.c01`, you need to install the `geogfm` package in editable mode. This lets Python find the module files.
+
+### Option 1: Install from Project Root (Recommended)
+
+If you're working in a notebook in the `book/` or `nbs/` directory:
+
+```python
+# Install the geogfm package in editable mode
+!pip install -e ..
+```
+
+### Option 2: Install with Absolute Path
+
+If you're working from anywhere else, use the absolute path to the project root:
+
+```python
+# Replace with your actual path to the geoAI directory
+!pip install -e /Users/your-username/dev/geoAI
+```
+
+### Option 3: Install from Terminal
+
+You can also install from the terminal before opening your notebook:
+
+```bash
+cd /path/to/geoAI
+pip install -e .
+```
+
+### Verify Installation
+
+After installation, verify that the package is available:
+
+```python
+# Check if geogfm can be imported
+import geogfm
+import logging
+
+logger = logging.getLogger(__name__)
+logger.info(f"✅ geogfm installed at: {geogfm.__file__}")
+
+# Check if c01 module exists
+from geogfm import c01
+logger.info(f"✅ c01 module available with {len(dir(c01))} attributes")
+```
+
+:::{.callout-warning}
+### Important Notes
+
+- The `-e` flag installs in "editable" mode, meaning changes to the source code are immediately available without reinstalling
+- You only need to install once per environment (unless you switch conda/virtual environments)
+- If you get import errors, make sure you've run the Week 1 notebook to generate the `geogfm/c01.py` file via tangling
+:::
+
+## Complete Setup (Sections 3-10)
+
+To run the **entire workflow** (Sections 3-10), use this comprehensive setup:
+
+### Step 1: Standard Library Imports
+
+```{python}
+# Standard library imports
+import logging
+import time
+import os
+from datetime import datetime, timedelta
+from pathlib import Path
+
+# Set up logger
+logger = logging.getLogger(__name__)
+logger.info("✅ Standard library imports complete")
+```
+
+### Step 2: Core Data Science Libraries
+
+```{python}
+# Core data science libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+logger.info("✅ Data science libraries loaded")
+```
+
+### Step 3: Geospatial Libraries
+
+```{python}
+# Geospatial libraries
+import rasterio
+import xarray as xr
+import rioxarray
+from pystac_client import Client
+import planetary_computer as pc
+from shapely.geometry import box
+
+logger.info("✅ Geospatial libraries loaded")
+```
+
+### Step 4: Interactive Mapping
+
+```{python}
+# Interactive mapping
+import folium
+from folium.plugins import MeasureControl, Fullscreen
+
+logger.info("✅ Mapping libraries loaded")
+```
+
+### Step 5: Import Week 1 Helper Functions
+
+This is where the magic happens - all 13+ helper functions in one import!
+
+```{python}
+# Import ALL helper functions from tangled Week 1 module
+from geogfm.c01 import (
+    # Environment and authentication (Section 2.1-2.4.1)
+    verify_environment,
+    setup_planetary_computer_auth,
+    
+    # Data discovery (Section 2.4.2)
+    search_sentinel2_scenes,
+    search_STAC_scenes,
+    
+    # Data loading (Section 2.4.3)
+    load_sentinel2_bands,
+    
+    # Spatial processing (Section 2.4.4)
+    get_subset_from_scene,
+    get_scene_info,
+    create_scene_tiles,
+    test_subset_functionality,
+    
+    # Data processing (Section 2.4.5)
+    normalize_band,
+    create_rgb_composite,
+    calculate_ndvi,
+    calculate_band_statistics,
+    
+    # Visualization (Section 2.4.6)
+    plot_band_comparison,
+    
+    # Export/Import (Section 2.4.7)
+    save_geotiff,
+    export_analysis_results,
+    load_week1_data
+)
+
+logger.info("✅ Week 1 helper functions imported")
+```
+
+### Step 6: Configure Matplotlib
+
+```{python}
+# Configure matplotlib for publication-quality plots
+plt.rcParams.update({
+    'figure.figsize': (10, 6),
+    'figure.dpi': 100,
+    'font.size': 10,
+    'axes.titlesize': 12,
+    'axes.labelsize': 10,
+    'xtick.labelsize': 9,
+    'ytick.labelsize': 9,
+    'legend.fontsize': 9
+})
+
+logger.info("✅ Matplotlib configured")
+```
+
+### Step 7: Setup Logging and Authentication
+
+```{python}
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# Authenticate to Planetary Computer
+auth_status = setup_planetary_computer_auth()
+logger.info(f"Planetary Computer authentication status: {'Authenticated' if auth_status else 'Anonymous'}")
+
+logger.info("\n" + "="*60)
+logger.info("✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!")
+logger.info("="*60)
+```
+
+## Quick Reference: Available Functions
+
+Here's what you have available after importing from `geogfm.c01`:
+
+### Authentication & Environment
+
+- `verify_environment()` - Check that required packages are installed
+- `setup_planetary_computer_auth()` - Authenticate to Planetary Computer
+
+### Data Discovery
+
+- `search_sentinel2_scenes()` - Search for Sentinel-2 scenes
+- `search_STAC_scenes()` - General-purpose STAC search
+
+### Data Loading
+
+- `load_sentinel2_bands()` - Load bands with retry logic and subsetting
+
+### Spatial Processing
+
+- `get_subset_from_scene()` - Extract spatial subsets using percentages
+- `get_scene_info()` - Get scene characteristics
+- `create_scene_tiles()` - Create systematic tile grid
+- `test_subset_functionality()` - Test data loading pipeline
+
+### Data Processing
+
+- `normalize_band()` - Percentile-based normalization
+- `create_rgb_composite()` - Create RGB composites
+- `calculate_ndvi()` - Calculate NDVI from NIR and Red bands
+- `calculate_band_statistics()` - Comprehensive band statistics
+
+### Visualization
+
+- `plot_band_comparison()` - Multi-panel band visualization
+
+### Export/Import
+
+- `save_geotiff()` - Export georeferenced GeoTIFF
+- `export_analysis_results()` - Save complete analysis results
+- `load_week1_data()` - Reload processed data
+
+## Complete Copy-Paste Block
+
+For convenience, here's everything in one block you can copy-paste:
+
+```{python}
+# Standard library imports
+import logging
+import time
+import os
+from datetime import datetime, timedelta
+from pathlib import Path
+
+# Core data science libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Geospatial libraries
+import rasterio
+import xarray as xr
+import rioxarray
+from pystac_client import Client
+import planetary_computer as pc
+from shapely.geometry import box
+
+# Interactive mapping
+import folium
+from folium.plugins import MeasureControl, Fullscreen
+
+# Import ALL helper functions from tangled Week 1 module
+from geogfm.c01 import (
+    verify_environment, setup_planetary_computer_auth,
+    search_sentinel2_scenes, search_STAC_scenes,
+    load_sentinel2_bands,
+    get_subset_from_scene, get_scene_info, create_scene_tiles, test_subset_functionality,
+    normalize_band, create_rgb_composite, calculate_ndvi, calculate_band_statistics,
+    plot_band_comparison,
+    save_geotiff, export_analysis_results, load_week1_data
+)
+
+# Configure matplotlib
+plt.rcParams.update({
+    'figure.figsize': (10, 6),
+    'figure.dpi': 100,
+    'font.size': 10,
+    'axes.titlesize': 12,
+    'axes.labelsize': 10,
+    'xtick.labelsize': 9,
+    'ytick.labelsize': 9,
+    'legend.fontsize': 9
+})
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+# Authenticate to Planetary Computer
+auth_status = setup_planetary_computer_auth()
+logger.info(f"Authentication: {'✅ Authenticated' if auth_status else '⚠️ Anonymous'}")
+
+logger.info("\n" + "="*60)
+logger.info("✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!")
+logger.info("="*60)
+```
+
+## Example Usage
+
+Once imported, you can immediately start working with satellite data:
+
+```{python}
+# Define your area of interest
+santa_barbara_bbox = [-120.5, 34.3, -119.5, 34.7]
+
+# Search for scenes
+scenes = search_sentinel2_scenes(
+    bbox=santa_barbara_bbox,
+    date_range="2024-06-01/2024-09-30",
+    cloud_cover_max=20,
+    limit=10
+)
+
+logger.info(f"Found {len(scenes)} scenes!")
+
+# Load the best scene
+best_scene = scenes[0]
+subset_bbox = get_subset_from_scene(best_scene, x_range=(30, 70), y_range=(30, 70))
+
+band_data = load_sentinel2_bands(
+    best_scene,
+    bands=['B04', 'B03', 'B02', 'B08'],
+    subset_bbox=subset_bbox
+)
+
+# Calculate NDVI
+ndvi = calculate_ndvi(band_data['B08'], band_data['B04'])
+
+# Create RGB composite
+rgb = create_rgb_composite(band_data['B04'], band_data['B03'], band_data['B02'])
+
+logger.info("✅ Analysis complete!")
+```
+
+## Troubleshooting
+
+### Import Errors
+
+If you get `ModuleNotFoundError: No module named 'geogfm'`:
+
+1. **Install the package in editable mode:**
+   ```python
+   !pip install -e ..  # If in book/ or nbs/ directory
+   # OR
+   !pip install -e /path/to/geoAI  # With absolute path
+   ```
+
+2. **Verify installation:**
+   ```python
+   import sys
+   import logging
+   
+   logger = logging.getLogger(__name__)
+   logger.info("Python paths:")
+   for p in sys.path:
+       logger.info(f"  {p}")
+   
+   # Check if geogfm is installed
+   !pip show geogfm
+   ```
+
+3. **Check your working directory:**
+   ```python
+   import os
+   import logging
+   
+   logger = logging.getLogger(__name__)
+   logger.info(f"Current directory: {os.getcwd()}")
+   ```
+
+### Missing c01.py File
+
+If you get `ImportError: cannot import name 'setup_planetary_computer_auth' from 'geogfm.c01'`:
+
+1. **Verify the c01.py file exists:**
+   ```python
+   import os
+   import logging
+   
+   logger = logging.getLogger(__name__)
+   c01_path = "geogfm/c01.py"
+   if os.path.exists(c01_path):
+       logger.info(f"✅ {c01_path} exists")
+   else:
+       logger.error(f"❌ {c01_path} not found - you need to run the Week 1 notebook to generate it")
+   ```
+
+2. **The file is generated by "tangling"** - run the Week 1 notebook (`c01-geospatial-data-foundations.qmd`) to generate `geogfm/c01.py` automatically.
+
+### Function Not Found
+
+If a specific function isn't available, check that the `geogfm/c01.py` file has been generated by running the tangle process on the Week 1 notebook.
+
+```python
+# Check what's available in c01
+from geogfm import c01
+import logging
+
+logger = logging.getLogger(__name__)
+logger.info("Available functions:")
+functions = [name for name in dir(c01) if not name.startswith('_')]
+for func in sorted(functions):
+    logger.info(f"  - {func}")
+```
+
+### Authentication Issues
+
+If Planetary Computer authentication fails, check:
+
+1. **Environment variable or .env file:**
+   ```python
+   import os
+   import logging
+   
+   logger = logging.getLogger(__name__)
+   key = os.getenv('PC_SDK_SUBSCRIPTION_KEY') or os.getenv('PLANETARY_COMPUTER_API_KEY')
+   if key:
+       logger.info(f"✅ API key found (length: {len(key)})")
+   else:
+       logger.error("❌ No API key found - create a .env file with:")
+       logger.error("   PC_SDK_SUBSCRIPTION_KEY=your_key_here")
+   ```
+
+2. **Check .env file location:**
+   ```python
+   from pathlib import Path
+   import logging
+   
+   logger = logging.getLogger(__name__)
+   env_file = Path('.env')
+   if env_file.exists():
+       logger.info(f"✅ .env file found at: {env_file.absolute()}")
+   else:
+       logger.warning(f"❌ .env file not found in: {Path.cwd()}")
+   ```
+
+3. **Internet connectivity** - Make sure you have an active connection
+4. **Service status** - Check [Planetary Computer status](https://planetarycomputer.microsoft.com/)
+
+### Dependency Issues
+
+If you're missing required packages:
+
+```python
+# Install all dependencies from the environment file
+!pip install rasterio xarray rioxarray folium pystac-client planetary-computer matplotlib numpy pandas geopandas
+```
+
+## Next Steps
+
+Once you have everything imported:
+
+1. **Section 3**: Explore STAC catalogs and discover available datasets
+2. **Section 4**: Define your area of interest with interactive maps
+3. **Section 5**: Search for and select optimal satellite scenes
+4. **Section 6**: Load and validate satellite data
+5. **Section 7**: Create visualizations and calculate indices
+6. **Section 8**: Build interactive maps with your results
+7. **Section 9**: Export your analysis for future use
+
+Happy analyzing! 🛰️
+

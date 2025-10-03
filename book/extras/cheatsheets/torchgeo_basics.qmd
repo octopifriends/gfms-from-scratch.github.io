@@ -1,0 +1,564 @@
+---
+title: "TorchGeo Datasets & Transforms"
+subtitle: "Geospatial datasets and preprocessing"
+jupyter: geoai
+format:
+  html:
+    code-fold: false
+---
+
+## Introduction to TorchGeo
+
+TorchGeo is a PyTorch domain library for geospatial data, providing datasets, samplers, transforms, and pre-trained models for satellite imagery and geospatial applications.
+
+```{python}
+import torch
+import torchgeo
+from torchgeo.datasets import RasterDataset, stack_samples
+from torchgeo.transforms import AugmentationSequential
+import matplotlib.pyplot as plt
+import numpy as np
+
+print(f"TorchGeo version: {torchgeo.__version__}")
+print(f"PyTorch version: {torch.__version__}")
+```
+
+## Core Dataset Classes
+
+### RasterDataset basics
+```{python}
+from torchgeo.datasets import RasterDataset
+from torchgeo.samplers import RandomGeoSampler
+import tempfile
+import os
+from pathlib import Path
+
+# Create a simple custom dataset (not inheriting from RasterDataset for demo)
+from torchgeo.datasets import BoundingBox
+from rtree.index import Index, Property
+
+class SampleGeoDataset:
+    """Sample geospatial dataset for demonstration"""
+    
+    def __init__(self, transforms=None):
+        self.transforms = transforms
+        # Define dataset bounds
+        self.bounds = BoundingBox(-10.0, 10.0, -10.0, 10.0, 0, 100)
+        # Define resolution (meters per pixel)
+        self.res = 10.0  # 10 meter resolution
+        
+        # Create spatial index required by TorchGeo samplers
+        self.index = Index(interleaved=False, properties=Property(dimension=3))
+        # Add the dataset bounds to the index
+        self.index.insert(0, tuple(self.bounds))
+        
+    def __getitem__(self, query):
+        # Create synthetic data for demonstration
+        sample = {
+            'image': torch.rand(3, 256, 256),  # RGB image
+            'bbox': query,
+            'crs': 'EPSG:4326'
+        }
+        
+        if self.transforms:
+            sample = self.transforms(sample)
+            
+        return sample
+    
+    def __len__(self):
+        return 1000  # Arbitrary length for sampling
+
+# Initialize dataset
+dataset = SampleGeoDataset()
+print(f"Dataset created: {type(dataset).__name__}")
+print(f"Dataset bounds: {dataset.bounds}")
+```
+
+### VisionDataset examples
+```{python}
+from torchgeo.datasets import RESISC45, EuroSAT
+
+# Note: These require downloaded data files
+# For demonstration, we show the usage patterns
+
+# RESISC45 - Remote sensing image scene classification
+# resisc45 = RESISC45(root='data/resisc45', download=True)
+# print(f"RESISC45 classes: {len(resisc45.classes)}")
+
+# EuroSAT - Sentinel-2 image classification  
+# eurosat = EuroSAT(root='data/eurosat', download=True)
+# print(f"EuroSAT classes: {len(eurosat.classes)}")
+
+print("Vision dataset classes ready for use with downloaded data")
+```
+
+## Geospatial Sampling
+
+### RandomGeoSampler
+```{python}
+from torchgeo.samplers import RandomGeoSampler, GridGeoSampler
+from torchgeo.datasets import BoundingBox
+
+# Define a region of interest
+roi = BoundingBox(
+    minx=-10.0, maxx=10.0,
+    miny=-10.0, maxy=10.0,
+    mint=0, maxt=100
+)
+
+# For demonstration, show sampler concepts without full implementation
+print("TorchGeo Samplers:")
+print("- RandomGeoSampler: Randomly samples patches from spatial regions")
+print("- GridGeoSampler: Systematically samples patches in a grid pattern") 
+print("- Units can be PIXELS or CRS (coordinate reference system)")
+print(f"Sample ROI: {roi}")
+
+# Note: Actual usage requires proper GeoDataset implementation
+# random_sampler = RandomGeoSampler(dataset=dataset, size=256, length=100, roi=roi)
+```
+
+### GridGeoSampler
+```{python}
+# Grid-based systematic sampling concept
+print("GridGeoSampler Usage Pattern:")
+print("- size: Patch size in pixels (e.g., 256)")
+print("- stride: Step size between patches (e.g., 128 for overlap)")
+print("- roi: Region of interest as BoundingBox")
+print("- Provides systematic spatial coverage")
+
+# Example conceptual usage:
+# grid_sampler = GridGeoSampler(dataset=dataset, size=256, stride=128, roi=roi)
+```
+
+## Data Transforms
+
+### Basic transforms
+```{python}
+import torchvision.transforms as T
+from torchgeo.transforms import AugmentationSequential
+
+# Standard computer vision transforms for preprocessing
+normalization_transform = T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+
+# Basic geometric augmentations
+basic_augments = T.Compose([
+    T.RandomHorizontalFlip(p=0.5),
+    T.RandomVerticalFlip(p=0.5),
+])
+
+print("Transform sequences created:")
+print("- Normalization transform for pretrained models") 
+print("- Basic augmentations for training")
+print("- TorchGeo's AugmentationSequential preserves spatial relationships")
+```
+
+### Geospatial-aware transforms
+```{python}
+# Create sample data for demonstration
+sample_image = torch.rand(3, 256, 256)
+sample_mask = torch.randint(0, 5, (256, 256))
+
+# Apply basic transforms
+augmented_image = basic_augments(sample_image)
+normalized_image = normalization_transform(sample_image)
+
+print(f"Original image shape: {sample_image.shape}")
+print(f"Augmented image shape: {augmented_image.shape}")
+print(f"Normalized image range: [{normalized_image.min():.3f}, {normalized_image.max():.3f}]")
+
+# TorchGeo's AugmentationSequential provides spatial awareness
+print("\nTorchGeo AugmentationSequential benefits:")
+print("- Preserves spatial relationships between image and mask")
+print("- Handles coordinate transformations")
+print("- Supports multi-modal data (image + labels + metadata)")
+```
+
+## Working with Real Satellite Data
+
+### Landsat dataset example
+```{python}
+from torchgeo.datasets import Landsat8
+
+# Note: Requires actual Landsat data
+# landsat = Landsat8(root='data/landsat8')
+
+# Define query for specific area and time
+query = BoundingBox(
+    minx=-100.0, maxx=-99.0,  # Longitude
+    miny=40.0, maxy=41.0,     # Latitude  
+    mint=637110000,           # Time (Unix timestamp)
+    maxt=637196400
+)
+
+# Sample usage pattern:
+# sample = landsat[query]
+# print(f"Landsat sample keys: {sample.keys()}")
+
+print("Landsat dataset pattern demonstrated")
+```
+
+### Sentinel-2 dataset example  
+```{python}
+from torchgeo.datasets import Sentinel2
+
+# Sentinel-2 usage pattern
+# sentinel = Sentinel2(root='data/sentinel2')
+# s2_sample = sentinel[query]
+
+print("Sentinel-2 dataset pattern demonstrated")
+```
+
+## Multi-modal Data Fusion
+
+### Combining datasets
+```{python}
+from torchgeo.datasets import IntersectionDataset, UnionDataset
+
+# Multi-modal data fusion concept
+print("TorchGeo Dataset Fusion:")
+print("- IntersectionDataset: Combines data that exists in ALL datasets")
+print("- UnionDataset: Combines data that exists in ANY dataset")
+print("- Useful for multi-modal analysis (optical + SAR + DEM)")
+
+# Example fusion workflow:
+print("\nTypical fusion workflow:")
+print("1. Load optical imagery dataset (Sentinel-2)")
+print("2. Load elevation dataset (DEM)")
+print("3. Load land cover dataset (labels)")
+print("4. Use IntersectionDataset to ensure spatial-temporal alignment")
+print("5. Sample consistent patches across all modalities")
+
+# Note: Requires proper GeoDataset implementations
+# fused_ds = IntersectionDataset(optical_ds, dem_ds, landcover_ds)
+```
+
+### Stack samples utility
+```{python}
+# Create multiple samples to stack
+samples = []
+for i in range(4):
+    sample = {
+        'image': torch.rand(3, 64, 64),
+        'mask': torch.randint(0, 2, (64, 64)),
+        'elevation': torch.rand(1, 64, 64)
+    }
+    samples.append(sample)
+
+# Stack into batch
+batch = stack_samples(samples)
+
+print(f"Batch image shape: {batch['image'].shape}")
+print(f"Batch mask shape: {batch['mask'].shape}")
+print(f"Batch elevation shape: {batch['elevation'].shape}")
+```
+
+## DataModule for Training
+
+### Lightning DataModule
+```{python}
+import pytorch_lightning as pl
+from torch.utils.data import DataLoader
+
+class GeospatialDataModule(pl.LightningDataModule):
+    """Data module for geospatial training"""
+    
+    def __init__(self, batch_size=32, num_workers=4):
+        super().__init__()
+        self.batch_size = batch_size
+        self.num_workers = num_workers
+        
+    def setup(self, stage=None):
+        print("Setting up geospatial data module:")
+        print("- Train/val split: 80/20")
+        print("- Spatial sampling strategy")
+        print("- Multi-worker data loading")
+        
+    def train_dataloader(self):
+        print("Creating train dataloader with TorchGeo samplers")
+        return None  # Would return actual DataLoader with GeoSampler
+    
+    def val_dataloader(self):
+        print("Creating validation dataloader")
+        return None  # Would return actual DataLoader
+
+# Example usage pattern
+print("PyTorch Lightning + TorchGeo Integration:")
+print("- Use GeoDataModule for spatial-aware data loading")
+print("- Combine with GeoSamplers for patch-based training")
+print("- Stack samples for batch processing")
+print("- Supports multi-modal geospatial data")
+
+datamodule = GeospatialDataModule(batch_size=8)
+datamodule.setup()
+```
+
+## Pre-trained Models
+
+### Using TorchGeo models
+```{python}
+from torchgeo.models import ResNet18_Weights
+import torchvision.models as models
+
+# Load pre-trained weights for satellite imagery
+# weights = ResNet18_Weights.SENTINEL2_ALL_MOCO
+# model = models.resnet18(weights=weights)
+
+# For demonstration without actual weights:
+model = models.resnet18(pretrained=False)
+model.conv1 = torch.nn.Conv2d(
+    in_channels=12,  # Sentinel-2 has 12 bands
+    out_channels=64,
+    kernel_size=7,
+    stride=2,
+    padding=3,
+    bias=False
+)
+
+print(f"Model adapted for {model.conv1.in_channels} input channels")
+```
+
+### Fine-tuning for classification
+```{python}
+import torch.nn as nn
+
+class GeospatialClassifier(nn.Module):
+    """Classifier for geospatial data"""
+    
+    def __init__(self, backbone, num_classes=10):
+        super().__init__()
+        self.backbone = backbone
+        
+        # Replace classifier head
+        if hasattr(backbone, 'fc'):
+            in_features = backbone.fc.in_features
+            backbone.fc = nn.Linear(in_features, num_classes)
+        
+    def forward(self, x):
+        return self.backbone(x)
+
+# Create classifier
+classifier = GeospatialClassifier(model, num_classes=10)
+print(f"Classifier created for {classifier.backbone.fc.out_features} classes")
+```
+
+## Visualization and Inspection
+
+### Plotting samples
+```{python}
+def plot_sample(sample, figsize=(12, 4)):
+    """Plot a geospatial sample"""
+    fig, axes = plt.subplots(1, 3, figsize=figsize)
+    
+    # RGB image (first 3 channels)
+    if 'image' in sample:
+        image = sample['image']
+        if image.shape[0] >= 3:
+            rgb = image[:3].permute(1, 2, 0)
+            # Normalize for display
+            rgb = (rgb - rgb.min()) / (rgb.max() - rgb.min())
+            axes[0].imshow(rgb)
+            axes[0].set_title('RGB Composite')
+            axes[0].axis('off')
+    
+    # Mask/labels
+    if 'mask' in sample:
+        mask = sample['mask']
+        axes[1].imshow(mask, cmap='tab10')
+        axes[1].set_title('Mask/Labels')
+        axes[1].axis('off')
+    
+    # Additional data (e.g., elevation)
+    if 'elevation' in sample:
+        elev = sample['elevation'].squeeze()
+        im = axes[2].imshow(elev, cmap='terrain')
+        axes[2].set_title('Elevation')
+        axes[2].axis('off')
+        plt.colorbar(im, ax=axes[2], shrink=0.8)
+    
+    plt.tight_layout()
+    plt.show()
+
+# Create and plot a sample
+demo_sample = {
+    'image': torch.rand(3, 128, 128),
+    'mask': torch.randint(0, 5, (128, 128)),
+    'elevation': torch.rand(1, 128, 128) * 1000
+}
+
+plot_sample(demo_sample)
+```
+
+### Dataset statistics
+```{python}
+def compute_dataset_stats(dataloader, num_samples=100):
+    """Compute dataset statistics for normalization"""
+    
+    pixel_sum = torch.zeros(3)
+    pixel_squared_sum = torch.zeros(3)
+    num_pixels = 0
+    
+    for i, batch in enumerate(dataloader):
+        if i >= num_samples:
+            break
+            
+        images = batch['image']
+        batch_size, channels, height, width = images.shape
+        num_pixels += batch_size * height * width
+        
+        pixel_sum += images.sum(dim=[0, 2, 3])
+        pixel_squared_sum += (images ** 2).sum(dim=[0, 2, 3])
+    
+    mean = pixel_sum / num_pixels
+    var = (pixel_squared_sum / num_pixels) - (mean ** 2)
+    std = torch.sqrt(var)
+    
+    return mean, std
+
+# Example usage (would require actual dataloader)
+# mean, std = compute_dataset_stats(train_loader)
+# print(f"Dataset mean: {mean}")
+# print(f"Dataset std: {std}")
+
+print("Dataset statistics computation function ready")
+```
+
+## Advanced Features
+
+### Custom indices and bands
+```{python}
+class SpectralIndices:
+    """Common spectral indices for satellite imagery"""
+    
+    @staticmethod
+    def ndvi(red, nir):
+        """Normalized Difference Vegetation Index"""
+        return (nir - red) / (nir + red + 1e-8)
+    
+    @staticmethod
+    def ndwi(green, nir):
+        """Normalized Difference Water Index"""
+        return (green - nir) / (green + nir + 1e-8)
+    
+    @staticmethod
+    def evi(blue, red, nir, g=2.5, c1=6.0, c2=7.5, l=1.0):
+        """Enhanced Vegetation Index"""
+        return g * (nir - red) / (nir + c1 * red - c2 * blue + l)
+
+# Example with Sentinel-2 bands (simulated)
+s2_image = torch.rand(12, 256, 256)  # 12 Sentinel-2 bands
+
+# Extract specific bands (0-indexed)
+blue = s2_image[1]    # B2
+green = s2_image[2]   # B3  
+red = s2_image[3]     # B4
+nir = s2_image[7]     # B8
+
+# Calculate indices
+ndvi = SpectralIndices.ndvi(red, nir)
+ndwi = SpectralIndices.ndwi(green, nir)
+evi = SpectralIndices.evi(blue, red, nir)
+
+print(f"NDVI shape: {ndvi.shape}, range: [{ndvi.min():.3f}, {ndvi.max():.3f}]")
+print(f"NDWI shape: {ndwi.shape}, range: [{ndwi.min():.3f}, {ndwi.max():.3f}]")
+```
+
+### Temporal data handling
+```{python}
+class TemporalDataset:
+    """Dataset for temporal satellite imagery"""
+    
+    def __init__(self, time_steps=5):
+        self.time_steps = time_steps
+        self.bounds = BoundingBox(-10.0, 10.0, -10.0, 10.0, 0, 100)
+        # Create spatial index
+        self.index = Index(interleaved=False, properties=Property(dimension=3))
+        self.index.insert(0, tuple(self.bounds))
+    
+    def __getitem__(self, query):
+        # Simulate temporal data
+        temporal_images = []
+        
+        for t in range(self.time_steps):
+            # Each time step has slightly different data
+            image = torch.rand(3, 256, 256) + t * 0.1
+            temporal_images.append(image)
+        
+        return {
+            'image': torch.stack(temporal_images, dim=0),  # [T, C, H, W]
+            'bbox': query,
+            'timestamps': torch.arange(self.time_steps)
+        }
+
+# Create temporal dataset
+temporal_ds = TemporalDataset(time_steps=5)
+print("Temporal dataset created for time series analysis")
+```
+
+## Performance Optimization
+
+### Caching and preprocessing
+```{python}
+class CachedDataset:
+    """Dataset with caching for repeated access"""
+    
+    def __init__(self, cache_size=1000):
+        self.cache = {}
+        self.cache_size = cache_size
+        self.bounds = BoundingBox(-10.0, 10.0, -10.0, 10.0, 0, 100)
+        # Create spatial index
+        self.index = Index(interleaved=False, properties=Property(dimension=3))
+        self.index.insert(0, tuple(self.bounds))
+    
+    def __getitem__(self, query):
+        query_key = str(query)
+        
+        if query_key in self.cache:
+            return self.cache[query_key]
+        
+        # Generate/load data
+        sample = {
+            'image': torch.rand(3, 256, 256),
+            'bbox': query
+        }
+        
+        # Cache if space available
+        if len(self.cache) < self.cache_size:
+            self.cache[query_key] = sample
+        
+        return sample
+
+print("Cached dataset implementation ready")
+```
+
+### Memory-efficient loading
+```{python}
+def create_efficient_dataloader(dataset, batch_size=32, num_workers=4):
+    """Create memory-efficient dataloader"""
+    
+    sampler = RandomGeoSampler(dataset, size=256, length=1000)
+    
+    return DataLoader(
+        dataset,
+        sampler=sampler,
+        batch_size=batch_size,
+        num_workers=num_workers,
+        collate_fn=stack_samples,
+        pin_memory=True,  # Faster GPU transfer
+        persistent_workers=True,  # Keep workers alive
+        prefetch_factor=2  # Prefetch batches
+    )
+
+print("Efficient dataloader configuration ready")
+```
+
+## Summary
+
+Key TorchGeo concepts:
+- **RasterDataset**: Base class for raster data
+- **VisionDataset**: Classification datasets (RESISC45, EuroSAT)
+- **GeoSampler**: Spatial sampling strategies
+- **Transforms**: Geospatial-aware data augmentation
+- **DataModule**: PyTorch Lightning integration
+- **Multi-modal**: Combining different data sources
+- **Pre-trained models**: Domain-specific model weights
+- **Spectral indices**: Vegetation, water, soil indices

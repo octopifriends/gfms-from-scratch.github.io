@@ -1,0 +1,124 @@
+# GPU-optimized requirements for GEOG 288KC
+# Install after creating conda environment
+
+# Foundation Models and Transformers
+transformers>=4.35.0
+datasets>=2.14.0
+huggingface-hub>=0.19.0
+accelerate>=0.24.0
+peft>=0.6.0
+bitsandbytes>=0.41.0
+sentence-transformers>=2.2.0
+
+# Geospatial ML Libraries
+torchgeo>=0.5.0
+segmentation-models-pytorch>=0.3.0
+albumentations>=1.3.0
+timm>=0.9.0
+efficientnet-pytorch>=0.7.0
+
+# Earth Engine and Google Earth Tools
+geemap>=0.28.0
+ee-extra>=0.0.15
+geetools>=1.3.0
+eemont>=0.3.15
+wxee>=0.4.0
+
+# Advanced Geospatial Analysis
+leafmap>=0.25.0
+pystac>=1.8.0
+pystac-client>=0.7.0
+planetary-computer>=1.0.0
+stackstac>=0.4.0
+odc-stac>=0.3.0
+
+# Satellite Data Access
+landsatxplore>=0.15.0
+sentinelsat>=1.2.0
+sentinelhub>=3.9.0
+planet>=2.4.0
+
+# API and Web Frameworks
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+streamlit>=1.28.0
+gradio>=3.50.0
+dash>=2.14.0
+
+# MLOps and Experiment Tracking
+mlflow>=2.8.0
+wandb>=0.16.0
+neptune-client>=1.8.0
+comet-ml>=3.35.0
+
+# GPU-Accelerated Computing (RAPIDS)
+cudf-cu11>=23.10.0  # GPU pandas
+cupy-cuda11x>=12.3.0  # GPU numpy
+cuml-cu11>=23.10.0  # GPU scikit-learn
+
+# Distributed Computing
+ray[default]>=2.8.0
+modin[ray]>=0.24.0
+
+# Cloud and Authentication
+google-auth>=2.23.0
+google-cloud-storage>=2.10.0
+boto3>=1.29.0
+azure-storage-blob>=12.19.0
+
+# Climate and Meteorological Data
+xesmf>=0.8.0
+cf-xarray>=0.8.0
+metpy>=1.5.0
+
+# Advanced Visualization
+deck-gl>=0.8.0
+pydeck>=0.8.0
+keplergl>=0.3.0
+ipyleaflet>=0.17.0
+
+# Model Optimization and Tuning
+optuna>=3.4.0
+hyperopt>=0.2.0
+
+# Utilities and CLI Tools
+rich>=13.7.0
+typer>=0.9.0
+loguru>=0.7.0
+omegaconf>=2.3.0
+hydra-core>=1.3.0
+
+# Model Serving
+bentoml>=1.1.0
+torchserve>=0.8.0
+
+# Jupyter Extensions
+ipympl>=0.9.0
+ipyvolume>=0.6.0
+jupyterlab-git>=0.44.0
+jupyterlab-lsp>=4.2.0
+
+# Additional Geospatial Foundation Models
+# Note: Some models may require special installation procedures
+# See installation/scripts/install_foundation_models.sh
+
+# Development and Testing
+pytest-xdist>=3.3.0  # Parallel testing
+pytest-cov>=4.1.0
+memory-profiler>=0.61.0
+line-profiler>=4.1.0
+
+# Documentation and Notebooks
+nbformat>=5.9.0
+nbconvert>=7.9.0
+jupyter-book>=0.15.0
+myst-parser>=2.0.0
+
+# Performance Monitoring
+gpustat>=1.1.0
+py-spy>=0.3.0
+scalene>=1.5.0
+
+# Additional utilities for large-scale processing
+dask-ml>=2023.3.0
+dask-cuda>=23.10.0  # GPU-accelerated Dask

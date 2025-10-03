@@ -1,0 +1,17 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type":"Feature","properties":{"aoi_id":"santa_ynez_valley"},
+     "geometry":{"type":"Polygon","coordinates":[[[-120.30,34.55],[-119.95,34.55],[-119.95,34.80],[-120.30,34.80],[-120.30,34.55]]]}},
+    {"type":"Feature","properties":{"aoi_id":"santa_maria_valley"},
+     "geometry":{"type":"Polygon","coordinates":[[[-120.60,34.80],[-120.30,34.80],[-120.30,35.10],[-120.60,35.10],[-120.60,34.80]]]}},
+    {"type":"Feature","properties":{"aoi_id":"cuyama_valley"},
+     "geometry":{"type":"Polygon","coordinates":[[[-120.40,34.80],[-119.60,34.80],[-119.60,35.00],[-120.40,35.00],[-120.40,34.80]]]}},
+    {"type":"Feature","properties":{"aoi_id":"carrizo_plain"},
+     "geometry":{"type":"Polygon","coordinates":[[[-120.30,35.00],[-119.60,35.00],[-119.60,35.40],[-120.30,35.40],[-120.30,35.00]]]}},
+    {"type":"Feature","properties":{"aoi_id":"paso_robles"},
+     "geometry":{"type":"Polygon","coordinates":[[[-120.90,35.50],[-120.50,35.50],[-120.50,35.80],[-120.90,35.80],[-120.90,35.50]]]}},
+    {"type":"Feature","properties":{"aoi_id":"los_padres_inland"},
+     "geometry":{"type":"Polygon","coordinates":[[[-120.10,34.60],[-119.80,34.60],[-119.80,34.85],[-120.10,34.85],[-120.10,34.60]]]} }
+  ]
+}

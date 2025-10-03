@@ -1,0 +1,109 @@
+project:
+  type: website
+  output-dir: ../docs
+  render:
+    - "*.qmd"
+    - "Syllabus.md"
+    - "*.ipynb"
+    - "!nbs/**"
+    - "!installation/**"
+    - "!example_course/**"
+    - "!LLMs-from-scratch/**"
+    - "!COURSE_*.md"
+    - "!*_PLAN.md"
+
+website:
+  site-url: https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models
+  navbar:
+    title: "GEOG 288KC"
+    right:
+      - text: 🏠 home
+        href: index.qmd
+      - text: 📋 syllabus
+        href: Syllabus.html
+      - text: 💻 weekly sessions
+        menu:
+          - text: Week 1 - 🚀 Core Tools and Data Access
+            href: chapters/c01-geospatial-data-foundations.qmd
+          - text: Week 2 - ⚡ Rapid Remote Sensing Preprocessing
+            href: chapters/c02-spatial-temporal-attention-mechanisms.qmd
+          - text: Week 3 - 🤖 Machine Learning on Remote Sensing
+            href: chapters/c03-complete-gfm-architecture.qmd
+          - text: Week 4 - 🏗️ Foundation Models in Practice
+            href: chapters/c04-pretraining-implementation.qmd
+          - text: Week 5 - 🔧 Fine-Tuning & Transfer Learning
+            href: chapters/c05-training-loop-optimization.qmd
+          - text: Week 6 - ⏰ Spatiotemporal Modeling & Projects
+            href: chapters/c06-model-evaluation-analysis.qmd
+      - text: 👀 cheatsheets
+        menu:
+          - text: "📋 All Cheatsheets"
+            href: cheatsheets.qmd
+          - text: "---"
+          - text: "⚡ Quick Starts"
+          - text: "Week 01: Import Guide"
+            href: extras/cheatsheets/week01_imports.qmd
+      - text: 🧩 explainers
+        menu:
+          - text: "1️⃣ Week 1"
+          - text: "🤖 AI/ML/DL/FM Hierarchy"
+            href: extras/ai-ml-dl-fm-hierarchy.qmd
+          - text: "🎯 GFM Predictions (Standalone)"
+            href: extras/geospatial-foundation-model-predictions-standalone.qmd
+          - text: "✅ Geospatial Task/Prediction Types"
+            href: extras/geospatial-prediction-hierarchy.qmd
+          - text: "2️⃣ Week 2"
+          - text: "🏗️ Foundation Model Architectures"
+            href: chapters/c00a-foundation_model_architectures.qmd
+          - text: "🎓 Introduction to Deep Learning Architecture"
+            href: chapters/c00b-introduction-to-deeplearning-architecture.qmd
+      - text: 📖 extras
+        menu:
+          - text: "🎯 Practical Examples"
+          - text: Normalization Comparison
+            href: extras/examples/normalization_comparison.qmd
+          - text: ResNet Implementation
+            href: extras/examples/resnet.qmd
+          - text: Text Encoder
+            href: extras/examples/text_encoder.qmd
+          - text: Tiling and Patches
+            href: extras/examples/tiling-and-patches.qmd
+          - text: TerraTorch Workflows
+            href: extras/examples/terratorch_workflows.qmd
+          - text: "📚 Reference Materials"
+            href: extras/resources/course_resources.qmd
+          - text: "📁 Project Templates"
+          - text: Project Proposal Template
+            href: extras/projects/project-proposal-template.qmd
+          - text: Project Results Template
+            href: extras/projects/mvp-template.qmd
+      - icon: github
+        href: https://github.com/gfms-from-scratch/gfms-from-scratch.github.io
+        target: _blank
+  page-footer:
+    background: dark
+    right: This website is built with [{{< fa brands github title="the github octocat logo" >}}](https://github.com/kcaylor/GEOG-288KC-geospatial-foundation-models) and [Quarto](https://quarto.org/)
+    left: |
+      ![Department of Geography logo](/images/geog-logo.png){.img-fluid width=250px}
+format:
+  html:
+    theme: meds-website-styles.scss
+    toc: true
+    title-block-banner: true
+    page-layout: full
+    code-fold: false
+    code-tools: true
+    jupyter: geoai
+    # note: keep filters at project level for reliability across engines
+
+filters:
+  - fontawesome
+  - tools/filters/tangle.py   # run your Python filter
+  - tools/filters/path_shortcode.py   # handle {{< path >}} shortcodes
+
+tangle-root: ..
+
+execute:
+  freeze: auto
+
+editor: source

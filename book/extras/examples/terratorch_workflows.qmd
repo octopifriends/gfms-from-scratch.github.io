@@ -1,0 +1,244 @@
+---
+title: "TerraTorch: No-/Low-Code GFM Workflows"
+subtitle: "Classification, Segmentation, and Embeddings"
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: show
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction to Terratorch
+
+Geospatial Foundation Models (GFMs) are often used for three core workflows: classification, segmentation, and embedding extraction. TerraTorch provides a no-/low-code interface to fine-tune and evaluate GFMs via configuration files and simple commands—ideal for quickly exploring a task before writing custom code.
+
+---
+
+## Quick environment check
+
+Use this cell to confirm your runtime and whether `terratorch` is available. If it is not installed, see the optional install cell below.
+
+```{python}
+# | echo: true
+import sys, platform
+
+print(f"Python: {sys.version.split()[0]}")
+print(f"Platform: {platform.platform()}")
+
+try:
+    import torch
+    print(f"PyTorch: {torch.__version__}; cuda={torch.cuda.is_available()}")
+except Exception as e:
+    print("PyTorch not available:", e)
+
+try:
+    import terratorch
+    print("TerraTorch is installed.")
+except Exception as e:
+    print("TerraTorch not available:", e)
+```
+
+---
+
+## No-code: Land cover classification (single-label)
+
+Intent: Show how a configuration file can fine-tune a pretrained backbone on a standard classification dataset with no Python coding.
+
+1) Example configuration
+
+```yaml
+# terratorch-configs/classification_eurosat.yaml
+
+task: classification
+
+data:
+  dataset: geobench.eurosat_rgb     # Example GEO-Bench dataset key
+  split: standard                   # Use library-provided split
+  batch_size: 64
+  num_workers: 4
+
+model:
+  backbone: prithvi-100m           # Example backbone identifier
+  pretrained: true
+  head: linear                      # Linear classifier head
+  num_classes: 10                   # EuroSAT RGB has 10 classes
+
+trainer:
+  max_epochs: 5
+  precision: 16
+  accelerator: auto
+
+optim:
+  name: adamw
+  lr: 3.0e-4
+  weight_decay: 0.01
+
+outputs:
+  dir: runs/classification_eurosat
+```
+
+2) Run training from the command line (choose one):
+
+```{bash}
+#| echo: true
+#| eval: false
+# Option A: dedicated CLI (if provided by your TerraTorch install)
+terratorch-train --config terratorch-configs/classification_eurosat.yaml
+
+# Option B: Python module entrypoint (Hydra-style)
+python -m terratorch.train --config terratorch-configs/classification_eurosat.yaml
+```
+
+3) Evaluate or predict (typical patterns):
+
+```{bash}
+#| echo: true
+#| eval: false
+terratorch-eval --run runs/classification_eurosat
+terratorch-predict --run runs/classification_eurosat --images path/to/*.tif --out preds/
+```
+
+What to notice:
+
+- Data, model, and trainer are declarative—change `dataset`, `backbone`, or `max_epochs` to iterate rapidly.
+- Outputs are organized under `runs/` for easy comparison across experiments.
+
+---
+
+## No-code: Semantic segmentation (pixel-wise)
+
+Intent: Demonstrate swapping the task and head while reusing a pretrained backbone.
+
+1) Example configuration
+
+```yaml
+# terratorch-configs/segmentation_floods.yaml
+
+task: segmentation
+
+data:
+  dataset: geobench.floods_s2      # Example placeholder for a flood dataset
+  split: standard
+  batch_size: 4                    # Larger images → smaller batch
+  num_workers: 4
+
+model:
+  backbone: satmae-base
+  pretrained: true
+  head: unet                       # Use a UNet-style decoder
+  num_classes: 2                    # water vs. non-water (example)
+
+trainer:
+  max_epochs: 10
+  precision: 16
+  accelerator: auto
+
+optim:
+  name: adamw
+  lr: 1.0e-4
+  weight_decay: 0.01
+
+outputs:
+  dir: runs/segmentation_floods
+```
+
+2) Train and visualize predictions
+
+```{bash}
+#| echo: true
+#| eval: false
+terratorch-train --config terratorch-configs/segmentation_floods.yaml
+terratorch-predict --run runs/segmentation_floods --images path/to/patches/*.tif --out preds/
+```
+
+What to notice:
+
+- Only `task`, `head`, and `num_classes` changed from classification.
+- You can reuse the same `backbone` across very different downstream tasks.
+
+---
+
+## No-/Low-code: Embedding extraction for retrieval or clustering
+
+Intent: Extract patch-level embeddings from a pretrained GFM for downstream analytics (nearest neighbors, clustering, or few-shot learning).
+
+1) Example configuration
+
+```yaml
+# terratorch-configs/embeddings_satellite.yaml
+
+task: embeddings
+
+data:
+  dataset: geobench.eurosat_rgb
+  split: train
+  batch_size: 128
+  num_workers: 4
+
+model:
+  backbone: prithvi-100m
+  pretrained: true
+  pooling: gap          # global average pool token embeddings
+
+outputs:
+  dir: runs/embeddings_eurosat
+```
+
+2) Extract and save features
+
+```{bash}
+#| echo: true
+#| eval: false
+terratorch-embed --config terratorch-configs/embeddings_satellite.yaml
+```
+
+3) Low-code: Load saved features and inspect neighbors
+
+```{python}
+# | echo: true
+# Example: toy post-processing of saved features (replace with your run path)
+import os
+import numpy as np
+
+run_dir = "runs/embeddings_eurosat"  # adjust to your path
+features_path = os.path.join(run_dir, "features.npy")
+labels_path = os.path.join(run_dir, "labels.npy")
+
+if os.path.exists(features_path) and os.path.exists(labels_path):
+    feats = np.load(features_path)
+    labels = np.load(labels_path)
+    print("features:", feats.shape, "labels:", labels.shape)
+
+    # Cosine similarities to the first sample
+    a = feats[0:1]
+    sims = (feats @ a.T) / (np.linalg.norm(feats, axis=1, keepdims=True) * np.linalg.norm(a))
+    topk = np.argsort(-sims.squeeze())[:5]
+    print("Top-5 nearest neighbors to sample 0:", topk.tolist())
+else:
+    print("Feature files not found. Run the embedding command first (see above).")
+```
+
+What to notice:
+
+- Embeddings create a versatile representation for retrieval, clustering, and few-shot tasks.
+- You can mix no-code extraction with simple, custom analytics.
+
+---
+
+## Tips for adapting configs
+
+- Change `data.dataset` to switch benchmarks or your own dataset key.
+- Swap `model.backbone` among supported GFMs (e.g., `prithvi-100m`, `satmae-base`).
+- Choose an appropriate head for the task: `linear` (classification), `unet` (segmentation), or `pooling` options for embeddings.
+- Keep `trainer.max_epochs` small for quick sanity checks, then scale up.
+
+---
+
+## Why this matters (reflection)
+
+No-/low-code workflows let you validate feasibility and surface bottlenecks quickly (data quality, class imbalance, resolution). Once you see promising signals, you can transition to custom training loops or integrate advanced augmentations—while keeping the same pretrained backbone and dataset.
+
+

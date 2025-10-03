@@ -1,0 +1,136 @@
+---
+title: "Project Results Template"
+subtitle: "GEOG 288KC: Geospatial Foundation Models and Applications"
+format: html
+---
+
+## Final Project Results (Week 6)
+
+**Student Name**: [Your Name]  
+**Project Title**: [Your Project Title]  
+**Presentation Date**: [Date]
+
+### MVP Overview (1-2 minutes)
+
+**Problem Recap** (30 seconds):
+- [Brief reminder of the problem you're solving]
+
+**Current Status** (1 minute):
+- [What have you accomplished so far?]
+- [What is working in your current implementation?]
+
+### Technical Implementation (3-4 minutes)
+
+**System Architecture**:
+```
+[Include a simple diagram or flowchart of your system]
+Data Input → Preprocessing → Model → Post-processing → Output
+```
+
+**Key Components Implemented**:
+- [x] Data loading and preprocessing pipeline
+- [x] Model setup and configuration  
+- [x] Basic training/fine-tuning workflow
+- [ ] Advanced evaluation metrics
+- [ ] Visualization dashboard
+- [ ] Scalable deployment
+
+**Technology Stack**:
+- **Data Processing**: [e.g., Earth Engine, rasterio, xarray]
+- **Model Framework**: [e.g., PyTorch, TorchGeo, HuggingFace]
+- **Visualization**: [e.g., Matplotlib, Folium, Plotly]
+- **Infrastructure**: [e.g., UCSB AI Sandbox, local development]
+
+### Live Demonstration (4-5 minutes)
+
+**Demo Script** (prepare talking points for each step):
+
+1. **Data Loading Demo** (1 minute):
+   - [Show loading and preprocessing of your specific dataset]
+   - [Highlight any data challenges you've solved]
+
+2. **Model Inference Demo** (2 minutes):
+   - [Run your model on sample data]
+   - [Show inputs and outputs clearly]
+
+3. **Results Visualization** (1-2 minutes):
+   - [Display results in an intuitive format]
+   - [Compare with baselines or ground truth if available]
+
+### Preliminary Results (2-3 minutes)
+
+**Quantitative Results**:
+- **Dataset Size**: [Number of samples, spatial/temporal coverage]
+- **Model Performance**: [Key metrics with numbers]
+- **Processing Time**: [Inference speed, training time]
+
+**Example Results Table**:
+| Metric | Baseline | Your Model | Notes |
+|--------|----------|------------|-------|
+| Accuracy | XX% | YY% | [Context] |
+| F1-Score | XX | YY | [Context] |
+| Processing Speed | XX sec | YY sec | [Context] |
+
+**Qualitative Observations**:
+- [What patterns or insights have you discovered?]
+- [What works well? What doesn't work as expected?]
+
+### Challenges and Solutions (2 minutes)
+
+**Technical Challenges Overcome**:
+1. **Challenge**: [Specific technical problem]
+   **Solution**: [How you solved it]
+
+2. **Challenge**: [Another problem]
+   **Solution**: [Your approach]
+
+**Current Limitations**:
+- [What are the current limitations of your system?]
+- [What assumptions are you making?]
+
+### Future Work and Extensions (1-2 minutes)
+
+**Potential Improvements**:
+- [ ] [How could this work be extended beyond the course?]
+- [ ] [Additional datasets or geographic regions]
+- [ ] [Advanced modeling techniques or optimizations]
+
+**Real-World Applications**:
+- [How could this work be used in practice?]
+- [What are the broader implications and potential impact?]
+
+**Next Steps for Deployment**:
+- [What would be needed to make this production-ready?]
+
+### Questions for Feedback (1 minute)
+
+**Specific Areas Where You'd Like Input**:
+1. [Technical question about approach or implementation]
+2. [Question about evaluation methodology]  
+3. [Question about scope or next steps]
+
+**Open Discussion**:
+- [Any other areas where peer feedback would be valuable]
+
+---
+
+## Project Presentation Checklist
+
+### Before Your Presentation:
+- [ ] Test all code and demos on presentation computer
+- [ ] Prepare backup slides in case live demo fails
+- [ ] Time your presentation (aim for 10-12 minutes + 3-5 for Q&A)
+- [ ] Have clear talking points for each section
+- [ ] Save sample outputs/screenshots as backup
+
+### During Presentation:
+- [ ] Speak clearly and at appropriate pace
+- [ ] Show your screen clearly for demos
+- [ ] Engage with questions and feedback
+- [ ] Stay within time limits
+- [ ] Be honest about current limitations
+
+### After Presentation:
+- [ ] Take notes on feedback received
+- [ ] Update project plan based on suggestions
+- [ ] Schedule follow-up consultations if needed

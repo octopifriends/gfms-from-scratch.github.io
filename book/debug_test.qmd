@@ -1,0 +1,7 @@
+---
+title: "Debug Test"
+---
+
+# Debug Test
+
+Testing shortcode: {{< path images/test.png >}}

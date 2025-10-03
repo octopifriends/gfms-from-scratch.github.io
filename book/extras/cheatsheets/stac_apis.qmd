@@ -1,0 +1,629 @@
+---
+title: "STAC APIs & Planetary Computer"
+subtitle: "Accessing satellite data via STAC for GFM training"
+jupyter: geoai
+format:
+  html:
+    code-fold: false
+---
+
+## Introduction to STAC
+
+STAC (SpatioTemporal Asset Catalog) is a specification for describing geospatial information that makes it easier to work with satellite imagery and other earth observation data at scale.
+
+```{python}
+import pystac_client
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from pystac.extensions.eo import EOExtension
+from pystac.extensions.sat import SatExtension
+import requests
+import json
+from datetime import datetime, timedelta
+
+print("STAC libraries loaded successfully")
+```
+
+## Microsoft Planetary Computer
+
+Microsoft's Planetary Computer provides free access to petabytes of earth observation data through STAC APIs.
+
+```{python}
+# Connect to Planetary Computer STAC API
+# Note: Planetary Computer requires authentication for data access, but catalog browsing is public
+pc_catalog = pystac_client.Client.open(
+    "https://planetarycomputer.microsoft.com/api/stac/v1"
+)
+
+print(f"Planetary Computer STAC API: {pc_catalog.title}")
+print(f"Description: {pc_catalog.description}")
+
+# List available collections
+collections = list(pc_catalog.get_collections())
+print(f"\nNumber of collections: {len(collections)}")
+
+# Show first few collection IDs and titles
+for i, collection in enumerate(collections[:10]):
+    print(f"{i+1:2d}. {collection.id}: {collection.title}")
+```
+
+### Key Planetary Computer Collections
+
+```{python}
+# Key collections for GFM training
+key_collections = [
+    "sentinel-2-l2a",      # Sentinel-2 Level 2A (surface reflectance)
+    "landsat-c2-l2",       # Landsat Collection 2 Level 2
+    "modis-13A1-061",      # MODIS Vegetation Indices
+    "naip",                # National Agriculture Imagery Program
+    "aster-l1t",           # ASTER Level 1T
+    "cop-dem-glo-30"       # Copernicus DEM Global 30m
+]
+
+print("Key Collections for GFM Training:")
+print("=" * 50)
+
+for collection_id in key_collections:
+    try:
+        collection = pc_catalog.get_collection(collection_id)
+        print(f"\n{collection.id}")
+        print(f"  Title: {collection.title}")
+        print(f"  Extent: {collection.extent.temporal.intervals[0][0]} to {collection.extent.temporal.intervals[0][1]}")
+        
+        # Show available bands if it's an EO collection
+        if 'eo:bands' in collection.summaries:
+            bands = collection.summaries['eo:bands']
+            print(f"  Bands: {len(bands)} bands available")
+            
+    except Exception as e:
+        print(f"  Error accessing {collection_id}: {e}")
+```
+
+## Searching for Data
+
+### Basic Search Parameters
+
+```{python}
+# Define area of interest (AOI) - California Central Valley
+aoi = {
+    "type": "Polygon",
+    "coordinates": [[
+        [-121.5, 37.0],  # Southwest corner
+        [-121.0, 37.0],  # Southeast corner  
+        [-121.0, 37.5],  # Northeast corner
+        [-121.5, 37.5],  # Northwest corner
+        [-121.5, 37.0]   # Close polygon
+    ]]
+}
+
+# Define time range
+start_date = "2023-06-01"
+end_date = "2023-08-31"
+
+print(f"Search parameters:")
+print(f"  AOI: Central Valley, California")
+print(f"  Time range: {start_date} to {end_date}")
+print(f"  Collections: Sentinel-2 L2A")
+```
+
+### Sentinel-2 Search Example
+
+```{python}
+# Search for Sentinel-2 data
+search = pc_catalog.search(
+    collections=["sentinel-2-l2a"],
+    intersects=aoi,
+    datetime=f"{start_date}/{end_date}",
+    query={"eo:cloud_cover": {"lt": 20}}  # Less than 20% cloud cover
+)
+
+# Get search results
+items = list(search.items())
+print(f"Found {len(items)} Sentinel-2 scenes")
+
+# Display first few results
+for i, item in enumerate(items[:5]):
+    # Get cloud cover from properties
+    cloud_cover = item.properties.get('eo:cloud_cover', 'N/A')
+    date = item.datetime.strftime('%Y-%m-%d')
+    
+    print(f"{i+1}. {item.id}")
+    print(f"   Date: {date}")
+    print(f"   Cloud cover: {cloud_cover}%")
+    print(f"   Assets: {list(item.assets.keys())}")
+```
+
+### Multi-Collection Search
+
+```{python}
+# Search across multiple collections
+multi_search = pc_catalog.search(
+    collections=["sentinel-2-l2a", "landsat-c2-l2"],
+    intersects=aoi,
+    datetime="2023-07-01/2023-07-31",
+    limit=10
+)
+
+multi_items = list(multi_search.items())
+print(f"Found {len(multi_items)} items across collections")
+
+# Group by collection
+by_collection = {}
+for item in multi_items:
+    collection = item.collection_id
+    if collection not in by_collection:
+        by_collection[collection] = []
+    by_collection[collection].append(item)
+
+for collection, items in by_collection.items():
+    print(f"\n{collection}: {len(items)} items")
+    for item in items[:3]:  # Show first 3
+        date = item.datetime.strftime('%Y-%m-%d')
+        print(f"  - {item.id} ({date})")
+```
+
+## Working with STAC Items
+
+### Examining Item Metadata
+
+```{python}
+# Take a closer look at a single item
+if items:
+    sample_item = items[0]
+    
+    print(f"Item ID: {sample_item.id}")
+    print(f"Collection: {sample_item.collection_id}")
+    print(f"Datetime: {sample_item.datetime}")
+    print(f"Geometry: {sample_item.geometry['type']}")
+    print(f"Bbox: {sample_item.bbox}")
+    
+    # Properties
+    print(f"\nKey Properties:")
+    key_props = ['eo:cloud_cover', 'proj:epsg', 'gsd']
+    for prop in key_props:
+        if prop in sample_item.properties:
+            print(f"  {prop}: {sample_item.properties[prop]}")
+    
+    # Available assets (bands/files)
+    print(f"\nAvailable Assets:")
+    for asset_key, asset in sample_item.assets.items():
+        print(f"  {asset_key}: {asset.title}")
+```
+
+### Accessing Asset URLs
+
+```{python}
+# Get asset URLs (authentication required for actual data download)
+# For production use, install: pip install planetary-computer
+if items:
+    sample_item = items[0]
+    
+    # Key Sentinel-2 bands for ML applications
+    key_bands = ['B02', 'B03', 'B04', 'B08']  # Blue, Green, Red, NIR
+    
+    print("Asset URLs for key bands:")
+    for band in key_bands:
+        if band in sample_item.assets:
+            # Get the asset URL (would need signing for actual data access)
+            asset = sample_item.assets[band]
+            asset_href = asset.href
+            print(f"  {band}: {asset_href[:80]}...")
+            print(f"    Title: {asset.title}")
+        else:
+            print(f"  {band}: Not available")
+
+# Note: For actual data access, use planetary-computer package:
+# import planetary_computer as pc
+# signed_item = pc.sign(sample_item)
+# Then use signed_item.assets[band].href for downloading
+print(f"\nNote: URLs above require authentication for actual data access")
+print(f"Install 'planetary-computer' package and use pc.sign() for data downloads")
+```
+
+## Other STAC Providers
+
+### Earth Search (Element84)
+
+```{python}
+# Connect to Earth Search STAC API
+try:
+    earth_search = pystac_client.Client.open("https://earth-search.aws.element84.com/v1")
+    print(f"Earth Search API: {earth_search.title}")
+    
+    # List collections
+    earth_collections = list(earth_search.get_collections())
+    print(f"Available collections: {len(earth_collections)}")
+    
+    for collection in earth_collections[:5]:
+        print(f"  - {collection.id}: {collection.title}")
+        
+except Exception as e:
+    print(f"Error connecting to Earth Search: {e}")
+```
+
+### Google Earth Engine Data Catalog
+
+```{python}
+# Example of other STAC endpoints
+other_endpoints = {
+    "USGS STAC": "https://landsatlook.usgs.gov/stac-server",
+    "CBERS STAC": "https://cbers-stac.s3.amazonaws.com",
+    "Digital Earth Australia": "https://explorer.sandbox.dea.ga.gov.au/stac"
+}
+
+print("Other STAC Endpoints:")
+for name, url in other_endpoints.items():
+    print(f"  {name}: {url}")
+    
+# Note: Some endpoints may require authentication or have different access patterns
+```
+
+## Loading Data for ML Applications
+
+### Creating Datacubes
+
+```{python}
+def create_datacube_info(items, bands=['B02', 'B03', 'B04', 'B08']):
+    """Create information for a datacube from STAC items"""
+    
+    datacube_info = []
+    
+    for item in items:
+        item_info = {
+            'id': item.id,
+            'datetime': item.datetime,
+            'cloud_cover': item.properties.get('eo:cloud_cover', None),
+            'epsg': item.properties.get('proj:epsg', None),
+            'bands': {}
+        }
+        
+        for band in bands:
+            if band in item.assets:
+                item_info['bands'][band] = item.assets[band].href
+            else:
+                item_info['bands'][band] = None
+                
+        datacube_info.append(item_info)
+    
+    return datacube_info
+
+# Create datacube information
+if items:
+    datacube = create_datacube_info(items[:5])
+    
+    print("Datacube Information:")
+    for i, scene in enumerate(datacube):
+        print(f"\nScene {i+1}:")
+        print(f"  ID: {scene['id']}")
+        print(f"  Date: {scene['datetime'].strftime('%Y-%m-%d')}")
+        print(f"  Cloud cover: {scene['cloud_cover']}%")
+        print(f"  Available bands: {list(scene['bands'].keys())}")
+```
+
+### Integration with Rasterio and Xarray
+
+```{python}
+# Example of loading data with rasterio (conceptual)
+def load_stac_band_info(item, band_name):
+    """Get information needed to load a band with rasterio"""
+    
+    if band_name in item.assets:
+        asset = item.assets[band_name]
+        
+        band_info = {
+            'url': asset.href,
+            'title': asset.title,
+            'description': asset.description,
+            'eo_bands': []
+        }
+        
+        # Get EO band information if available
+        if hasattr(asset, 'extra_fields') and 'eo:bands' in asset.extra_fields:
+            band_info['eo_bands'] = asset.extra_fields['eo:bands']
+            
+        return band_info
+    else:
+        return None
+
+# Example usage
+if items:
+    sample_item = items[0]
+    red_band_info = load_stac_band_info(sample_item, 'B04')
+    
+    if red_band_info:
+        print("Red Band Information:")
+        for key, value in red_band_info.items():
+            print(f"  {key}: {value}")
+```
+
+## STAC for GFM Training Workflows
+
+### Multi-Temporal Data Collection
+
+```{python}
+def plan_multitemporal_collection(aoi, date_ranges, collections):
+    """Plan a multi-temporal data collection for GFM training"""
+    
+    collection_plan = {
+        'total_scenes': 0,
+        'by_date_range': {},
+        'by_collection': {}
+    }
+    
+    for date_range in date_ranges:
+        start, end = date_range
+        range_key = f"{start}_to_{end}"
+        collection_plan['by_date_range'][range_key] = {}
+        
+        for collection in collections:
+            # Simulate search (would normally use actual search)
+            estimated_scenes = np.random.randint(10, 50)  # Mock data
+            
+            collection_plan['by_date_range'][range_key][collection] = estimated_scenes
+            
+            if collection not in collection_plan['by_collection']:
+                collection_plan['by_collection'][collection] = 0
+            collection_plan['by_collection'][collection] += estimated_scenes
+            
+            collection_plan['total_scenes'] += estimated_scenes
+    
+    return collection_plan
+
+# Plan multi-temporal collection
+date_ranges = [
+    ("2023-03-01", "2023-05-31"),  # Spring
+    ("2023-06-01", "2023-08-31"),  # Summer  
+    ("2023-09-01", "2023-11-30")   # Fall
+]
+
+collections = ["sentinel-2-l2a", "landsat-c2-l2"]
+
+plan = plan_multitemporal_collection(aoi, date_ranges, collections)
+
+print("Multi-temporal Collection Plan:")
+print(f"Total estimated scenes: {plan['total_scenes']}")
+
+print("\nBy Date Range:")
+for date_range, collections in plan['by_date_range'].items():
+    print(f"  {date_range}:")
+    for collection, count in collections.items():
+        print(f"    {collection}: {count} scenes")
+
+print("\nBy Collection:")
+for collection, count in plan['by_collection'].items():
+    print(f"  {collection}: {count} scenes")
+```
+
+### Quality Filtering for ML
+
+```{python}
+def filter_scenes_for_ml(items, max_cloud_cover=10, min_data_coverage=80):
+    """Filter STAC items for ML training quality"""
+    
+    filtered_items = []
+    filter_stats = {
+        'total_input': len(items),
+        'passed_cloud_filter': 0,
+        'passed_data_filter': 0,
+        'final_count': 0
+    }
+    
+    for item in items:
+        # Check cloud cover
+        cloud_cover = item.properties.get('eo:cloud_cover', 100)
+        if cloud_cover > max_cloud_cover:
+            continue
+        filter_stats['passed_cloud_filter'] += 1
+        
+        # Check data coverage (if available)
+        data_coverage = item.properties.get('s2:data_coverage_percentage', 100)
+        if data_coverage < min_data_coverage:
+            continue
+        filter_stats['passed_data_filter'] += 1
+        
+        filtered_items.append(item)
+        filter_stats['final_count'] += 1
+    
+    return filtered_items, filter_stats
+
+# Apply quality filtering
+if items:
+    filtered_items, stats = filter_scenes_for_ml(items, max_cloud_cover=15)
+    
+    print("Quality Filtering Results:")
+    print(f"  Input scenes: {stats['total_input']}")
+    print(f"  Passed cloud filter (<15%): {stats['passed_cloud_filter']}")
+    print(f"  Passed data filter (>80%): {stats['passed_data_filter']}")
+    print(f"  Final count: {stats['final_count']}")
+    print(f"  Retention rate: {stats['final_count']/stats['total_input']*100:.1f}%")
+```
+
+### Metadata Extraction for Training
+
+```{python}
+def extract_training_metadata(items):
+    """Extract metadata useful for ML training"""
+    
+    metadata_df = []
+    
+    for item in items:
+        metadata = {
+            'scene_id': item.id,
+            'collection': item.collection_id,
+            'datetime': item.datetime,
+            'cloud_cover': item.properties.get('eo:cloud_cover'),
+            'sun_azimuth': item.properties.get('s2:mean_solar_azimuth'),
+            'sun_elevation': item.properties.get('s2:mean_solar_zenith'),
+            'data_coverage': item.properties.get('s2:data_coverage_percentage'),
+            'processing_level': item.properties.get('processing:level'),
+            'spatial_resolution': item.properties.get('gsd'),
+            'epsg_code': item.properties.get('proj:epsg'),
+            'bbox': item.bbox,
+            'geometry_type': item.geometry['type']
+        }
+        
+        # Count available bands
+        band_count = len([k for k in item.assets.keys() if k.startswith('B')])
+        metadata['band_count'] = band_count
+        
+        metadata_df.append(metadata)
+    
+    return pd.DataFrame(metadata_df)
+
+# Extract metadata
+if items:
+    metadata_df = extract_training_metadata(items[:10])
+    
+    print("Training Metadata Summary:")
+    print(f"  Scenes: {len(metadata_df)}")
+    print(f"  Date range: {metadata_df['datetime'].min()} to {metadata_df['datetime'].max()}")
+    print(f"  Cloud cover range: {metadata_df['cloud_cover'].min()}% to {metadata_df['cloud_cover'].max()}%")
+    print(f"  Average bands per scene: {metadata_df['band_count'].mean():.1f}")
+    
+    # Show first few rows
+    print("\nFirst 3 scenes:")
+    print(metadata_df[['scene_id', 'datetime', 'cloud_cover', 'band_count']].head(3).to_string(index=False))
+```
+
+## Advanced STAC Operations
+
+### Aggregating Collections
+
+```{python}
+def compare_collections(catalog, collection_ids, aoi, date_range):
+    """Compare multiple collections for the same area and time"""
+    
+    comparison = {}
+    
+    for collection_id in collection_ids:
+        try:
+            search = catalog.search(
+                collections=[collection_id],
+                intersects=aoi,
+                datetime=date_range,
+                limit=100
+            )
+            
+            items = list(search.items())
+            
+            if items:
+                # Calculate statistics
+                cloud_covers = [item.properties.get('eo:cloud_cover', 0) for item in items if item.properties.get('eo:cloud_cover') is not None]
+                
+                comparison[collection_id] = {
+                    'item_count': len(items),
+                    'avg_cloud_cover': np.mean(cloud_covers) if cloud_covers else None,
+                    'min_cloud_cover': np.min(cloud_covers) if cloud_covers else None,
+                    'temporal_coverage': (items[0].datetime, items[-1].datetime),
+                    'sample_bands': list(items[0].assets.keys())[:5]
+                }
+            else:
+                comparison[collection_id] = {'item_count': 0}
+                
+        except Exception as e:
+            comparison[collection_id] = {'error': str(e)}
+    
+    return comparison
+
+# Compare collections
+comparison = compare_collections(
+    pc_catalog,
+    ["sentinel-2-l2a", "landsat-c2-l2"],
+    aoi,
+    "2023-07-01/2023-07-31"
+)
+
+print("Collection Comparison:")
+for collection_id, stats in comparison.items():
+    print(f"\n{collection_id}:")
+    if 'error' in stats:
+        print(f"  Error: {stats['error']}")
+    elif stats['item_count'] == 0:
+        print("  No items found")
+    else:
+        print(f"  Items found: {stats['item_count']}")
+        if stats['avg_cloud_cover'] is not None:
+            print(f"  Avg cloud cover: {stats['avg_cloud_cover']:.1f}%")
+            print(f"  Min cloud cover: {stats['min_cloud_cover']:.1f}%")
+        print(f"  Sample bands: {stats['sample_bands']}")
+```
+
+### Creating Training Datasets
+
+```{python}
+def create_training_manifest(filtered_items, output_bands=['B02', 'B03', 'B04', 'B08']):
+    """Create a manifest file for ML training"""
+    
+    training_manifest = {
+        'dataset_info': {
+            'created_at': datetime.now().isoformat(),
+            'total_scenes': len(filtered_items),
+            'bands': output_bands,
+            'description': 'STAC-derived training dataset manifest'
+        },
+        'scenes': []
+    }
+    
+    for item in filtered_items:
+        scene_data = {
+            'scene_id': item.id,
+            'collection': item.collection_id,
+            'datetime': item.datetime.isoformat(),
+            'bbox': item.bbox,
+            'properties': {
+                'cloud_cover': item.properties.get('eo:cloud_cover'),
+                'sun_elevation': item.properties.get('s2:mean_solar_zenith'),
+                'epsg': item.properties.get('proj:epsg')
+            },
+            'band_urls': {}
+        }
+        
+        for band in output_bands:
+            if band in item.assets:
+                scene_data['band_urls'][band] = item.assets[band].href
+        
+        training_manifest['scenes'].append(scene_data)
+    
+    return training_manifest
+
+# Create training manifest
+if items:
+    filtered_items, _ = filter_scenes_for_ml(items[:5], max_cloud_cover=15)
+    manifest = create_training_manifest(filtered_items)
+    
+    print("Training Manifest Created:")
+    print(f"  Total scenes: {manifest['dataset_info']['total_scenes']}")
+    print(f"  Bands: {manifest['dataset_info']['bands']}")
+    print(f"  Created: {manifest['dataset_info']['created_at']}")
+    
+    # Show first scene structure
+    if manifest['scenes']:
+        print(f"\nFirst scene structure:")
+        first_scene = manifest['scenes'][0]
+        for key, value in first_scene.items():
+            if key == 'band_urls':
+                print(f"  {key}: {list(value.keys())}")
+            else:
+                print(f"  {key}: {value}")
+```
+
+## Summary
+
+Key STAC concepts for GFM development:
+
+- **STAC APIs** provide standardized access to petabytes of earth observation data
+- **Microsoft Planetary Computer** offers free access to major satellite datasets
+- **Quality filtering** is essential for ML training data preparation
+- **Multi-temporal collections** enable time-series and change detection models
+- **Metadata extraction** supports dataset organization and model training
+- **Cross-collection searches** maximize data availability and diversity
+
+Essential workflows:
+- Search and filter scenes by quality metrics
+- Extract and organize metadata for training
+- Create manifests linking STAC items to training pipelines
+- Compare collections to optimize data selection
+- Plan multi-temporal acquisitions for comprehensive datasets
+
+These patterns enable scalable, reproducible access to satellite imagery for geospatial foundation model development.

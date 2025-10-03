@@ -1,0 +1,13 @@
+---
+title: "Earth Engine Basics"
+subtitle: "Using Earth Engine for Geospatial Analysis and Workflows"
+jupyter: geoai
+format:
+  html:
+    code-fold: false
+---
+
+# Earth Engine Basics
+
+Coming Soon...
+

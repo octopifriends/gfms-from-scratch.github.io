@@ -1,0 +1,140 @@
+# Example course materials (template only)
+example_course/
+LLMS-from-scratch/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.cursor/
+.claude/
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyTorch
+*.pth
+*.pt
+checkpoints/
+lightning_logs/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# Environment files
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Thumbnails
+Thumbs.db
+ehthumbs.db
+
+# Quarto
+/.quarto/
+_site/
+.quarto/
+_freeze/
+# Note: *_files/ directories in docs/ contain important generated content and should be tracked
+# Only ignore _files/ in the source (book/) directory
+book/*_files/
+
+# Data files (add specific patterns as needed)
+*.h5
+*.hdf5
+*.nc
+*.zarr/
+large_datasets/
+data/geobench
+
+# Generated data manifests and splits
+data/out/
+
+# Model files and checkpoints
+*.model
+*.pkl
+*.pickle
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.log
+
+# Documentation build - ignore build artifacts in docs/ but keep final HTML output
+docs/_site/
+docs/.quarto/
+docs/_freeze/
+*_cache/
+
+# Explicitly track all files in docs/ directory (GitHub Pages output)
+!docs/
+!docs/**
+
+# Cloud credentials
+*credentials*.json
+*.pem
+*.key
+service-account*.json
+
+# Large files that shouldn't be tracked
+*.tif
+*.tiff
+*.nc4
+data/raw/
+data/processed/large/
+/.luarc.json
+
+# Generated output directories
+**/week1_output/
+**/week*_output/
+
+# Test files
+*test*.py
+execute_test.py
+quick_test.py
+run_test.sh
+
+# Temporary Quarto configs
+*_quarto_test.yml
+

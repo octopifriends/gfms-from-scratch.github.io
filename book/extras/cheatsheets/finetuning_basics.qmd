@@ -1,0 +1,432 @@
+---
+title: "Fine-tuning Strategies"
+subtitle: "Basic fine-tuning approaches"
+jupyter: geoai
+format:
+  html:
+    code-fold: false
+---
+
+# Fine-tuning Strategies
+
+This cheatsheet demonstrates practical fine-tuning techniques for geospatial models using small examples that run quickly.
+
+## Setup and Sample Data
+
+```{python}
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Set seeds for reproducibility
+torch.manual_seed(42)
+np.random.seed(42)
+
+print(f"PyTorch version: {torch.__version__}")
+print("Quick fine-tuning examples")
+```
+
+## Simple Classification Model
+
+```{python}
+class SimpleGeospatialModel(nn.Module):
+    """Lightweight model for demonstration"""
+    
+    def __init__(self, num_bands=6, num_classes=5):
+        super().__init__()
+        
+        # Simple CNN backbone
+        self.features = nn.Sequential(
+            nn.Conv2d(num_bands, 32, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            
+            nn.Conv2d(32, 64, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            
+            nn.Conv2d(64, 128, 3, padding=1),
+            nn.ReLU(),
+            nn.AdaptiveAvgPool2d(4)
+        )
+        
+        # Classifier head
+        self.classifier = nn.Sequential(
+            nn.Linear(128 * 4 * 4, 64),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(64, num_classes)
+        )
+    
+    def forward(self, x):
+        features = self.features(x)
+        features = features.view(features.size(0), -1)
+        return self.classifier(features)
+
+# Create model
+model = SimpleGeospatialModel(num_bands=6, num_classes=5)
+print(f"Model parameters: {sum(p.numel() for p in model.parameters()):,}")
+```
+
+## Synthetic Dataset for Fast Training
+
+```{python}
+class SyntheticGeospatialDataset(Dataset):
+    """Synthetic dataset that generates data on-the-fly"""
+    
+    def __init__(self, num_samples=100, size=64, num_bands=6, num_classes=5):
+        self.num_samples = num_samples
+        self.size = size
+        self.num_bands = num_bands
+        self.num_classes = num_classes
+        
+        # Fixed seed for consistent synthetic data
+        self.rng = np.random.RandomState(42)
+    
+    def __len__(self):
+        return self.num_samples
+    
+    def __getitem__(self, idx):
+        # Generate synthetic satellite-like image
+        # Different patterns for different classes
+        class_label = idx % self.num_classes
+        
+        # Create class-specific patterns
+        if class_label == 0:  # Water
+            image = self.rng.normal(0.2, 0.1, (self.num_bands, self.size, self.size))
+        elif class_label == 1:  # Forest
+            image = self.rng.normal(0.4, 0.15, (self.num_bands, self.size, self.size))
+        elif class_label == 2:  # Urban
+            image = self.rng.normal(0.6, 0.2, (self.num_bands, self.size, self.size))
+        elif class_label == 3:  # Agriculture
+            image = self.rng.normal(0.5, 0.12, (self.num_bands, self.size, self.size))
+        else:  # Bare soil
+            image = self.rng.normal(0.7, 0.18, (self.num_bands, self.size, self.size))
+        
+        # Add some spatial structure
+        image = np.clip(image, 0, 1)
+        
+        return torch.FloatTensor(image), torch.LongTensor([class_label])
+
+# Create datasets
+train_dataset = SyntheticGeospatialDataset(num_samples=80, size=64)
+val_dataset = SyntheticGeospatialDataset(num_samples=20, size=64)
+
+train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False)
+
+print(f"Training samples: {len(train_dataset)}")
+print(f"Validation samples: {len(val_dataset)}")
+
+# Show sample
+sample_image, sample_label = train_dataset[0]
+print(f"Sample shape: {sample_image.shape}, Label: {sample_label.item()}")
+```
+
+## Fine-tuning Strategy 1: Full Model Training
+
+```{python}
+def train_epoch(model, dataloader, optimizer, criterion):
+    """Train for one epoch"""
+    model.train()
+    total_loss = 0
+    correct = 0
+    total = 0
+    
+    for batch_idx, (data, targets) in enumerate(dataloader):
+        targets = targets.squeeze()
+        
+        optimizer.zero_grad()
+        outputs = model(data)
+        loss = criterion(outputs, targets)
+        loss.backward()
+        optimizer.step()
+        
+        total_loss += loss.item()
+        _, predicted = outputs.max(1)
+        total += targets.size(0)
+        correct += predicted.eq(targets).sum().item()
+    
+    return total_loss / len(dataloader), 100. * correct / total
+
+def validate(model, dataloader, criterion):
+    """Validate model"""
+    model.eval()
+    total_loss = 0
+    correct = 0
+    total = 0
+    
+    with torch.no_grad():
+        for data, targets in dataloader:
+            targets = targets.squeeze()
+            outputs = model(data)
+            loss = criterion(outputs, targets)
+            
+            total_loss += loss.item()
+            _, predicted = outputs.max(1)
+            total += targets.size(0)
+            correct += predicted.eq(targets).sum().item()
+    
+    return total_loss / len(dataloader), 100. * correct / total
+
+# Setup for full training
+model_full = SimpleGeospatialModel(num_bands=6, num_classes=5)
+optimizer = optim.Adam(model_full.parameters(), lr=0.001)
+criterion = nn.CrossEntropyLoss()
+
+print("=== Full Model Training ===")
+# Quick training (just 3 epochs for demo)
+for epoch in range(3):
+    train_loss, train_acc = train_epoch(model_full, train_loader, optimizer, criterion)
+    val_loss, val_acc = validate(model_full, val_loader, criterion)
+    
+    print(f"Epoch {epoch+1}: Train Loss: {train_loss:.3f}, Train Acc: {train_acc:.1f}%, "
+          f"Val Loss: {val_loss:.3f}, Val Acc: {val_acc:.1f}%")
+```
+
+## Fine-tuning Strategy 2: Frozen Feature Extractor
+
+```{python}
+# Create a new model with frozen features
+model_frozen = SimpleGeospatialModel(num_bands=6, num_classes=5)
+
+# Freeze feature layers
+for param in model_frozen.features.parameters():
+    param.requires_grad = False
+
+# Count trainable parameters
+trainable_params = sum(p.numel() for p in model_frozen.parameters() if p.requires_grad)
+total_params = sum(p.numel() for p in model_frozen.parameters())
+
+print(f"=== Frozen Features Training ===")
+print(f"Trainable parameters: {trainable_params:,} / {total_params:,}")
+print(f"Frozen: {total_params - trainable_params:,} parameters")
+
+# Only optimize classifier
+optimizer_frozen = optim.Adam(model_frozen.classifier.parameters(), lr=0.001)
+
+# Quick training
+for epoch in range(3):
+    train_loss, train_acc = train_epoch(model_frozen, train_loader, optimizer_frozen, criterion)
+    val_loss, val_acc = validate(model_frozen, val_loader, criterion)
+    
+    print(f"Epoch {epoch+1}: Train Loss: {train_loss:.3f}, Train Acc: {train_acc:.1f}%, "
+          f"Val Loss: {val_loss:.3f}, Val Acc: {val_acc:.1f}%")
+```
+
+## Fine-tuning Strategy 3: Layer-wise Learning Rates
+
+```{python}
+# Different learning rates for different parts
+def create_layerwise_optimizer(model, base_lr=0.001):
+    """Create optimizer with different learning rates for different layers"""
+    
+    params_groups = [
+        {'params': model.features.parameters(), 'lr': base_lr * 0.1},  # Lower LR for features
+        {'params': model.classifier.parameters(), 'lr': base_lr}        # Higher LR for classifier
+    ]
+    
+    return optim.Adam(params_groups)
+
+model_layerwise = SimpleGeospatialModel(num_bands=6, num_classes=5)
+optimizer_layerwise = create_layerwise_optimizer(model_layerwise)
+
+print("=== Layerwise Learning Rates ===")
+print("Features: 0.0001, Classifier: 0.001")
+
+# Quick training
+for epoch in range(3):
+    train_loss, train_acc = train_epoch(model_layerwise, train_loader, optimizer_layerwise, criterion)
+    val_loss, val_acc = validate(model_layerwise, val_loader, criterion)
+    
+    print(f"Epoch {epoch+1}: Train Loss: {train_loss:.3f}, Train Acc: {train_acc:.1f}%, "
+          f"Val Loss: {val_loss:.3f}, Val Acc: {val_acc:.1f}%")
+```
+
+## Learning Rate Scheduling
+
+```{python}
+# Demonstrate learning rate scheduling
+from torch.optim.lr_scheduler import StepLR, CosineAnnealingLR
+
+def train_with_scheduler():
+    """Train model with learning rate scheduling"""
+    
+    model_sched = SimpleGeospatialModel(num_bands=6, num_classes=5)
+    optimizer = optim.Adam(model_sched.parameters(), lr=0.01)  # Higher initial LR
+    scheduler = StepLR(optimizer, step_size=2, gamma=0.5)  # Reduce LR every 2 epochs
+    
+    print("=== Learning Rate Scheduling ===")
+    
+    for epoch in range(4):  # 4 epochs to see LR changes
+        train_loss, train_acc = train_epoch(model_sched, train_loader, optimizer, criterion)
+        val_loss, val_acc = validate(model_sched, val_loader, criterion)
+        
+        current_lr = optimizer.param_groups[0]['lr']
+        print(f"Epoch {epoch+1}: LR: {current_lr:.4f}, Train Loss: {train_loss:.3f}, "
+              f"Train Acc: {train_acc:.1f}%, Val Acc: {val_acc:.1f}%")
+        
+        scheduler.step()
+
+train_with_scheduler()
+```
+
+## Early Stopping Implementation
+
+```{python}
+class EarlyStopping:
+    """Early stopping utility"""
+    
+    def __init__(self, patience=3, min_delta=0.001):
+        self.patience = patience
+        self.min_delta = min_delta
+        self.counter = 0
+        self.best_loss = float('inf')
+    
+    def __call__(self, val_loss):
+        if val_loss < self.best_loss - self.min_delta:
+            self.best_loss = val_loss
+            self.counter = 0
+            return False  # Continue training
+        else:
+            self.counter += 1
+            return self.counter >= self.patience  # Stop if patience exceeded
+
+# Demonstrate early stopping
+def train_with_early_stopping():
+    """Train with early stopping"""
+    
+    model_es = SimpleGeospatialModel(num_bands=6, num_classes=5)
+    optimizer = optim.Adam(model_es.parameters(), lr=0.001)
+    early_stopping = EarlyStopping(patience=2)
+    
+    print("=== Early Stopping Demo ===")
+    
+    for epoch in range(10):  # Max 10 epochs
+        train_loss, train_acc = train_epoch(model_es, train_loader, optimizer, criterion)
+        val_loss, val_acc = validate(model_es, val_loader, criterion)
+        
+        print(f"Epoch {epoch+1}: Train Loss: {train_loss:.3f}, Train Acc: {train_acc:.1f}%, "
+              f"Val Loss: {val_loss:.3f}, Val Acc: {val_acc:.1f}%")
+        
+        if early_stopping(val_loss):
+            print(f"Early stopping at epoch {epoch+1}")
+            break
+
+train_with_early_stopping()
+```
+
+## Model Comparison
+
+```{python}
+def compare_final_performance():
+    """Compare final performance of different strategies"""
+    
+    models = {
+        'Full Training': model_full,
+        'Frozen Features': model_frozen,
+        'Layerwise LR': model_layerwise
+    }
+    
+    print("\n=== Final Performance Comparison ===")
+    
+    for name, model in models.items():
+        val_loss, val_acc = validate(model, val_loader, criterion)
+        print(f"{name:15}: Val Acc = {val_acc:.1f}%, Val Loss = {val_loss:.3f}")
+
+compare_final_performance()
+```
+
+## Transfer Learning Best Practices
+
+```{python}
+def show_best_practices():
+    """Demonstrate transfer learning best practices"""
+    
+    print("\n=== Transfer Learning Best Practices ===")
+    
+    practices = {
+        "Start with lower learning rates": "0.0001 - 0.001 typically work well",
+        "Freeze early layers initially": "Then gradually unfreeze if needed",
+        "Use different LRs for different layers": "Lower for pretrained, higher for new layers",
+        "Monitor validation carefully": "Use early stopping to prevent overfitting",
+        "Data augmentation is crucial": "Especially with limited training data",
+        "Gradual unfreezing": "Unfreeze layers progressively during training"
+    }
+    
+    for practice, explanation in practices.items():
+        print(f"• {practice}: {explanation}")
+
+show_best_practices()
+```
+
+## Feature Visualization
+
+```{python}
+def visualize_learned_features(model, sample_image):
+    """Visualize what the model has learned"""
+    
+    model.eval()
+    
+    # Get intermediate features
+    features = []
+    def hook_fn(module, input, output):
+        features.append(output.detach())
+    
+    # Register hooks on conv layers
+    hooks = []
+    for name, module in model.features.named_modules():
+        if isinstance(module, nn.Conv2d):
+            hooks.append(module.register_forward_hook(hook_fn))
+    
+    # Forward pass
+    with torch.no_grad():
+        _ = model(sample_image.unsqueeze(0))
+    
+    # Remove hooks
+    for hook in hooks:
+        hook.remove()
+    
+    print(f"\n=== Feature Map Analysis ===")
+    for i, feature_map in enumerate(features):
+        print(f"Layer {i+1}: {feature_map.shape}")
+    
+    return features
+
+# Analyze learned features
+sample_img, _ = train_dataset[0]
+learned_features = visualize_learned_features(model_full, sample_img)
+```
+
+## Key Takeaways
+
+```{python}
+print("\n=== Fine-tuning Strategy Summary ===")
+
+strategies = {
+    "Full Training": "Train all parameters - best when you have lots of data",
+    "Frozen Features": "Only train classifier - fastest, good for small datasets", 
+    "Layerwise LR": "Different learning rates - balanced approach",
+    "Gradual Unfreezing": "Progressive training - best for complex adaptation",
+    "Early Stopping": "Prevent overfitting - essential for small datasets"
+}
+
+for strategy, description in strategies.items():
+    print(f"• {strategy}: {description}")
+
+print(f"\nTraining completed successfully! All examples ran quickly.")
+```
+
+## Summary
+
+- **Start simple** with frozen features and classifier-only training
+- **Use appropriate learning rates** - lower for pretrained layers
+- **Monitor validation** carefully to avoid overfitting  
+- **Implement early stopping** for robust training
+- **Consider gradual unfreezing** for complex adaptations
+- **Visualize features** to understand what the model learns
+
+These techniques work across different model architectures and can be scaled up for larger, real-world applications.

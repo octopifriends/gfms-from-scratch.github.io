@@ -1,0 +1,42 @@
+---
+title: "Path Shortcode Integration Test"
+subtitle: "Testing {{< path >}} shortcode resolution across contexts"
+format: html
+---
+
+# Path Shortcode Integration Test
+
+This file tests the `{{< path >}}` shortcode filter in various contexts.
+It's used by the test suite and should not be rendered as part of the main site.
+
+## Basic Shortcode Usage
+
+Single shortcode: {{< path images/geog-logo.png >}}
+
+Multiple shortcodes: {{< path images/kelly.png >}} and {{< path images/anna.png >}}
+
+## HTML Context Testing
+
+<div class="test-container">
+  <img src="{{< path images/geog-logo.png >}}" alt="Logo" width="100">
+  <p>Banner: <img src="{{< path images/geoai-banner.png >}}" alt="Banner" width="200"></p>
+</div>
+
+## Various Quote Styles
+
+Double quotes: {{< path "images/geog-logo.png" >}}
+
+Single quotes: {{< path 'images/kelly.png' >}}
+
+## Whitespace Variations
+
+No spaces: {{<path images/anna.png>}}
+
+Extra spaces: {{<  path   images/python.png  >}}
+
+## Expected Behavior
+
+After processing:
+- All `{{< path ... >}}` should become `/<path>`
+- No "Shortcode 'path' not found" warnings
+- Images should resolve from any directory level

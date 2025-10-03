@@ -1,0 +1,36 @@
+name: Build & Deploy to gfms-from-scratch.github.io
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/deploy-org-pages.yml'
+  workflow_dispatch:
+
+# Prevent the fork (in gfms-from-scratch) from also running this
+jobs:
+  build-deploy:
+    if: github.repository_owner == 'kcaylor'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Verify built site exists
+        run: |
+          test -f docs/index.html || (echo "docs/index.html not found; nothing to deploy" && exit 1)
+          echo "docs/ contents:" && ls -la docs | cat
+
+      - name: Deploy to org root repo
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.PAGES_PAT }}
+          external_repository: gfms-from-scratch/gfms-from-scratch.github.io
+          publish_branch: main
+          publish_dir: docs
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com

@@ -1,0 +1,91 @@
+models:
+  prithvi-100m:
+    name: Prithvi-100M
+    repo_id: ibm-nasa-geospatial/Prithvi-100M
+    dest: prithvi/Prithvi-100M
+    size_gb: 2.5
+    params_m: 100
+    type: foundation_model
+    domain: earth_observation
+    description: NASA-IBM Prithvi-100M foundation model for EO (6-band HLS)
+
+  prithvi-eo-v2-300m:
+    name: Prithvi EO v2 300M
+    repo_id: ibm-nasa-geospatial/Prithvi-EO-v2-300M
+    dest: prithvi/Prithvi-EO-v2-300M
+    size_gb: 3.8
+    params_m: 300
+    type: foundation_model
+    domain: earth_observation
+    description: Next-gen Prithvi EO v2 with ~300M params
+
+  prithvi-eo-v2-600m:
+    name: Prithvi EO v2 600M
+    repo_id: ibm-nasa-geospatial/Prithvi-EO-v2-600M
+    dest: prithvi/Prithvi-EO-v2-600M
+    size_gb: 7.5
+    params_m: 600
+    type: foundation_model
+    domain: earth_observation
+    description: Larger Prithvi EO v2 (~600M params)
+
+  satmae-fmow:
+    name: SatMAE fMoW
+    repo_id: microsoft/SatMAE-fMoW
+    dest: satmae/SatMAE
+    size_gb: 1.5
+    params_m: 86
+    type: masked_autoencoder
+    domain: satellite_imagery
+    description: Satellite Masked Autoencoder trained on fMoW
+
+  clip-vit-base-patch32:
+    name: CLIP ViT-B/32
+    repo_id: openai/clip-vit-base-patch32
+    dest: clip/clip-vit-base-patch32
+    size_gb: 0.5
+    params_m: 151
+    type: vision_language
+    domain: multimodal
+    description: CLIP base model for image-text tasks
+
+  clip-vit-large-patch14:
+    name: CLIP ViT-L/14
+    repo_id: openai/clip-vit-large-patch14
+    dest: clip/clip-vit-large-patch14
+    size_gb: 1.8
+    params_m: 428
+    type: vision_language
+    domain: multimodal
+    description: CLIP large model for image-text tasks
+
+  clay:
+    name: Clay (Remote Sensing LMM)
+    repo_id: OpenGVLab/CLAY
+    dest: clay/CLAY
+    size_gb: 8.0
+    params_m: 700
+    type: multimodal
+    domain: remote_sensing
+    description: Clay large multimodal model adapted for remote sensing
+
+  dinov2-base:
+    name: DINOv2-Base
+    repo_id: facebook/dinov2-base
+    dest: additional/dinov2-base
+    size_gb: 0.9
+    params_m: 86
+    type: vision_foundation
+    domain: general_vision
+    description: DINOv2 base features, useful for geospatial tasks
+
+  sam-vit-base:
+    name: Segment-Anything ViT-B
+    repo_id: facebook/sam-vit-base
+    dest: additional/sam-vit-base
+    size_gb: 1.1
+    params_m: 94
+    type: segmentation
+    domain: vision
+    description: Segment Anything Model (ViT-B)
+

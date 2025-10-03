@@ -1,0 +1,89 @@
+---
+title: "Week 8 Interactive Session: Task-Specific Fine-tuning"
+subtitle: "Efficient fine-tuning strategies for geospatial applications"
+editor_options: 
+  chunk_output_type: console
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+---
+
+## Course Roadmap Mapping
+
+This week’s work in the broader GFM plan.
+
+| Week | Stage | Focus | You will build (geogfm) | Library tools | Outcome |
+|------|-------|-------|--------------------------|---------------|---------|
+| 8 | Stage 3: Apply & Deploy | Task Fine-tuning | `tasks/{classification.py|segmentation.py}` (light heads) | `torch.nn.CrossEntropyLoss`; timm optional | Head swap on frozen encoder; small dataset demo |
+
+### Weekly goals
+- Implement a simple classifier/segmentation head
+- Fine-tune with frozen encoder; evaluate on a tiny dataset
+- Discuss efficient strategies (LoRA/prompting as concepts)
+
+## Session Outline (and Tangled Code)
+
+- Concepts → Components mapping
+  - Classification/segmentation heads → `tasks/*.py`
+  - Freezing encoder and training head → usage snippets
+
+### Package inits
+
+```{python}
+#| tangle: geogfm/tasks/__init__.py
+#| header: "geogfm.tasks — package init (Week 8). Heads for task-specific fine-tuning."
+# geogfm.tasks
+```
+
+### 1) Classification Head
+
+```{python}
+#| tangle: geogfm/tasks/classification.py
+#| header: "geogfm.tasks.classification — Simple classification head (Week 8)."
+from __future__ import annotations
+import torch
+import torch.nn as nn
+
+class ClassificationHead(nn.Module):
+    def __init__(self, embed_dim: int, num_classes: int):
+        super().__init__()
+        self.fc = nn.Linear(embed_dim, num_classes)
+
+    def forward(self, tokens: torch.Tensor) -> torch.Tensor:
+        # tokens: (B, N, D). Use mean pooling over tokens.
+        x = tokens.mean(dim=1)
+        return self.fc(x)
+```
+
+### 2) Segmentation Head (token-wise classifier)
+
+```{python}
+#| tangle: geogfm/tasks/segmentation.py
+#| header: "geogfm.tasks.segmentation — Token-wise segmentation head (Week 8)."
+from __future__ import annotations
+import torch
+import torch.nn as nn
+
+class SegmentationHead(nn.Module):
+    def __init__(self, embed_dim: int, num_classes: int):
+        super().__init__()
+        self.fc = nn.Linear(embed_dim, num_classes)
+
+    def forward(self, tokens: torch.Tensor) -> torch.Tensor:
+        # tokens: (B, N, D) -> (B, N, C)
+        return self.fc(tokens)
+```
+
+### Usage snippet (non-tangled)
+
+```{python}
+# Example of freezing encoder and training a head:
+# encoder = GeoViTBackbone(cfg)
+# for p in encoder.parameters():
+#     p.requires_grad = False
+# head = ClassificationHead(embed_dim=cfg.embed_dim, num_classes=5)
+# logits = head(encoder(images))
+# loss = torch.nn.functional.cross_entropy(logits, labels)
+```

@@ -1,0 +1,183 @@
+---
+title: "GEO-Bench Datasets"
+subtitle: "What they are, how to access them, and practical usage patterns"
+jupyter: geoai
+format:
+  html:
+    code-fold: false
+---
+
+## What is GEO-Bench?
+
+GEO-Bench is a curated benchmark suite for evaluating geospatial foundation models and related methods across diverse Earth observation tasks. It provides standardized data splits, consistent preprocessing, and a simple Python API for loading tasks as PyTorch-ready datasets. See the paper: [GEO-Bench: Toward Foundation Models for Earth Monitoring](https://arxiv.org/abs/2306.03831).
+
+### Why it matters
+
+- **Comparability**: Common splits and metrics across datasets and tasks
+- **Breadth**: Classification, segmentation, and other downstream tasks
+- **Relevance**: Real-world sensors (e.g., Sentinel-2, Landsat) across many geographies
+
+## Task suites in GEO-Bench
+
+GEO-Bench groups tasks into benchmark suites. Common suites include:
+
+- **classification_v1.0**: Scene/patch classification tasks drawn from multiple sources
+- **segmentation_v1.0**: Pixel-wise land cover/semantic segmentation tasks
+- (Some releases include additional tracks; consult the repository for the current list.)
+
+Each suite consists of multiple tasks. A "task" defines a dataset, its split protocol, input bands, and target type.
+
+## Install and download
+
+GEO-Bench provides a pip package and a CLI for data download. The full suite can be large; ensure sufficient disk space.
+
+```bash
+#| eval: false
+pip install geobench
+
+# optional: choose where data are stored
+export GEO_BENCH_DIR="$HOME/datasets/geobench"
+
+# download selected benchmark(s); will prompt/stream progress
+geobench-download
+```
+
+Notes:
+- If `GEO_BENCH_DIR` is not set, GEO-Bench defaults to `$HOME/dataset/geobench/` (as configured by the package).
+- Download sizes can exceed ~65 GB for full coverage.
+
+## Loading tasks in Python
+
+The `geobench` package exposes an iterator over tasks in a benchmark suite. Each task can yield a PyTorch-style dataset per split.
+
+```{python}
+import os
+
+# Try to import geobench, but don't fail the notebook if unavailable
+try:
+    import geobench  # type: ignore
+    print("geobench available:", getattr(geobench, "__version__", "unknown"))
+except Exception as e:
+    geobench = None
+    print("geobench not usable in this environment:", e)
+
+train_ds = None
+if geobench is not None:
+    try:
+        data_dir = os.environ.get("GEO_BENCH_DIR")
+        if not data_dir or not os.path.exists(data_dir):
+            print("GEO_BENCH_DIR not set or path missing; skipping dataset load")
+        else:
+            # List tasks and take the first one as an example
+            iterator = geobench.task_iterator(benchmark_name="classification_v1.0")
+            first_task = None
+            for task in iterator:
+                print("Task:", task.name, "| Splits:", task.splits)
+                if first_task is None:
+                    first_task = task
+            if first_task is not None:
+                train_ds = first_task.get_dataset(split="train")
+                sample = train_ds[0]
+                print("Loaded dataset:", type(train_ds).__name__)
+                print("Num bands:", len(getattr(sample, "bands", [])))
+            else:
+                print("No tasks found in this benchmark; check your local data")
+    except Exception as e:
+        print("Failed to enumerate/load GEO-Bench tasks:", e)
+```
+
+### Wrapping for model training
+
+Convert GEO-Bench samples to channels-first tensors and pair with labels/masks for PyTorch training.
+
+```python
+from types import SimpleNamespace
+from torch.utils.data import DataLoader
+import numpy as np
+import torch
+
+def to_chw_tensor(sample):
+    # Stack per-band arrays into [C, H, W]
+    band_arrays = [torch.from_numpy(band.data).float() for band in sample.bands]
+    x = torch.stack(band_arrays, dim=0)
+    # Normalize per band (simple min-max as example)
+    x_min = x.amin(dim=(1,2), keepdim=True)
+    x_max = x.amax(dim=(1,2), keepdim=True)
+    x = (x - x_min) / torch.clamp(x_max - x_min, min=1e-6)
+    return x
+
+def collate_classification(batch):
+    xs = [to_chw_tensor(s) for s in batch]
+    ys = [torch.tensor(s.label, dtype=torch.long) for s in batch]
+    return {"image": torch.stack(xs), "label": torch.stack(ys)}
+
+def make_synthetic_samples(num=8, bands=3, size=64):
+    rng = np.random.default_rng(0)
+    samples = []
+    for i in range(num):
+        arrays = [rng.random((size, size), dtype=np.float32) for _ in range(bands)]
+        band_objs = [SimpleNamespace(data=a, band_info=SimpleNamespace(name=f"B{j}")) for j, a in enumerate(arrays)]
+        label = int(i % 4)
+        samples.append(SimpleNamespace(bands=band_objs, label=label))
+    return samples
+
+if 'train_ds' in globals() and train_ds is not None:
+    loader = DataLoader(train_ds, batch_size=8, shuffle=True, collate_fn=collate_classification)
+    batch = next(iter(loader))
+    print("From GEO-Bench →", batch["image"].shape, batch["label"].shape)
+else:
+    # Fallback: demonstrate the collate with synthetic samples so this cell always runs
+    synthetic = make_synthetic_samples()
+    batch = collate_classification(synthetic)
+    print("Synthetic demo →", batch["image"].shape, batch["label"].shape)
+```
+
+For segmentation tasks, use a different collate that returns `mask` or `target` tensors:
+
+```python
+from types import SimpleNamespace
+import numpy as np
+import torch
+
+def collate_segmentation(batch):
+    xs = [to_chw_tensor(s) for s in batch]
+    ys = [torch.from_numpy(s.mask).long() for s in batch]  # H x W
+    return {"image": torch.stack(xs), "mask": torch.stack(ys)}
+
+# Minimal runnable demo with synthetic masks (does not depend on geobench)
+class _SegSample(SimpleNamespace):
+    pass
+
+def _make_synthetic_segmentation(num=4, bands=3, size=32, classes=5):
+    rng = np.random.default_rng(1)
+    samples = []
+    for i in range(num):
+        arrays = [rng.random((size, size), dtype=np.float32) for _ in range(bands)]
+        band_objs = [SimpleNamespace(data=a, band_info=SimpleNamespace(name=f"B{j}")) for j, a in enumerate(arrays)]
+        mask = rng.integers(0, classes, size=(size, size), dtype=np.int64)
+        samples.append(_SegSample(bands=band_objs, mask=mask))
+    return samples
+
+seg_batch = collate_segmentation(_make_synthetic_segmentation())
+print("Synthetic segmentation demo →", seg_batch["image"].shape, seg_batch["mask"].shape)
+```
+
+## Practical tips
+
+- **Storage layout**: After `geobench-download`, verify `GEO_BENCH_DIR` contains the benchmark folders (e.g., `classification_v1.0/`, `segmentation_v1.0/`). The Python API will find them automatically.
+- **Band handling**: Different tasks expose different sensors and band sets. Always inspect `task.input_bands` and adapt normalization/ordering accordingly.
+- **Train/val/test**: Use `task.get_dataset(split="train"|"val"|"test")` to obtain consistent splits. Do not reshuffle unless explicitly allowed.
+- **Transforms**: Wrap datasets with on-the-fly augmentations for training. Keep evaluation preprocessing deterministic.
+- **Reproducibility**: Fix random seeds in your training loop and log the exact `benchmark_name` and task list used.
+
+## How GEO-Bench fits our course
+
+- Weeks 6–9 use standardized benchmarks for evaluation, fine-tuning, and deployment demos
+- You can swap a custom dataset for a GEO-Bench task to compare against baselines quickly
+
+## References
+
+- GitHub repository: `https://github.com/ServiceNow/geo-bench`
+- Paper: `https://arxiv.org/abs/2306.03831`
+
+
