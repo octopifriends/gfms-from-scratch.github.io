@@ -19,6 +19,206 @@ This guide shows you how to use the pre-built helper functions from Week 1 witho
 The Week 1 session defines 13+ helper functions in Section 2. Instead of re-running all those cells every time, you can simply import them from `geogfm.c01` and start analyzing data immediately!
 :::
 
+## Syncing Your Fork with Class Updates
+
+If you've forked and cloned the class repository, you'll need to periodically sync your fork with the upstream (original class repo) to get the latest module code and updates.
+
+### One-Time Setup: Add Upstream Remote
+
+First, check if you already have the upstream remote configured:
+
+```bash
+# Check your current remotes
+git remote -v
+```
+
+If you only see `origin` (your fork), add the upstream remote:
+
+```bash
+# Add the upstream remote (original class repo)
+git remote add upstream https://github.com/kcaylor/GEOG-288KC-geospatial-foundation-models.git
+
+# Verify it was added
+git remote -v
+```
+
+You should now see:
+- `origin` - your fork (where you push your work)
+- `upstream` - the original class repo (where you pull updates)
+
+### Updating Your Fork: Recommended Workflow
+
+:::{.callout-tip}
+### Protect Your Work First!
+
+Before syncing, make sure your work is safe:
+1. **Commit your changes** to a feature branch (not `main`)
+2. **Push to your fork** regularly
+3. **Never work directly on `main`** - keep it clean for updates
+:::
+
+#### Step 1: Save Your Current Work
+
+```bash
+# Check what files you've modified
+git status
+
+# If you have uncommitted changes, save them
+git add your-notebook.ipynb your-analysis.py
+git commit -m "WIP: my analysis work"
+
+# Or stash them temporarily
+git stash save "my current work"
+```
+
+#### Step 2: Fetch Updates from Upstream
+
+```bash
+# Make sure you're on your main branch
+git checkout main
+
+# Fetch all updates from the class repo (upstream)
+git fetch upstream
+
+# See what's new
+git log --oneline main..upstream/main
+```
+
+#### Step 3: Merge Updates into Your Fork
+
+```bash
+# Merge upstream changes into your local main
+git merge upstream/main
+
+# If there are conflicts, Git will tell you which files need attention
+```
+
+#### Step 4: Update Your Remote Fork
+
+```bash
+# Push the updated main to your fork on GitHub
+git push origin main
+```
+
+#### Step 5: Restore Your Work (if stashed)
+
+```bash
+# If you stashed changes, restore them
+git stash pop
+```
+
+### Best Practices for Protecting Your Work
+
+#### 1. Use Feature Branches for Your Work
+
+**DO THIS:**
+```bash
+# Create a branch for each assignment or analysis
+git checkout -b week01-my-analysis
+# ... do your work ...
+git add my-notebook.ipynb
+git commit -m "Complete Week 1 analysis for Santa Barbara"
+git push origin week01-my-analysis
+```
+
+**NOT THIS:**
+```bash
+# DON'T work directly on main
+git checkout main
+# ... do your work ...  # ❌ This makes syncing harder!
+```
+
+#### 2. Keep Personal Files Out of Git
+
+Create a `.gitignore` file (or add to the existing one) to exclude your personal work:
+
+```bash
+# Add to .gitignore
+echo "my-notebooks/" >> .gitignore
+echo "my-analysis/" >> .gitignore
+echo "*.local.ipynb" >> .gitignore
+echo "week1_output/" >> .gitignore
+```
+
+#### 3. Name Your Files to Avoid Conflicts
+
+Use a personal prefix for your notebooks:
+
+```
+✅ GOOD:
+  - yourname-week01-analysis.ipynb
+  - yourname-santa-barbara-study.ipynb
+  - my-notes.md
+
+❌ AVOID:
+  - week01.ipynb (might conflict with class files)
+  - analysis.ipynb (too generic)
+```
+
+### Handling Merge Conflicts
+
+If you get conflicts when merging upstream:
+
+```bash
+# Git will show you which files have conflicts
+git status
+
+# Open each conflicting file and look for conflict markers:
+# <<<<<<< HEAD
+# Your changes
+# =======
+# Upstream changes
+# >>>>>>> upstream/main
+
+# Edit the file to resolve conflicts, then:
+git add resolved-file.ipynb
+git commit -m "Merge upstream updates, resolved conflicts"
+```
+
+:::{.callout-warning}
+### When Conflicts Happen
+
+If class files (like `geogfm/c01.py`) have conflicts:
+1. **Keep the upstream version** - this is the latest module code
+2. Your personal notebooks should never conflict if you follow naming conventions
+3. If in doubt, ask for help before force-pushing!
+:::
+
+### Quick Reference: Common Sync Commands
+
+```bash
+# Quick update (when you have no local changes on main)
+git checkout main
+git pull upstream main
+git push origin main
+
+# Full workflow (with local work protection)
+git checkout main
+git stash                    # Save any uncommitted work
+git fetch upstream           # Get latest from class repo
+git merge upstream/main      # Merge into your local main
+git push origin main         # Update your GitHub fork
+git stash pop               # Restore your work
+
+# Check sync status
+git fetch upstream
+git log --oneline main..upstream/main  # See what's new upstream
+git log --oneline upstream/main..main  # See your commits not in upstream
+```
+
+### After Syncing: Reinstall the Package
+
+After pulling updates to `geogfm/c01.py` or other module files, the editable install will automatically pick up changes. But to be safe:
+
+```python
+# In your notebook, restart the kernel or reimport
+import importlib
+from geogfm import c01
+importlib.reload(c01)  # Reload the updated module
+
+# Or restart the Jupyter kernel (Kernel → Restart)
+```
+
 ## Installation
 
 Before you can import from `geogfm.c01`, you need to install the `geogfm` package in editable mode. This lets Python find the module files.
