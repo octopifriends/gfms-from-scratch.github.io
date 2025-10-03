@@ -9,12 +9,13 @@ format:
     code-fold: false
 ---
 
-## Introduction
+## 1. Introduction
 
 Welcome to your first hands-on session with geospatial AI! Today we'll set up the core tools you'll use throughout this course and get you working with real satellite imagery immediately. No theory-heavy introductions – we're diving straight into practical data access and exploration.
 
 :::{.callout-tip}
-## Learning Goals
+
+##### Learning Goals
 
 By the end of this session, you will:
 
@@ -25,26 +26,12 @@ By the end of this session, you will:
 - Understand the basics of multi-spectral satellite imagery
 :::
 
-## Course Structure Overview
 
-This accelerated seminar follows a hands-on progression:
-
-| Week | Focus | Hands-on Activity | Key Tools | Goal |
-|------|-------|-------------------|-----------|------|
-| 1 | Core Tools & Data Access | Pull satellite imagery via STAC API | rasterio, xarray, folium, pystac-client | Everyone can load and explore geospatial data |
-| 2 | Rapid Preprocessing | Process Sentinel-2 scenes for AOI | rasterio, numpy, dask | Reproducible preprocessing pipeline |
-| 3 | ML on Remote Sensing | Train CNN on land cover patches | PyTorch, torchgeo, sklearn | End-to-end ML workflow |
-| 4 | Foundation Models | Use pretrained geospatial models | transformers, torch | Compare FM vs scratch models |
-| 5 | Fine-tuning | Adapt models for new tasks | transformers, torch | Efficient transfer learning |
-| 6 | Spatiotemporal & Projects | Time series analysis + project proposals | xarray, matplotlib | Independent project planning |
-
----
-
-## Step 1: Environment Setup and Helper Functions
+## 2. Environment Setup and Helper Functions
 
 We'll start by setting up our environment and creating reusable helper functions that you'll use throughout the course. These functions handle common tasks like data loading, visualization, and processing.
 
-### Verify Your Environment
+### 2.1 Verify Your Environment
 
 **Environment Verification:**
 
@@ -112,12 +99,14 @@ def verify_environment(required_packages: list) -> dict:
 
     # Report results
     if missing_packages:
-        print(f"❌ Missing packages: {', '.join(missing_packages)}")
+        logger.error(f"❌ Missing packages: {', '.join(missing_packages)}")
         return results
 
-    print(f"✅ All {len(required_packages)} packages verified")
+    logger.info(f"✅ All {len(required_packages)} packages verified")
     return results
 ```
+
+#### Verify that we have all the packages we need in our environment
 
 ```{python}
 # Verify core geospatial AI environment
@@ -130,7 +119,11 @@ required_packages = [
 package_status = verify_environment(required_packages)
 ```
 
-### Import Essential Libraries and Create Helper Functions
+### 2.2 Import Essential Libraries and Create Helper Functions
+
+Before diving into geospatial data analysis and AI workflows, it's important to import the essential Python libraries that form the backbone of this toolkit. The following code block brings together core geospatial libraries such as [rasterio](https://rasterio.readthedocs.io/) for raster data handling, [xarray](https://docs.xarray.dev/) and [rioxarray](https://corteva.github.io/rioxarray/stable/) for multi-dimensional array operations, [geopandas](https://geopandas.org/) for vector data, and [pystac-client](https://pystac-client.readthedocs.io/) for accessing spatiotemporal asset catalogs. 
+
+Visualization is supported by [matplotlib](https://matplotlib.org/) and [folium](https://python-visualization.github.io/folium/), while [torch](https://pytorch.org/) enables deep learning workflows. Additional utilities for data handling, logging, and reproducibility are also included. These libraries collectively provide a robust foundation for geospatial AI projects.
 
 ```{python}
 # Core geospatial libraries
@@ -162,6 +155,11 @@ import logging
 # Deep learning libraries
 import torch
 
+```
+
+Set up some standard plot configuration options. 
+
+```{python}
 # Configure matplotlib for publication-quality plots
 plt.rcParams.update({
     'figure.figsize': (10, 6),
@@ -173,13 +171,26 @@ plt.rcParams.update({
     'ytick.labelsize': 9,
     'legend.fontsize': 9
 })
+```
+
+
+### 2.3 Setup Logging for our workflow
+
+Logging is a crucial practice in data science and geospatial workflows, enabling you to track code execution, monitor data processing steps, and quickly diagnose issues. By setting up logging, you ensure that your analyses are reproducible and errors are easier to trace—especially important in production or collaborative environments. For more on logging in data science, see [Effective Logging for Data Science](https://towardsdatascience.com/5-easy-and-effective-ways-to-use-python-logging-a9564bd17ccd/) and the [Python logging HOWTO](https://docs.python.org/3/howto/logging.html).
+
+
+```{python}
+# | tangle: geogfm/c01.py
+# | tangle-append: true
 
 # Configure logging for production-ready code
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 ```
 
-### Geospatial AI Toolkit: Comprehensive Helper Functions
+### 2.4 Geospatial AI Toolkit: Comprehensive Helper Functions
 
 This chapter is organized to guide you through the essential foundations of geospatial data science and AI. The file is structured into clear sections, each focusing on a key aspect of the geospatial workflow:
 
@@ -190,10 +201,11 @@ This chapter is organized to guide you through the essential foundations of geos
 
 This structure is designed to help you understand not just how to use the tools, but also why certain architectural and security decisions are made—preparing you for both practical work and deeper learning as you progress through the course.
 
-## Section 1: STAC Authentication and Security 🔐
+#### 2.4.1 STAC Authentication and Security 🔐
 
 :::{.callout-tip}
-## Learning Objectives
+
+##### Learning Objectives
 
 - Understand API authentication patterns for production systems
 - Implement secure credential management for cloud services
@@ -209,6 +221,46 @@ Modern satellite data access relies on cloud-native APIs that require proper aut
 - **Access Control**: Some datasets require institutional or commercial access
 - **Usage Tracking**: Providers need to monitor and bill for data access
 - **Security**: Prevents abuse and ensures sustainable data sharing
+
+:::{.callout-note}
+
+##### How to Obtain a Microsoft Planetary Computer API Key
+
+To access premium datasets and higher request quotas on the Microsoft Planetary Computer, you need to obtain a free API key. Follow these steps:
+
+1. **Sign in with a Microsoft Account**
+   - Visit the [Planetary Computer sign-in page](https://planetarycomputer.microsoft.com/account).
+   - Click **Sign in** and log in using your Microsoft, GitHub, or LinkedIn account.
+
+2. **Request an API Key**
+   - After signing in, navigate to the [API Keys section](https://planetarycomputer.microsoft.com/account/keys).
+   - Click **Request API Key**.
+   - Fill out the brief form describing your intended use (e.g., "For coursework in geospatial data science").
+   - Submit the request. Approval is usually instant for academic and research use.
+
+3. **Copy Your API Key**
+   - Once approved, your API key will be displayed on the page.
+   - **Copy** the key and keep it secure. Do not share it publicly.
+
+4. **Set the API Key for Your Code**
+   - **Recommended (for local development):**  
+     Create a file named `.env` in your project directory and add the following line:  
+     ```
+     PC_SDK_SUBSCRIPTION_KEY=your_api_key_here
+     ```
+   - **Alternatively (for temporary use):**  
+     Set the environment variable in your terminal before running your code:  
+     ```
+     export PC_SDK_SUBSCRIPTION_KEY=your_api_key_here
+     ```
+
+5. **Verify Authentication**
+   - When you run the code in this chapter, it will automatically detect your API key and authenticate you with the Planetary Computer.
+
+:::
+
+> **Tip:** If you lose your API key, you can always return to the [API Keys page](https://planetarycomputer.microsoft.com/account/keys) to view or regenerate it.
+
 
 ```{python}
 #| tangle: geogfm/c01.py
@@ -255,13 +307,19 @@ def setup_planetary_computer_auth() -> bool:
     return False
 ```
 
+### Authenticate to the Planetary Computer
+
 ```{python}
 # Initialize authentication
 auth_status = setup_planetary_computer_auth()
+
+logger.info(f"Planetary Computer authentication status: {'Authenticated' if auth_status else 'Anonymous'}")
+
 ```
 
 :::{.callout-note}
-## Security Best Practices
+
+##### Security Best Practices
 
 - **Never hardcode credentials** in source code or notebooks
 - **Use environment variables** for production deployments
@@ -269,10 +327,10 @@ auth_status = setup_planetary_computer_auth()
 
 ---
 
-## Section 2: STAC Data Discovery 🔍
+#### 2.4.2 STAC Data Discovery 🔍
 
 :::{.callout-tip}
-## Learning Objectives
+##### Learning Objectives
 
 - Master cloud-native data discovery patterns
 - Understand STAC query optimization strategies
@@ -288,6 +346,16 @@ STAC APIs represent a paradigm shift from traditional data distribution:
 - **On-Demand Access**: No need to download entire datasets
 - **Rich Metadata**: Searchable properties for precise discovery
 - **Cloud Optimization**: Direct access to cloud-optimized formats
+
+The code block below defines a function, `search_sentinel2_scenes`, which enables us to programmatically search for Sentinel-2 Level 2A satellite imagery using the Microsoft Planetary Computer (MPC) STAC API. 
+
+Here's how it works:
+
+- **Inputs**: You provide a bounding box (`bbox`), a date range (`date_range`), a maximum allowed cloud cover (`cloud_cover_max`), and a limit on the number of results.
+- **STAC Search**: The function connects to the MPC's STAC API endpoint and performs a search for Sentinel-2 scenes that match your criteria.
+- **Filtering**: It filters results by cloud cover and sorts them so that the clearest images (lowest cloud cover) come first.
+- **Output**: The function returns a list of STAC items (scenes) that you can further analyze or download.
+
 
 ```{python}
 #| tangle: geogfm/c01.py
@@ -340,8 +408,118 @@ def search_sentinel2_scenes(
     return items
 ```
 
+While the `search_sentinel2_scenes` function is currently tailored for Sentinel-2 imagery from the Microsoft Planetary Computer (MPC) STAC, it can be easily adapted to access other types of imagery or even different STAC endpoints. 
+
+To search for other datasets—such as Landsat, NAIP, or commercial imagery—you can modify the `"collections"` parameter in the `search_params` dictionary to reference the desired collection (e.g., `"landsat-8-c2-l2"` for Landsat 8). Additionally, to query a different STAC API (such as a local STAC server or another cloud provider), simply change the `Client.open()` URL to the appropriate endpoint. You may also adjust the search filters (e.g., properties like spatial resolution, acquisition mode, or custom metadata fields) to suit the requirements of other imagery types. 
+
+The `search_STAC_scenes` function generalizes our `search_sentinel2_scenes` by allowing keyword parameters that define the collection and the URL to use to access the STAC. This flexibility allows you to leverage the same search pattern for a wide variety of geospatial datasets across multiple STAC-compliant catalogs.
+
+```{python}
+# | tangle: geogfm/c01.py
+# | tangle-append: true
+def search_STAC_scenes(
+    bbox: list,
+    date_range: str,
+    cloud_cover_max: float = 100.0,
+    limit: int = 10,
+    collection: str = "sentinel-2-l2a",
+    stac_url: str = "https://planetarycomputer.microsoft.com/api/stac/v1",
+    client_modifier=None,
+    extra_query: dict = None
+) -> list:
+    """
+    General-purpose function to search STAC scenes using a STAC API.
+
+    Parameters
+    ----------
+    bbox : List[float]
+        Bounding box as [west, south, east, north] in WGS84
+    date_range : str
+        ISO date range: "YYYY-MM-DD/YYYY-MM-DD"
+    cloud_cover_max : float, optional
+        Maximum cloud cover percentage (default: 100.0)
+    limit : int, optional
+        Maximum scenes to return (default: 10)
+    collection : str, optional
+        STAC collection name (default: "sentinel-2-l2a")
+    stac_url : str, optional
+        STAC API endpoint URL (default: MPC STAC)
+    client_modifier : callable, optional
+        Optional function to modify the STAC client (e.g., for auth)
+    extra_query : dict, optional
+        Additional query parameters for the search
+
+    Returns
+    -------
+    List[pystac.Item]
+        List of STAC items sorted by cloud cover (ascending, if available).
+
+    Examples
+    --------
+    >>> # Search for Sentinel-2 scenes (default) on the Microsoft Planetary Computer (default) 
+    >>> # over a bounding box in Oregon in January 2022
+    >>> bbox = [-123.5, 45.0, -122.5, 46.0]
+    >>> date_range = "2022-01-01/2022-01-31"
+    >>> items = search_STAC_scenes(bbox, date_range, cloud_cover_max=10, limit=5)
+
+    >>> # Search for Landsat 8 scenes from a different STAC endpoint
+    >>> landsat_url = "https://earth-search.aws.element84.com/v1"
+    >>> items = search_STAC_scenes(
+    ...     bbox,
+    ...     "2021-06-01/2021-06-30",
+    ...     collection="landsat-8-c2-l2",
+    ...     stac_url=landsat_url,
+    ...     cloud_cover_max=20,
+    ...     limit=3
+    ... )
+
+    >>> # Add an extra query to filter by platform
+    >>> items = search_STAC_scenes(
+    ...     bbox,
+    ...     date_range,
+    ...     extra_query={"platform": {"eq": "sentinel-2b"}}
+    ... )
+    """
+    # Open the STAC client, with optional modifier (e.g., for MPC auth)
+    if client_modifier is not None:
+        catalog = Client.open(stac_url, modifier=client_modifier)
+    else:
+        catalog = Client.open(stac_url)
+
+    # Build query parameters
+    search_params = {
+        "collections": [collection],
+        "bbox": bbox,
+        "datetime": date_range,
+        "limit": limit
+    }
+
+    # Add cloud cover filter if present
+    if cloud_cover_max < 100.0:
+        search_params["query"] = {"eo:cloud_cover": {"lt": cloud_cover_max}}
+    if extra_query:
+        # Merge extra_query into search_params['query']
+        if "query" not in search_params:
+            search_params["query"] = {}
+        search_params["query"].update(extra_query)
+
+    search_results = catalog.search(**search_params)
+    items = list(search_results.items())
+
+    # Sort by cloud cover if available
+    items.sort(key=lambda x: x.properties.get('eo:cloud_cover', 100))
+
+    logger.info(
+        f"Found {len(items)} scenes in collection '{collection}' (cloud cover < {cloud_cover_max}%)"
+    )
+    return items
+
+
+```
+
 :::{.callout-note}
-## Query Optimization Strategies
+
+##### Query Optimization Strategies
 
 - **Spatial Indexing**: STAC APIs use spatial indices for fast geographic queries
 - **Temporal Partitioning**: Date-based organization enables efficient time series queries
@@ -351,10 +529,11 @@ def search_sentinel2_scenes(
 
 ---
 
-## Section 3: Intelligent Data Loading 📥
+#### 2.4.3 Intelligent Data Loading 📥
 
 :::{.callout-tip}
-## Learning Objectives
+
+##### Learning Objectives
 
 - Implement memory-efficient satellite data loading
 - Master coordinate reference system (CRS) transformations
@@ -364,12 +543,14 @@ def search_sentinel2_scenes(
 
 ### Memory Management in Satellite Data Processing
 
-Satellite scenes can be massive (>1GB per scene), requiring intelligent loading strategies:
+Satellite scenes can be massive (>1GB per scene), requiring intelligent loading strategies. The next block of code demonstrates how to efficiently load satellite data by implementing several optimization strategies:
 
-- **Lazy Loading**: Load only when needed, not during search
-- **Subset Loading**: Extract regions of interest to reduce memory footprint
-- **Progressive Loading**: Handle multi-resolution data efficiently
-- **Error Recovery**: Robust handling of network interruptions
+- **Lazy Loading**: Data is only read from disk or over the network when explicitly requested, rather than preloading entire scenes. This conserves memory and speeds up initial operations.
+- **Subset Loading**: By allowing a `subset_bbox` parameter, only the region of interest is loaded into memory, reducing both data transfer and RAM usage.
+- **Retry Logic**: Network interruptions are handled gracefully with automatic retries, improving robustness for large or remote datasets.
+- **Progressive Loading**: The function is designed to handle multi-band and multi-resolution data, enabling users to load only the bands they need.
+
+Together, these techniques ensure that satellite data processing is both memory- and network-efficient, making it practical to work with large geospatial datasets on typical hardware.
 
 ```{python}
 #| tangle: geogfm/c01.py
@@ -504,7 +685,8 @@ def load_sentinel2_bands(
 ```
 
 :::{.callout-note}
-## Memory Management Best Practices
+
+##### Memory Management Best Practices
 
 - **Use windowed reading** for large rasters to control memory usage
 - **Load bands on-demand** rather than all at once
@@ -515,10 +697,11 @@ def load_sentinel2_bands(
 
 ---
 
-## Section 4: Scene Processing and Subsetting 📐
+#### 2.4.4 Scene Processing and Subsetting 📐
 
 :::{.callout-tip}
-## Learning Objectives
+
+##### Learning Objectives
 
 - Master percentage-based spatial subsetting for reproducible analysis
 - Understand scene geometry and coordinate system implications
@@ -535,11 +718,30 @@ Satellite scenes come in various sizes and projections, requiring intelligent sp
 - **Spatial Metadata**: Consistent georeferencing across operations
 - **Tiling Strategies**: Partition large scenes for parallel processing
 
+::: {.callout-note}
+### What does the next block of code do, and why is it useful for GeoAI workflows?
+
+The next block of code defines a function for **percentage-based spatial subsetting** of satellite scenes. Instead of specifying exact coordinates or pixel indices, you provide percentage ranges (e.g., 25% to 75%) for both the x (longitude) and y (latitude) axes. The function then calculates the corresponding bounding box in geographic coordinates.
+
+**How does this help in GeoAI workflows?**
+- **Resolution Independence:** The same percentage-based subset works for any scene, regardless of its pixel size or spatial resolution.
+- **Reproducibility:** Analyses can be repeated on different scenes or at different times, always extracting the same relative region.
+- **Scalability:** Enables systematic tiling or grid-based sampling for large-scale or distributed processing.
+- **Adaptability:** Easily adjust the subset size or location based on scene characteristics or model requirements.
+- **Abstraction:** Hides the complexity of coordinate systems and scene geometry, making spatial operations more accessible and less error-prone.
+
+This approach is especially valuable in GeoAI, where consistent, automated, and scalable spatial sampling is critical for training, validating, and deploying machine learning models on geospatial data.
+:::
+
+
 ```{python}
+# | tangle: geogfm/c01.py
+# | tangle-append: true
+
 def get_subset_from_scene(
     item,
     x_range: Tuple[float, float] = (25, 75),
-    y_range: Tuple[float, float] = (25, 75)
+    y_range: Tuple[float, float] = (25, 75),
 ) -> List[float]:
     """
     Intelligent spatial subsetting using percentage-based coordinates.
@@ -574,12 +776,16 @@ def get_subset_from_scene(
 
     # Input validation for percentage ranges
     if not (0 <= x_range[0] < x_range[1] <= 100):
-        raise ValueError(f"Invalid x_range: {x_range}. Must be (min, max) with 0 <= min < max <= 100")
+        raise ValueError(
+            f"Invalid x_range: {x_range}. Must be (min, max) with 0 <= min < max <= 100"
+        )
     if not (0 <= y_range[0] < y_range[1] <= 100):
-        raise ValueError(f"Invalid y_range: {y_range}. Must be (min, max) with 0 <= min < max <= 100")
+        raise ValueError(
+            f"Invalid y_range: {y_range}. Must be (min, max) with 0 <= min < max <= 100"
+        )
 
     # Calculate scene dimensions in geographic coordinates
-    scene_width = scene_bbox[2] - scene_bbox[0]   # east - west
+    scene_width = scene_bbox[2] - scene_bbox[0]  # east - west
     scene_height = scene_bbox[3] - scene_bbox[1]  # north - south
 
     # Convert percentages to geographic coordinates
@@ -591,15 +797,34 @@ def get_subset_from_scene(
     subset_bbox = [west, south, east, north]
 
     # Calculate subset metrics for reporting
-    subset_area_percent = ((x_range[1] - x_range[0]) * (y_range[1] - y_range[0])) / 100.0
+    subset_area_percent = (
+        (x_range[1] - x_range[0]) * (y_range[1] - y_range[0])
+    ) / 100.0
 
-    print(f"📐 Calculated subset from scene bounds:")
-    print(f"   Scene bbox: [{scene_bbox[0]:.4f}, {scene_bbox[1]:.4f}, {scene_bbox[2]:.4f}, {scene_bbox[3]:.4f}]")
-    print(f"   Subset bbox: [{west:.4f}, {south:.4f}, {east:.4f}, {north:.4f}]")
-    print(f"   X range: {x_range[0]}%-{x_range[1]}%, Y range: {y_range[0]}%-{y_range[1]}%")
-    print(f"   Subset area: {subset_area_percent:.1f}% of original scene")
+    logger.info("📐 Calculated subset from scene bounds:")
+    logger.info(
+        "   Scene bbox: [%.4f, %.4f, %.4f, %.4f]",
+        scene_bbox[0], scene_bbox[1], scene_bbox[2], scene_bbox[3]
+    )
+    logger.info(
+        "   Subset bbox: [%.4f, %.4f, %.4f, %.4f]",
+        west, south, east, north
+    )
+    logger.info(
+        "   X range: %s%%-%s%%, Y range: %s%%-%s%%",
+        x_range[0], x_range[1], y_range[0], y_range[1]
+    )
+    logger.info(
+        "   Subset area: %.1f%% of original scene",
+        subset_area_percent
+    )
 
     return subset_bbox
+```
+
+```{python}
+# | tangle: geogfm/c01.py
+# | tangle-append: true
 
 def get_scene_info(item):
     """
@@ -630,25 +855,25 @@ def get_scene_info(item):
     height_km = height_deg * 111
 
     info = {
-        'scene_id': item.id,
-        'date': item.properties['datetime'].split('T')[0],
-        'bbox': bbox,
-        'width_deg': width_deg,
-        'height_deg': height_deg,
-        'width_km': width_km,
-        'height_km': height_km,
-        'area_km2': width_km * height_km,
-        'center_lat': center_lat,
-        'center_lon': (bbox[0] + bbox[2]) / 2
+        "scene_id": item.id,
+        "date": item.properties["datetime"].split("T")[0],
+        "bbox": bbox,
+        "width_deg": width_deg,
+        "height_deg": height_deg,
+        "width_km": width_km,
+        "height_km": height_km,
+        "area_km2": width_km * height_km,
+        "center_lat": center_lat,
+        "center_lon": (bbox[0] + bbox[2]) / 2,
     }
 
     return info
-
-print("✅ Scene processing and subsetting functions ready")
 ```
 
+
 :::{.callout-note}
-## Spatial Processing Design Patterns
+
+##### Spatial Processing Design Patterns
 
 - **Percentage-based coordinates** provide resolution independence
 - **Adaptive processing** adjusts strategies based on scene size
@@ -658,10 +883,11 @@ print("✅ Scene processing and subsetting functions ready")
 
 ---
 
-## Section 5: Data Processing Pipelines 🔬
+#### 2.4.5 Data Processing Pipelines 🔬
 
 :::{.callout-tip}
-## Learning Objectives
+
+##### Learning Objectives
 
 - Master spectral analysis and vegetation index calculations
 - Implement robust statistical analysis with error handling
@@ -678,11 +904,31 @@ Satellite sensors capture electromagnetic radiation across multiple spectral ban
 - **Statistical Analysis**: Characterize data distributions and quality
 - **Composable Functions**: Build complex workflows from simple operations
 
+#### Band Normalization
+
+The `normalize_band` function performs percentile-based normalization of a satellite image band (a 2D NumPy array of pixel values). Its main purpose is to enhance the visual contrast of the data for display or further analysis, while being robust to outliers and invalid values.
+
+**How it works:**
+- **Input:** The function takes a NumPy array (`band`) representing the raw values of a spectral band, a tuple of percentiles (defaulting to the 2nd and 98th), and a `clip` flag.
+- **Robustness:** It first creates a mask to identify valid (finite) values, ignoring NaNs and infinities.
+- **Percentile Stretch:** It computes the lower and upper percentile values (`p_low`, `p_high`) from the valid data. These percentiles define the range for stretching, which helps ignore extreme outliers.
+- **Normalization:** The band is linearly scaled so that `p_low` maps to 0 and `p_high` maps to 1. Values outside this range can be optionally clipped.
+- **Edge Cases:** If all values are invalid or the percentiles are equal (no variation), it returns an array of zeros.
+
+**Why use this?**
+- It improves image contrast for visualization.
+- It is robust to outliers and missing data.
+- It preserves the relative relationships between pixel values.
+
+This function exemplifies the "Strategy Pattern" by encapsulating a normalization approach that can be swapped or extended for other enhancement strategies.
+
+
 ```{python}
+# | tangle: geogfm/c01.py
+# | tangle-append: true
+
 def normalize_band(
-    band: np.ndarray,
-    percentiles: Tuple[float, float] = (2, 98),
-    clip: bool = True
+    band: np.ndarray, percentiles: Tuple[float, float] = (2, 98), clip: bool = True
 ) -> np.ndarray:
     """
     Percentile-based radiometric enhancement for optimal visualization.
@@ -732,12 +978,18 @@ def normalize_band(
         normalized = np.clip(normalized, 0, 1)
 
     return normalized
+```
+
+#### RGB Composite
+
+The next code block introduces the function `create_rgb_composite`, which is designed to generate publication-quality RGB composite images from individual spectral bands (red, green, and blue). This function optionally applies automatic contrast enhancement to each band using the previously defined `normalize_band` function, ensuring that the resulting composite is visually optimized and suitable for analysis or presentation. The function demonstrates the Composite design pattern by combining multiple bands into a unified RGB representation, applying consistent processing across all channels, and producing an output format compatible with standard visualization libraries.
+
+```{python}
+# | tangle: geogfm/c01.py
+# | tangle-append: true
 
 def create_rgb_composite(
-    red: np.ndarray,
-    green: np.ndarray,
-    blue: np.ndarray,
-    enhance: bool = True
+    red: np.ndarray, green: np.ndarray, blue: np.ndarray, enhance: bool = True
 ) -> np.ndarray:
     """
     Create publication-quality RGB composite images.
@@ -774,11 +1026,20 @@ def create_rgb_composite(
     rgb_composite = np.dstack([red_norm, green_norm, blue_norm])
 
     return rgb_composite
+```
+
+
+### Derived band calculations
+
+The following code block introduces the function `calculate_ndvi`, which computes the Normalized Difference Vegetation Index (NDVI) from near-infrared (NIR) and red spectral bands. NDVI is a widely used vegetation index in remote sensing, defined as (NIR - Red) / (NIR + Red). This index leverages the fact that healthy vegetation strongly reflects NIR light while absorbing red light due to chlorophyll, making NDVI a robust indicator of plant health, biomass, and vegetation cover. The function includes robust error handling for numerical stability and edge cases, ensuring reliable results even when input values are near zero or contain invalid data.
+
+
+```{python}
+# | tangle: geogfm/c01.py
+# | tangle-append: true
 
 def calculate_ndvi(
-    nir: np.ndarray,
-    red: np.ndarray,
-    epsilon: float = 1e-8
+    nir: np.ndarray, red: np.ndarray, epsilon: float = 1e-8
 ) -> np.ndarray:
     """
     Calculate Normalized Difference Vegetation Index with robust error handling.
@@ -824,6 +1085,23 @@ def calculate_ndvi(
     ndvi = np.where(np.isfinite(ndvi), ndvi, 0)
 
     return ndvi
+```
+
+
+#### Band statistics
+
+The next function, `calculate_band_statistics`, provides a comprehensive statistical summary of a satellite image band. It computes key statistics such as minimum, maximum, mean, standard deviation, median, and percentiles, as well as counts of valid and total pixels. This function is essential in GeoAI workflows for several reasons:
+
+- **Data Quality Assessment:** By summarizing the distribution and quality of pixel values, it helps identify anomalies, outliers, or missing data before further analysis.
+- **Feature Engineering:** Statistical summaries can be used as features in machine learning models for land cover classification, anomaly detection, or change detection.
+- **Automated Validation:** Integrating this function into data pipelines enables automated quality control, ensuring only reliable data is used for downstream tasks.
+- **Reporting and Visualization:** The output can be used to generate reports or visualizations that communicate data characteristics to stakeholders.
+
+In practice, `calculate_band_statistics` can be called on each band of a satellite image to quickly assess data readiness and inform preprocessing or modeling decisions in GeoAI projects.
+
+```{python}
+# | tangle: geogfm/c01.py
+# | tangle-append: true
 
 def calculate_band_statistics(band: np.ndarray, name: str = "Band") -> Dict:
     """
@@ -851,35 +1129,41 @@ def calculate_band_statistics(band: np.ndarray, name: str = "Band") -> Dict:
 
     if len(valid_data) == 0:
         return {
-            'name': name,
-            'min': np.nan, 'max': np.nan, 'mean': np.nan,
-            'std': np.nan, 'median': np.nan,
-            'valid_pixels': 0, 'total_pixels': band.size
+            "name": name,
+            "min": np.nan,
+            "max": np.nan,
+            "mean": np.nan,
+            "std": np.nan,
+            "median": np.nan,
+            "valid_pixels": 0,
+            "total_pixels": band.size,
         }
 
     stats = {
-        'name': name,
-        'min': float(np.min(valid_data)),
-        'max': float(np.max(valid_data)),
-        'mean': float(np.mean(valid_data)),
-        'std': float(np.std(valid_data)),
-        'median': float(np.median(valid_data)),
-        'valid_pixels': int(np.sum(valid_mask)),
-        'total_pixels': int(band.size),
-        'percentiles': {
-            'p25': float(np.percentile(valid_data, 25)),
-            'p75': float(np.percentile(valid_data, 75)),
-            'p95': float(np.percentile(valid_data, 95))
-        }
+        "name": name,
+        "min": float(np.min(valid_data)),
+        "max": float(np.max(valid_data)),
+        "mean": float(np.mean(valid_data)),
+        "std": float(np.std(valid_data)),
+        "median": float(np.median(valid_data)),
+        "valid_pixels": int(np.sum(valid_mask)),
+        "total_pixels": int(band.size),
+        "percentiles": {
+            "p25": float(np.percentile(valid_data, 25)),
+            "p75": float(np.percentile(valid_data, 75)),
+            "p95": float(np.percentile(valid_data, 95)),
+        },
     }
 
     return stats
 
-print("✅ Data processing pipeline functions ready")
 ```
 
+
+
 :::{.callout-note}
-## Spectral Analysis Best Practices
+
+##### Spectral Analysis Best Practices
 
 - **Percentile normalization** provides robust enhancement against outliers
 - **Numerical stability constants** prevent division by zero in index calculations
@@ -889,10 +1173,11 @@ print("✅ Data processing pipeline functions ready")
 
 ---
 
-## Section 6: Visualization Functions 📊
+#### 2.4.6 Visualization Functions 📊
 
 :::{.callout-tip}
-## Learning Objectives
+
+##### Learning Objectives
 
 - Design publication-quality visualization systems
 - Implement adaptive layout algorithms for multi-panel displays
@@ -910,11 +1195,14 @@ Effective satellite data visualization requires careful consideration of:
 - **Context Preservation**: Maintain spatial and temporal reference information
 
 ```{python}
+# | tangle: geogfm/c01.py
+# | tangle-append: true
+
 def plot_band_comparison(
     bands: Dict[str, np.ndarray],
     rgb: Optional[np.ndarray] = None,
     ndvi: Optional[np.ndarray] = None,
-    title: str = "Multi-band Analysis"
+    title: str = "Multi-band Analysis",
 ) -> None:
     """
     Create comprehensive multi-panel visualization for satellite analysis.
@@ -942,11 +1230,13 @@ def plot_band_comparison(
     - Handles layout complexity automatically
     """
     # Calculate layout
-    n_panels = len(bands) + (1 if rgb is not None else 0) + (1 if ndvi is not None else 0)
+    n_panels = (
+        len(bands) + (1 if rgb is not None else 0) + (1 if ndvi is not None else 0)
+    )
     n_cols = min(3, n_panels)
     n_rows = (n_panels + n_cols - 1) // n_cols
 
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(5*n_cols, 4*n_rows))
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(5 * n_cols, 4 * n_rows))
     if n_panels == 1:
         axes = [axes]
     elif n_rows > 1:
@@ -957,42 +1247,43 @@ def plot_band_comparison(
     # RGB composite
     if rgb is not None:
         axes[panel_idx].imshow(rgb)
-        axes[panel_idx].set_title('RGB Composite', fontweight='bold')
-        axes[panel_idx].axis('off')
+        axes[panel_idx].set_title("RGB Composite", fontweight="bold")
+        axes[panel_idx].axis("off")
         panel_idx += 1
 
     # Individual bands
     for band_name, band_data in bands.items():
         if panel_idx < len(axes):
             normalized = normalize_band(band_data)
-            axes[panel_idx].imshow(normalized, cmap='gray', vmin=0, vmax=1)
-            axes[panel_idx].set_title(f'Band: {band_name}', fontweight='bold')
-            axes[panel_idx].axis('off')
+            axes[panel_idx].imshow(normalized, cmap="gray", vmin=0, vmax=1)
+            axes[panel_idx].set_title(f"Band: {band_name}", fontweight="bold")
+            axes[panel_idx].axis("off")
             panel_idx += 1
 
     # NDVI with colorbar
     if ndvi is not None and panel_idx < len(axes):
-        im = axes[panel_idx].imshow(ndvi, cmap='RdYlGn', vmin=-0.5, vmax=1.0)
-        axes[panel_idx].set_title('NDVI', fontweight='bold')
-        axes[panel_idx].axis('off')
+        im = axes[panel_idx].imshow(ndvi, cmap="RdYlGn", vmin=-0.5, vmax=1.0)
+        axes[panel_idx].set_title("NDVI", fontweight="bold")
+        axes[panel_idx].axis("off")
 
         cbar = plt.colorbar(im, ax=axes[panel_idx], shrink=0.6)
-        cbar.set_label('NDVI Value', rotation=270, labelpad=15)
+        cbar.set_label("NDVI Value", rotation=270, labelpad=15)
         panel_idx += 1
 
     # Hide unused panels
     for idx in range(panel_idx, len(axes)):
-        axes[idx].axis('off')
+        axes[idx].axis("off")
 
-    plt.suptitle(title, fontsize=14, fontweight='bold')
+    plt.suptitle(title, fontsize=14, fontweight="bold")
     plt.tight_layout()
     plt.show()
 
-print("✅ Scientific visualization functions ready")
+
 ```
 
 :::{.callout-note}
-## Visualization Design Principles
+
+##### Visualization Design Principles
 
 - **Adaptive layouts** accommodate varying numbers of data layers
 - **Perceptually uniform colormaps** (like RdYlGn for NDVI) accurately represent data relationships
@@ -1002,10 +1293,11 @@ print("✅ Scientific visualization functions ready")
 
 ---
 
-## Section 7: Data Export and Interoperability 💾
+#### 2.4.7 Data Export and Interoperability 💾
 
 :::{.callout-tip}
-## Learning Objectives
+
+##### Learning Objectives
 
 - Master geospatial data standards (GeoTIFF, CRS, metadata)
 - Implement cloud-optimized data formats for scalable access
@@ -1023,12 +1315,15 @@ Modern geospatial workflows require adherence to established standards:
 - **Cloud Optimization**: Structure data for efficient cloud-native access
 
 ```{python}
+# | tangle: geogfm/c01.py
+# | tangle-append: true
+
 def save_geotiff(
     data: np.ndarray,
     output_path: Union[str, Path],
     transform,
     crs,
-    band_names: Optional[List[str]] = None
+    band_names: Optional[List[str]] = None,
 ) -> None:
     """
     Export georeferenced data using industry-standard GeoTIFF format.
@@ -1070,18 +1365,18 @@ def save_geotiff(
     # Write GeoTIFF with comprehensive metadata
     with rasterio.open(
         output_path,
-        'w',
-        driver='GTiff',
+        "w",
+        driver="GTiff",
         height=height,
         width=width,
         count=count,
         dtype=data.dtype,
         crs=crs,
         transform=transform,
-        compress='deflate',  # Lossless compression
-        tiled=True,         # Cloud-optimized structure
-        blockxsize=512,     # Optimize for cloud access
-        blockysize=512
+        compress="deflate",  # Lossless compression
+        tiled=True,  # Cloud-optimized structure
+        blockxsize=512,  # Optimize for cloud access
+        blockysize=512,
     ) as dst:
         if data.ndim == 2:
             dst.write(data, 1)
@@ -1093,16 +1388,17 @@ def save_geotiff(
                 if band_names and i < len(band_names):
                     dst.set_band_description(i + 1, band_names[i])
 
-    print(f"💾 Saved GeoTIFF: {output_path}")
-    print(f"   Shape: {data.shape}")
-    print(f"   CRS: {crs}")
-    print(f"   Compression: deflate, tiled")
+    logger = logging.getLogger(__name__)
+    logger.info(f"💾 Saved GeoTIFF: {output_path}")
+    logger.info(f"   Shape: {data.shape}")
+    logger.info(f"   CRS: {crs}")
+    logger.info(f"   Compression: deflate, tiled")
 
-print("✅ Geospatial data export functions ready")
 ```
 
 :::{.callout-note}
-## Geospatial Data Standards
+
+##### Geospatial Data Standards
 
 - **GeoTIFF with COG optimization** ensures cloud-native accessibility
 - **CRS preservation** maintains spatial accuracy across platforms
@@ -1112,10 +1408,11 @@ print("✅ Geospatial data export functions ready")
 
 ---
 
-## Section 8: Advanced Workflow Patterns 🚀
+#### 2.4.8 Advanced Workflow Patterns 🚀
 
 :::{.callout-tip}
-## Learning Objectives
+
+##### Learning Objectives
 
 - Design scalable spatial partitioning strategies for large-scale analysis
 - Implement testing frameworks for geospatial data pipelines
@@ -1132,7 +1429,20 @@ Large-scale satellite analysis requires sophisticated workflow patterns:
 - **Quality Assurance**: Automated testing of processing pipelines
 - **Parallel Execution**: Leverage multiple cores/nodes for efficiency
 
+The `create_scene_tiles` function systematically partitions a geospatial scene (represented by a STAC item) into a grid of smaller tiles for scalable and parallel processing. It takes as input a STAC item and a desired grid size (e.g., 3×3), then:
+
+- Retrieves scene metadata (such as bounding box and area).
+- Iterates over the grid dimensions to compute the spatial extent of each tile as a percentage of the scene.
+- For each tile, calculates its bounding box and relevant metadata.
+- Returns a list of dictionaries, each describing a tile's spatial boundaries and processing information.
+
+This approach enables efficient parallelization, memory management, and quality control by allowing independent processing and testing of each tile, and is designed to be flexible for different partitioning strategies.
+
+
 ```{python}
+# | tangle: geogfm/c01.py
+# | tangle-append: true
+
 def create_scene_tiles(item, tile_size: Tuple[int, int] = (3, 3)):
     """
     Create systematic spatial partitioning for parallel processing workflows.
@@ -1165,9 +1475,9 @@ def create_scene_tiles(item, tile_size: Tuple[int, int] = (3, 3)):
 
     scene_info = get_scene_info(item)
 
-    print(f"🔲 Creating {nx}×{ny} tile grid from scene...")
-    print(f"   Total tiles: {nx * ny}")
-    print(f"   Scene area: {scene_info['area_km2']:.0f} km²")
+    logger.info(f"🔲 Creating {nx}×{ny} tile grid from scene...")
+    logger.info(f"   Total tiles: {nx * ny}")
+    logger.info(f"   Scene area: {scene_info['area_km2']:.0f} km²")
 
     for i in range(nx):
         for j in range(ny):
@@ -1179,27 +1489,39 @@ def create_scene_tiles(item, tile_size: Tuple[int, int] = (3, 3)):
 
             # Generate tile bounding box
             tile_bbox = get_subset_from_scene(
-                item,
-                x_range=(x_start, x_end),
-                y_range=(y_start, y_end)
+                item, x_range=(x_start, x_end), y_range=(y_start, y_end)
             )
 
             # Package tile metadata for processing
             tile_info = {
-                'tile_id': f"{i}_{j}",
-                'row': j,
-                'col': i,
-                'bbox': tile_bbox,
-                'x_range': (x_start, x_end),
-                'y_range': (y_start, y_end),
-                'area_percent': ((x_end - x_start) * (y_end - y_start)) / 100.0,
-                'processing_priority': 'high' if (i == nx//2 and j == ny//2) else 'normal'  # Center tile first
+                "tile_id": f"{i}_{j}",
+                "row": j,
+                "col": i,
+                "bbox": tile_bbox,
+                "x_range": (x_start, x_end),
+                "y_range": (y_start, y_end),
+                "area_percent": ((x_end - x_start) * (y_end - y_start)) / 100.0,
+                "processing_priority": "high"
+                if (i == nx // 2 and j == ny // 2)
+                else "normal",  # Center tile first
             }
 
             tiles.append(tile_info)
 
-    print(f"   ✅ Created {len(tiles)} tiles, each covering {tiles[0]['area_percent']:.1f}% of scene")
+    logger.info(
+        f"   ✅ Created {len(tiles)} tiles, each covering {tiles[0]['area_percent']:.1f}% of scene"
+    )
     return tiles
+```
+
+#### Testing functionality
+
+The next code block introduces a function called `test_subset_functionality`. This function is designed to perform automated quality assurance on geospatial data loading pipelines. It does so by running a series of tests on a small, central subset of a geospatial scene, using a STAC item as input. The function checks that the subset extraction and band loading processes work correctly, verifies that data is actually loaded, and provides informative print statements about the test results. This approach helps catch errors early, ensures that the core data loading functionality is operational before processing larger datasets, and validates performance on a manageable data sample.
+
+
+```{python}
+# | tangle: geogfm/c01.py
+# | tangle-append: true
 
 def test_subset_functionality(item):
     """
@@ -1226,7 +1548,7 @@ def test_subset_functionality(item):
     - Provides early failure detection
     - Validates core functionality before expensive operations
     """
-    print(f"🧪 Testing subset functionality...")
+    logger.info(f"🧪 Testing subset functionality...")
 
     try:
         # Test with small central area (minimal data transfer)
@@ -1235,42 +1557,34 @@ def test_subset_functionality(item):
         # Load minimal data for testing
         test_data = load_sentinel2_bands(
             item,
-            bands=['B04'],  # Single band reduces test time
+            bands=["B04"],  # Single band reduces test time
             subset_bbox=test_bbox,
-            max_retries=2
+            max_retries=2,
         )
 
-        if 'B04' in test_data:
-            shape = test_data['B04'].shape
-            has_data = test_data['B04'].size > 0
-            print(f"   ✅ Subset test successful: {shape} pixels, {test_data['B04'].size} total")
+        if "B04" in test_data:
+            shape = test_data["B04"].shape
+            has_data = test_data["B04"].size > 0
+            logger.info(
+                f"   ✅ Subset test successful: {shape} pixels, {test_data['B04'].size} total"
+            )
             return True
         else:
-            print(f"   ❌ Subset test failed: no data returned")
+            logger.error(f"   ❌ Subset test failed: no data returned")
             return False
 
     except Exception as e:
-        print(f"   ❌ Subset test failed: {str(e)[:50]}...")
+        logger.error(f"   ❌ Subset test failed: {str(e)[:50]}...")
         return False
 
-print("✅ Advanced workflow pattern functions ready")
+
 ```
 
-:::{.callout-note}
-## Scalable Processing Patterns
-
-- **Systematic tiling** enables parallel processing of large datasets
-- **Quality assurance testing** prevents failures in production workflows
-- **Adaptive processing priorities** optimize resource utilization
-- **Metadata packaging** supports complex workflow orchestration
-:::
-
-
-## Summary: Your Geospatial AI Toolkit
+### 2.5 Summary: Your Geospatial AI Toolkit
 
 You now have a comprehensive, production-ready toolkit with:
 
-### Core Capabilities
+**Core Capabilities:**
 
 1. **🔐 Enterprise Authentication**: Secure, scalable API access patterns
 2. **🔍 Intelligent Data Discovery**: Cloud-native search with optimization
@@ -1282,7 +1596,8 @@ You now have a comprehensive, production-ready toolkit with:
 8. **🚀 Scalable Workflows**: Parallel processing and quality assurance
 
 
-### Design Philosophy
+**Design Philosophy:**
+
 Each function embodies software engineering best practices:
 
 - **Error Handling**: Graceful degradation and informative error messages
@@ -1290,7 +1605,8 @@ Each function embodies software engineering best practices:
 - **Extensibility**: Easy to modify and extend for new requirements
 - **Documentation**: Clear examples and architectural reasoning
 
-### Ready for Production
+**Ready for Production:**
+
 These functions are designed for real-world deployment:
 
 - **Scalability**: Handle datasets from small studies to global analysis
@@ -1298,20 +1614,20 @@ These functions are designed for real-world deployment:
 - **Performance**: Memory-efficient algorithms and cloud optimization
 - **Maintainability**: Clear code structure and comprehensive documentation
 
-## Troubleshooting
+**Troubleshooting:**
 
 - **Systematic tiling** enables parallel processing of large datasets
 - **Quality assurance testing** prevents failures in production workflows
 - **Adaptive processing priorities** optimize resource utilization
 - **Metadata packaging** supports complex workflow orchestration
 
-
 ---
 
-## Step 2: Understanding STAC APIs and Cloud-Native Geospatial Architecture
+## 3. Understanding STAC APIs and Cloud-Native Geospatial Architecture
 
 :::{.callout-tip}
-## Learning Objectives
+
+##### Learning Objectives
 By the end of this section, you will:
 
 Understand the STAC specification and its role in modern geospatial architecture
@@ -1341,6 +1657,7 @@ Microsoft Planetary Computer hosts one of the world's largest STAC catalogs, pro
 #### Testing STAC Connectivity and Catalog Discovery
 
 This connection test demonstrates several important concepts for production geospatial systems:
+
 
 ```{python}
 # Connect to STAC catalog
@@ -1379,20 +1696,14 @@ try:
     logger.info(f"Accessible collections: {len(available_collections)}/{len(satellite_collections)}")
 
 except Exception as e:
-    print(f"\n❌ STAC connection failed: {str(e)}")
-    print(f"\n🔧 Troubleshooting steps:")
-    print(f"   1. Verify internet connectivity")
-    print(f"   2. Check Planetary Computer API status: https://planetarycomputer.microsoft.com/")
-    print(f"   3. Ensure pystac-client is installed: pip install pystac-client")
-    print(f"   4. Verify planetary-computer package: pip install planetary-computer")
-    print(f"   5. Try again in a few minutes (temporary API issues)")
+    logger.error(f"\n❌ STAC connection failed: {str(e)}")
+    logger.info(f"\n🔧 Troubleshooting steps:")
+    logger.info(f"   1. Verify internet connectivity")
+    logger.info(f"   2. Check Planetary Computer API status: https://planetarycomputer.microsoft.com/")
+    logger.info(f"   3. Ensure pystac-client is installed: pip install pystac-client")
+    logger.info(f"   4. Verify planetary-computer package: pip install planetary-computer")
+    logger.info(f"   5. Try again in a few minutes (temporary API issues)")
 
-    # Provide fallback information for educational purposes
-    print(f"\n📚 Educational Note: Even without connection, you now understand:")
-    print(f"   • STAC APIs provide standardized geospatial data access")
-    print(f"   • Cloud-native architectures eliminate data download requirements")
-    print(f"   • Federated catalogs enable multi-provider data discovery")
-    print(f"   • Authentication enables enhanced rate limits and access control")
 ```
 
 ## Connection Troubleshooting
@@ -1407,9 +1718,11 @@ Each STAC collection contains rich metadata that helps you choose the right data
 
 ---
 
-## Step 3: Spatial Analysis Design - Defining Areas of Interest
+## 4. Spatial Analysis Design - Defining Areas of Interest
 
-### Learning Objectives
+:::{.callout-tip}
+
+##### Learning Objectives
 
 
 By the end of this section, you will be able to understand coordinate systems and bounding box conventions in geospatial analysis, design effective study areas based on analysis objectives and data characteristics, create interactive maps for spatial context and validation, and apply best practices for reproducible spatial analysis workflows.
@@ -1424,63 +1737,63 @@ Defining your Area of Interest (AOI) is a critical design decision that influenc
 
 For our AOI definition, we will use the WGS84 geographic coordinate system (EPSG:4326). In this system, longitude (X) represents the east-west position and ranges from -180° to +180°, with negative values indicating west. Latitude (Y) represents the north-south position and ranges from -90° to +90°, with negative values indicating south. Bounding boxes are formatted as [west, south, east, north], corresponding to (min_x, min_y, max_x, max_y).
 
-#### Study Area Selection: San Francisco Bay Area
+#### Study Area Selection: Santa Barbara Region
 
-We'll use the San Francisco Bay Area as our exemplar study region because it features a mix of urban, water, agricultural, and natural environments. The region is characterized by dynamic processes such as urban growth, vegetation changes, and water level fluctuations. It also benefits from frequent satellite coverage with minimal cloud interference and presents geographic complexity, including islands, peninsulas, and varied topography.
+We'll use the Santa Barbara region as our exemplar study region because it features a diverse mix of coastal, urban, mountainous, and agricultural environments. The region is characterized by dynamic processes such as coastal dynamics, wildfire activity, vegetation changes, and urban-wildland interface transitions. It also benefits from frequent satellite coverage and presents geographic complexity, including the Santa Ynez Mountains, Channel Islands, agricultural valleys, and varied coastal ecosystems.
 
 **Designing Area of Interest (AOI) for Geospatial Analysis**
 
-This demonstrates spatial scope definition for satellite-based studies. We'll work with the San Francisco Bay Area as our primary study area.
+This demonstrates spatial scope definition for satellite-based studies. We'll work with the Santa Barbara region as our primary study area.
 
 ```{python}
 # Step 3A: Define Area of Interest with Geographic Reasoning
-# Primary study area: San Francisco Bay Area
-# Coordinates chosen to encompass the greater metropolitan region
-sf_bay_bbox = [-122.5, 37.3, -121.8, 38.0]  # [west, south, east, north]
+# Primary study area: Santa Barbara Region
+# Coordinates chosen to encompass the greater Santa Barbara County coastal region
+santa_barbara_bbox = [-120.5, 34.3, -119.5, 34.7]  # [west, south, east, north]
 
 # Import required libraries for spatial calculations
 from shapely.geometry import box
 import os
 
 # Create geometry object for area calculations
-aoi_geom = box(*sf_bay_bbox)
+aoi_geom = box(*santa_barbara_bbox)
 
 # Calculate basic spatial metrics
 area_degrees = aoi_geom.area
 # Approximate conversion to kilometers (valid for mid-latitudes)
-center_lat = (sf_bay_bbox[1] + sf_bay_bbox[3]) / 2
+center_lat = (santa_barbara_bbox[1] + santa_barbara_bbox[3]) / 2
 lat_correction = np.cos(np.radians(center_lat))
 area_km2 = area_degrees * (111.32 ** 2) * lat_correction  # 1 degree ≈ 111.32 km
 
-print(f"\n📊 AOI Spatial Characteristics:")
-print(f"   📍 Region: San Francisco Bay Area")
-print(f"   🗺️ Bounding box: {sf_bay_bbox}")
-print(f"   📐 Dimensions: {(sf_bay_bbox[2] - sf_bay_bbox[0]):.2f}° × {(sf_bay_bbox[3] - sf_bay_bbox[1]):.2f}°")
-print(f"   📏 Approximate area: {area_km2:.0f} km²")
-print(f"   🏙️ Population: ~8 million (Bay Area metropolitan region)")
+logger.info(f"\n📊 AOI Spatial Characteristics:")
+logger.info(f"   📍 Region: Santa Barbara County Coastal Region")
+logger.info(f"   🗺️ Bounding box: {santa_barbara_bbox}")
+logger.info(f"   📐 Dimensions: {(santa_barbara_bbox[2] - santa_barbara_bbox[0]):.2f}° × {(santa_barbara_bbox[3] - santa_barbara_bbox[1]):.2f}°")
+logger.info(f"   📏 Approximate area: {area_km2:.0f} km²")
+logger.info(f"   🏙️ Population: ~450,000 (Santa Barbara County)")
 
 # Provide alternative study areas for different research interests
-print(f"\n🌐 Alternative AOI Options for Different Study Objectives:")
+logger.info(f"\n🌐 Alternative AOI Options for Different Study Objectives:")
 alternative_aois = {
+    "San Francisco Bay Area": {
+        "bbox": [-122.5, 37.3, -121.8, 38.0],
+        "focus": "Urban growth, water dynamics, mixed land use",
+        "challenges": "Fog and cloud cover in summer"
+    },
     "Los Angeles Basin": {
         "bbox": [-118.7, 33.7, -118.1, 34.3],
         "focus": "Urban heat islands, air quality, sprawl patterns",
         "challenges": "Frequent clouds, complex topography"
-    },
-    "New York City": {
-        "bbox": [-74.3, 40.5, -73.7, 40.9],
-        "focus": "Dense urban analysis, coastal processes",
-        "challenges": "Seasonal cloud cover, urban shadows"
     },
     "Central Valley Agriculture": {
         "bbox": [-121.5, 36.0, -120.0, 37.5],
         "focus": "Crop monitoring, irrigation patterns, drought",
         "challenges": "Seasonal variations, haze"
     },
-    "Florida Everglades": {
-        "bbox": [-81.5, 25.0, -80.0, 26.5],
-        "focus": "Wetland monitoring, water levels, restoration",
-        "challenges": "Frequent clouds, seasonal flooding"
+    "Channel Islands": {
+        "bbox": [-120.5, 33.9, -119.0, 34.1],
+        "focus": "Island ecology, marine-terrestrial interface, conservation",
+        "challenges": "Marine layer, limited ground truth"
     }
 }
 
@@ -1488,15 +1801,15 @@ for region, info in alternative_aois.items():
     bbox = info["bbox"]
     area_alt = ((bbox[2] - bbox[0]) * (bbox[3] - bbox[1]) *
                 (111.32 ** 2) * np.cos(np.radians((bbox[1] + bbox[3]) / 2)))
-    print(f"   🗺️ {region}: {info['bbox']} ({area_alt:.0f} km²)")
-    print(f"      🎯 Research focus: {info['focus']}")
-    print(f"      ⚠️ Considerations: {info['challenges']}")
+    logger.info(f"   🗺️ {region}: {info['bbox']} ({area_alt:.0f} km²)")
+    logger.info(f"      🎯 Research focus: {info['focus']}")
+    logger.info(f"      ⚠️ Considerations: {info['challenges']}")
 
-print(f"\n💡 Pro Tip: Choose AOI based on:")
-print(f"   1. Research objectives and required spatial resolution")
-print(f"   2. Data availability and typical cloud cover patterns")
-print(f"   3. Computational resources and processing time constraints")
-print(f"   4. Ecological or administrative boundary alignment")
+logger.info(f"\n💡 Pro Tip: Choose AOI based on:")
+logger.info(f"   1. Research objectives and required spatial resolution")
+logger.info(f"   2. Data availability and typical cloud cover patterns")
+logger.info(f"   3. Computational resources and processing time constraints")
+logger.info(f"   4. Ecological or administrative boundary alignment")
 ```
 
 #### Interactive Mapping for Spatial Context and Validation
@@ -1510,8 +1823,8 @@ This demonstrates best practices for geospatial visualization with multiple base
 ```{python}
 # Step 3B: Create Interactive Map with Multiple Basemap Options
 # Calculate map center for optimal display
-center_lat = (sf_bay_bbox[1] + sf_bay_bbox[3]) / 2
-center_lon = (sf_bay_bbox[0] + sf_bay_bbox[2]) / 2
+center_lat = (santa_barbara_bbox[1] + santa_barbara_bbox[3]) / 2
+center_lon = (santa_barbara_bbox[0] + santa_barbara_bbox[2]) / 2
 
 # Initialize folium map with appropriate zoom level
 # Zoom level chosen to show entire AOI while maintaining detail
@@ -1538,24 +1851,26 @@ basemap_options = {
         ),
         'use_case': 'Ground truth validation, visual interpretation'
     },
-    'Stamen Terrain': {
+    'OpenTopoMap': {
         'layer': folium.TileLayer(
-            'Stamen Terrain',
-            name='Topographic',
-            attr='Map tiles by Stamen Design, CC BY 3.0 — Map data © OpenStreetMap contributors'
+            tiles='https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+            name='Topographic (OpenTopoMap)',
+            attr='Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)',
+            overlay=False,
+            control=True
         ),
         'use_case': 'Elevation context, watershed analysis'
     }
 }
 
-print(f"   📚 Adding {len(basemap_options)} basemap options:")
+logger.info(f"   📚 Adding {len(basemap_options)} basemap options:")
 for name, info in basemap_options.items():
     info['layer'].add_to(m)
-    print(f"     • {name}: {info['use_case']}")
+    logger.info(f"     • {name}: {info['use_case']}")
 
 # Add AOI boundary with informative styling
-aoi_bounds = [[sf_bay_bbox[1], sf_bay_bbox[0]],  # southwest corner
-              [sf_bay_bbox[3], sf_bay_bbox[2]]]  # northeast corner
+aoi_bounds = [[santa_barbara_bbox[1], santa_barbara_bbox[0]],  # southwest corner
+              [santa_barbara_bbox[3], santa_barbara_bbox[2]]]  # northeast corner
 
 folium.Rectangle(
     bounds=aoi_bounds,
@@ -1567,8 +1882,8 @@ folium.Rectangle(
         f"""
         <div style="font-family: Arial; width: 300px;">
         <h4>📊 Study Area Details</h4>
-        <b>Region:</b> San Francisco Bay Area<br>
-        <b>Coordinates:</b> {sf_bay_bbox}<br>
+        <b>Region:</b> Santa Barbara County Coastal Region<br>
+        <b>Coordinates:</b> {santa_barbara_bbox}<br>
         <b>Area:</b> {area_km2:.0f} km²<br>
         <b>Purpose:</b> Geospatial AI Training<br>
         <b>Data Type:</b> Sentinel-2 Optical<br>
@@ -1582,32 +1897,32 @@ folium.Rectangle(
 # Add geographic reference points with contextual information
 reference_locations = [
     {
-        "name": "San Francisco",
-        "coords": [37.7749, -122.4194],
-        "description": "Urban core, dense development",
+        "name": "Santa Barbara",
+        "coords": [34.4208, -119.6982],
+        "description": "Coastal city, urban-wildland interface",
         "icon": "building",
         "color": "blue"
     },
     {
-        "name": "Oakland",
-        "coords": [37.8044, -122.2712],
-        "description": "Port city, mixed urban-industrial",
-        "icon": "ship",
+        "name": "UCSB",
+        "coords": [34.4140, -119.8489],
+        "description": "University campus, research facilities",
+        "icon": "graduation-cap",
         "color": "green"
     },
     {
-        "name": "San Jose",
-        "coords": [37.3382, -121.8863],
-        "description": "Silicon Valley, tech corridors",
+        "name": "Goleta",
+        "coords": [34.4358, -119.8276],
+        "description": "Tech corridor, agricultural transition zone",
         "icon": "microchip",
         "color": "purple"
     },
     {
-        "name": "Palo Alto",
-        "coords": [37.4419, -122.1430],
-        "description": "University town, research facilities",
-        "icon": "graduation-cap",
-        "color": "orange"
+        "name": "Montecito",
+        "coords": [34.4358, -119.6376],
+        "description": "Wildfire-prone, high-value urban area",
+        "icon": "fire",
+        "color": "red"
     }
 ]
 
@@ -1674,8 +1989,9 @@ logger.info("Interactive map created with comprehensive spatial context")
 m
 ```
 
-:::{.callout-note}
-## AOI Design Best Practices
+:::{.callout-note} 
+
+#### AOI Design Best Practices
 
 **Size Considerations:**  
 When defining your Area of Interest (AOI), consider that an area too small may miss important spatial patterns or edge effects, while an area too large can increase processing time and may include irrelevant regions. Aim for a balance that ensures computational efficiency without sacrificing analytical completeness.
@@ -1691,11 +2007,9 @@ Ensure your AOI captures relevant seasonal dynamics and accounts for both histor
 
 Before proceeding with data acquisition, confirm that your AOI is well-matched to your analysis objectives.
 
----
+## 5. Intelligent Satellite Scene Discovery and Selection
 
-
-## Step 4: Intelligent Satellite Scene Discovery and Selection
-### Intelligent Satellite Scene Discovery
+### 5.1 Intelligent Satellite Scene Discovery
 
 Selecting appropriate satellite imagery is a multi-faceted challenge that requires balancing several key factors: temporal coverage (recent vs. historical data), data quality (cloud cover, sensor conditions, processing artifacts), spatial coverage (ensuring your AOI is fully captured), and the processing level of the data (raw vs. analysis-ready products). Relying on a single search strategy often leads to missed opportunities or suboptimal results, especially when data availability is limited by weather or acquisition schedules.
 
@@ -1762,7 +2076,7 @@ for i, strategy in enumerate(search_strategies, 1):
     try:
         # Use our optimized search function with current strategy parameters
         temp_scenes = search_sentinel2_scenes(
-            bbox=sf_bay_bbox,
+            bbox=santa_barbara_bbox,
             date_range=strategy["date_range"],
             cloud_cover_max=strategy["cloud_max"],
             limit=100  # Generous limit for selection flexibility
@@ -1789,7 +2103,7 @@ if not scenes:
 logger.info(f"Scene discovery completed: {successful_strategy['name']} strategy found {len(scenes)} scenes (attempt {search_strategies.index(successful_strategy) + 1}/{len(search_strategies)})")
 ```
 
-#### Scene Quality Assessment and Selection
+### 5.2 Scene Quality Assessment and Selection
 
 Once we have candidate scenes, we need to systematically evaluate and select the best option:
 
@@ -2076,17 +2390,20 @@ Now let's examine the scene's geographic characteristics and proceed to data loa
 
 ---
 
-## Step 5: Production-Grade Satellite Data Loading and Processing
+## 6. Production-Grade Satellite Data Loading and Processing
 
-### Learning Objectives
+:::{.callout-tip} 
+
+#### Learning Objectives
 
 By the end of this section, you will be able to implement memory-efficient satellite data loading with intelligent subsetting, design adaptive processing strategies based on scene characteristics, create robust error handling for network-dependent data workflows, and build multi-dimensional datasets suitable for AI and machine learning applications.
+:::
 
-### The Challenge of Large-Scale Satellite Data Loading
+### 6.1 The Challenge of Large-Scale Satellite Data Loading
 
 Modern satellite scenes can exceed 1GB in size, which requires careful planning for data loading and processing. Efficient memory management is necessary to avoid loading unnecessary data into RAM. Network efficiency is also important to minimize data transfer while maintaining analysis quality. Processing strategies should be adaptive, adjusting to the size and characteristics of each scene. Additionally, workflows must be resilient to network interruptions and data access failures.
 
-### Intelligent Data Loading Architecture
+### 6.2 Intelligent Data Loading Architecture
 
 The following approach demonstrates production-ready patterns used in operational systems. It implements an intelligent satellite data loading pipeline that adapts processing based on scene characteristics, selecting optimal loading strategies according to the scene size and analysis requirements.
 
@@ -2159,7 +2476,7 @@ else:
     subset_bbox = None
 ```
 
-#### High-Performance Data Loading Implementation
+### 6.3 High-Performance Data Loading Implementation
 
 Now we'll implement the actual data loading with comprehensive error handling and performance monitoring:
 
@@ -2228,7 +2545,7 @@ if 'best_scene' in locals() and 'subset_bbox' in locals():
                     'B08': np.random.randint(2000, 6000, synthetic_size, dtype=np.uint16),
                     'transform': None,
                     'crs': None,
-                    'bounds': subset_bbox if subset_bbox else sf_bay_bbox,
+                    'bounds': subset_bbox if subset_bbox else santa_barbara_bbox,
                     'scene_id': 'SYNTHETIC_DEMO',
                     'date': '2024-01-01'
                 }
@@ -2254,7 +2571,7 @@ else:
     logger.info(f"Educational dataset ready: {synthetic_size[0]}×{synthetic_size[1]} pixels")
 ```
 
-#### Comprehensive Data Validation and Quality Assessment
+### 6.4 Comprehensive Data Validation and Quality Assessment
 
 After loading, we must validate data quality and completeness before proceeding with analysis:
 
@@ -2273,7 +2590,7 @@ if 'band_data' in locals() and band_data:
     # Extract georeferencing information
     transform = band_data.get('transform', None)
     crs = band_data.get('crs', None)
-    bounds = band_data.get('bounds', subset_bbox if 'subset_bbox' in locals() else sf_bay_bbox)
+    bounds = band_data.get('bounds', subset_bbox if 'subset_bbox' in locals() else santa_barbara_bbox)
     scene_id = band_data.get('scene_id', 'Unknown')
     acquisition_date = band_data.get('date', 'Unknown')
 
@@ -2341,7 +2658,7 @@ else:
     logger.error("Data validation failed - no valid satellite data available")
 ```
 
-#### Creating AI-Ready Multi-Dimensional Datasets
+### 6.5 Creating AI-Ready Multi-Dimensional Datasets
 
 Transform loaded bands into analysis-ready xarray datasets optimized for AI/ML workflows:
 
@@ -2442,17 +2759,20 @@ Rasterio provides lower-level, direct file access and is well-suited for basic g
 
 ---
 
-## Step 6: Scientific Visualization and Spectral Analysis
+## 7. Scientific Visualization and Spectral Analysis
 
-### Learning Objectives
+:::{.callout-tip} 
+
+#### Learning Objectives
 
 By the end of this section, you will be able to design publication-quality visualizations for satellite data analysis, understand the importance of perceptually uniform colormaps in scientific visualization, create informative multi-panel displays with appropriate context and interpretation, and calculate as well as visualize spectral indices for environmental monitoring.
+:::
 
-### Principles of Scientific Visualization for Remote Sensing
+### 7.1 Principles of Scientific Visualization for Remote Sensing
 
 Effective satellite data visualization requires attention to perceptual accuracy, ensuring that colors accurately represent data relationships. It is important to maximize information density to provide insight with minimal cognitive load, while also preserving spatial and temporal context. Additionally, visualizations should be accessible and interpretable by a wide range of audiences.
 
-#### Advanced Color Composite Creation
+### 7.2 Advanced Color Composite Creation
 
 ```{python}
 if band_data and all(k in band_data for k in ['B04', 'B03', 'B02']):
@@ -2464,7 +2784,7 @@ if band_data and all(k in band_data for k in ['B04', 'B03', 'B02']):
         enhance=True  # Apply contrast enhancement
     )
 
-    print(f"   RGB composite shape: {rgb_composite.shape}")
+    logger.info(f"   RGB composite shape: {rgb_composite.shape}")
 
     # Create false color composite if NIR band is available
     false_color_composite = None
@@ -2475,7 +2795,7 @@ if band_data and all(k in band_data for k in ['B04', 'B03', 'B02']):
             blue=band_data['B03'],   # Green in blue channel
             enhance=True
         )
-        print(f"   False color composite created")
+        logger.info(f"   False color composite created")
 
     # Visualize the composites
     if 'B08' in band_data:
@@ -2520,7 +2840,7 @@ else:
     logger.warning("Insufficient bands for RGB composite")
 ```
 
-### Calculate Vegetation Indices
+### 7.3 Calculate Vegetation Indices
 
 ```{python}
 if band_data and 'B08' in band_data and 'B04' in band_data:
@@ -2592,16 +2912,16 @@ A common practice in environmental studies is to use NDVI values greater than 0.
 
 ---
 
-## Step 6: Interactive Mapping and Band Analysis
+## 8. Interactive Mapping and Band Analysis
 
 Let's create interactive visualizations and perform multi-band analysis.
 
-### Create Interactive Map with Results
+### 8.1 Create Interactive Map with Results
 
 ```{python}
-if 'subset_bbox' in locals() or 'sf_bay_bbox' in locals():
+if 'subset_bbox' in locals() or 'santa_barbara_bbox' in locals():
     # Use subset bbox if available, otherwise use the full AOI
-    map_bbox = subset_bbox if 'subset_bbox' in locals() else sf_bay_bbox
+    map_bbox = subset_bbox if 'subset_bbox' in locals() else santa_barbara_bbox
     center_lat = (map_bbox[1] + map_bbox[3]) / 2
     center_lon = (map_bbox[0] + map_bbox[2]) / 2
 
@@ -2690,7 +3010,7 @@ else:
     logger.warning("No location data available for mapping")
 ```
 
-### Comprehensive Multi-band Analysis
+### 8.2 Comprehensive Multi-band Analysis
 
 ```{python}
 if band_data and 'rgb_composite' in locals():
@@ -2746,17 +3066,24 @@ if band_data and len(band_data) > 2:
 
 ---
 
-## Step 7: Data Export and Caching
+## 9. Data Export and Caching
 
 Let's save our processed data for future use and create a reusable cache.
 
-### Export Processed Data Using Helper Functions
+### 9.1 Export Processed Data Using Helper Functions
+
+The next function in the code block is `export_analysis_results`. This function is designed to export the results of geospatial data analysis to a structured output directory. It takes several optional parameters, including arrays for NDVI and RGB composites, a dictionary of band data, geospatial transform and CRS information, scene metadata, NDVI statistics, and bounding boxes for the area of interest and any subset. The function creates the necessary output and cache directories, and then (as seen in the partial code) proceeds to export the NDVI data as a GeoTIFF file if the relevant data and metadata are provided. The function is intended to help organize and cache analysis outputs for future use or reproducibility.
+
 
 ```{python}
+# | tangle: geogfm/c01.py
+# | tangle-append: true
+
 from typing import Any
 
+
 def export_analysis_results(
-    output_dir: str = 'week1_output',
+    output_dir: str = "week1_output",
     ndvi: Optional[np.ndarray] = None,
     rgb_composite: Optional[np.ndarray] = None,
     band_data: Optional[Dict[str, np.ndarray]] = None,
@@ -2765,7 +3092,7 @@ def export_analysis_results(
     scene_metadata: Optional[Dict] = None,
     ndvi_stats: Optional[Dict] = None,
     aoi_bbox: Optional[List[float]] = None,
-    subset_bbox: Optional[List[float]] = None
+    subset_bbox: Optional[List[float]] = None,
 ) -> Path:
     """Export analysis results to structured output directory.
 
@@ -2790,31 +3117,31 @@ def export_analysis_results(
 
     output_path = Path(output_dir)
     output_path.mkdir(exist_ok=True)
-    cache_dir = output_path / 'cache'
+    cache_dir = output_path / "cache"
     cache_dir.mkdir(exist_ok=True)
 
     # Export NDVI if available
     if ndvi is not None and transform is not None and crs is not None:
-        ndvi_path = output_path / 'ndvi.tif'
+        ndvi_path = output_path / "ndvi.tif"
         save_geotiff(
             data=ndvi,
             output_path=ndvi_path,
             transform=transform,
             crs=crs,
-            band_names=['NDVI']
+            band_names=["NDVI"],
         )
         logger.debug(f"Exported NDVI to {ndvi_path.name}")
 
     # Export RGB composite if available
     if rgb_composite is not None and transform is not None and crs is not None:
         rgb_bands = np.transpose(rgb_composite, (2, 0, 1))  # HWC to CHW
-        rgb_path = output_path / 'rgb_composite.tif'
+        rgb_path = output_path / "rgb_composite.tif"
         save_geotiff(
             data=rgb_bands,
             output_path=rgb_path,
             transform=transform,
             crs=crs,
-            band_names=['Red', 'Green', 'Blue']
+            band_names=["Red", "Green", "Blue"],
         )
         logger.debug(f"Exported RGB composite to {rgb_path.name}")
 
@@ -2822,31 +3149,41 @@ def export_analysis_results(
     if band_data:
         cached_bands = []
         for band_name, band_array in band_data.items():
-            if band_name.startswith('B') and isinstance(band_array, np.ndarray):
-                band_path = cache_dir / f'{band_name}.npy'
+            if band_name.startswith("B") and isinstance(band_array, np.ndarray):
+                band_path = cache_dir / f"{band_name}.npy"
                 np.save(band_path, band_array)
                 cached_bands.append(band_name)
         logger.debug(f"Cached {len(cached_bands)} bands: {cached_bands}")
 
     # Create metadata
     metadata = {
-        'processing_date': datetime.now().isoformat(),
-        'aoi_bbox': aoi_bbox,
-        'subset_bbox': subset_bbox
+        "processing_date": datetime.now().isoformat(),
+        "aoi_bbox": aoi_bbox,
+        "subset_bbox": subset_bbox,
     }
 
     if scene_metadata:
-        metadata['scene'] = scene_metadata
+        metadata["scene"] = scene_metadata
     if ndvi_stats:
-        metadata['ndvi_statistics'] = ndvi_stats
+        metadata["ndvi_statistics"] = ndvi_stats
 
     # Save metadata
-    metadata_path = output_path / 'metadata.json'
-    with open(metadata_path, 'w') as f:
+    metadata_path = output_path / "metadata.json"
+    with open(metadata_path, "w") as f:
         json.dump(metadata, f, indent=2, default=str)
 
     logger.info(f"Analysis results exported to: {output_path.absolute()}")
     return output_path
+```
+
+### 9.2 Reloading Data
+
+To reload your processed data, you can use the `load_week1_data` function provided below. This function reads the exported metadata, NDVI raster, and any cached bands from the specified output directory. Here's how you can use it:
+
+
+```{python}
+# | tangle: geogfm/c01.py
+# | tangle-append: true
 
 def load_week1_data(output_dir: str = "week1_output") -> Dict[str, Any]:
     """Load processed data from Week 1."""
@@ -2885,26 +3222,27 @@ def load_week1_data(output_dir: str = "week1_output") -> Dict[str, Any]:
 
     return data
 
+
 # Export the analysis results
 scene_meta = None
-if 'best_scene' in locals():
+if "best_scene" in locals():
     scene_meta = {
-        'id': best_scene.id,
-        'date': best_scene.properties['datetime'],
-        'cloud_cover': best_scene.properties['eo:cloud_cover'],
-        'platform': best_scene.properties.get('platform', 'Unknown')
+        "id": best_scene.id,
+        "date": best_scene.properties["datetime"],
+        "cloud_cover": best_scene.properties["eo:cloud_cover"],
+        "platform": best_scene.properties.get("platform", "Unknown"),
     }
 
 output_dir = export_analysis_results(
-    ndvi=ndvi if 'ndvi' in locals() else None,
-    rgb_composite=rgb_composite if 'rgb_composite' in locals() else None,
-    band_data=band_data if 'band_data' in locals() else None,
-    transform=transform if 'transform' in locals() else None,
-    crs=crs if 'crs' in locals() else None,
+    ndvi=ndvi if "ndvi" in locals() else None,
+    rgb_composite=rgb_composite if "rgb_composite" in locals() else None,
+    band_data=band_data if "band_data" in locals() else None,
+    transform=transform if "transform" in locals() else None,
+    crs=crs if "crs" in locals() else None,
     scene_metadata=scene_meta,
-    ndvi_stats=ndvi_stats if 'ndvi_stats' in locals() else None,
-    aoi_bbox=sf_bay_bbox if 'sf_bay_bbox' in locals() else None,
-    subset_bbox=subset_bbox if 'subset_bbox' in locals() else None
+    ndvi_stats=ndvi_stats if "ndvi_stats" in locals() else None,
+    aoi_bbox=santa_barbara_bbox if "santa_barbara_bbox" in locals() else None,
+    subset_bbox=subset_bbox if "subset_bbox" in locals() else None,
 )
 
 logger.info("Data exported - use load_week1_data() to reload")
@@ -2913,22 +3251,20 @@ logger.info("Data exported - use load_week1_data() to reload")
 
 ---
 
----
-
----
-
-## Conclusion: From Foundations to Frontiers
+## 10. Conclusion: From Foundations to Frontiers
 
 :::{.callout-tip}
-## What You've Accomplished
+
+##### What You've Accomplished
 You've successfully built a **production-ready geospatial AI toolkit** that demonstrates both technical excellence and software engineering best practices. This foundation will serve you throughout your career in geospatial AI.
 :::
 
 🎉 **Outstanding Achievement!** You've progressed from basic satellite data access to building a sophisticated, enterprise-grade geospatial analysis system.
 
-### Core Competencies Developed
+### 10.1 Core Competencies Developed
 
 **Technical Mastery:**
+
 1. **🛠️ Enterprise-Grade Toolkit**: Built 13+ production-ready functions for geospatial AI workflows
 2. **🔐 Security-First Architecture**: Implemented robust authentication and error handling patterns
 2. **🌍 Mastered STAC APIs**: Connected to planetary-scale satellite data with proper authentication
@@ -2938,7 +3274,7 @@ You've successfully built a **production-ready geospatial AI toolkit** that demo
 6. **🗺️ Built Interactive Maps**: Folium maps with measurement tools and multiple basemaps
 7. **💾 Established Data Workflows**: Export functions and caching for reproducible analysis
 
-### Key Technical Skills Gained:
+**Key Technical Skills Gained:**
 
 - **Authentication**: Planetary Computer API tokens for enterprise-level data access
 - **Error Handling**: Robust functions with retry logic and fallback options
@@ -2946,7 +3282,7 @@ You've successfully built a **production-ready geospatial AI toolkit** that demo
 - **Geospatial Standards**: Working with CRS transformations and GeoTIFF exports
 - **Code Documentation**: Well-documented functions with examples and type hints
 
-### Real-World Applications:
+### 10.2 Real-World Applications
 
 Your helper functions are now ready for:
 
@@ -2955,7 +3291,7 @@ Your helper functions are now ready for:
 - 📊 **Research Projects**: Time series analysis, change detection studies
 - 🏢 **Commercial Applications**: Agricultural monitoring, real estate analysis
 
-### Week 2 Preview: Rapid Preprocessing Pipelines
+### 10.3 Week 2 Preview: Rapid Preprocessing Pipelines
 
 Next week, we'll scale up using your new toolkit:
 
@@ -2965,40 +3301,33 @@ Next week, we'll scale up using your new toolkit:
 - **Analysis-Ready Data**: Create standardized data cubes for ML
 - **Performance Optimization**: Parallel processing and dask integration
 
-### Practice Assignment
-
-**Choose Your Own Adventure** - Use your helper functions to analyze a different region:
-
-1. **Urban Growth**: Compare city expansion (try Phoenix, Dubai, or Shenzhen)
-2. **Agricultural Monitoring**: Track crop cycles in Central Valley or Iowa
-3. **Environmental Change**: Monitor glacial retreat in Alaska or Greenland
-4. **Disaster Assessment**: Recent wildfire or flood areas
-
 **Steps to try**:
-1. Modify the `sf_bay_bbox` to your area of interest
+
+1. Modify the `santa_barbara_bbox` to your area of interest
 2. Use `search_sentinel2_scenes()` to find recent imagery
 3. Run the complete analysis pipeline
 4. Export your results and compare seasonal changes
 
-## Essential Resources
+### 10.4 Essential Resources
 
-### Data Sources
+**Data Sources:**
 
 - [Microsoft Planetary Computer Catalog](https://planetarycomputer.microsoft.com/catalog) - Free satellite data
 - [STAC Browser](https://radiantearth.github.io/stac-browser/) - Explore STAC catalogs
 - [Earth Engine Data Catalog](https://developers.google.com/earth-engine/datasets) - Alternative data source
 
-### Technical Documentation
+**Technical Documentation:**
 
 - [Rasterio Documentation](https://rasterio.readthedocs.io/) - Geospatial I/O
 - [Xarray Tutorial](https://docs.xarray.dev/en/stable/tutorials-and-videos.html) - Multi-dimensional arrays
 - [STAC Specification](https://stacspec.org/) - Metadata standards
 - [Folium Examples](https://python-visualization.github.io/folium/) - Interactive mapping
 
-### Community
+**Community:**
 
 - [Pangeo Community](https://pangeo.io/) - Open source geoscience
 - [STAC Discord](https://discord.gg/stac) - STAC community support
 - [PyData Geospatial](https://github.com/pydata/pydata-book) - Python geospatial ecosystem
+
 
 **Remember**: Your helper functions are now your superpower! 🦸 Use them to explore any area on Earth with just a few lines of code.
