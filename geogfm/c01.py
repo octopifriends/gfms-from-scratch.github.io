@@ -1,4 +1,4 @@
-# Tangled on 2025-10-09T11:20:18
+# Tangled on 2025-10-09T13:04:54
 
 """Week 1: Core Tools and Data Access functions for geospatial AI."""
 
@@ -17,22 +17,29 @@ from rasterio.windows import from_bounds
 from rasterio.warp import transform_bounds
 import numpy as np
 import pandas as pd
+
+#Include matplotlib for plt use.
+import matplotlib.pyplot as plt
+
 from pystac_client import Client
 import planetary_computer as pc
+
 
 warnings.filterwarnings('ignore')
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
 
 def configure_gdal_environment() -> dict:
     """
     Configure GDAL/PROJ environment variables for HPC and local systems.
-    
+
     This function addresses common GDAL/PROJ configuration issues, particularly
     on HPC systems where proj.db may not be found or version mismatches exist.
-    
+
     Returns
     -------
     dict
@@ -45,14 +52,14 @@ def configure_gdal_environment() -> dict:
         'proj_lib_path': None,
         'warnings': []
     }
-    
+
     try:
         import osgeo
         from osgeo import gdal, osr
-        
+
         # Enable GDAL exceptions for better error handling
         gdal.UseExceptions()
-        
+
         # Try to find PROJ data directory
         proj_lib_candidates = [
             os.environ.get('PROJ_LIB'),
@@ -64,7 +71,7 @@ def configure_gdal_environment() -> dict:
             os.path.expanduser('~/miniconda3/share/proj'),
             os.path.expanduser('~/anaconda3/share/proj'),
         ]
-        
+
         # Find valid PROJ directory
         proj_lib_path = None
         for candidate in proj_lib_candidates:
@@ -73,16 +80,17 @@ def configure_gdal_environment() -> dict:
                 if os.path.isfile(proj_db):
                     proj_lib_path = candidate
                     break
-        
+
         if proj_lib_path:
             os.environ['PROJ_LIB'] = proj_lib_path
             os.environ['PROJ_DATA'] = proj_lib_path
             config_status['proj_lib_path'] = proj_lib_path
             config_status['proj_configured'] = True
-            logger.info(f"✅ PROJ configured: {proj_lib_path}")
+            logger.info(f"PROJ configured: {proj_lib_path}")
         else:
-            config_status['warnings'].append("⚠️ Could not locate proj.db - coordinate transformations may fail")
-        
+            config_status['warnings'].append(
+                "Could not locate proj.db - coordinate transformations may fail")
+
         # Try to find GDAL data directory
         gdal_data_candidates = [
             os.environ.get('GDAL_DATA'),
@@ -91,41 +99,43 @@ def configure_gdal_environment() -> dict:
             os.path.join(sys.prefix, 'Library', 'share', 'gdal'),  # Windows
             '/usr/share/gdal',  # Linux system
         ]
-        
+
         gdal_data_path = None
         for candidate in gdal_data_candidates:
             if candidate and os.path.isdir(candidate):
                 gdal_data_path = candidate
                 break
-        
+
         if gdal_data_path:
             os.environ['GDAL_DATA'] = gdal_data_path
             gdal.SetConfigOption('GDAL_DATA', gdal_data_path)
             config_status['gdal_data_path'] = gdal_data_path
             config_status['gdal_configured'] = True
-            logger.info(f"✅ GDAL_DATA configured: {gdal_data_path}")
-        
+            logger.info(f"GDAL_DATA configured: {gdal_data_path}")
+
         # Additional GDAL configuration for network access
         gdal.SetConfigOption('GDAL_DISABLE_READDIR_ON_OPEN', 'EMPTY_DIR')
-        gdal.SetConfigOption('CPL_VSIL_CURL_ALLOWED_EXTENSIONS', '.tif,.tiff,.vrt')
+        gdal.SetConfigOption(
+            'CPL_VSIL_CURL_ALLOWED_EXTENSIONS', '.tif,.tiff,.vrt')
         gdal.SetConfigOption('GDAL_HTTP_TIMEOUT', '300')
         gdal.SetConfigOption('GDAL_HTTP_MAX_RETRY', '5')
-        
+
         # Test PROJ functionality
         try:
             srs = osr.SpatialReference()
             srs.ImportFromEPSG(4326)
             config_status['proj_test_passed'] = True
         except Exception as e:
-            config_status['warnings'].append(f"⚠️ PROJ test failed: {str(e)}")
+            config_status['warnings'].append(f"PROJ test failed: {str(e)}")
             config_status['proj_test_passed'] = False
-        
+
         return config_status
-        
+
     except Exception as e:
         logger.error(f"Error configuring GDAL environment: {e}")
         config_status['warnings'].append(f"Configuration error: {str(e)}")
         return config_status
+
 
 def verify_environment(required_packages: list) -> dict:
     """
@@ -154,10 +164,10 @@ def verify_environment(required_packages: list) -> dict:
 
     # Report results
     if missing_packages:
-        logger.error(f"❌ Missing packages: {', '.join(missing_packages)}")
+        logger.error(f"Missing packages: {', '.join(missing_packages)}")
         return results
 
-    logger.info(f"✅ All {len(required_packages)} packages verified")
+    logger.info(f"All {len(required_packages)} packages verified")
     return results
 
 # Configure logging for production-ready code
@@ -536,29 +546,6 @@ def get_subset_from_scene(
     north = scene_bbox[1] + (y_range[1] / 100.0) * scene_height
 
     subset_bbox = [west, south, east, north]
-
-    # Calculate subset metrics for reporting
-    subset_area_percent = (
-        (x_range[1] - x_range[0]) * (y_range[1] - y_range[0])
-    ) / 100.0
-
-    logger.info("📐 Calculated subset from scene bounds:")
-    logger.info(
-        "   Scene bbox: [%.4f, %.4f, %.4f, %.4f]",
-        scene_bbox[0], scene_bbox[1], scene_bbox[2], scene_bbox[3]
-    )
-    logger.info(
-        "   Subset bbox: [%.4f, %.4f, %.4f, %.4f]",
-        west, south, east, north
-    )
-    logger.info(
-        "   X range: %s%%-%s%%, Y range: %s%%-%s%%",
-        x_range[0], x_range[1], y_range[0], y_range[1]
-    )
-    logger.info(
-        "   Subset area: %.1f%% of original scene",
-        subset_area_percent
-    )
 
     return subset_bbox
 
@@ -949,10 +936,7 @@ def save_geotiff(
                     dst.set_band_description(i + 1, band_names[i])
 
     logger = logging.getLogger(__name__)
-    logger.info(f"💾 Saved GeoTIFF: {output_path}")
-    logger.info(f"   Shape: {data.shape}")
-    logger.info(f"   CRS: {crs}")
-    logger.info(f"   Compression: deflate, tiled")
+    logger.info(f"Saved GeoTIFF: {output_path}")
 
 def create_scene_tiles(item, tile_size: Tuple[int, int] = (3, 3)):
     """
@@ -986,9 +970,7 @@ def create_scene_tiles(item, tile_size: Tuple[int, int] = (3, 3)):
 
     scene_info = get_scene_info(item)
 
-    logger.info(f"🔲 Creating {nx}×{ny} tile grid from scene...")
-    logger.info(f"   Total tiles: {nx * ny}")
-    logger.info(f"   Scene area: {scene_info['area_km2']:.0f} km²")
+    logger.info(f"Creating {nx}×{ny} tile grid ({nx * ny} total tiles)")
 
     for i in range(nx):
         for j in range(ny):
@@ -1019,9 +1001,6 @@ def create_scene_tiles(item, tile_size: Tuple[int, int] = (3, 3)):
 
             tiles.append(tile_info)
 
-    logger.info(
-        f"   ✅ Created {len(tiles)} tiles, each covering {tiles[0]['area_percent']:.1f}% of scene"
-    )
     return tiles
 
 def test_subset_functionality(item):
@@ -1049,8 +1028,6 @@ def test_subset_functionality(item):
     - Provides early failure detection
     - Validates core functionality before expensive operations
     """
-    logger.info(f"🧪 Testing subset functionality...")
-
     try:
         # Test with small central area (minimal data transfer)
         test_bbox = get_subset_from_scene(item, x_range=(40, 60), y_range=(40, 60))
@@ -1064,18 +1041,13 @@ def test_subset_functionality(item):
         )
 
         if "B04" in test_data:
-            shape = test_data["B04"].shape
-            has_data = test_data["B04"].size > 0
-            logger.info(
-                f"   ✅ Subset test successful: {shape} pixels, {test_data['B04'].size} total"
-            )
             return True
         else:
-            logger.error(f"   ❌ Subset test failed: no data returned")
+            logger.error(f"Subset test failed: no data returned")
             return False
 
     except Exception as e:
-        logger.error(f"   ❌ Subset test failed: {str(e)[:50]}...")
+        logger.error(f"Subset test failed: {str(e)[:50]}...")
         return False
 
 from typing import Any

@@ -63,7 +63,10 @@ from rasterio.windows import from_bounds
 from rasterio.warp import transform_bounds
 import numpy as np
 import pandas as pd
+
+#Include matplotlib for plt use.
 import matplotlib.pyplot as plt
+
 from pystac_client import Client
 import planetary_computer as pc
 
