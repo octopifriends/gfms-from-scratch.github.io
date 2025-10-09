@@ -1,4 +1,4 @@
-# Tangled on 2025-10-03T13:44:24
+# Tangled on 2025-10-09T10:16:05
 
 """Week 1: Core Tools and Data Access functions for geospatial AI."""
 
@@ -25,6 +25,107 @@ warnings.filterwarnings('ignore')
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+def configure_gdal_environment() -> dict:
+    """
+    Configure GDAL/PROJ environment variables for HPC and local systems.
+    
+    This function addresses common GDAL/PROJ configuration issues, particularly
+    on HPC systems where proj.db may not be found or version mismatches exist.
+    
+    Returns
+    -------
+    dict
+        Dictionary with configuration status and detected paths
+    """
+    config_status = {
+        'gdal_configured': False,
+        'proj_configured': False,
+        'gdal_data_path': None,
+        'proj_lib_path': None,
+        'warnings': []
+    }
+    
+    try:
+        import osgeo
+        from osgeo import gdal, osr
+        
+        # Enable GDAL exceptions for better error handling
+        gdal.UseExceptions()
+        
+        # Try to find PROJ data directory
+        proj_lib_candidates = [
+            os.environ.get('PROJ_LIB'),
+            os.environ.get('PROJ_DATA'),
+            os.path.join(sys.prefix, 'share', 'proj'),
+            os.path.join(sys.prefix, 'Library', 'share', 'proj'),  # Windows
+            '/usr/share/proj',  # Linux system
+            os.path.expanduser('~/mambaforge/share/proj'),
+            os.path.expanduser('~/miniconda3/share/proj'),
+            os.path.expanduser('~/anaconda3/share/proj'),
+        ]
+        
+        # Find valid PROJ directory
+        proj_lib_path = None
+        for candidate in proj_lib_candidates:
+            if candidate and os.path.isdir(candidate):
+                proj_db = os.path.join(candidate, 'proj.db')
+                if os.path.isfile(proj_db):
+                    proj_lib_path = candidate
+                    break
+        
+        if proj_lib_path:
+            os.environ['PROJ_LIB'] = proj_lib_path
+            os.environ['PROJ_DATA'] = proj_lib_path
+            config_status['proj_lib_path'] = proj_lib_path
+            config_status['proj_configured'] = True
+            logger.info(f"✅ PROJ configured: {proj_lib_path}")
+        else:
+            config_status['warnings'].append("⚠️ Could not locate proj.db - coordinate transformations may fail")
+        
+        # Try to find GDAL data directory
+        gdal_data_candidates = [
+            os.environ.get('GDAL_DATA'),
+            gdal.GetConfigOption('GDAL_DATA'),
+            os.path.join(sys.prefix, 'share', 'gdal'),
+            os.path.join(sys.prefix, 'Library', 'share', 'gdal'),  # Windows
+            '/usr/share/gdal',  # Linux system
+        ]
+        
+        gdal_data_path = None
+        for candidate in gdal_data_candidates:
+            if candidate and os.path.isdir(candidate):
+                gdal_data_path = candidate
+                break
+        
+        if gdal_data_path:
+            os.environ['GDAL_DATA'] = gdal_data_path
+            gdal.SetConfigOption('GDAL_DATA', gdal_data_path)
+            config_status['gdal_data_path'] = gdal_data_path
+            config_status['gdal_configured'] = True
+            logger.info(f"✅ GDAL_DATA configured: {gdal_data_path}")
+        
+        # Additional GDAL configuration for network access
+        gdal.SetConfigOption('GDAL_DISABLE_READDIR_ON_OPEN', 'EMPTY_DIR')
+        gdal.SetConfigOption('CPL_VSIL_CURL_ALLOWED_EXTENSIONS', '.tif,.tiff,.vrt')
+        gdal.SetConfigOption('GDAL_HTTP_TIMEOUT', '300')
+        gdal.SetConfigOption('GDAL_HTTP_MAX_RETRY', '5')
+        
+        # Test PROJ functionality
+        try:
+            srs = osr.SpatialReference()
+            srs.ImportFromEPSG(4326)
+            config_status['proj_test_passed'] = True
+        except Exception as e:
+            config_status['warnings'].append(f"⚠️ PROJ test failed: {str(e)}")
+            config_status['proj_test_passed'] = False
+        
+        return config_status
+        
+    except Exception as e:
+        logger.error(f"Error configuring GDAL environment: {e}")
+        config_status['warnings'].append(f"Configuration error: {str(e)}")
+        return config_status
 
 def verify_environment(required_packages: list) -> dict:
     """

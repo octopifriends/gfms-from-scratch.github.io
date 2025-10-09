@@ -217,24 +217,53 @@ The course uses a sophisticated Python-based build system (`build_docs.py`) with
 
 **ALWAYS USE THE SIMPLEST SOLUTION** - Not "sometimes" or "usually" - ALWAYS.
 
+## Educational Philosophy: Production-Ready, Reusable Code
+
+Our course teaches students to build geospatial foundation models they can use in their projects. All code examples must be:
+
+**CLEAN AND REUSABLE:**
+- ✅ Minimal, focused implementations without unnecessary ornamentations
+- ✅ Production-quality code students can copy directly into their projects
+- ✅ Non-opinionated design that doesn't impose unnecessary constraints
+- ✅ Clear function signatures with minimal "code chrome"
+- ✅ Practical examples that demonstrate functionality without distraction
+
 **FORBIDDEN PATTERNS IN COURSE MATERIALS:**
 - ❌ Code-as-strings: `code = '''def func(): pass'''`
 - ❌ Dynamic code execution: `exec()`, `eval()`, `compile()`
 - ❌ String-based code generation: Building functions with f.write() calls
 - ❌ Template-based code creation: Any programmatic function generation
 - ❌ "Clever" solutions that obscure the educational point
+- ❌ **Excessive print statements and informational messages**
+- ❌ **Emojis in code or output (NEVER use emojis in any generated code)**
+- ❌ **Unnecessary control flow or validation blocks**
+- ❌ **Overly verbose logging or status updates**
+- ❌ **Decorative comments or ASCII art**
+- ❌ **Complex wrapper functions when simple code suffices**
 
 **REQUIRED PATTERNS:**
 - ✅ Define functions directly in code blocks
 - ✅ Write the actual implementation, not generated code
 - ✅ Use the most obvious, direct approach
 - ✅ Show students clean, simple examples they can understand immediately
+- ✅ **Minimal print statements - only for essential output verification**
+- ✅ **Clean function signatures without unnecessary parameters**
+- ✅ **Straightforward implementations focused on core functionality**
+- ✅ **Code that students can use as-is without refactoring**
 
 **QUALITY CHECK:** Before writing any code, ask:
 1. Is this the simplest possible solution?
 2. Can a student read and understand this immediately?
 3. Am I generating code instead of writing it directly?
+4. **Can students use this code directly in their projects without modification?**
+5. **Does this code contain any unnecessary ornamentations (emojis, excessive prints, extra validation)?**
+6. **Is this production-quality code or just a demo with too much "chrome"?**
 
-If the answer to #3 is yes, STOP and rewrite using direct function definitions.
+If the answer to #3 or #5 is yes, STOP and rewrite using direct function definitions.
+If the answer to #4 or #6 is no, STOP and simplify the code.
 
-**THE GOLDEN RULE:** If you need a function, just write the function. Never generate it.
+**THE GOLDEN RULES:**
+1. If you need a function, just write the function. Never generate it.
+2. **Write code as if it will be copied into a production codebase - clean, minimal, reusable.**
+3. **Demo code should expose functionality, not distract from it.**
+4. **NEVER use emojis in code, comments, or output.**

@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c01-geospatial-data-foundations.html</loc>
-    <lastmod>2025-10-03T03:27:03.862Z</lastmod>
+    <lastmod>2025-10-09T16:17:21.319Z</lastmod>
   </url>
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/neural_networks_explainer.html</loc>
@@ -203,5 +203,9 @@
   <url>
     <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/extras/examples/text_encoder.html</loc>
     <lastmod>2025-08-08T19:29:31.724Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kcaylor.github.io/GEOG-288KC-geospatial-foundation-models/chapters/c01-geospatial-data-foundations-CLEAN.html</loc>
+    <lastmod>2025-10-09T16:17:36.790Z</lastmod>
   </url>
 </urlset>

@@ -31,6 +31,11 @@ make preview            # Build and serve locally
 
 **Need help?** Check [installation/TROUBLESHOOTING.md](installation/TROUBLESHOOTING.md) or course Slack.
 
+**Running on HPC?** 
+- **Students**: See [HPC_QUICKSTART.md](HPC_QUICKSTART.md) for quick fixes
+- **Instructors**: See [SEND_TO_ADMIN_README.md](SEND_TO_ADMIN_README.md) for shared kernel setup
+- **Complete guide**: [GDAL_PROJ_HPC_TROUBLESHOOTING.md](GDAL_PROJ_HPC_TROUBLESHOOTING.md)
+
 ---
 
 ## 🎯 What This Course Teaches
@@ -211,8 +216,9 @@ make data-course
 - **Get help**: [Installation guide](installation/README.md) and [Troubleshooting](installation/TROUBLESHOOTING.md)
 - **Ask questions**: Course Slack or office hours
 
-### Instructors/TAs  
+### Instructors/TAs
 - **Content editing**: [AUTHORING_GUIDE.md](AUTHORING_GUIDE.md)
+- **Code quality philosophy**: [.claude/PRODUCTION_READY_CODE_PHILOSOPHY.md](.claude/PRODUCTION_READY_CODE_PHILOSOPHY.md)
 - **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
 - **Technical issues**: [installation/TROUBLESHOOTING.md](installation/TROUBLESHOOTING.md)
 
