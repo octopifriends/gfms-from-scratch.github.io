@@ -125,9 +125,9 @@ def configure_gdal_environment() -> dict:
             os.environ['PROJ_DATA'] = proj_lib_path
             config_status['proj_lib_path'] = proj_lib_path
             config_status['proj_configured'] = True
-            logger.info(f"PROJ configured: {proj_lib_path}")
+            logger.info(f"✅ PROJ configured: {proj_lib_path}")
         else:
-            config_status['warnings'].append("Could not locate proj.db - coordinate transformations may fail")
+            config_status['warnings'].append("⚠️ Could not locate proj.db - coordinate transformations may fail")
         
         # Try to find GDAL data directory
         gdal_data_candidates = [
@@ -149,7 +149,7 @@ def configure_gdal_environment() -> dict:
             gdal.SetConfigOption('GDAL_DATA', gdal_data_path)
             config_status['gdal_data_path'] = gdal_data_path
             config_status['gdal_configured'] = True
-            logger.info(f"GDAL_DATA configured: {gdal_data_path}")
+            logger.info(f"✅ GDAL_DATA configured: {gdal_data_path}")
         
         # Additional GDAL configuration for network access
         gdal.SetConfigOption('GDAL_DISABLE_READDIR_ON_OPEN', 'EMPTY_DIR')
@@ -163,7 +163,7 @@ def configure_gdal_environment() -> dict:
             srs.ImportFromEPSG(4326)
             config_status['proj_test_passed'] = True
         except Exception as e:
-            config_status['warnings'].append(f"PROJ test failed: {str(e)}")
+            config_status['warnings'].append(f"⚠️ PROJ test failed: {str(e)}")
             config_status['proj_test_passed'] = False
         
         return config_status
@@ -200,10 +200,10 @@ def verify_environment(required_packages: list) -> dict:
 
     # Report results
     if missing_packages:
-        logger.error(f"Missing packages: {', '.join(missing_packages)}")
+        logger.error(f"❌ Missing packages: {', '.join(missing_packages)}")
         return results
 
-    logger.info(f"All {len(required_packages)} packages verified")
+    logger.info(f"✅ All {len(required_packages)} packages verified")
     return results
 ```
 
@@ -230,13 +230,13 @@ gdal_config = configure_gdal_environment()
 
 # Report configuration status
 if gdal_config['proj_configured'] and gdal_config['gdal_configured']:
-    logger.info("GDAL/PROJ fully configured and ready")
+    logger.info("✅ GDAL/PROJ fully configured and ready")
 elif gdal_config['proj_configured'] or gdal_config['gdal_configured']:
-    logger.warning("Partial GDAL/PROJ configuration - some operations may fail")
+    logger.warning("⚠️ Partial GDAL/PROJ configuration - some operations may fail")
     for warning in gdal_config['warnings']:
         logger.warning(warning)
 else:
-    logger.error("GDAL/PROJ configuration incomplete")
+    logger.error("❌ GDAL/PROJ configuration incomplete")
     logger.error("This may cause issues with coordinate transformations")
     for warning in gdal_config['warnings']:
         logger.error(warning)
@@ -1012,6 +1012,29 @@ def get_subset_from_scene(
 
     subset_bbox = [west, south, east, north]
 
+    # Calculate subset metrics for reporting
+    subset_area_percent = (
+        (x_range[1] - x_range[0]) * (y_range[1] - y_range[0])
+    ) / 100.0
+
+    logger.info("📐 Calculated subset from scene bounds:")
+    logger.info(
+        "   Scene bbox: [%.4f, %.4f, %.4f, %.4f]",
+        scene_bbox[0], scene_bbox[1], scene_bbox[2], scene_bbox[3]
+    )
+    logger.info(
+        "   Subset bbox: [%.4f, %.4f, %.4f, %.4f]",
+        west, south, east, north
+    )
+    logger.info(
+        "   X range: %s%%-%s%%, Y range: %s%%-%s%%",
+        x_range[0], x_range[1], y_range[0], y_range[1]
+    )
+    logger.info(
+        "   Subset area: %.1f%% of original scene",
+        subset_area_percent
+    )
+
     return subset_bbox
 ```
 
@@ -1582,7 +1605,10 @@ def save_geotiff(
                     dst.set_band_description(i + 1, band_names[i])
 
     logger = logging.getLogger(__name__)
-    logger.info(f"Saved GeoTIFF: {output_path}")
+    logger.info(f"💾 Saved GeoTIFF: {output_path}")
+    logger.info(f"   Shape: {data.shape}")
+    logger.info(f"   CRS: {crs}")
+    logger.info(f"   Compression: deflate, tiled")
 
 ```
 
@@ -1665,7 +1691,9 @@ def create_scene_tiles(item, tile_size: Tuple[int, int] = (3, 3)):
 
     scene_info = get_scene_info(item)
 
-    logger.info(f"Creating {nx}×{ny} tile grid ({nx * ny} total tiles)")
+    logger.info(f"🔲 Creating {nx}×{ny} tile grid from scene...")
+    logger.info(f"   Total tiles: {nx * ny}")
+    logger.info(f"   Scene area: {scene_info['area_km2']:.0f} km²")
 
     for i in range(nx):
         for j in range(ny):
@@ -1696,6 +1724,9 @@ def create_scene_tiles(item, tile_size: Tuple[int, int] = (3, 3)):
 
             tiles.append(tile_info)
 
+    logger.info(
+        f"   ✅ Created {len(tiles)} tiles, each covering {tiles[0]['area_percent']:.1f}% of scene"
+    )
     return tiles
 ```
 
@@ -1733,6 +1764,8 @@ def test_subset_functionality(item):
     - Provides early failure detection
     - Validates core functionality before expensive operations
     """
+    logger.info(f"🧪 Testing subset functionality...")
+
     try:
         # Test with small central area (minimal data transfer)
         test_bbox = get_subset_from_scene(item, x_range=(40, 60), y_range=(40, 60))
@@ -1746,13 +1779,18 @@ def test_subset_functionality(item):
         )
 
         if "B04" in test_data:
+            shape = test_data["B04"].shape
+            has_data = test_data["B04"].size > 0
+            logger.info(
+                f"   ✅ Subset test successful: {shape} pixels, {test_data['B04'].size} total"
+            )
             return True
         else:
-            logger.error(f"Subset test failed: no data returned")
+            logger.error(f"   ❌ Subset test failed: no data returned")
             return False
 
     except Exception as e:
-        logger.error(f"Subset test failed: {str(e)[:50]}...")
+        logger.error(f"   ❌ Subset test failed: {str(e)[:50]}...")
         return False
 
 
@@ -1874,7 +1912,13 @@ try:
     logger.info(f"Accessible collections: {len(available_collections)}/{len(satellite_collections)}")
 
 except Exception as e:
-    logger.error(f"\nSTAC connection failed: {str(e)}")
+    logger.error(f"\n❌ STAC connection failed: {str(e)}")
+    logger.info(f"\n🔧 Troubleshooting steps:")
+    logger.info(f"   1. Verify internet connectivity")
+    logger.info(f"   2. Check Planetary Computer API status: https://planetarycomputer.microsoft.com/")
+    logger.info(f"   3. Ensure pystac-client is installed: pip install pystac-client")
+    logger.info(f"   4. Verify planetary-computer package: pip install planetary-computer")
+    logger.info(f"   5. Try again in a few minutes (temporary API issues)")
 
 ```
 
@@ -1937,9 +1981,15 @@ center_lat = (santa_barbara_bbox[1] + santa_barbara_bbox[3]) / 2
 lat_correction = np.cos(np.radians(center_lat))
 area_km2 = area_degrees * (111.32 ** 2) * lat_correction  # 1 degree ≈ 111.32 km
 
-logger.info(f"AOI: Santa Barbara County ({area_km2:.0f} km²)")
+logger.info(f"\n📊 AOI Spatial Characteristics:")
+logger.info(f"   📍 Region: Santa Barbara County Coastal Region")
+logger.info(f"   🗺️ Bounding box: {santa_barbara_bbox}")
+logger.info(f"   📐 Dimensions: {(santa_barbara_bbox[2] - santa_barbara_bbox[0]):.2f}° × {(santa_barbara_bbox[3] - santa_barbara_bbox[1]):.2f}°")
+logger.info(f"   📏 Approximate area: {area_km2:.0f} km²")
+logger.info(f"   🏙️ Population: ~450,000 (Santa Barbara County)")
 
 # Provide alternative study areas for different research interests
+logger.info(f"\n🌐 Alternative AOI Options for Different Study Objectives:")
 alternative_aois = {
     "San Francisco Bay Area": {
         "bbox": [-122.5, 37.3, -121.8, 38.0],
@@ -1962,6 +2012,20 @@ alternative_aois = {
         "challenges": "Marine layer, limited ground truth"
     }
 }
+
+for region, info in alternative_aois.items():
+    bbox = info["bbox"]
+    area_alt = ((bbox[2] - bbox[0]) * (bbox[3] - bbox[1]) *
+                (111.32 ** 2) * np.cos(np.radians((bbox[1] + bbox[3]) / 2)))
+    logger.info(f"   🗺️ {region}: {info['bbox']} ({area_alt:.0f} km²)")
+    logger.info(f"      🎯 Research focus: {info['focus']}")
+    logger.info(f"      ⚠️ Considerations: {info['challenges']}")
+
+logger.info(f"\n💡 Pro Tip: Choose AOI based on:")
+logger.info(f"   1. Research objectives and required spatial resolution")
+logger.info(f"   2. Data availability and typical cloud cover patterns")
+logger.info(f"   3. Computational resources and processing time constraints")
+logger.info(f"   4. Ecological or administrative boundary alignment")
 ```
 
 #### Interactive Mapping for Spatial Context and Validation
@@ -2015,8 +2079,10 @@ basemap_options = {
     }
 }
 
+logger.info(f"   📚 Adding {len(basemap_options)} basemap options:")
 for name, info in basemap_options.items():
     info['layer'].add_to(m)
+    logger.info(f"     • {name}: {info['use_case']}")
 
 # Add AOI boundary with informative styling
 aoi_bounds = [[santa_barbara_bbox[1], santa_barbara_bbox[0]],  # southwest corner
@@ -2076,7 +2142,9 @@ reference_locations = [
     }
 ]
 
+logger.info(f"Adding {len(reference_locations)} geographic reference points")
 for location in reference_locations:
+    logger.debug(f"{location['name']}: {location['description']}")
 
     folium.Marker(
         location=location["coords"],
@@ -2100,6 +2168,7 @@ for location in reference_locations:
     ).add_to(m)
 
 # Add measurement and interaction tools for analysis
+logger.info("Adding interactive analysis tools")
 
 # Measurement tool for distance/area calculations
 from folium.plugins import MeasureControl
@@ -2128,6 +2197,9 @@ layer_control = folium.LayerControl(
     collapsed=False
 )
 layer_control.add_to(m)
+logger.debug("Added layer control for basemap switching")
+
+logger.info("Interactive map created with comprehensive spatial context")
 
 # Display the map
 m
@@ -2167,6 +2239,8 @@ from datetime import datetime, timedelta
 
 # Strategy 1: Dynamic temporal window based on current date
 current_date = datetime.now()
+logger.info(f"Calculating optimal temporal search windows (current date: {current_date.strftime('%Y-%m-%d')})")
+
 # Define multiple search strategies with different trade-offs
 # Each strategy balances data quality against data availability
 search_strategies = [
@@ -2204,11 +2278,17 @@ search_strategies = [
     }
 ]
 
+logger.info(f"Defined {len(search_strategies)} search strategies")
+for i, strategy in enumerate(search_strategies, 1):
+    logger.debug(f"Strategy {i}: {strategy['name']} - {strategy['description']}")
+
 # Execute search strategies in order of preference
 scenes = []
 successful_strategy = None
 
 for i, strategy in enumerate(search_strategies, 1):
+    logger.info(f"Executing Strategy {i}: {strategy['name']} (dates: {strategy['date_range']}, cloud < {strategy['cloud_max']}%)")
+
     try:
         # Use our optimized search function with current strategy parameters
         temp_scenes = search_sentinel2_scenes(
@@ -2221,16 +2301,22 @@ for i, strategy in enumerate(search_strategies, 1):
         if temp_scenes:
             scenes = temp_scenes
             successful_strategy = strategy
+            logger.info(f"SUCCESS! Found {len(scenes)} qualifying scenes with {strategy['name']} strategy")
             break
+        else:
+            logger.warning(f"No scenes found with {strategy['name']} strategy, proceeding to next")
 
     except Exception as e:
-        logger.warning(f"Search failed for {strategy['name']}: {str(e)[:80]}")
+        logger.warning(f"Search execution failed for {strategy['name']}: {str(e)[:80]}")
         continue
 
-# Validate search results
+# Validate search results and provide detailed feedback
 if not scenes:
     logger.error(f"Scene discovery failed after trying all {len(search_strategies)} strategies")
-    raise Exception("Critical failure in scene discovery")
+    logger.info("Diagnostic steps: 1) Check network connectivity, 2) Verify API status, 3) Confirm AOI coverage, 4) Try broader date ranges, 5) Check authentication")
+    raise Exception("Critical failure in scene discovery. Review diagnostic steps and retry.")
+
+logger.info(f"Scene discovery completed: {successful_strategy['name']} strategy found {len(scenes)} scenes (attempt {search_strategies.index(successful_strategy) + 1}/{len(search_strategies)})")
 ```
 
 ### 5.2 Scene Quality Assessment and Selection
@@ -2248,6 +2334,7 @@ This demonstrates multi-criteria decision making for satellite data selection us
 # Secondary: date (more recent is better)
 scenes_with_scores = []
 
+logger.info(f"Evaluating {len(scenes)} candidate scenes for quality assessment")
 for scene in scenes:
     props = scene.properties
 
@@ -2749,7 +2836,7 @@ if 'band_data' in locals() and band_data:
     if len(available_bands) >= 2:
         shapes = [band_data[band].shape for band in available_bands]
         consistent_shape = all(shape == shapes[0] for shape in shapes)
-        logger.info(f"Spatial consistency: {'OK' if consistent_shape else 'WARNING'} shape {shapes[0] if consistent_shape else 'mixed'}")
+        logger.info(f"Spatial consistency: {'✓' if consistent_shape else '⚠'} shape {shapes[0] if consistent_shape else 'mixed'}")
 
         # Check for reasonable spectral relationships
         if 'B04' in available_bands and 'B08' in available_bands:
@@ -3041,105 +3128,9 @@ A common practice in environmental studies is to use NDVI values greater than 0.
 
 ---
 
-## 8. Interactive Mapping and Band Analysis
+## 8. Band Analysis
 
-Let's create interactive visualizations and perform multi-band analysis.
-
-### 8.1 Create Interactive Map with Results
-
-```{python}
-if 'subset_bbox' in locals() or 'santa_barbara_bbox' in locals():
-    # Use subset bbox if available, otherwise use the full AOI
-    map_bbox = subset_bbox if 'subset_bbox' in locals() else santa_barbara_bbox
-    center_lat = (map_bbox[1] + map_bbox[3]) / 2
-    center_lon = (map_bbox[0] + map_bbox[2]) / 2
-
-    # Create folium map
-    m = folium.Map(
-        location=[center_lat, center_lon],
-        zoom_start=12,
-        tiles='OpenStreetMap'
-    )
-
-    # Add different basemap options
-    folium.TileLayer('CartoDB positron', name='Light Basemap').add_to(m)
-    folium.TileLayer('CartoDB dark_matter', name='Dark Basemap').add_to(m)
-    folium.TileLayer(
-        tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        attr='Esri',
-        name='Satellite Basemap',
-        overlay=False,
-        control=True
-    ).add_to(m)
-
-    # Add study area boundary
-    folium.Rectangle(
-        bounds=[[map_bbox[1], map_bbox[0]], [map_bbox[3], map_bbox[2]]],
-        color='red',
-        weight=3,
-        fill=True,
-        fillOpacity=0.1,
-        popup='Study Area',
-        tooltip='Analysis extent'
-    ).add_to(m)
-
-    # Add scene information if available
-    if 'best_scene' in locals():
-        scene_info = f"""
-        <div style="font-family: Arial; width: 250px;">
-        <h4>Sentinel-2 Scene Info</h4>
-        <b>Date:</b> {best_scene.properties['datetime'].split('T')[0]}<br>
-        <b>Cloud Cover:</b> {best_scene.properties['eo:cloud_cover']:.1f}%<br>
-        <b>Tile:</b> {best_scene.properties.get('sentinel:utm_zone', 'N/A')}<br>
-        <b>Processing:</b> Level 2A (Surface Reflectance)<br>
-        </div>
-        """
-
-        folium.Marker(
-            location=[center_lat, center_lon],
-            popup=folium.Popup(scene_info, max_width=300),
-            tooltip='Click for scene details',
-            icon=folium.Icon(color='blue', icon='satellite', prefix='fa')
-        ).add_to(m)
-
-    # Add NDVI statistics if calculated
-    if 'ndvi_stats' in locals():
-        ndvi_info = f"""
-        <div style="font-family: Arial;">
-        <h4>NDVI Statistics</h4>
-        <b>Mean:</b> {ndvi_stats['mean']:.3f}<br>
-        <b>Std Dev:</b> {ndvi_stats['std']:.3f}<br>
-        <b>Min:</b> {ndvi_stats['min']:.3f}<br>
-        <b>Max:</b> {ndvi_stats['max']:.3f}<br>
-        </div>
-        """
-
-        # Add a marker with NDVI stats
-        folium.Marker(
-            location=[center_lat + 0.02, center_lon],
-            popup=folium.Popup(ndvi_info, max_width=200),
-            tooltip='NDVI Statistics',
-            icon=folium.Icon(color='green', icon='leaf', prefix='fa')
-        ).add_to(m)
-
-    # Add measurement tool
-    from folium.plugins import MeasureControl
-    m.add_child(MeasureControl())
-
-    # Add fullscreen button
-    from folium.plugins import Fullscreen
-    Fullscreen().add_to(m)
-
-    # Add layer control
-    folium.LayerControl(position='topright').add_to(m)
-
-    logger.info("Interactive map created with analysis overlays")
-    m
-else:
-    logger.warning("No location data available for mapping")
-```
-
-### 8.2 Comprehensive Multi-band Analysis
+### 8.1 Comprehensive Multi-band Analysis
 
 ```{python}
 if band_data and 'rgb_composite' in locals():
