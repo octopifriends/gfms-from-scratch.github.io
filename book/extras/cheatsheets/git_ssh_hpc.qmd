@@ -1,0 +1,285 @@
+---
+title: "Git & SSH Setup on HPC"
+subtitle: "Configure Git and SSH keys for the UCSB AI Sandbox"
+format:
+  html:
+    code-fold: false
+    toc: true
+    toc-depth: 2
+---
+
+## Overview
+
+This guide helps you set up Git and SSH keys on the UCSB AI Sandbox (HPC) so you can:
+
+1. Sync your fork with class materials (upstream remote)
+2. Push your work to your GitHub fork
+3. Use SSH authentication instead of passwords
+
+## One-Time Setup: SSH Key Configuration
+
+### Step 1: Generate SSH Key on HPC
+
+SSH keys let you authenticate to GitHub without entering passwords.
+
+```bash
+# Check if you already have an SSH key
+ls -la ~/.ssh
+
+# If you see id_ed25519.pub or id_rsa.pub, you already have a key - skip to Step 2
+```
+
+If you don't have a key, generate one:
+
+```bash
+# Generate a new SSH key (use your GitHub email)
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# When prompted:
+# - Save location: Press Enter (accept default: ~/.ssh/id_ed25519)
+# - Passphrase: Press Enter for no passphrase (or set one if you prefer)
+```
+
+### Step 2: Copy Your Public Key
+
+```bash
+# Display your public key
+cat ~/.ssh/id_ed25519.pub
+
+# Copy the entire output (starts with ssh-ed25519 and ends with your email)
+```
+
+### Step 3: Add Key to GitHub
+
+1. Go to [GitHub SSH Settings](https://github.com/settings/keys)
+2. Click **New SSH key**
+3. **Title**: `UCSB AI Sandbox` (or any name you prefer)
+4. **Key**: Paste the public key you copied
+5. Click **Add SSH key**
+
+### Step 4: Test SSH Connection
+
+```bash
+# Test connection to GitHub
+ssh -T git@github.com
+
+# You should see:
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+### Step 5: Configure Git Identity
+
+```bash
+# Set your name and email (used in commits)
+git config --global user.name "Your Name"
+git config --global user.email "your_email@example.com"
+
+# Verify configuration
+git config --list
+```
+
+## Setting Up Your Fork
+
+### Step 1: Clone Your Fork (First Time)
+
+```bash
+# Navigate to your work directory
+cd ~
+mkdir -p dev
+cd dev
+
+# Clone YOUR fork using SSH
+git clone git@github.com:YOUR-USERNAME/GEOG-288KC-geospatial-foundation-models.git
+cd GEOG-288KC-geospatial-foundation-models
+```
+
+**Important**: Replace `YOUR-USERNAME` with your actual GitHub username.
+
+### Step 2: Add Upstream Remote
+
+The upstream remote points to the class repository (Kelly's repo).
+
+```bash
+# Check current remotes
+git remote -v
+
+# Add upstream (class repo)
+git remote add upstream git@github.com:kcaylor/GEOG-288KC-geospatial-foundation-models.git
+
+# Verify both remotes exist
+git remote -v
+
+# You should see:
+# origin    git@github.com:YOUR-USERNAME/GEOG-288KC-geospatial-foundation-models.git (fetch)
+# origin    git@github.com:YOUR-USERNAME/GEOG-288KC-geospatial-foundation-models.git (push)
+# upstream  git@github.com:kcaylor/GEOG-288KC-geospatial-foundation-models.git (fetch)
+# upstream  git@github.com:kcaylor/GEOG-288KC-geospatial-foundation-models.git (push)
+```
+
+## Daily Workflow: Sync and Push
+
+### Syncing with Class Updates
+
+```bash
+# 1. Make sure you're on main branch
+git checkout main
+
+# 2. Fetch latest class materials
+git fetch upstream
+
+# 3. Merge class updates into your local main
+git merge upstream/main
+
+# 4. Push updates to your fork
+git push origin main
+```
+
+### Working on Your Analysis
+
+```bash
+# 1. Create a branch for your work
+git checkout -b week01-analysis
+
+# 2. Do your work, then check what changed
+git status
+
+# 3. Stage your changes
+git add your-notebook.ipynb your-script.py
+
+# 4. Commit with a message
+git commit -m "Complete Week 1 analysis"
+
+# 5. Push to your fork
+git push origin week01-analysis
+```
+
+### Quick Sync (When You Have No Local Changes)
+
+```bash
+git checkout main
+git pull upstream main
+git push origin main
+```
+
+## Troubleshooting
+
+### Permission Denied (publickey)
+
+If you get this error when pushing/pulling:
+
+```bash
+# Check SSH agent is running
+eval "$(ssh-agent -s)"
+
+# Add your SSH key
+ssh-add ~/.ssh/id_ed25519
+
+# Test connection again
+ssh -T git@github.com
+```
+
+### Remote URL is HTTPS Instead of SSH
+
+If `git remote -v` shows HTTPS URLs (https://github.com/...), change to SSH:
+
+```bash
+# Change origin to SSH
+git remote set-url origin git@github.com:YOUR-USERNAME/GEOG-288KC-geospatial-foundation-models.git
+
+# Change upstream to SSH (if needed)
+git remote set-url upstream git@github.com:kcaylor/GEOG-288KC-geospatial-foundation-models.git
+
+# Verify
+git remote -v
+```
+
+### Unrelated Histories Error
+
+If you get `refusing to merge unrelated histories`:
+
+```bash
+git fetch upstream
+git merge upstream/main --allow-unrelated-histories
+git push origin main
+```
+
+## Best Practices
+
+### Do This
+
+1. **Work on branches**, not main:
+   ```bash
+   git checkout -b descriptive-branch-name
+   ```
+
+2. **Commit often** with clear messages:
+   ```bash
+   git commit -m "Add NDVI calculation for Santa Barbara"
+   ```
+
+3. **Pull before you push**:
+   ```bash
+   git pull origin main  # Update your local copy
+   git push origin main  # Then push
+   ```
+
+### Avoid This
+
+1. Don't work directly on main branch
+2. Don't force push unless you know what you're doing
+3. Don't commit large data files (use .gitignore)
+
+## Quick Reference
+
+```bash
+# Clone your fork (first time only)
+git clone git@github.com:YOUR-USERNAME/GEOG-288KC-geospatial-foundation-models.git
+
+# Add upstream (first time only)
+git remote add upstream git@github.com:kcaylor/GEOG-288KC-geospatial-foundation-models.git
+
+# Sync with class updates
+git checkout main
+git fetch upstream
+git merge upstream/main
+git push origin main
+
+# Work on your analysis
+git checkout -b my-analysis
+# ... do work ...
+git add .
+git commit -m "Descriptive message"
+git push origin my-analysis
+
+# Check status
+git status
+git remote -v
+git log --oneline -5
+```
+
+## After Syncing: Update Python Package
+
+After pulling updates that modify `geogfm/` code:
+
+```bash
+# Reinstall in editable mode (optional, usually automatic)
+cd /path/to/GEOG-288KC-geospatial-foundation-models
+pip install -e .
+```
+
+In your notebook, restart the kernel or reload the module:
+
+```python
+# Reload module
+import importlib
+from geogfm import c01
+importlib.reload(c01)
+
+# Or restart kernel: Kernel → Restart
+```
+
+## Getting Help
+
+- **Git basics**: [GitHub Git Handbook](https://guides.github.com/introduction/git-handbook/)
+- **SSH troubleshooting**: [GitHub SSH Docs](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+- **Class specific issues**: Ask on Slack or in office hours

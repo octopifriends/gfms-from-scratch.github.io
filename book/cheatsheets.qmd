@@ -12,9 +12,10 @@ format:
 
 - [Week 01: Import Cheatsheet](extras/cheatsheets/week01_imports.qmd) - Using the tangled c01.py module
 
-## 💻 HPC Installation and setup
+## 💻 HPC Installation and Setup
 
 - [Setting up HPC Access](extras/grit-hpc-setup.qmd)
+- [Git & SSH Setup on HPC](extras/cheatsheets/git_ssh_hpc.qmd)
 
 ## 🌍 Geospatial Data Fundamentals
 

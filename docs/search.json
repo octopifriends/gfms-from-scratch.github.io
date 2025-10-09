@@ -774,21 +774,14 @@
     "href": "extras/cheatsheets/week01_imports.html",
     "title": "Week 01 Quick Start Guide",
     "section": "",
-    "text": "This guide shows you how to use the pre-built helper functions from Week 1 without needing to copy-paste all the code from Section 2. All the functions are already available in the geogfm.c01 module!\n\n\n\n\n\n\nWhy Use the Tangled Module?\n\n\n\nThe Week 1 session defines 13+ helper functions in Section 2. Instead of re-running all those cells every time, you can simply import them from geogfm.c01 and start analyzing data immediately!"
+    "text": "This guide shows you how to use the pre-built helper functions from Week 1 without needing to copy-paste all the code from Section 2. All the functions are already available in the geogfm.c01 module!\n\n\n\n\n\n\nWhy Use the Tangled Module?\n\n\n\nThe Week 1 session defines 13+ helper functions in Section 2. Instead of re-running all those cells every time, you can simply import them from geogfm.c01 and start analyzing data immediately!\n\n\n\n\n\n\n\n\nWorking on the HPC?\n\n\n\nFor Git and SSH key setup on the UCSB AI Sandbox, see the Git & SSH Setup on HPC cheatsheet."
   },
   {
     "objectID": "extras/cheatsheets/week01_imports.html#overview",
     "href": "extras/cheatsheets/week01_imports.html#overview",
     "title": "Week 01 Quick Start Guide",
     "section": "",
-    "text": "This guide shows you how to use the pre-built helper functions from Week 1 without needing to copy-paste all the code from Section 2. All the functions are already available in the geogfm.c01 module!\n\n\n\n\n\n\nWhy Use the Tangled Module?\n\n\n\nThe Week 1 session defines 13+ helper functions in Section 2. Instead of re-running all those cells every time, you can simply import them from geogfm.c01 and start analyzing data immediately!"
-  },
-  {
-    "objectID": "extras/cheatsheets/week01_imports.html#syncing-your-fork-with-class-updates",
-    "href": "extras/cheatsheets/week01_imports.html#syncing-your-fork-with-class-updates",
-    "title": "Week 01 Quick Start Guide",
-    "section": "Syncing Your Fork with Class Updates",
-    "text": "Syncing Your Fork with Class Updates\nIf you’ve forked and cloned the class repository, you’ll need to periodically sync your fork with the upstream (original class repo) to get the latest module code and updates.\n\nOne-Time Setup: Add Upstream Remote\nFirst, check if you already have the upstream remote configured:\n# Check your current remotes\ngit remote -v\nIf you only see origin (your fork), add the upstream remote:\n# Add the upstream remote (original class repo)\ngit remote add upstream https://github.com/kcaylor/GEOG-288KC-geospatial-foundation-models.git\n\n# Verify it was added\ngit remote -v\nYou should now see: - origin - your fork (where you push your work) - upstream - the original class repo (where you pull updates)\n\n\nUpdating Your Fork: Recommended Workflow\n\n\n\n\n\n\nProtect Your Work First!\n\n\n\nBefore syncing, make sure your work is safe:\n\nCommit your changes to a feature branch (not main)\nPush to your fork regularly\nNever work directly on main - keep it clean for updates\n\n\n\n\nStep 1: Save Your Current Work\n# Check what files you've modified\ngit status\n\n# If you have uncommitted changes, save them\ngit add your-notebook.ipynb your-analysis.py\ngit commit -m \"WIP: my analysis work\"\n\n# Or stash them temporarily\ngit stash save \"my current work\"\n\n\nStep 2: Fetch Updates from Upstream\n# Make sure you're on your main branch\ngit checkout main\n\n# Fetch all updates from the class repo (upstream)\ngit fetch upstream\n\n# See what's new\ngit log --oneline main..upstream/main\n\n\nStep 3: Merge Updates into Your Fork\n# Merge upstream changes into your local main\ngit merge upstream/main\n\n# If there are conflicts, Git will tell you which files need attention\n\n\nStep 4: Update Your Remote Fork\n# Push the updated main to your fork on GitHub\ngit push origin main\n\n\nStep 5: Restore Your Work (if stashed)\n# If you stashed changes, restore them\ngit stash pop\n\n\n\nBest Practices for Protecting Your Work\n\n1. Use Feature Branches for Your Work\nDO THIS:\n# Create a branch for each assignment or analysis\ngit checkout -b week01-my-analysis\n# ... do your work ...\ngit add my-notebook.ipynb\ngit commit -m \"Complete Week 1 analysis for Santa Barbara\"\ngit push origin week01-my-analysis\nNOT THIS:\n# DON'T work directly on main\ngit checkout main\n# ... do your work ...  # ❌ This makes syncing harder!\n\n\n2. Keep Personal Files Out of Git\nCreate a .gitignore file (or add to the existing one) to exclude your personal work:\n# Add to .gitignore\necho \"my-notebooks/\" &gt;&gt; .gitignore\necho \"my-analysis/\" &gt;&gt; .gitignore\necho \"*.local.ipynb\" &gt;&gt; .gitignore\necho \"week1_output/\" &gt;&gt; .gitignore\n\n\n3. Name Your Files to Avoid Conflicts\nUse a personal prefix for your notebooks:\n✅ GOOD:\n  - yourname-week01-analysis.ipynb\n  - yourname-santa-barbara-study.ipynb\n  - my-notes.md\n\n❌ AVOID:\n  - week01.ipynb (might conflict with class files)\n  - analysis.ipynb (too generic)\n\n\n\nHandling “Unrelated Histories” Error\nIf you get an error like fatal: refusing to merge unrelated histories, this means Git thinks your fork and the upstream repo don’t share a common history. Here’s how to fix it:\n\nOption 1: Allow Unrelated Histories (Recommended)\n# Fetch from upstream\ngit fetch upstream\n\n# Merge with the --allow-unrelated-histories flag\ngit merge upstream/main --allow-unrelated-histories\n\n# Git will open an editor for a merge commit message\n# Save and close the editor to complete the merge\n\n# Push to your fork\ngit push origin main\n\n\nOption 2: Rebase Your Fork (Advanced)\nIf you haven’t made significant changes and want a clean history:\n# Save your work first!\ngit stash save \"backup before rebase\"\n\n# Fetch upstream\ngit fetch upstream\n\n# Reset your main to match upstream exactly\ngit reset --hard upstream/main\n\n# Push to your fork (requires force push)\ngit push origin main --force\n\n# Restore your work\ngit stash pop\n\n\n\n\n\n\n⚠️ Important: Force Push Safety\n\n\n\nOnly use git push --force on your fork’s main branch if: 1. You’ve backed up your work (stash or feature branch) 2. You understand this will overwrite your fork’s history 3. You’re not collaborating with others on your fork\n\n\n\n\n\nHandling Merge Conflicts\nIf you get conflicts when merging upstream:\n# Git will show you which files have conflicts\ngit status\n\n# Open each conflicting file and look for conflict markers:\n# &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD\n# Your changes\n# =======\n# Upstream changes\n# &gt;&gt;&gt;&gt;&gt;&gt;&gt; upstream/main\n\n# Edit the file to resolve conflicts, then:\ngit add resolved-file.ipynb\ngit commit -m \"Merge upstream updates, resolved conflicts\"\n\n\n\n\n\n\nWhen Conflicts Happen\n\n\n\nIf class files (like geogfm/c01.py) have conflicts: 1. Keep the upstream version - this is the latest module code 2. Your personal notebooks should never conflict if you follow naming conventions 3. If in doubt, ask for help before force-pushing!\n\n\n\n\nQuick Reference: Common Sync Commands\n# Quick update (when you have no local changes on main)\ngit checkout main\ngit pull upstream main\ngit push origin main\n\n# Full workflow (with local work protection)\ngit checkout main\ngit stash                    # Save any uncommitted work\ngit fetch upstream           # Get latest from class repo\ngit merge upstream/main      # Merge into your local main\ngit push origin main         # Update your GitHub fork\ngit stash pop               # Restore your work\n\n# Fix unrelated histories error\ngit fetch upstream\ngit merge upstream/main --allow-unrelated-histories\ngit push origin main\n\n# Check sync status\ngit fetch upstream\ngit log --oneline main..upstream/main  # See what's new upstream\ngit log --oneline upstream/main..main  # See your commits not in upstream\n\n\nAfter Syncing: Reinstall the Package\nAfter pulling updates to geogfm/c01.py or other module files, the editable install will automatically pick up changes. But to be safe:\n# In your notebook, restart the kernel or reimport\nimport importlib\nfrom geogfm import c01\nimportlib.reload(c01)  # Reload the updated module\n\n# Or restart the Jupyter kernel (Kernel → Restart)"
+    "text": "This guide shows you how to use the pre-built helper functions from Week 1 without needing to copy-paste all the code from Section 2. All the functions are already available in the geogfm.c01 module!\n\n\n\n\n\n\nWhy Use the Tangled Module?\n\n\n\nThe Week 1 session defines 13+ helper functions in Section 2. Instead of re-running all those cells every time, you can simply import them from geogfm.c01 and start analyzing data immediately!\n\n\n\n\n\n\n\n\nWorking on the HPC?\n\n\n\nFor Git and SSH key setup on the UCSB AI Sandbox, see the Git & SSH Setup on HPC cheatsheet."
   },
   {
     "objectID": "extras/cheatsheets/week01_imports.html#installation",
@@ -802,7 +795,7 @@
     "href": "extras/cheatsheets/week01_imports.html#complete-setup-sections-3-10",
     "title": "Week 01 Quick Start Guide",
     "section": "Complete Setup (Sections 3-10)",
-    "text": "Complete Setup (Sections 3-10)\nTo run the entire workflow (Sections 3-10), use this comprehensive setup:\n\nStep 1: Standard Library Imports\n\n# Standard library imports\nimport logging\nimport time\nimport os\nfrom datetime import datetime, timedelta\nfrom pathlib import Path\n\n# Set up logger\nlogger = logging.getLogger(__name__)\nlogger.info(\"✅ Standard library imports complete\")\n\n\n\nStep 2: Core Data Science Libraries\n\n# Core data science libraries\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\nlogger.info(\"✅ Data science libraries loaded\")\n\n\n\nStep 3: Geospatial Libraries\n\n# Geospatial libraries\nimport rasterio\nimport xarray as xr\nimport rioxarray\nfrom pystac_client import Client\nimport planetary_computer as pc\nfrom shapely.geometry import box\n\nlogger.info(\"✅ Geospatial libraries loaded\")\n\n/Users/kellycaylor/mambaforge/envs/geoAI/lib/python3.11/site-packages/pyproj/network.py:59: UserWarning:\n\npyproj unable to set PROJ database path.\n\n\n\n\n\nStep 4: Interactive Mapping\n\n# Interactive mapping\nimport folium\nfrom folium.plugins import MeasureControl, Fullscreen\n\nlogger.info(\"✅ Mapping libraries loaded\")\n\n\n\nStep 5: Import Week 1 Helper Functions\nThis is where the magic happens - all 13+ helper functions in one import!\n\n# Import ALL helper functions from tangled Week 1 module\nfrom geogfm.c01 import (\n    # Environment and authentication (Section 2.1-2.4.1)\n    verify_environment,\n    setup_planetary_computer_auth,\n    \n    # Data discovery (Section 2.4.2)\n    search_sentinel2_scenes,\n    search_STAC_scenes,\n    \n    # Data loading (Section 2.4.3)\n    load_sentinel2_bands,\n    \n    # Spatial processing (Section 2.4.4)\n    get_subset_from_scene,\n    get_scene_info,\n    create_scene_tiles,\n    test_subset_functionality,\n    \n    # Data processing (Section 2.4.5)\n    normalize_band,\n    create_rgb_composite,\n    calculate_ndvi,\n    calculate_band_statistics,\n    \n    # Visualization (Section 2.4.6)\n    plot_band_comparison,\n    \n    # Export/Import (Section 2.4.7)\n    save_geotiff,\n    export_analysis_results,\n    load_week1_data\n)\n\nlogger.info(\"✅ Week 1 helper functions imported\")\n\n2025-10-03 13:15:31,768 - INFO - Analysis results exported to: /Users/kellycaylor/dev/geoAI/book/extras/cheatsheets/week1_output\n2025-10-03 13:15:31,768 - INFO - Data exported - use load_week1_data() to reload\n2025-10-03 13:15:31,769 - INFO - ✅ Week 1 helper functions imported\n\n\n\n\nStep 6: Configure Matplotlib\n\n# Configure matplotlib for publication-quality plots\nplt.rcParams.update({\n    'figure.figsize': (10, 6),\n    'figure.dpi': 100,\n    'font.size': 10,\n    'axes.titlesize': 12,\n    'axes.labelsize': 10,\n    'xtick.labelsize': 9,\n    'ytick.labelsize': 9,\n    'legend.fontsize': 9\n})\n\nlogger.info(\"✅ Matplotlib configured\")\n\n2025-10-03 13:15:31,774 - INFO - ✅ Matplotlib configured\n\n\n\n\nStep 7: Setup Logging and Authentication\n\n# Configure logging\nlogging.basicConfig(\n    level=logging.INFO,\n    format='%(asctime)s - %(levelname)s - %(message)s'\n)\nlogger = logging.getLogger(__name__)\n\n# Authenticate to Planetary Computer\nauth_status = setup_planetary_computer_auth()\nlogger.info(f\"Planetary Computer authentication status: {'Authenticated' if auth_status else 'Anonymous'}\")\n\nlogger.info(\"\\n\" + \"=\"*60)\nlogger.info(\"✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!\")\nlogger.info(\"=\"*60)\n\n2025-10-03 13:15:31,779 - INFO - Using anonymous access (basic rate limits)\n2025-10-03 13:15:31,779 - INFO - Planetary Computer authentication status: Anonymous\n2025-10-03 13:15:31,780 - INFO - \n============================================================\n2025-10-03 13:15:31,780 - INFO - ✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!\n2025-10-03 13:15:31,780 - INFO - ============================================================"
+    "text": "Complete Setup (Sections 3-10)\nTo run the entire workflow (Sections 3-10), use this comprehensive setup:\n\nStep 1: Standard Library Imports\n\n# Standard library imports\nimport logging\nimport time\nimport os\nfrom datetime import datetime, timedelta\nfrom pathlib import Path\n\n# Set up logger\nlogger = logging.getLogger(__name__)\nlogger.info(\"✅ Standard library imports complete\")\n\n\n\nStep 2: Core Data Science Libraries\n\n# Core data science libraries\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\nlogger.info(\"✅ Data science libraries loaded\")\n\n\n\nStep 3: Geospatial Libraries\n\n# Geospatial libraries\nimport rasterio\nimport xarray as xr\nimport rioxarray\nfrom pystac_client import Client\nimport planetary_computer as pc\nfrom shapely.geometry import box\n\nlogger.info(\"✅ Geospatial libraries loaded\")\n\n\n\nStep 4: Interactive Mapping\n\n# Interactive mapping\nimport folium\nfrom folium.plugins import MeasureControl, Fullscreen\n\nlogger.info(\"✅ Mapping libraries loaded\")\n\n\n\nStep 5: Import Week 1 Helper Functions\nThis is where the magic happens - all 13+ helper functions in one import!\n\n# Import ALL helper functions from tangled Week 1 module\nfrom geogfm.c01 import (\n    # Environment and authentication (Section 2.1-2.4.1)\n    verify_environment,\n    setup_planetary_computer_auth,\n    \n    # Data discovery (Section 2.4.2)\n    search_sentinel2_scenes,\n    search_STAC_scenes,\n    \n    # Data loading (Section 2.4.3)\n    load_sentinel2_bands,\n    \n    # Spatial processing (Section 2.4.4)\n    get_subset_from_scene,\n    get_scene_info,\n    create_scene_tiles,\n    test_subset_functionality,\n    \n    # Data processing (Section 2.4.5)\n    normalize_band,\n    create_rgb_composite,\n    calculate_ndvi,\n    calculate_band_statistics,\n    \n    # Visualization (Section 2.4.6)\n    plot_band_comparison,\n    \n    # Export/Import (Section 2.4.7)\n    save_geotiff,\n    export_analysis_results,\n    load_week1_data\n)\n\nlogger.info(\"✅ Week 1 helper functions imported\")\n\n2025-10-09 16:22:05,847 - INFO - Analysis results exported to: /Users/kellycaylor/dev/geoAI/book/extras/cheatsheets/week1_output\n2025-10-09 16:22:05,847 - INFO - Data exported - use load_week1_data() to reload\n2025-10-09 16:22:05,848 - INFO - ✅ Week 1 helper functions imported\n\n\n\n\nStep 6: Configure Matplotlib\n\n# Configure matplotlib for publication-quality plots\nplt.rcParams.update({\n    'figure.figsize': (10, 6),\n    'figure.dpi': 100,\n    'font.size': 10,\n    'axes.titlesize': 12,\n    'axes.labelsize': 10,\n    'xtick.labelsize': 9,\n    'ytick.labelsize': 9,\n    'legend.fontsize': 9\n})\n\nlogger.info(\"✅ Matplotlib configured\")\n\n2025-10-09 16:22:05,852 - INFO - ✅ Matplotlib configured\n\n\n\n\nStep 7: Setup Logging and Authentication\n\n# Configure logging\nlogging.basicConfig(\n    level=logging.INFO,\n    format='%(asctime)s - %(levelname)s - %(message)s'\n)\nlogger = logging.getLogger(__name__)\n\n# Authenticate to Planetary Computer\nauth_status = setup_planetary_computer_auth()\nlogger.info(f\"Planetary Computer authentication status: {'Authenticated' if auth_status else 'Anonymous'}\")\n\nlogger.info(\"\\n\" + \"=\"*60)\nlogger.info(\"✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!\")\nlogger.info(\"=\"*60)\n\n2025-10-09 16:22:05,857 - INFO - Using anonymous access (basic rate limits)\n2025-10-09 16:22:05,857 - INFO - Planetary Computer authentication status: Anonymous\n2025-10-09 16:22:05,858 - INFO - \n============================================================\n2025-10-09 16:22:05,858 - INFO - ✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!\n2025-10-09 16:22:05,858 - INFO - ============================================================"
   },
   {
     "objectID": "extras/cheatsheets/week01_imports.html#quick-reference-available-functions",
@@ -816,14 +809,14 @@
     "href": "extras/cheatsheets/week01_imports.html#complete-copy-paste-block",
     "title": "Week 01 Quick Start Guide",
     "section": "Complete Copy-Paste Block",
-    "text": "Complete Copy-Paste Block\nFor convenience, here’s everything in one block you can copy-paste:\n\n# Standard library imports\nimport logging\nimport time\nimport os\nfrom datetime import datetime, timedelta\nfrom pathlib import Path\n\n# Core data science libraries\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n# Geospatial libraries\nimport rasterio\nimport xarray as xr\nimport rioxarray\nfrom pystac_client import Client\nimport planetary_computer as pc\nfrom shapely.geometry import box\n\n# Interactive mapping\nimport folium\nfrom folium.plugins import MeasureControl, Fullscreen\n\n# Import ALL helper functions from tangled Week 1 module\nfrom geogfm.c01 import (\n    verify_environment, setup_planetary_computer_auth,\n    search_sentinel2_scenes, search_STAC_scenes,\n    load_sentinel2_bands,\n    get_subset_from_scene, get_scene_info, create_scene_tiles, test_subset_functionality,\n    normalize_band, create_rgb_composite, calculate_ndvi, calculate_band_statistics,\n    plot_band_comparison,\n    save_geotiff, export_analysis_results, load_week1_data\n)\n\n# Configure matplotlib\nplt.rcParams.update({\n    'figure.figsize': (10, 6),\n    'figure.dpi': 100,\n    'font.size': 10,\n    'axes.titlesize': 12,\n    'axes.labelsize': 10,\n    'xtick.labelsize': 9,\n    'ytick.labelsize': 9,\n    'legend.fontsize': 9\n})\n\n# Configure logging\nlogging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')\nlogger = logging.getLogger(__name__)\n\n# Authenticate to Planetary Computer\nauth_status = setup_planetary_computer_auth()\nlogger.info(f\"Authentication: {'✅ Authenticated' if auth_status else '⚠️ Anonymous'}\")\n\nlogger.info(\"\\n\" + \"=\"*60)\nlogger.info(\"✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!\")\nlogger.info(\"=\"*60)\n\n2025-10-03 13:15:31,787 - INFO - Using anonymous access (basic rate limits)\n2025-10-03 13:15:31,788 - INFO - Authentication: ⚠️ Anonymous\n2025-10-03 13:15:31,788 - INFO - \n============================================================\n2025-10-03 13:15:31,788 - INFO - ✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!\n2025-10-03 13:15:31,789 - INFO - ============================================================"
+    "text": "Complete Copy-Paste Block\nFor convenience, here’s everything in one block you can copy-paste:\n\n# Standard library imports\nimport logging\nimport time\nimport os\nfrom datetime import datetime, timedelta\nfrom pathlib import Path\n\n# Core data science libraries\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n# Geospatial libraries\nimport rasterio\nimport xarray as xr\nimport rioxarray\nfrom pystac_client import Client\nimport planetary_computer as pc\nfrom shapely.geometry import box\n\n# Interactive mapping\nimport folium\nfrom folium.plugins import MeasureControl, Fullscreen\n\n# Import ALL helper functions from tangled Week 1 module\nfrom geogfm.c01 import (\n    verify_environment, setup_planetary_computer_auth,\n    search_sentinel2_scenes, search_STAC_scenes,\n    load_sentinel2_bands,\n    get_subset_from_scene, get_scene_info, create_scene_tiles, test_subset_functionality,\n    normalize_band, create_rgb_composite, calculate_ndvi, calculate_band_statistics,\n    plot_band_comparison,\n    save_geotiff, export_analysis_results, load_week1_data\n)\n\n# Configure matplotlib\nplt.rcParams.update({\n    'figure.figsize': (10, 6),\n    'figure.dpi': 100,\n    'font.size': 10,\n    'axes.titlesize': 12,\n    'axes.labelsize': 10,\n    'xtick.labelsize': 9,\n    'ytick.labelsize': 9,\n    'legend.fontsize': 9\n})\n\n# Configure logging\nlogging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')\nlogger = logging.getLogger(__name__)\n\n# Authenticate to Planetary Computer\nauth_status = setup_planetary_computer_auth()\nlogger.info(f\"Authentication: {'✅ Authenticated' if auth_status else '⚠️ Anonymous'}\")\n\nlogger.info(\"\\n\" + \"=\"*60)\nlogger.info(\"✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!\")\nlogger.info(\"=\"*60)\n\n2025-10-09 16:22:05,864 - INFO - Using anonymous access (basic rate limits)\n2025-10-09 16:22:05,864 - INFO - Authentication: ⚠️ Anonymous\n2025-10-09 16:22:05,864 - INFO - \n============================================================\n2025-10-09 16:22:05,864 - INFO - ✅ ALL IMPORTS COMPLETE - READY TO RUN SECTIONS 3-10!\n2025-10-09 16:22:05,865 - INFO - ============================================================"
   },
   {
     "objectID": "extras/cheatsheets/week01_imports.html#example-usage",
     "href": "extras/cheatsheets/week01_imports.html#example-usage",
     "title": "Week 01 Quick Start Guide",
     "section": "Example Usage",
-    "text": "Example Usage\nOnce imported, you can immediately start working with satellite data:\n\n# Define your area of interest\nsanta_barbara_bbox = [-120.5, 34.3, -119.5, 34.7]\n\n# Search for scenes\nscenes = search_sentinel2_scenes(\n    bbox=santa_barbara_bbox,\n    date_range=\"2024-06-01/2024-09-30\",\n    cloud_cover_max=20,\n    limit=10\n)\n\nlogger.info(f\"Found {len(scenes)} scenes!\")\n\n# Load the best scene\nbest_scene = scenes[0]\nsubset_bbox = get_subset_from_scene(best_scene, x_range=(30, 70), y_range=(30, 70))\n\nband_data = load_sentinel2_bands(\n    best_scene,\n    bands=['B04', 'B03', 'B02', 'B08'],\n    subset_bbox=subset_bbox\n)\n\n# Calculate NDVI\nndvi = calculate_ndvi(band_data['B08'], band_data['B04'])\n\n# Create RGB composite\nrgb = create_rgb_composite(band_data['B04'], band_data['B03'], band_data['B02'])\n\nlogger.info(\"✅ Analysis complete!\")\n\n2025-10-03 13:15:35,006 - INFO - Found 40 Sentinel-2 scenes (cloud cover &lt; 20%)\n2025-10-03 13:15:35,007 - INFO - Found 40 scenes!\n2025-10-03 13:15:35,007 - INFO - 📐 Calculated subset from scene bounds:\n2025-10-03 13:15:35,008 - INFO -    Scene bbox: [-120.2952, 34.5339, -119.0728, 35.2250]\n2025-10-03 13:15:35,008 - INFO -    Subset bbox: [-119.9285, 34.7412, -119.4395, 35.0177]\n2025-10-03 13:15:35,008 - INFO -    X range: 30%-70%, Y range: 30%-70%\n2025-10-03 13:15:35,009 - INFO -    Subset area: 16.0% of original scene\n2025-10-03 13:15:36,198 - WARNING - CPLE_AppDefined in PROJ: proj_create_from_database: /Users/kellycaylor/mambaforge/share/proj/proj.db contains DATABASE.LAYOUT.VERSION.MINOR = 2 whereas a number &gt;= 5 is expected. It comes from another PROJ installation.\n2025-10-03 13:15:36,198 - WARNING - CPLE_AppDefined in The definition of projected CRS EPSG:32611 got from GeoTIFF keys is not the same as the one from the EPSG registry, which may cause issues during reprojection operations. Set GTIFF_SRS_SOURCE configuration option to EPSG to use official parameters (overriding the ones from GeoTIFF keys), or to GEOKEYS to use custom values from GeoTIFF keys and drop the EPSG code.\n2025-10-03 13:15:36,217 - INFO - GDAL signalled an error: err_no=1, msg='PROJ: proj_create_from_database: /Users/kellycaylor/mambaforge/share/proj/proj.db contains DATABASE.LAYOUT.VERSION.MINOR = 2 whereas a number &gt;= 5 is expected. It comes from another PROJ installation.'\n2025-10-03 13:16:19,715 - WARNING - CPLE_AppDefined in PROJ: proj_create_from_database: /Users/kellycaylor/mambaforge/share/proj/proj.db contains DATABASE.LAYOUT.VERSION.MINOR = 2 whereas a number &gt;= 5 is expected. It comes from another PROJ installation.\n2025-10-03 13:16:19,716 - WARNING - CPLE_AppDefined in The definition of projected CRS EPSG:32611 got from GeoTIFF keys is not the same as the one from the EPSG registry, which may cause issues during reprojection operations. Set GTIFF_SRS_SOURCE configuration option to EPSG to use official parameters (overriding the ones from GeoTIFF keys), or to GEOKEYS to use custom values from GeoTIFF keys and drop the EPSG code.\n2025-10-03 13:16:19,726 - INFO - GDAL signalled an error: err_no=1, msg='PROJ: proj_create_from_database: /Users/kellycaylor/mambaforge/share/proj/proj.db contains DATABASE.LAYOUT.VERSION.MINOR = 2 whereas a number &gt;= 5 is expected. It comes from another PROJ installation.'\n2025-10-03 13:16:59,070 - WARNING - CPLE_AppDefined in PROJ: proj_create_from_database: /Users/kellycaylor/mambaforge/share/proj/proj.db contains DATABASE.LAYOUT.VERSION.MINOR = 2 whereas a number &gt;= 5 is expected. It comes from another PROJ installation.\n2025-10-03 13:16:59,070 - WARNING - CPLE_AppDefined in The definition of projected CRS EPSG:32611 got from GeoTIFF keys is not the same as the one from the EPSG registry, which may cause issues during reprojection operations. Set GTIFF_SRS_SOURCE configuration option to EPSG to use official parameters (overriding the ones from GeoTIFF keys), or to GEOKEYS to use custom values from GeoTIFF keys and drop the EPSG code.\n2025-10-03 13:16:59,080 - INFO - GDAL signalled an error: err_no=1, msg='PROJ: proj_create_from_database: /Users/kellycaylor/mambaforge/share/proj/proj.db contains DATABASE.LAYOUT.VERSION.MINOR = 2 whereas a number &gt;= 5 is expected. It comes from another PROJ installation.'\n2025-10-03 13:17:45,757 - WARNING - CPLE_AppDefined in PROJ: proj_create_from_database: /Users/kellycaylor/mambaforge/share/proj/proj.db contains DATABASE.LAYOUT.VERSION.MINOR = 2 whereas a number &gt;= 5 is expected. It comes from another PROJ installation.\n2025-10-03 13:17:45,758 - WARNING - CPLE_AppDefined in The definition of projected CRS EPSG:32611 got from GeoTIFF keys is not the same as the one from the EPSG registry, which may cause issues during reprojection operations. Set GTIFF_SRS_SOURCE configuration option to EPSG to use official parameters (overriding the ones from GeoTIFF keys), or to GEOKEYS to use custom values from GeoTIFF keys and drop the EPSG code.\n2025-10-03 13:17:45,768 - INFO - GDAL signalled an error: err_no=1, msg='PROJ: proj_create_from_database: /Users/kellycaylor/mambaforge/share/proj/proj.db contains DATABASE.LAYOUT.VERSION.MINOR = 2 whereas a number &gt;= 5 is expected. It comes from another PROJ installation.'\n2025-10-03 13:18:31,748 - INFO - Successfully loaded 4 bands: ['B04', 'B03', 'B02', 'B08']\n2025-10-03 13:18:39,674 - INFO - ✅ Analysis complete!"
+    "text": "Example Usage\nOnce imported, you can immediately start working with satellite data:\n\n# Define your area of interest\nsanta_barbara_bbox = [-120.5, 34.3, -119.5, 34.7]\n\n# Search for scenes\nscenes = search_sentinel2_scenes(\n    bbox=santa_barbara_bbox,\n    date_range=\"2024-06-01/2024-09-30\",\n    cloud_cover_max=20,\n    limit=10\n)\n\nlogger.info(f\"Found {len(scenes)} scenes!\")\n\n# Load the best scene\nbest_scene = scenes[0]\nsubset_bbox = get_subset_from_scene(best_scene, x_range=(30, 70), y_range=(30, 70))\n\nband_data = load_sentinel2_bands(\n    best_scene,\n    bands=['B04', 'B03', 'B02', 'B08'],\n    subset_bbox=subset_bbox\n)\n\n# Calculate NDVI\nndvi = calculate_ndvi(band_data['B08'], band_data['B04'])\n\n# Create RGB composite\nrgb = create_rgb_composite(band_data['B04'], band_data['B03'], band_data['B02'])\n\nlogger.info(\"✅ Analysis complete!\")\n\n2025-10-09 16:22:08,949 - INFO - Found 40 Sentinel-2 scenes (cloud cover &lt; 20%)\n2025-10-09 16:22:08,950 - INFO - Found 40 scenes!\n2025-10-09 16:24:52,195 - INFO - Successfully loaded 4 bands: ['B04', 'B03', 'B02', 'B08']\n2025-10-09 16:24:52,850 - INFO - ✅ Analysis complete!"
   },
   {
     "objectID": "extras/cheatsheets/week01_imports.html#troubleshooting",
@@ -1442,102 +1435,74 @@
     "text": "Project Presentation Checklist\n\nBefore Your Presentation:\n\nTest all code and demos on presentation computer\nPrepare backup slides in case live demo fails\nTime your presentation (aim for 10-12 minutes + 3-5 for Q&A)\nHave clear talking points for each section\nSave sample outputs/screenshots as backup\n\n\n\nDuring Presentation:\n\nSpeak clearly and at appropriate pace\nShow your screen clearly for demos\nEngage with questions and feedback\nStay within time limits\nBe honest about current limitations\n\n\n\nAfter Presentation:\n\nTake notes on feedback received\nUpdate project plan based on suggestions\nSchedule follow-up consultations if needed"
   },
   {
-    "objectID": "extras/cheatsheets/earth_engine_basics.html",
-    "href": "extras/cheatsheets/earth_engine_basics.html",
-    "title": "Earth Engine Basics",
+    "objectID": "extras/cheatsheets/git_ssh_hpc.html",
+    "href": "extras/cheatsheets/git_ssh_hpc.html",
+    "title": "Git & SSH Setup on HPC",
     "section": "",
-    "text": "Earth Engine Basics\nComing Soon…"
+    "text": "This guide helps you set up Git and SSH keys on the UCSB AI Sandbox (HPC) so you can:\n\nSync your fork with class materials (upstream remote)\nPush your work to your GitHub fork\nUse SSH authentication instead of passwords"
   },
   {
-    "objectID": "debug_test.html",
-    "href": "debug_test.html",
-    "title": "Debug Test",
+    "objectID": "extras/cheatsheets/git_ssh_hpc.html#overview",
+    "href": "extras/cheatsheets/git_ssh_hpc.html#overview",
+    "title": "Git & SSH Setup on HPC",
     "section": "",
-    "text": "Debug Test\nTesting shortcode: /images/test.png"
+    "text": "This guide helps you set up Git and SSH keys on the UCSB AI Sandbox (HPC) so you can:\n\nSync your fork with class materials (upstream remote)\nPush your work to your GitHub fork\nUse SSH authentication instead of passwords"
   },
   {
-    "objectID": "chapters/c10-project-presentations-synthesis.html",
-    "href": "chapters/c10-project-presentations-synthesis.html",
-    "title": "Week 10 Interactive Session: Project Presentations & Synthesis",
-    "section": "",
-    "text": "This week’s work in the broader GFM plan.\n\n\n\n\n\n\n\n\n\n\n\nWeek\nStage\nFocus\nYou will build (geogfm)\nLibrary tools\nOutcome\n\n\n\n\n10\nStage 3: Apply & Deploy\nPresentations & Synthesis\nProject deliverables (no new geogfm code required)\n—\nPresent MVP builds, analysis, transition plan\n\n\n\n\n\n\nSynthesize architecture, training, and evaluation learnings\nPresent MVP results and insights\nOutline next steps with Prithvi/scale-up"
+    "objectID": "extras/cheatsheets/git_ssh_hpc.html#one-time-setup-ssh-key-configuration",
+    "href": "extras/cheatsheets/git_ssh_hpc.html#one-time-setup-ssh-key-configuration",
+    "title": "Git & SSH Setup on HPC",
+    "section": "One-Time Setup: SSH Key Configuration",
+    "text": "One-Time Setup: SSH Key Configuration\n\nStep 1: Generate SSH Key on HPC\nSSH keys let you authenticate to GitHub without entering passwords.\n# Check if you already have an SSH key\nls -la ~/.ssh\n\n# If you see id_ed25519.pub or id_rsa.pub, you already have a key - skip to Step 2\nIf you don’t have a key, generate one:\n# Generate a new SSH key (use your GitHub email)\nssh-keygen -t ed25519 -C \"your_email@example.com\"\n\n# When prompted:\n# - Save location: Press Enter (accept default: ~/.ssh/id_ed25519)\n# - Passphrase: Press Enter for no passphrase (or set one if you prefer)\n\n\nStep 2: Copy Your Public Key\n# Display your public key\ncat ~/.ssh/id_ed25519.pub\n\n# Copy the entire output (starts with ssh-ed25519 and ends with your email)\n\n\nStep 3: Add Key to GitHub\n\nGo to GitHub SSH Settings\nClick New SSH key\nTitle: UCSB AI Sandbox (or any name you prefer)\nKey: Paste the public key you copied\nClick Add SSH key\n\n\n\nStep 4: Test SSH Connection\n# Test connection to GitHub\nssh -T git@github.com\n\n# You should see:\n# Hi username! You've successfully authenticated, but GitHub does not provide shell access.\n\n\nStep 5: Configure Git Identity\n# Set your name and email (used in commits)\ngit config --global user.name \"Your Name\"\ngit config --global user.email \"your_email@example.com\"\n\n# Verify configuration\ngit config --list"
   },
   {
-    "objectID": "chapters/c10-project-presentations-synthesis.html#course-roadmap-mapping",
-    "href": "chapters/c10-project-presentations-synthesis.html#course-roadmap-mapping",
-    "title": "Week 10 Interactive Session: Project Presentations & Synthesis",
-    "section": "",
-    "text": "This week’s work in the broader GFM plan.\n\n\n\n\n\n\n\n\n\n\n\nWeek\nStage\nFocus\nYou will build (geogfm)\nLibrary tools\nOutcome\n\n\n\n\n10\nStage 3: Apply & Deploy\nPresentations & Synthesis\nProject deliverables (no new geogfm code required)\n—\nPresent MVP builds, analysis, transition plan\n\n\n\n\n\n\nSynthesize architecture, training, and evaluation learnings\nPresent MVP results and insights\nOutline next steps with Prithvi/scale-up"
+    "objectID": "extras/cheatsheets/git_ssh_hpc.html#setting-up-your-fork",
+    "href": "extras/cheatsheets/git_ssh_hpc.html#setting-up-your-fork",
+    "title": "Git & SSH Setup on HPC",
+    "section": "Setting Up Your Fork",
+    "text": "Setting Up Your Fork\n\nStep 1: Clone Your Fork (First Time)\n# Navigate to your work directory\ncd ~\nmkdir -p dev\ncd dev\n\n# Clone YOUR fork using SSH\ngit clone git@github.com:YOUR-USERNAME/GEOG-288KC-geospatial-foundation-models.git\ncd GEOG-288KC-geospatial-foundation-models\nImportant: Replace YOUR-USERNAME with your actual GitHub username.\n\n\nStep 2: Add Upstream Remote\nThe upstream remote points to the class repository (Kelly’s repo).\n# Check current remotes\ngit remote -v\n\n# Add upstream (class repo)\ngit remote add upstream git@github.com:kcaylor/GEOG-288KC-geospatial-foundation-models.git\n\n# Verify both remotes exist\ngit remote -v\n\n# You should see:\n# origin    git@github.com:YOUR-USERNAME/GEOG-288KC-geospatial-foundation-models.git (fetch)\n# origin    git@github.com:YOUR-USERNAME/GEOG-288KC-geospatial-foundation-models.git (push)\n# upstream  git@github.com:kcaylor/GEOG-288KC-geospatial-foundation-models.git (fetch)\n# upstream  git@github.com:kcaylor/GEOG-288KC-geospatial-foundation-models.git (push)"
   },
   {
-    "objectID": "chapters/c10-project-presentations-synthesis.html#session-outline",
-    "href": "chapters/c10-project-presentations-synthesis.html#session-outline",
-    "title": "Week 10 Interactive Session: Project Presentations & Synthesis",
-    "section": "Session Outline",
-    "text": "Session Outline\n\nConcepts → Components mapping\n\nModel architecture → models/gfm_vit.py\nPretraining objective → models/gfm_mae.py + modules/losses/mae_loss.py\nTraining loop → training/{optimizer.py, loop.py}\nEvaluation → evaluation/{visualization.py, metrics.py}\nApplied tasks → tasks/{classification.py, segmentation.py}\nInference → inference/{sliding_window.py, tiling.py}\n\nDeliverables checklist\n\nSlides with pipeline diagram and key code references\nShort demo: load a small batch, run MAE forward, show recon\nOne analysis figure (recon grid or PSNR curve)\nWhat you would swap to scale (timm blocks, TorchGeo datasets, FlashAttention, HF hub)"
+    "objectID": "extras/cheatsheets/git_ssh_hpc.html#daily-workflow-sync-and-push",
+    "href": "extras/cheatsheets/git_ssh_hpc.html#daily-workflow-sync-and-push",
+    "title": "Git & SSH Setup on HPC",
+    "section": "Daily Workflow: Sync and Push",
+    "text": "Daily Workflow: Sync and Push\n\nSyncing with Class Updates\n# 1. Make sure you're on main branch\ngit checkout main\n\n# 2. Fetch latest class materials\ngit fetch upstream\n\n# 3. Merge class updates into your local main\ngit merge upstream/main\n\n# 4. Push updates to your fork\ngit push origin main\n\n\nWorking on Your Analysis\n# 1. Create a branch for your work\ngit checkout -b week01-analysis\n\n# 2. Do your work, then check what changed\ngit status\n\n# 3. Stage your changes\ngit add your-notebook.ipynb your-script.py\n\n# 4. Commit with a message\ngit commit -m \"Complete Week 1 analysis\"\n\n# 5. Push to your fork\ngit push origin week01-analysis\n\n\nQuick Sync (When You Have No Local Changes)\ngit checkout main\ngit pull upstream main\ngit push origin main"
   },
   {
-    "objectID": "Syllabus.html",
-    "href": "Syllabus.html",
-    "title": "",
-    "section": "",
-    "text": "Code"
+    "objectID": "extras/cheatsheets/git_ssh_hpc.html#troubleshooting",
+    "href": "extras/cheatsheets/git_ssh_hpc.html#troubleshooting",
+    "title": "Git & SSH Setup on HPC",
+    "section": "Troubleshooting",
+    "text": "Troubleshooting\n\nPermission Denied (publickey)\nIf you get this error when pushing/pulling:\n# Check SSH agent is running\neval \"$(ssh-agent -s)\"\n\n# Add your SSH key\nssh-add ~/.ssh/id_ed25519\n\n# Test connection again\nssh -T git@github.com\n\n\nRemote URL is HTTPS Instead of SSH\nIf git remote -v shows HTTPS URLs (https://github.com/…), change to SSH:\n# Change origin to SSH\ngit remote set-url origin git@github.com:YOUR-USERNAME/GEOG-288KC-geospatial-foundation-models.git\n\n# Change upstream to SSH (if needed)\ngit remote set-url upstream git@github.com:kcaylor/GEOG-288KC-geospatial-foundation-models.git\n\n# Verify\ngit remote -v\n\n\nUnrelated Histories Error\nIf you get refusing to merge unrelated histories:\ngit fetch upstream\ngit merge upstream/main --allow-unrelated-histories\ngit push origin main"
   },
   {
-    "objectID": "Syllabus.html#geog-288kc-geospatial-foundation-models-and-applications",
-    "href": "Syllabus.html#geog-288kc-geospatial-foundation-models-and-applications",
-    "title": "",
-    "section": "GEOG 288KC: Geospatial Foundation Models and Applications",
-    "text": "GEOG 288KC: Geospatial Foundation Models and Applications\nFall 2025 Fridays 9am-12pm + optional lab office hours Fridays 2pm-5pm\n\n\nCourse Overview\nThis accelerated, hands-on seminar provides practical skills for working with state-of-the-art geospatial foundation models. Students learn to access, process, and analyze satellite imagery using modern tools, apply foundation models to real-world problems, and implement independent projects in environmental monitoring and analysis. The course emphasizes immediately applicable skills rather than theoretical foundations.\n\n\n\nPrerequisites\n\nStudents should have some experience with remote sensing, geospatial data, or ML (e.g., Python, Earth Engine, PyTorch)\nAccess to UCSB AI Sandbox for computational resources\nBasic familiarity with satellite imagery and environmental applications\n\n\n\n\nApplications\nTo apply, students should submit a paragraph at the form link below describing their past experience with remote sensing, geospatial data, and ML, as well as their interest in applying Geospatial Foundation Models to practical problems. They should describe a specific geospatial application area they want to explore. The more clearly defined the target application and any existing datasets the better.\nhttps://forms.gle/Q1iDp2kuZuX1avMPA\n\n\n—\n\n\nCourse Structure: 10-Week Format\n\n📚 Phase 1: Structured Learning (Weeks 1-5)\n\nWeek 1: Core Tools and Data Access (STAC APIs, satellite data visualization)\nWeek 2: Remote Sensing Preprocessing (Cloud masking, reprojection, compositing)\nWeek 3: Machine Learning on Remote Sensing (CNN training, land cover classification)\nWeek 4: Foundation Models in Practice (Loading pretrained models, feature extraction)\nWeek 5: Fine-Tuning & Transfer Learning (Linear probing vs. full fine-tuning, adaptation strategies)\n\n\n\n🎯 Phase 2: Independent Project Development (Weeks 6-10)\n\nWeek 6: Project Proposals & Planning (Define scope, methodology, expected outcomes)\nWeek 7: Initial Implementation (Develop minimum viable product, early results)\nWeek 8: Development & Refinement (Expand functionality, optimize performance)\nWeek 9: Analysis & Results (Generate final results, prepare visualizations)\nWeek 10: Final Presentations (Present completed projects, peer review, submission)\n\n\n\n\n\nDeliverables\nPhase 1: Structured Learning (Weeks 1-5)\n\nWeek 1: Working data access pipeline using STAC APIs\nWeek 2: Complete preprocessing workflow for satellite imagery\nWeek 3: Trained CNN model for land cover classification\nWeek 4: Working foundation model integration and feature extraction\nWeek 5: Fine-tuning implementation and project proposal\n\nPhase 2: Independent Project Development (Weeks 6-10)\n\nWeek 6: Detailed project proposal with methodology and timeline\nWeek 7: Minimum viable product (MVP) with initial results\nWeek 8-9: Iterative development, analysis, and documentation\nWeek 10: Final presentation, complete project code, and written report\n\nOptional: Submit project results to GitHub, Hugging Face, or present at student showcase\n\n\n\nGrading\nThis course will be assessed on a pass/fail basis. Passing requires:\n\nConsistent attendance and participation (Weeks 1-5)\nSubmission of all structured learning deliverables (Weeks 1-5)\nProject proposal submission (Week 6)\nMVP demonstration (Week 7)\nFinal project presentation and submission (Week 10)"
+    "objectID": "extras/cheatsheets/git_ssh_hpc.html#best-practices",
+    "href": "extras/cheatsheets/git_ssh_hpc.html#best-practices",
+    "title": "Git & SSH Setup on HPC",
+    "section": "Best Practices",
+    "text": "Best Practices\n\nDo This\n\nWork on branches, not main:\ngit checkout -b descriptive-branch-name\nCommit often with clear messages:\ngit commit -m \"Add NDVI calculation for Santa Barbara\"\nPull before you push:\ngit pull origin main  # Update your local copy\ngit push origin main  # Then push\n\n\n\nAvoid This\n\nDon’t work directly on main branch\nDon’t force push unless you know what you’re doing\nDon’t commit large data files (use .gitignore)"
   },
   {
-    "objectID": "cheatsheets.html",
-    "href": "cheatsheets.html",
-    "title": "Cheatsheets",
-    "section": "",
-    "text": "Week 01: Import Cheatsheet - Using the tangled c01.py module"
+    "objectID": "extras/cheatsheets/git_ssh_hpc.html#quick-reference",
+    "href": "extras/cheatsheets/git_ssh_hpc.html#quick-reference",
+    "title": "Git & SSH Setup on HPC",
+    "section": "Quick Reference",
+    "text": "Quick Reference\n# Clone your fork (first time only)\ngit clone git@github.com:YOUR-USERNAME/GEOG-288KC-geospatial-foundation-models.git\n\n# Add upstream (first time only)\ngit remote add upstream git@github.com:kcaylor/GEOG-288KC-geospatial-foundation-models.git\n\n# Sync with class updates\ngit checkout main\ngit fetch upstream\ngit merge upstream/main\ngit push origin main\n\n# Work on your analysis\ngit checkout -b my-analysis\n# ... do work ...\ngit add .\ngit commit -m \"Descriptive message\"\ngit push origin my-analysis\n\n# Check status\ngit status\ngit remote -v\ngit log --oneline -5"
   },
   {
-    "objectID": "cheatsheets.html#weekly-quick-start-guides",
-    "href": "cheatsheets.html#weekly-quick-start-guides",
-    "title": "Cheatsheets",
-    "section": "",
-    "text": "Week 01: Import Cheatsheet - Using the tangled c01.py module"
+    "objectID": "extras/cheatsheets/git_ssh_hpc.html#after-syncing-update-python-package",
+    "href": "extras/cheatsheets/git_ssh_hpc.html#after-syncing-update-python-package",
+    "title": "Git & SSH Setup on HPC",
+    "section": "After Syncing: Update Python Package",
+    "text": "After Syncing: Update Python Package\nAfter pulling updates that modify geogfm/ code:\n# Reinstall in editable mode (optional, usually automatic)\ncd /path/to/GEOG-288KC-geospatial-foundation-models\npip install -e .\nIn your notebook, restart the kernel or reload the module:\n# Reload module\nimport importlib\nfrom geogfm import c01\nimportlib.reload(c01)\n\n# Or restart kernel: Kernel → Restart"
   },
   {
-    "objectID": "cheatsheets.html#hpc-installation-and-setup",
-    "href": "cheatsheets.html#hpc-installation-and-setup",
-    "title": "Cheatsheets",
-    "section": "💻 HPC Installation and setup",
-    "text": "💻 HPC Installation and setup\n\nSetting up HPC Access"
-  },
-  {
-    "objectID": "cheatsheets.html#geospatial-data-fundamentals",
-    "href": "cheatsheets.html#geospatial-data-fundamentals",
-    "title": "Cheatsheets",
-    "section": "🌍 Geospatial Data Fundamentals",
-    "text": "🌍 Geospatial Data Fundamentals\n\nWorking with Rasterio\nEarth Engine Basics\nXarray for Multi-dimensional Data"
-  },
-  {
-    "objectID": "cheatsheets.html#pytorch-for-geospatial-ai",
-    "href": "cheatsheets.html#pytorch-for-geospatial-ai",
-    "title": "Cheatsheets",
-    "section": "🔥 PyTorch for Geospatial AI",
-    "text": "🔥 PyTorch for Geospatial AI\n\nPyTorch Tensors & GPU Operations\nTorchGeo Datasets & Transforms\nData Loading for Satellite Imagery"
-  },
-  {
-    "objectID": "cheatsheets.html#foundation-models-huggingface",
-    "href": "cheatsheets.html#foundation-models-huggingface",
-    "title": "Cheatsheets",
-    "section": "🤗 Foundation Models & HuggingFace",
-    "text": "🤗 Foundation Models & HuggingFace\n\nLoading Pre-trained Models\nModel Inference & Feature Extraction\nFine-tuning Strategies"
-  },
-  {
-    "objectID": "cheatsheets.html#visualization-analysis",
-    "href": "cheatsheets.html#visualization-analysis",
-    "title": "Cheatsheets",
-    "section": "📊 Visualization & Analysis",
-    "text": "📊 Visualization & Analysis\n\nPlotting Satellite Imagery\nInteractive Maps with Folium\nGeospatial Plotting with Matplotlib"
+    "objectID": "extras/cheatsheets/git_ssh_hpc.html#getting-help",
+    "href": "extras/cheatsheets/git_ssh_hpc.html#getting-help",
+    "title": "Git & SSH Setup on HPC",
+    "section": "Getting Help",
+    "text": "Getting Help\n\nGit basics: GitHub Git Handbook\nSSH troubleshooting: GitHub SSH Docs\nClass specific issues: Ask on Slack or in office hours"
   },
   {
     "objectID": "extras/cheatsheets/cloud_scalable_computing.html",
@@ -1601,6 +1566,104 @@
     "title": "Cloud & Scalable Computing",
     "section": "",
     "text": "Distributed Training: Use DDP for multi-GPU training across nodes\nData Parallelism: Distribute large datasets using Dask and cloud storage\n\nModel Optimization: Apply quantization, pruning, and ONNX export for deployment\nContainer Deployment: Use Docker and Kubernetes for scalable inference\nResource Monitoring: Track CPU, GPU, memory usage for optimization\nCloud Integration: Leverage Earth Engine, cloud storage, and managed services\nCost Management: Use spot instances and lifecycle policies for cost control\n\nThese techniques enable processing continent-scale geospatial data and deploying models to serve millions of inference requests efficiently."
+  },
+  {
+    "objectID": "cheatsheets.html",
+    "href": "cheatsheets.html",
+    "title": "Cheatsheets",
+    "section": "",
+    "text": "Week 01: Import Cheatsheet - Using the tangled c01.py module"
+  },
+  {
+    "objectID": "cheatsheets.html#weekly-quick-start-guides",
+    "href": "cheatsheets.html#weekly-quick-start-guides",
+    "title": "Cheatsheets",
+    "section": "",
+    "text": "Week 01: Import Cheatsheet - Using the tangled c01.py module"
+  },
+  {
+    "objectID": "cheatsheets.html#hpc-installation-and-setup",
+    "href": "cheatsheets.html#hpc-installation-and-setup",
+    "title": "Cheatsheets",
+    "section": "💻 HPC Installation and Setup",
+    "text": "💻 HPC Installation and Setup\n\nSetting up HPC Access\nGit & SSH Setup on HPC"
+  },
+  {
+    "objectID": "cheatsheets.html#geospatial-data-fundamentals",
+    "href": "cheatsheets.html#geospatial-data-fundamentals",
+    "title": "Cheatsheets",
+    "section": "🌍 Geospatial Data Fundamentals",
+    "text": "🌍 Geospatial Data Fundamentals\n\nWorking with Rasterio\nEarth Engine Basics\nXarray for Multi-dimensional Data"
+  },
+  {
+    "objectID": "cheatsheets.html#pytorch-for-geospatial-ai",
+    "href": "cheatsheets.html#pytorch-for-geospatial-ai",
+    "title": "Cheatsheets",
+    "section": "🔥 PyTorch for Geospatial AI",
+    "text": "🔥 PyTorch for Geospatial AI\n\nPyTorch Tensors & GPU Operations\nTorchGeo Datasets & Transforms\nData Loading for Satellite Imagery"
+  },
+  {
+    "objectID": "cheatsheets.html#foundation-models-huggingface",
+    "href": "cheatsheets.html#foundation-models-huggingface",
+    "title": "Cheatsheets",
+    "section": "🤗 Foundation Models & HuggingFace",
+    "text": "🤗 Foundation Models & HuggingFace\n\nLoading Pre-trained Models\nModel Inference & Feature Extraction\nFine-tuning Strategies"
+  },
+  {
+    "objectID": "cheatsheets.html#visualization-analysis",
+    "href": "cheatsheets.html#visualization-analysis",
+    "title": "Cheatsheets",
+    "section": "📊 Visualization & Analysis",
+    "text": "📊 Visualization & Analysis\n\nPlotting Satellite Imagery\nInteractive Maps with Folium\nGeospatial Plotting with Matplotlib"
+  },
+  {
+    "objectID": "Syllabus.html",
+    "href": "Syllabus.html",
+    "title": "",
+    "section": "",
+    "text": "Code"
+  },
+  {
+    "objectID": "Syllabus.html#geog-288kc-geospatial-foundation-models-and-applications",
+    "href": "Syllabus.html#geog-288kc-geospatial-foundation-models-and-applications",
+    "title": "",
+    "section": "GEOG 288KC: Geospatial Foundation Models and Applications",
+    "text": "GEOG 288KC: Geospatial Foundation Models and Applications\nFall 2025 Fridays 9am-12pm + optional lab office hours Fridays 2pm-5pm\n\n\nCourse Overview\nThis accelerated, hands-on seminar provides practical skills for working with state-of-the-art geospatial foundation models. Students learn to access, process, and analyze satellite imagery using modern tools, apply foundation models to real-world problems, and implement independent projects in environmental monitoring and analysis. The course emphasizes immediately applicable skills rather than theoretical foundations.\n\n\n\nPrerequisites\n\nStudents should have some experience with remote sensing, geospatial data, or ML (e.g., Python, Earth Engine, PyTorch)\nAccess to UCSB AI Sandbox for computational resources\nBasic familiarity with satellite imagery and environmental applications\n\n\n\n\nApplications\nTo apply, students should submit a paragraph at the form link below describing their past experience with remote sensing, geospatial data, and ML, as well as their interest in applying Geospatial Foundation Models to practical problems. They should describe a specific geospatial application area they want to explore. The more clearly defined the target application and any existing datasets the better.\nhttps://forms.gle/Q1iDp2kuZuX1avMPA\n\n\n—\n\n\nCourse Structure: 10-Week Format\n\n📚 Phase 1: Structured Learning (Weeks 1-5)\n\nWeek 1: Core Tools and Data Access (STAC APIs, satellite data visualization)\nWeek 2: Remote Sensing Preprocessing (Cloud masking, reprojection, compositing)\nWeek 3: Machine Learning on Remote Sensing (CNN training, land cover classification)\nWeek 4: Foundation Models in Practice (Loading pretrained models, feature extraction)\nWeek 5: Fine-Tuning & Transfer Learning (Linear probing vs. full fine-tuning, adaptation strategies)\n\n\n\n🎯 Phase 2: Independent Project Development (Weeks 6-10)\n\nWeek 6: Project Proposals & Planning (Define scope, methodology, expected outcomes)\nWeek 7: Initial Implementation (Develop minimum viable product, early results)\nWeek 8: Development & Refinement (Expand functionality, optimize performance)\nWeek 9: Analysis & Results (Generate final results, prepare visualizations)\nWeek 10: Final Presentations (Present completed projects, peer review, submission)\n\n\n\n\n\nDeliverables\nPhase 1: Structured Learning (Weeks 1-5)\n\nWeek 1: Working data access pipeline using STAC APIs\nWeek 2: Complete preprocessing workflow for satellite imagery\nWeek 3: Trained CNN model for land cover classification\nWeek 4: Working foundation model integration and feature extraction\nWeek 5: Fine-tuning implementation and project proposal\n\nPhase 2: Independent Project Development (Weeks 6-10)\n\nWeek 6: Detailed project proposal with methodology and timeline\nWeek 7: Minimum viable product (MVP) with initial results\nWeek 8-9: Iterative development, analysis, and documentation\nWeek 10: Final presentation, complete project code, and written report\n\nOptional: Submit project results to GitHub, Hugging Face, or present at student showcase\n\n\n\nGrading\nThis course will be assessed on a pass/fail basis. Passing requires:\n\nConsistent attendance and participation (Weeks 1-5)\nSubmission of all structured learning deliverables (Weeks 1-5)\nProject proposal submission (Week 6)\nMVP demonstration (Week 7)\nFinal project presentation and submission (Week 10)"
+  },
+  {
+    "objectID": "chapters/c10-project-presentations-synthesis.html",
+    "href": "chapters/c10-project-presentations-synthesis.html",
+    "title": "Week 10 Interactive Session: Project Presentations & Synthesis",
+    "section": "",
+    "text": "This week’s work in the broader GFM plan.\n\n\n\n\n\n\n\n\n\n\n\nWeek\nStage\nFocus\nYou will build (geogfm)\nLibrary tools\nOutcome\n\n\n\n\n10\nStage 3: Apply & Deploy\nPresentations & Synthesis\nProject deliverables (no new geogfm code required)\n—\nPresent MVP builds, analysis, transition plan\n\n\n\n\n\n\nSynthesize architecture, training, and evaluation learnings\nPresent MVP results and insights\nOutline next steps with Prithvi/scale-up"
+  },
+  {
+    "objectID": "chapters/c10-project-presentations-synthesis.html#course-roadmap-mapping",
+    "href": "chapters/c10-project-presentations-synthesis.html#course-roadmap-mapping",
+    "title": "Week 10 Interactive Session: Project Presentations & Synthesis",
+    "section": "",
+    "text": "This week’s work in the broader GFM plan.\n\n\n\n\n\n\n\n\n\n\n\nWeek\nStage\nFocus\nYou will build (geogfm)\nLibrary tools\nOutcome\n\n\n\n\n10\nStage 3: Apply & Deploy\nPresentations & Synthesis\nProject deliverables (no new geogfm code required)\n—\nPresent MVP builds, analysis, transition plan\n\n\n\n\n\n\nSynthesize architecture, training, and evaluation learnings\nPresent MVP results and insights\nOutline next steps with Prithvi/scale-up"
+  },
+  {
+    "objectID": "chapters/c10-project-presentations-synthesis.html#session-outline",
+    "href": "chapters/c10-project-presentations-synthesis.html#session-outline",
+    "title": "Week 10 Interactive Session: Project Presentations & Synthesis",
+    "section": "Session Outline",
+    "text": "Session Outline\n\nConcepts → Components mapping\n\nModel architecture → models/gfm_vit.py\nPretraining objective → models/gfm_mae.py + modules/losses/mae_loss.py\nTraining loop → training/{optimizer.py, loop.py}\nEvaluation → evaluation/{visualization.py, metrics.py}\nApplied tasks → tasks/{classification.py, segmentation.py}\nInference → inference/{sliding_window.py, tiling.py}\n\nDeliverables checklist\n\nSlides with pipeline diagram and key code references\nShort demo: load a small batch, run MAE forward, show recon\nOne analysis figure (recon grid or PSNR curve)\nWhat you would swap to scale (timm blocks, TorchGeo datasets, FlashAttention, HF hub)"
+  },
+  {
+    "objectID": "debug_test.html",
+    "href": "debug_test.html",
+    "title": "Debug Test",
+    "section": "",
+    "text": "Debug Test\nTesting shortcode: /images/test.png"
+  },
+  {
+    "objectID": "extras/cheatsheets/earth_engine_basics.html",
+    "href": "extras/cheatsheets/earth_engine_basics.html",
+    "title": "Earth Engine Basics",
+    "section": "",
+    "text": "Earth Engine Basics\nComing Soon…"
   },
   {
     "objectID": "extras/examples/resnet.html",
