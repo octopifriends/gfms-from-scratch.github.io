@@ -29,6 +29,11 @@ format:
 - [TorchGeo Datasets & Transforms](extras/cheatsheets/torchgeo_basics.qmd)
 - [Data Loading for Satellite Imagery](extras/cheatsheets/dataloader_satellite.qmd)
 
+## 🌎 TerraTorch for Geospatial AI
+
+- [TerraTorch Workflows](extras/examples/terratorch_workflows.qmd)
+- [TerraTorch Model Zoo](extras/cheatsheets/terratorch_model_zoo.qmd)
+
 ## 🤗 Foundation Models & HuggingFace
 
 - [Loading Pre-trained Models](extras/cheatsheets/loading_models.qmd)
