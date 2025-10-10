@@ -14,14 +14,6 @@ format:
 
 This week we'll build production-ready preprocessing pipelines that can handle multiple Sentinel-2 scenes efficiently. You'll learn to process entire datasets, not just single scenes, with cloud masking, reprojection, and mosaicking.
 
-## Prerequisites
-
-Before starting this session, ensure you have:
-
-- Completed Week 1: Geospatial Data Foundations
-- Activated the `geoAI` conda environment
-- Access to UCSB AI Sandbox or local environment with 8GB+ RAM
-- Basic familiarity with xarray and rasterio from Week 1
 
 :::{.callout-note}
 ## Data Storage Format
