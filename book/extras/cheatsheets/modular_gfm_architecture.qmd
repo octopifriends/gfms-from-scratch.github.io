@@ -1,6 +1,6 @@
 ---
-title: "Understanding GFM Architecture Components: Backends, Necks, Decoders, and Heads"
-subtitle: "From Scratch to TerraTorch"
+title: "Choosing TerraTorch GFM Modules: Practical Examples and Modular Architecture"
+subtitle: "From Project Needs to Model Assembly"
 author: "GeoAI Course Team"
 date: today
 format:
@@ -9,388 +9,138 @@ format:
     toc-depth: 3
 ---
 
-# Understanding GFM Architecture Components: Backbones, Necks, Decoders, and Heads
+# Modular GFM Design: Matching Projects to TerraTorch Components
 
-## Overview of the Modular Architecture
+## Quick Examples: Project-Driven Component Choices
 
-Geospatial Foundation Models (GFMs) in TerraTorch follow a modular architecture pattern that separates concerns and enables flexible model composition. This design philosophy allows researchers to mix-and-match components optimized for different aspects of the learning pipeline.
+- **Land Cover Segmentation (Satellite Imagery):**
 
-```mermaid
+  - **Backbone:** Prithvi (ViT-based, strong on global features)
+  - **Neck:** ViTToConv or SelectiveNeck (reshape ViT token sequences to spatial maps)
+  - **Decoder:** UPerNet (multi-scale spatial fusion)
+  - **Head:** SegmentationHead
+
+- **Crop Type Classification (Scene-Level Labels):**
+
+  - **Backbone:** Clay (ViT with wavelength encoding)
+  - **Neck:** Identity or SelectiveNeck
+  - **Decoder:** IdentityDecoder
+  - **Head:** ClassificationHead
+
+- **Object Detection (Buildings/Roads):**
+
+  - **Backbone:** ResNet or Swin (good for local and multi-scale features)
+  - **Neck:** FPNNeck (yields pyramid of features)
+  - **Decoder:** Detection-specific (uses ROI pooling)
+  - **Head:** DetectionHead
+
+- **Temporal Change Detection:**
+
+  - **Backbone:** Prithvi-EO-2.0 (handles time series, with temporal encoding)
+  - **Neck:** ViTToConv/SelectiveNeck
+  - **Decoder:** UPerNet
+  - **Head:** Segmentation or Regression Head, depending on task
+
+---
+
+## TerraTorch Model Anatomy (One-Liner Summary):
+
+1. **Backbone** – feature extractor
+2. **Neck** – adapts/reshapes features
+3. **Decoder** – prepares task-relevant outputs
+4. **Head** – projects onto the prediction space
+
+---
+
+```{mermaid}
 flowchart LR
-    A["Input Image<br/><sub>Raw Data</sub>"] --> B["Backbone<br/><sub>Features Extracted</sub>"]
-    B --> C["Neck<br/><sub>Adapted Features</sub>"]
-    C --> D["Decoder<br/><sub>Task-Specific Processing</sub>"]
-    D --> E["Head<br/><sub>Final Mapping</sub>"]
-    E --> F["Output<br/><sub>Predictions</sub>"]
+    A["Input Image"] --> B["Backbone"]
+    B --> C["Neck"]
+    C --> D["Decoder"]
+    D --> E["Head"]
+    E --> F["Output"]
 ```
 
-## 1. Backbone: The Feature Extractor
+---
 
-### Definition
-The backbone is the core neural network that extracts hierarchical feature representations from input imagery. It's typically a pre-trained model that has learned general-purpose visual representations from large-scale datasets.
+## 1. Backbone: Feature Extractor
 
-### Role in GFMs
+- **ViT (e.g., Prithvi, Clay):** Splits image into patches, encodes global context. Preferred if your data varies spectrally or needs temporal awareness (see *dynamic wavelength encoding*, *temporal encoding*).
+- **ResNet:** Classic convolutional backbone for local detail; often used for detection and segmentation where spatial accuracy is key.
+- **Swin:** Combines transformations and CNN-style multiscale hierarchy.
 
-- **Primary Feature Learning**: Transforms raw pixel values into learned representations
-- **Hierarchical Processing**: Generates features at multiple scales/depths
-- **Transfer Learning Foundation**: Carries pre-trained knowledge from upstream tasks
+**GFM tricks:**
+- *Dynamic wavelength encoding* (DOFA, Clay): handles variable bands by embedding their wavelengths, great for multi-sensor work.
+- *Temporal encoding* (Prithvi-EO-2.0): injects time info, vital for time series and seasonal tasks.
 
-### Technical Details
+---
 
-**Vision Transformers (ViT)**: Used by Prithvi, Clay, DOFA
+## 2. Neck: Adapter
 
-```python
-# ViT backbone processes images as sequences of patches
-Input: (B, C, H, W)  # Batch, Channels, Height, Width
-↓ Patchify: Divide into 16×16 patches
-↓ Linear Projection: Each patch → embedding
-↓ Add positional encodings
-↓ Transformer blocks (self-attention + FFN)
-Output: (B, N, D)  # N patches, D dimensions
-```
+Bridges backbone output and decoder input. Typical necks:
 
-**Convolutional Networks (ResNet)**: Used by MOCOv2, DINO, DeCUR
+- **ViTToConvNeck / SelectiveNeck:** Converts ViT token sequences to spatial feature maps (essential if using ViT with UPerNet or CNN decoders).
+- **FPNNeck:** Aggregates multi-scale features for pyramid decoders (ResNet/Swin → FPN for detection, segmentation).
+- **IdentityNeck:** Pass-through (when backbone output already fits decoder).
 
-```python
-# CNN backbone with hierarchical features
-Input: (B, C, H, W)
-↓ Stage 1: (B, 64, H/4, W/4)    # Low-level edges
-↓ Stage 2: (B, 128, H/8, W/8)   # Mid-level patterns  
-↓ Stage 3: (B, 256, H/16, W/16) # High-level objects
-↓ Stage 4: (B, 512, H/32, W/32) # Semantic concepts
-Output: Multi-scale feature maps
-```
+---
 
-**Swin Transformers**: Used by Satlas
+## 3. Decoder: Task-Specific Processing
 
-```python
-# Hierarchical transformer with shifted windows
-Combines benefits of CNNs (multi-scale) with transformers (attention)
-Progressive reduction: H×W → H/4×W/4 → H/8×W/8 → H/16×W/16
-```
+- **UPerNet:** Multi-scale and context fusion for high-res segmentation.
+- **FCN:** Lightweight, for simpler semantic segmentation.
+- **IdentityDecoder:** For classification tasks where spatial output isn't needed.
+- **MAEDecoder:** Used only for *pretraining* with masked input reconstruction—produces no final predictions.
 
-### GFM-Specific Adaptations
+---
 
-**Dynamic Wavelength Encoding (DOFA, Clay)**:
+## 4. Head: Prediction Layer
+
+- **SegmentationHead:** Pixel/class map (e.g., land cover mapping). Expects (B, C, H, W).
+- **ClassificationHead:** Scene-level label. Use with decoders or backbones returning single feature vectors.
+- **RegressionHead:** Continuous maps (e.g., elevation). Use with dense or pooled features.
+- **DetectionHead:** Bboxes and labels per object; input is pooled region features.
+
+---
+
+## Example: Model Assembly for Semantic Segmentation
 
 ```python
-class DynamicSpectralEmbedding(nn.Module):
+class LandCoverSegmenter(nn.Module):
     def __init__(self):
-        # Learnable embeddings for each possible wavelength
-        self.wavelength_embeddings = nn.Embedding(num_wavelengths, embed_dim)
-    
-    def forward(self, x, active_bands):
-        # Adapt to whatever bands are present in input
-        return x + self.wavelength_embeddings(active_bands)
-```
-
-**Temporal Encoding (Prithvi-EO-2.0)**:
-
-```python
-# Encode temporal information into features
-temporal_embedding = positional_encoding(timestamp)
-features = spatial_features + temporal_embedding
-```
-
-## 2. Neck: The Feature Adapter
-
-### Definition
-
-The neck is an intermediate module that transforms backbone outputs into a format suitable for the decoder. It bridges the representation gap between feature extraction and task-specific processing.
-
-### Role in GFMs
-
-- **Dimensional Adaptation**: Converts features to required shapes
-- **Feature Aggregation**: Combines multi-scale representations
-- **Modality Bridging**: Reconciles different backbone output formats
-
-### Technical Details
-
-**For ViT → CNN Decoder Adaptation**:
-
-```python
-class ViTNeck(nn.Module):
-    """Converts 1D sequence output to 2D spatial features"""
-    def forward(self, x):
-        # Input: (B, N_patches, D) from ViT
-        B, N, D = x.shape
-        H = W = int(math.sqrt(N))  # Assuming square patches
-        
-        # Reshape to spatial
-        x = x.transpose(1, 2)  # (B, D, N)
-        x = x.reshape(B, D, H, W)  # (B, D, H, W)
-        
-        # Optionally upsample to match decoder expectations
-        x = F.interpolate(x, scale_factor=4, mode='bilinear')
-        return x
-```
-
-**Feature Pyramid Network (FPN) Neck**:
-
-```python
-class FPNNeck(nn.Module):
-    """Creates multi-scale feature pyramid"""
-    def forward(self, backbone_outputs):
-        # backbone_outputs: [feat1, feat2, feat3, feat4] at different scales
-        
-        # Top-down pathway with lateral connections
-        p5 = self.lateral5(feat4)
-        p4 = self.lateral4(feat3) + F.upsample(p5, scale_factor=2)
-        p3 = self.lateral3(feat2) + F.upsample(p4, scale_factor=2)
-        p2 = self.lateral2(feat1) + F.upsample(p3, scale_factor=2)
-        
-        return [p2, p3, p4, p5]  # Multi-scale features for decoder
-```
-
-**SelectiveNeck for Hierarchical Decoders**:
-
-```python
-class SelectiveNeck(nn.Module):
-    """Selects specific layers for UPerNet-style decoders"""
-    def __init__(self, layer_indices=[3, 5, 7, 11]):
-        self.indices = layer_indices
-    
-    def forward(self, vit_outputs):
-        # Extract intermediate transformer layers
-        selected = [vit_outputs[i] for i in self.indices]
-        # Convert each to 2D and return
-        return [self.reshape_to_2d(feat) for feat in selected]
-```
-
-## 3. Decoder: The Task-Specific Processor
-
-### Definition
-The decoder transforms encoded features into task-appropriate representations, reconstructing spatial information for dense predictions or aggregating for image-level tasks.
-
-### Role in GFMs
-
-- **Spatial Reconstruction**: Upsamples features to original resolution
-- **Multi-scale Integration**: Combines features across scales
-- **Task Specialization**: Implements task-specific architectures
-
-### Technical Details
-
-**UPerNet Decoder** (Used for semantic segmentation):
-
-```python
-class UPerNet(nn.Module):
-    """Unified Perceptual Parsing decoder"""
-    def __init__(self):
-        self.ppm = PyramidPoolingModule()  # Global context
-        self.fpn = FeaturePyramidNetwork()  # Multi-scale fusion
-        
-    def forward(self, features):
-        # features: [f1, f2, f3, f4] from neck
-        
-        # Pyramid pooling on deepest features
-        ppm_out = self.ppm(features[-1])
-        
-        # FPN to combine all scales
-        fpn_features = self.fpn(features + [ppm_out])
-        
-        # Fuse and upsample
-        fused = self.fusion_conv(torch.cat(fpn_features, dim=1))
-        output = F.interpolate(fused, scale_factor=4)
-        return output  # (B, decoder_dim, H, W)
-```
-
-**FCN Decoder** (Simple but effective):
-
-```python
-class FCNDecoder(nn.Module):
-    def forward(self, x):
-        # Progressive upsampling with skip connections
-        x = self.conv1(x)  # Reduce channels
-        x = F.interpolate(x, scale_factor=2)
-        x = self.conv2(x)
-        x = F.interpolate(x, scale_factor=2)
-        x = self.conv3(x)
-        x = F.interpolate(x, scale_factor=2)
-        return x
-```
-
-**Identity Decoder** (For classification):
-
-```python
-class IdentityDecoder(nn.Module):
-    """No spatial decoding needed for image-level tasks"""
-    def forward(self, x):
-        # Just pool the features
-        return F.adaptive_avg_pool2d(x, (1, 1)).squeeze()
-```
-
-**MAE Decoder** (For pre-training):
-
-```python
-class MAEDecoder(nn.Module):
-    """Reconstructs masked patches during pre-training"""
-    def __init__(self):
-        self.decoder_blocks = nn.TransformerDecoder(...)
-        self.pixel_predictor = nn.Linear(embed_dim, patch_size**2 * channels)
-    
-    def forward(self, encoded_patches, mask):
-        # Add mask tokens for missing patches
-        decoded = self.decoder_blocks(encoded_patches, mask)
-        # Predict pixel values
-        pixels = self.pixel_predictor(decoded)
-        return pixels
-```
-
-## 4. Head: The Final Prediction Layer
-
-### Definition
-The head is the final layer that maps decoder outputs to task-specific predictions (class probabilities, regression values, bounding boxes, etc.).
-
-### Role in GFMs
-
-- **Output Mapping**: Converts features to desired output format
-- **Task Formulation**: Implements loss-specific computations
-- **Probability Generation**: Produces interpretable predictions
-
-### Technical Details
-
-**Segmentation Head**:
-
-```python
-class SegmentationHead(nn.Module):
-    def __init__(self, in_channels, num_classes):
-        self.conv = nn.Conv2d(in_channels, num_classes, kernel_size=1)
-        
-    def forward(self, x):
-        # x: (B, decoder_dim, H, W)
-        logits = self.conv(x)  # (B, num_classes, H, W)
-        return logits  # Raw scores for each pixel-class pair
-```
-
-**Classification Head**:
-
-```python
-class ClassificationHead(nn.Module):
-    def __init__(self, in_features, num_classes):
-        self.fc = nn.Linear(in_features, num_classes)
-        self.dropout = nn.Dropout(0.2)
-        
-    def forward(self, x):
-        # x: (B, features) from backbone/decoder
-        x = self.dropout(x)
-        logits = self.fc(x)  # (B, num_classes)
-        return logits
-```
-
-**Regression Head** (For continuous values):
-
-```python
-class RegressionHead(nn.Module):
-    """For pixel-wise regression (e.g., elevation, temperature)"""
-    def __init__(self, in_channels, out_channels=1):
-        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=1)
-        
-    def forward(self, x):
-        return self.conv(x)  # (B, out_channels, H, W)
-```
-
-**Object Detection Head** (Faster R-CNN style):
-
-```python
-class DetectionHead(nn.Module):
-    def __init__(self):
-        self.cls_head = nn.Linear(feat_dim, num_classes)
-        self.bbox_head = nn.Linear(feat_dim, 4)  # x, y, w, h
-        
-    def forward(self, roi_features):
-        class_logits = self.cls_head(roi_features)
-        bbox_deltas = self.bbox_head(roi_features)
-        return class_logits, bbox_deltas
-```
-
-## Complete Pipeline Example
-
-Here's how these components work together in practice:
-
-```python
-class GeoFMPipeline(nn.Module):
-    def __init__(self, task='segmentation'):
         super().__init__()
-        
-        # 1. BACKBONE: Pre-trained feature extractor
-        self.backbone = PrithviBackbone(
-            weights='prithvi-eo-2.0-300m',
-            in_channels=6,  # HLS bands
-            num_frames=3    # Temporal inputs
-        )
-        
-        # 2. NECK: Adapt ViT outputs for CNN decoder
-        self.neck = ViTToConvNeck(
-            embed_dim=1024,
-            output_dims=[256, 512, 1024, 2048],
-            layer_indices=[5, 11, 17, 23]  # Which transformer layers
-        )
-        
-        # 3. DECODER: Task-specific processing
-        if task == 'segmentation':
-            self.decoder = UPerNetDecoder(
-                in_channels=[256, 512, 1024, 2048],
-                out_channels=256
-            )
-        elif task == 'classification':
-            self.decoder = IdentityDecoder()
-            
-        # 4. HEAD: Final predictions
-        if task == 'segmentation':
-            self.head = SegmentationHead(256, num_classes=10)
-        elif task == 'classification':
-            self.head = ClassificationHead(1024, num_classes=100)
-    
+        self.backbone = PrithviBackbone(weights='prithvi-eo-2.0', in_channels=6, num_frames=3)
+        self.neck = ViTToConvNeck(embed_dim=1024, output_dims=[256, 512, 1024, 2048], layer_indices=[5,11,17,23])
+        self.decoder = UPerNetDecoder(in_channels=[256,512,1024,2048], out_channels=256)
+        self.head = SegmentationHead(256, num_classes=10)
     def forward(self, x):
-        # Extract features
-        features = self.backbone(x)  # List of features or single tensor
-        
-        # Adapt features
-        adapted = self.neck(features)  # Convert to decoder format
-        
-        # Process for task
-        decoded = self.decoder(adapted)  # Task-specific processing
-        
-        # Generate predictions
-        output = self.head(decoded)  # Final predictions
-        
-        return output
+        feats = self.backbone(x)
+        feats = self.neck(feats)
+        feats = self.decoder(feats)
+        return self.head(feats)
 ```
 
-## Key Design Principles
+## Best Practices
 
-### 1. **Modularity**
+- **Mix-and-match:** Swap any module as long as input/output shapes agree.
+- **ViT output is sequence:** Needs a neck to yield spatial features for dense tasks.
+- **Pre-trained backbones:** Freeze/freeze-most layers for small labeled datasets.
+- **Choose components to match:** Imaging modality, spatial vs. global task, need for spectral/temporal flexibility.
 
-Each component has a single responsibility, enabling easy swapping:
+---
 
-```python
-# Easy to experiment with different configurations
-model = build_model(
-    backbone="clay_v1",      # or "prithvi", "decur", etc.
-    neck="fpn",              # or "selective", "identity"
-    decoder="upernet",       # or "fcn", "deeplabv3"
-    head="segmentation"      # or "classification", "regression"
-)
-```
+## Quick Reference Table
 
-### 2. **Compatibility**
+| Project Type           | Backbone      | Neck           | Decoder        | Head                |
+|------------------------|--------------|----------------|---------------|---------------------|
+| Segmentation           | Prithvi      | ViTToConv      | UPerNet        | SegmentationHead    |
+| Classification         | Clay         | Selective/Id   | Identity       | ClassificationHead  |
+| Detection              | Swin/ResNet  | FPN            | ROI Decoder    | DetectionHead       |
+| Time Series Regression | Prithvi-EO   | ViTToConv      | UPerNet/FCN    | RegressionHead      |
+| Multiband (hyperspectral) | Clay/DOFA | Selective      | UPerNet        | SegmentationHead    |
 
-Necks ensure different backbone-decoder combinations work:
+---
 
-- ViT backbone → CNN decoder (needs reshaping)
-- CNN backbone → Transformer decoder (needs sequencing)
-- Multi-scale → Single-scale (needs aggregation)
+This modular approach in TerraTorch means you always have the right toolkit for your geospatial machine learning challenge—just select the combo that fits your data and your task.
 
-### 3. **Task Flexibility**
-
-Same backbone can serve multiple tasks by changing decoder/head:
-
-- Dense prediction: UPerNet + Segmentation Head
-- Image classification: Identity + Classification Head
-- Object detection: FPN + Detection Head
-
-### 4. **Efficient Transfer Learning**
-
-Pre-trained backbones remain frozen or minimally fine-tuned while task-specific components (decoder/head) learn from scratch, enabling efficient adaptation with limited labeled data.
-
-This modular architecture is what makes TerraTorch powerful - researchers can leverage state-of-the-art pre-trained backbones while experimenting with different task-specific components for optimal performance on their specific Earth observation challenges.
+For more technical and code-level details, check the [TerraTorch Model Zoo](extras/cheatsheets/terratorch_model_zoo.qmd) and each class's docstring.
