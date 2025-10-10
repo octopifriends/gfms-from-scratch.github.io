@@ -1,0 +1,245 @@
+---
+title: "TerraTorch Model Zoo: Comprehensive Guide to Geospatial Foundation Models"
+author: "GeoAI Course Materials"
+date: "2025"
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+---
+
+# TerraTorch Model Zoo Overview
+
+This guide provides a comprehensive overview of the Geospatial Foundation Models (GeoFMs) available in the TerraTorch toolkit. Each model represents different approaches to pre-training on Earth observation data, with varying architectures, data requirements, and downstream task performance.
+
+## Model Comparison Metrics
+
+For consistency, we evaluate each model using these standardized metrics:
+
+- **Architecture Type**: Base neural network architecture (ResNet, ViT, Swin)
+- **Parameter Count**: Total trainable parameters
+- **Pre-training Method**: Self-supervised learning approach used
+- **Input Resolution**: Spatial resolution of training data
+- **Spectral Bands**: Number and type of input channels
+- **Temporal Handling**: How the model processes time-series data
+- **Pre-training Dataset Size**: Scale of training data
+- **Patch Size**: For ViT models, the size of image patches
+- **Embedding Dimension**: Size of learned representations
+
+---
+
+## Contrastive Learning Models
+
+### MOCOv2
+**Paper**: [Momentum Contrast for Unsupervised Visual Representation Learning](https://arxiv.org/abs/1911.05722)  
+**Repository**: Available through TerraTorch backbone registry
+
+**Description**: MOCOv2 applies momentum-based contrastive learning to Sentinel-2 imagery, learning representations by maximizing agreement between different augmented views of the same scene across multiple seasons.
+
+**Standard Metrics**:
+- Architecture Type: ResNet50
+- Parameter Count: 25M
+- Pre-training Method: Momentum Contrastive Learning
+- Input Resolution: 10m (Sentinel-2)
+- Spectral Bands: 13 (Sentinel-2 MSI)
+- Temporal Handling: Multi-seasonal contrasts
+- Pre-training Dataset Size: 1M samples
+- Patch Size: N/A (CNN-based)
+- Embedding Dimension: 2048
+
+### DINO
+**Paper**: [Emerging Properties in Self-Supervised Vision Transformers](https://arxiv.org/abs/2104.14294)  
+**Repository**: Integrated via TerraTorch
+
+**Description**: DINO (self-DIstillation with NO labels) learns visual representations through self-distillation, adapted for Sentinel-2 imagery with multi-seasonal temporal patterns.
+
+**Standard Metrics**:
+- Architecture Type: ResNet50
+- Parameter Count: 25M
+- Pre-training Method: Self-Distillation
+- Input Resolution: 10m (Sentinel-2)
+- Spectral Bands: 13 (Sentinel-2 MSI)
+- Temporal Handling: Multi-seasonal processing
+- Pre-training Dataset Size: 1M samples
+- Patch Size: N/A (CNN-based)
+- Embedding Dimension: 2048
+
+### DeCUR
+**Paper**: [Decoupling Common and Unique Representations for Multimodal Self-Supervised Learning](https://arxiv.org/abs/2309.05300)  
+**Repository**: Available in TerraTorch
+
+**Description**: DeCUR jointly learns from Sentinel-1 (radar) and Sentinel-2 (optical) data by decoupling common and unique representations between modalities, enabling robust multi-modal Earth observation.
+
+**Standard Metrics**:
+- Architecture Type: ResNet50
+- Parameter Count: 25M
+- Pre-training Method: Multi-modal Contrastive Learning
+- Input Resolution: 10m
+- Spectral Bands: 13 (S2) + 2 (S1 VV/VH polarizations)
+- Temporal Handling: Single timestamp
+- Pre-training Dataset Size: 1M samples
+- Patch Size: N/A (CNN-based)
+- Embedding Dimension: 2048
+
+---
+
+## Masked Autoencoding Models
+
+### ScaleMAE
+**Paper**: [Scale-Aware Masked Autoencoder for Multi-scale Geospatial Representation Learning](https://arxiv.org/abs/2212.14532)  
+**Repository**: [GitHub](https://github.com/bair-climate-initiative/scale-mae)
+
+**Description**: ScaleMAE introduces scale-aware positional encodings to handle the variable ground sampling distances in remote sensing, training on RGB imagery across multiple resolutions.
+
+**Standard Metrics**:
+- Architecture Type: ViT-Large
+- Parameter Count: 300M
+- Pre-training Method: Masked Autoencoding with scale awareness
+- Input Resolution: 0.1m to 30m (variable)
+- Spectral Bands: 3 (RGB)
+- Temporal Handling: Single timestamp
+- Pre-training Dataset Size: 360k samples
+- Patch Size: 16x16
+- Embedding Dimension: 1024
+
+### DOFA (Dynamic One-For-All)
+**Paper**: [Neural Plasticity-Inspired Foundation Model for Observing the Earth Crossing Modalities](https://arxiv.org/abs/2403.15356)  
+**Repository**: Available through TerraTorch
+
+**Description**: DOFA employs dynamic wavelength encoding to handle arbitrary combinations of spectral bands, making it adaptable to various Earth observation sensors without retraining.
+
+**Standard Metrics**:
+- Architecture Type: ViT-Large
+- Parameter Count: 300M
+- Pre-training Method: Masked Autoencoding with dynamic encoding
+- Input Resolution: 1-30m (variable)
+- Spectral Bands: Dynamic (any combination)
+- Temporal Handling: Single timestamp
+- Pre-training Dataset Size: 8M samples
+- Patch Size: 16x16
+- Embedding Dimension: 1024
+
+### Clay v1
+**Paper**: [Clay Foundation Model Technical Report](https://arxiv.org/abs/2406.13030)  
+**Repository**: [HuggingFace](https://huggingface.co/made-with-clay/Clay)
+
+**Description**: Clay combines masked autoencoding with DINO for self-supervised learning, incorporating location and temporal encodings alongside dynamic wavelength handling for comprehensive Earth observation.
+
+**Standard Metrics**:
+- Architecture Type: ViT-Base
+- Parameter Count: 100M
+- Pre-training Method: MAE + DINO hybrid
+- Input Resolution: 1-500m (highly variable)
+- Spectral Bands: Dynamic (Sentinel-2, Landsat, NAIP)
+- Temporal Handling: Temporal position encodings
+- Pre-training Dataset Size: 70M samples
+- Patch Size: 8x8
+- Embedding Dimension: 768
+
+### Prithvi-EO-1.0
+**Paper**: [Foundation Models for Generalist Geospatial Artificial Intelligence](https://arxiv.org/abs/2310.18660)  
+**Repository**: [HuggingFace](https://huggingface.co/ibm-nasa-geospatial/Prithvi-100M)
+
+**Description**: Developed by IBM and NASA, Prithvi-EO-1.0 is trained on Harmonized Landsat-Sentinel (HLS) data with multi-temporal inputs for comprehensive Earth system understanding.
+
+**Standard Metrics**:
+- Architecture Type: ViT-Base
+- Parameter Count: 100M
+- Pre-training Method: Masked Autoencoding
+- Input Resolution: 30m (HLS)
+- Spectral Bands: 6 (HLS bands)
+- Temporal Handling: Multi-temporal stacking (3 timestamps)
+- Pre-training Dataset Size: 250k samples
+- Patch Size: 16x16
+- Embedding Dimension: 768
+
+### Prithvi-EO-2.0
+**Paper**: [Prithvi-EO-2.0: A Versatile Multi-Temporal Foundation Model](https://arxiv.org/abs/2412.02732)  
+**Repository**: [HuggingFace](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-300M)
+
+**Description**: The second generation of Prithvi models, offering both 300M and 600M parameter variants with enhanced temporal and location encodings for improved global Earth observation capabilities.
+
+**Standard Metrics**:
+- Architecture Type: ViT-Large (300M) / ViT-Huge (600M)
+- Parameter Count: 300M / 600M
+- Pre-training Method: Masked Autoencoding with temporal encoding
+- Input Resolution: 30m (HLS)
+- Spectral Bands: 6 (HLS bands)
+- Temporal Handling: Enhanced multi-temporal (3+ timestamps)
+- Pre-training Dataset Size: 4.2M samples
+- Patch Size: 16x16
+- Embedding Dimension: 1024 (300M) / 1280 (600M)
+
+---
+
+## Multi-Task Supervised Models
+
+### Satlas
+**Paper**: [SatlasPretrain: A Large-Scale Dataset for Remote Sensing Image Understanding](https://arxiv.org/abs/2211.15660)  
+**Repository**: [GitHub](https://github.com/allenai/satlas)
+
+**Description**: Satlas uses supervised multi-task learning across various label types and resolutions, creating a generalist model for diverse remote sensing applications.
+
+**Standard Metrics**:
+- Architecture Type: Swin Transformer
+- Parameter Count: 100M
+- Pre-training Method: Supervised Multi-task Learning
+- Input Resolution: ~10m (various sources)
+- Spectral Bands: Variable (RGB + multispectral)
+- Temporal Handling: Single timestamp
+- Pre-training Dataset Size: Not specified (labeled data)
+- Patch Size: 4x4 (Swin patches)
+- Embedding Dimension: 768
+
+---
+
+## Model Selection Guide
+
+### Best for Multi-Modal Applications
+- **DeCUR**: Optimized for combined SAR-optical analysis
+- **Clay v1**: Flexible wavelength handling for diverse sensors
+- **DOFA**: Dynamic adaptation to any spectral configuration
+
+### Best for Temporal Analysis
+- **Prithvi-EO-2.0**: Enhanced temporal encodings
+- **Prithvi-EO-1.0**: Native multi-temporal support
+- **MOCOv2/DINO**: Multi-seasonal contrastive learning
+
+### Best for High-Resolution Tasks
+- **ScaleMAE**: Scale-aware design for variable resolutions
+- **Satlas**: Multi-resolution supervised training
+
+### Best for Limited Compute Resources
+- **MOCOv2/DINO/DeCUR**: 25M parameters (ResNet50)
+- **Prithvi-EO-1.0**: 100M parameters with proven efficiency
+- **Clay v1**: 100M parameters with 8x8 patches for detail
+
+### Best for Production Deployment
+- **Prithvi-EO-2.0**: Extensive validation and NASA/IBM support
+- **Clay v1**: Active development and community support
+- **Satlas**: Supervised training for predictable performance
+
+---
+
+## Implementation Example
+```python
+import terratorch
+from terratorch.models import PrithviModelFactory
+
+# Load a pre-trained model
+model = PrithviModelFactory.build_model(
+    backbone="prithvi_eo_v2_300m",
+    decoder="upernet",
+    num_classes=10,
+    in_channels=6,
+    bands=["B02", "B03", "B04", "B08", "B11", "B12"],
+    num_frames=3
+)
+
+# Fine-tune on your dataset
+trainer = terratorch.Trainer(
+    model=model,
+    task="semantic_segmentation",
+    learning_rate=1e-4,
+    batch_size=16
+)
