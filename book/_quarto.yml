@@ -27,7 +27,9 @@ website:
             href: chapters/c01-geospatial-data-foundations.qmd
           - text: Week 2 - ⚡ Rapid Remote Sensing Preprocessing
             href: chapters/c02-spatial-temporal-attention-mechanisms.qmd
-          - text: Week 3 - 🤖 Machine Learning on Remote Sensing
+          - text: Week 3a - 🌍 TerraTorch Foundations
+            href: chapters/c03a-terratorch-foundations.qmd
+          - text: Week 3b - 🤖 Machine Learning on Remote Sensing
             href: chapters/c03-complete-gfm-architecture.qmd
           - text: Week 4 - 🏗️ Foundation Models in Practice
             href: chapters/c04-pretraining-implementation.qmd

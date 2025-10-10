@@ -63,15 +63,8 @@ print(f"CUDA available: {torch.cuda.is_available()}")
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Using device: {device}")
 
-# Check for TerraTorch (optional for this demo)
-try:
-    import terratorch
-    print(f"TerraTorch version: {terratorch.__version__}")
-    TERRATORCH_AVAILABLE = True
-except ImportError:
-    print("TerraTorch not installed (optional for this demo)")
-    print("To install: pip install terratorch")
-    TERRATORCH_AVAILABLE = False
+print("\nNote: This chapter demonstrates foundation model concepts")
+print("TerraTorch integration is optional - core concepts work without it")
 ```
 
 ### Model Utilities → `geogfm/utils/terratorch_utils.py`
@@ -95,7 +88,7 @@ def load_pretrained_model(
     device: str = "cpu"
 ) -> nn.Module:
     """
-    Load a pretrained TerraTorch model.
+    Load a pretrained model.
 
     Args:
         model_name: Name of the model (e.g., 'prithvi_100m', 'clay_v1')
@@ -105,22 +98,32 @@ def load_pretrained_model(
 
     Returns:
         Loaded model
+
+    Note:
+        This function requires terratorch to be installed.
+        For this demo, we use simplified models instead.
     """
-    from terratorch.models import get_model
+    try:
+        from terratorch.models import get_model
 
-    model_config = {
-        'backbone': model_name,
-        'task': task,
-    }
+        model_config = {
+            'backbone': model_name,
+            'task': task,
+        }
 
-    if num_classes is not None:
-        model_config['num_classes'] = num_classes
+        if num_classes is not None:
+            model_config['num_classes'] = num_classes
 
-    model = get_model(**model_config)
-    model = model.to(device)
-    model.eval()
+        model = get_model(**model_config)
+        model = model.to(device)
+        model.eval()
 
-    return model
+        return model
+    except ImportError:
+        raise ImportError(
+            "terratorch is required for loading foundation models. "
+            "Install with: pip install terratorch"
+        )
 
 
 def extract_features(
@@ -336,55 +339,56 @@ Now let's load and explore a simple pretrained model.
 ### Demo: Load and Inspect a Model
 
 ```{python}
-# Load a lightweight model for demonstration
-from geogfm.utils.terratorch_utils import load_pretrained_model, get_model_info
+# Helper function for model info
+def get_model_info(model):
+    """Get information about a model."""
+    total_params = sum(p.numel() for p in model.parameters())
+    trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    return {
+        'total_parameters': total_params,
+        'trainable_parameters': trainable_params,
+        'frozen_parameters': total_params - trainable_params,
+        'model_type': type(model).__name__
+    }
 
-# For this demo, we'll work with a simpler backbone
-# In practice, you would use models like 'prithvi_100m' or 'clay_v1'
-try:
-    # Try to load a simple model (adjust model name based on availability)
-    model = load_pretrained_model(
-        model_name='prithvi_eo_v1_100m',
-        task='embedding',
-        device=str(device)
-    )
+# Create a simple demonstration model
+# This represents a feature extractor similar to what foundation models provide
+class SimpleFeatureExtractor(nn.Module):
+    """
+    Lightweight feature extractor demonstrating foundation model concepts.
 
-    model_info = get_model_info(model)
+    In practice, you would load pretrained models like Prithvi or Clay.
+    This simplified version shows the same workflow without dependencies.
+    """
+    def __init__(self, in_channels=6, embed_dim=256):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Conv2d(in_channels, 64, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Conv2d(128, embed_dim, kernel_size=3, padding=1),
+            nn.AdaptiveAvgPool2d(1)
+        )
 
-    print("Model loaded successfully")
-    print(f"Total parameters: {model_info['total_parameters']:,}")
-    print(f"Trainable parameters: {model_info['trainable_parameters']:,}")
-    print(f"Model type: {model_info['model_type']}")
+    def forward(self, x):
+        x = self.encoder(x)
+        return x.squeeze(-1).squeeze(-1)
 
-except Exception as e:
-    print(f"Note: Full TerraTorch models require specific installation")
-    print(f"Error: {e}")
-    print("\nCreating a simple demonstration model instead...")
+model = SimpleFeatureExtractor().to(device)
+model_info = get_model_info(model)
 
-    # Create a simple demonstration model
-    class SimpleFeatureExtractor(nn.Module):
-        def __init__(self, in_channels=6, embed_dim=256):
-            super().__init__()
-            self.encoder = nn.Sequential(
-                nn.Conv2d(in_channels, 64, kernel_size=3, padding=1),
-                nn.ReLU(),
-                nn.MaxPool2d(2),
-                nn.Conv2d(64, 128, kernel_size=3, padding=1),
-                nn.ReLU(),
-                nn.MaxPool2d(2),
-                nn.Conv2d(128, embed_dim, kernel_size=3, padding=1),
-                nn.AdaptiveAvgPool2d(1)
-            )
+print("Feature Extractor Model Created")
+print(f"Total parameters: {model_info['total_parameters']:,}")
+print(f"Trainable parameters: {model_info['trainable_parameters']:,}")
+print(f"Model type: {model_info['model_type']}")
 
-        def forward(self, x):
-            x = self.encoder(x)
-            return x.squeeze(-1).squeeze(-1)
-
-    model = SimpleFeatureExtractor().to(device)
-    model_info = get_model_info(model)
-
-    print("Demo model created")
-    print(f"Total parameters: {model_info['total_parameters']:,}")
+print("\nThis model demonstrates the same workflow as full foundation models:")
+print("- Feature extraction from satellite imagery")
+print("- Transfer learning for downstream tasks")
+print("- Fine-tuning strategies")
 ```
 
 ### Demo: Extract Features from Sample Data
@@ -428,7 +432,17 @@ print(f"Classes: {torch.unique(sample_labels).tolist()}")
 ### Demo: Feature Extraction
 
 ```{python}
-from geogfm.utils.terratorch_utils import extract_features
+# Helper function for feature extraction
+def extract_features(model, images, device='cpu'):
+    """Extract features from a model."""
+    model.eval()
+    images = images.to(device)
+    with torch.no_grad():
+        if hasattr(model, 'encode'):
+            features = model.encode(images)
+        else:
+            features = model(images)
+    return features
 
 # Extract features from all patches
 all_features = []
@@ -450,7 +464,38 @@ print(f"Embedding dimension: {embeddings.shape[1]}")
 ### Demo: Visualize Embeddings
 
 ```{python}
-from geogfm.utils.terratorch_utils import visualize_embeddings
+# Helper function for visualization
+def visualize_embeddings(embeddings, labels=None, method='pca', n_components=2):
+    """Visualize high-dimensional embeddings in 2D."""
+    from sklearn.decomposition import PCA
+    from sklearn.manifold import TSNE
+
+    if method == "pca":
+        reducer = PCA(n_components=n_components)
+    elif method == "tsne":
+        reducer = TSNE(n_components=n_components, random_state=42)
+    else:
+        raise ValueError(f"Unknown method: {method}")
+
+    reduced = reducer.fit_transform(embeddings)
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    if labels is not None:
+        scatter = ax.scatter(
+            reduced[:, 0], reduced[:, 1],
+            c=labels, cmap='tab10', alpha=0.6, s=50
+        )
+        plt.colorbar(scatter, ax=ax, label='Class')
+    else:
+        ax.scatter(reduced[:, 0], reduced[:, 1], alpha=0.6, s=50)
+
+    ax.set_xlabel(f'{method.upper()} Component 1')
+    ax.set_ylabel(f'{method.upper()} Component 2')
+    ax.set_title(f'Embedding Visualization ({method.upper()})')
+    ax.grid(True, alpha=0.3)
+
+    return fig
 
 # Convert labels to numpy
 labels_np = sample_labels.numpy()
@@ -639,8 +684,91 @@ def evaluate_model(
 ### Demo: Train a Simple Classifier
 
 ```{python}
-from geogfm.training.simple_trainer import SimpleDataset, train_classifier, evaluate_model
 from sklearn.model_selection import train_test_split
+
+# Helper classes and functions for training
+class SimpleDataset(torch.utils.data.Dataset):
+    """Simple dataset for image patches and labels."""
+    def __init__(self, images, labels):
+        self.images = images
+        self.labels = labels
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        return self.images[idx], self.labels[idx]
+
+def train_classifier(model, train_loader, val_loader=None, n_epochs=10, lr=1e-4, device='cpu'):
+    """Train a classifier."""
+    model = model.to(device)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+
+    history = {
+        'train_loss': [],
+        'train_acc': [],
+        'val_loss': [],
+        'val_acc': []
+    }
+
+    for epoch in range(n_epochs):
+        # Training
+        model.train()
+        train_loss = 0.0
+        train_correct = 0
+        train_total = 0
+
+        for images, labels in train_loader:
+            images, labels = images.to(device), labels.to(device)
+
+            optimizer.zero_grad()
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            train_loss += loss.item()
+            _, predicted = outputs.max(1)
+            train_total += labels.size(0)
+            train_correct += predicted.eq(labels).sum().item()
+
+        train_loss /= len(train_loader)
+        train_acc = train_correct / train_total
+
+        history['train_loss'].append(train_loss)
+        history['train_acc'].append(train_acc)
+
+        # Validation
+        if val_loader is not None:
+            model.eval()
+            val_loss = 0.0
+            val_correct = 0
+            val_total = 0
+
+            with torch.no_grad():
+                for images, labels in val_loader:
+                    images, labels = images.to(device), labels.to(device)
+                    outputs = model(images)
+                    loss = criterion(outputs, labels)
+
+                    val_loss += loss.item()
+                    _, predicted = outputs.max(1)
+                    val_total += labels.size(0)
+                    val_correct += predicted.eq(labels).sum().item()
+
+            val_loss /= len(val_loader)
+            val_acc = val_correct / val_total
+
+            history['val_loss'].append(val_loss)
+            history['val_acc'].append(val_acc)
+
+        if (epoch + 1) % 5 == 0:
+            print(f"Epoch {epoch+1}/{n_epochs}: Train Loss={train_loss:.4f}, Train Acc={train_acc:.3f}")
+            if val_loader is not None:
+                print(f"  Val Loss={val_loss:.4f}, Val Acc={val_acc:.3f}")
+
+    return history
 
 # Split data
 train_idx, val_idx = train_test_split(
