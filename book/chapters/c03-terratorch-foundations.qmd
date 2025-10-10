@@ -1,0 +1,909 @@
+---
+title: "Week 3: Working with Geospatial Foundation Models"
+subtitle: "Hands-on practice with TerraTorch and pretrained models"
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+---
+
+## Introduction
+
+This week we'll work with pretrained geospatial foundation models (GFMs) using TerraTorch, a framework that simplifies fine-tuning and inference with state-of-the-art models. You'll learn to use models like Prithvi and Clay for practical remote sensing tasks.
+
+:::{.callout-tip}
+## Learning Goals
+By the end of this session, you will:
+
+- Understand the architecture of geospatial foundation models
+- Load and use pretrained models for feature extraction
+- Fine-tune models on custom datasets
+- Compare different GFM architectures
+- Apply models to real satellite imagery
+:::
+
+## Session Overview
+
+Today's workflow focuses on practical model usage:
+
+| Step | Activity | Tools | Output |
+|------|----------|-------|--------|
+| 1 | Model architecture exploration | TerraTorch | Understanding |
+| 2 | Feature extraction | PyTorch, TerraTorch | Embeddings |
+| 3 | Simple classification task | TerraTorch, TorchGeo | Trained model |
+| 4 | Model comparison | Multiple backbones | Performance metrics |
+| 5 | Real-world inference | Satellite imagery | Predictions |
+
+---
+
+## Step 1: Environment Setup and Model Loading
+
+Let's start by setting up our environment and understanding the available models.
+
+### Import Libraries and Check Setup
+
+```{python}
+import warnings
+warnings.filterwarnings('ignore')
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from pathlib import Path
+
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader
+
+import rasterio
+from rasterio.plot import show
+
+try:
+    import terratorch
+    from terratorch.models import PrithviModelFactory, get_model
+    print(f"TerraTorch version: {terratorch.__version__}")
+except ImportError:
+    print("TerraTorch not installed. Install with: pip install terratorch")
+    raise
+
+print(f"PyTorch version: {torch.__version__}")
+print(f"CUDA available: {torch.cuda.is_available()}")
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(f"Using device: {device}")
+```
+
+### Model Utilities → `geogfm/utils/terratorch_utils.py`
+
+Let's create reusable utilities for working with TerraTorch models.
+
+```{python}
+#| tangle: geogfm/utils/terratorch_utils.py
+"""Utilities for working with TerraTorch models."""
+
+import torch
+import torch.nn as nn
+from typing import Dict, Optional, Tuple, List
+import numpy as np
+
+
+def load_pretrained_model(
+    model_name: str,
+    num_classes: Optional[int] = None,
+    task: str = "classification",
+    device: str = "cpu"
+) -> nn.Module:
+    """
+    Load a pretrained TerraTorch model.
+
+    Args:
+        model_name: Name of the model (e.g., 'prithvi_100m', 'clay_v1')
+        num_classes: Number of output classes (for classification/segmentation)
+        task: Task type ('classification', 'segmentation', 'embedding')
+        device: Device to load model on
+
+    Returns:
+        Loaded model
+    """
+    from terratorch.models import get_model
+
+    model_config = {
+        'backbone': model_name,
+        'task': task,
+    }
+
+    if num_classes is not None:
+        model_config['num_classes'] = num_classes
+
+    model = get_model(**model_config)
+    model = model.to(device)
+    model.eval()
+
+    return model
+
+
+def extract_features(
+    model: nn.Module,
+    images: torch.Tensor,
+    layer: str = "last",
+    device: str = "cpu"
+) -> torch.Tensor:
+    """
+    Extract features from a model.
+
+    Args:
+        model: PyTorch model
+        images: Input images (B, C, H, W)
+        layer: Which layer to extract from
+        device: Device to use
+
+    Returns:
+        Feature tensor
+    """
+    model.eval()
+    images = images.to(device)
+
+    with torch.no_grad():
+        if hasattr(model, 'encode'):
+            features = model.encode(images)
+        else:
+            features = model(images)
+
+    return features
+
+
+def get_model_info(model: nn.Module) -> Dict:
+    """
+    Get information about a model.
+
+    Args:
+        model: PyTorch model
+
+    Returns:
+        Dictionary with model info
+    """
+    total_params = sum(p.numel() for p in model.parameters())
+    trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+    return {
+        'total_parameters': total_params,
+        'trainable_parameters': trainable_params,
+        'frozen_parameters': total_params - trainable_params,
+        'model_type': type(model).__name__
+    }
+
+
+def prepare_satellite_image(
+    image_path: str,
+    target_bands: Optional[List[int]] = None,
+    normalize: bool = True
+) -> torch.Tensor:
+    """
+    Load and prepare a satellite image for model input.
+
+    Args:
+        image_path: Path to image file
+        target_bands: Band indices to use (None = all)
+        normalize: Whether to normalize to [0, 1]
+
+    Returns:
+        Tensor of shape (1, C, H, W)
+    """
+    import rasterio
+
+    with rasterio.open(image_path) as src:
+        if target_bands is None:
+            data = src.read()
+        else:
+            data = src.read(target_bands)
+
+    # Convert to float and normalize
+    data = data.astype(np.float32)
+
+    if normalize:
+        # Handle NaN values
+        valid_mask = ~np.isnan(data)
+        if valid_mask.any():
+            data_min = np.nanmin(data)
+            data_max = np.nanmax(data)
+            data = (data - data_min) / (data_max - data_min + 1e-8)
+            data = np.nan_to_num(data, nan=0.0)
+
+    # Add batch dimension and convert to tensor
+    tensor = torch.from_numpy(data).unsqueeze(0)
+
+    return tensor
+```
+
+### Model Comparison Utilities → `geogfm/utils/terratorch_utils.py`
+
+```{python}
+#| tangle: geogfm/utils/terratorch_utils.py
+#| mode: append
+
+def compare_models(
+    model_names: List[str],
+    sample_input: torch.Tensor,
+    device: str = "cpu"
+) -> pd.DataFrame:
+    """
+    Compare multiple models on the same input.
+
+    Args:
+        model_names: List of model names to compare
+        sample_input: Sample input tensor
+        device: Device to use
+
+    Returns:
+        DataFrame with comparison results
+    """
+    results = []
+
+    for model_name in model_names:
+        try:
+            model = load_pretrained_model(
+                model_name=model_name,
+                task="embedding",
+                device=device
+            )
+
+            info = get_model_info(model)
+
+            # Measure inference time
+            import time
+            start = time.time()
+            with torch.no_grad():
+                output = extract_features(model, sample_input, device=device)
+            elapsed = time.time() - start
+
+            results.append({
+                'model': model_name,
+                'total_params': info['total_parameters'],
+                'trainable_params': info['trainable_parameters'],
+                'inference_time_ms': elapsed * 1000,
+                'output_shape': str(tuple(output.shape))
+            })
+
+        except Exception as e:
+            print(f"Error loading {model_name}: {e}")
+            continue
+
+    return pd.DataFrame(results)
+
+
+def visualize_embeddings(
+    embeddings: np.ndarray,
+    labels: Optional[np.ndarray] = None,
+    method: str = "pca",
+    n_components: int = 2
+) -> plt.Figure:
+    """
+    Visualize high-dimensional embeddings in 2D.
+
+    Args:
+        embeddings: Feature embeddings (N, D)
+        labels: Optional labels for coloring
+        method: Dimensionality reduction method ('pca', 'tsne')
+        n_components: Number of components
+
+    Returns:
+        Matplotlib figure
+    """
+    from sklearn.decomposition import PCA
+    from sklearn.manifold import TSNE
+
+    if method == "pca":
+        reducer = PCA(n_components=n_components)
+    elif method == "tsne":
+        reducer = TSNE(n_components=n_components, random_state=42)
+    else:
+        raise ValueError(f"Unknown method: {method}")
+
+    reduced = reducer.fit_transform(embeddings)
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    if labels is not None:
+        scatter = ax.scatter(
+            reduced[:, 0], reduced[:, 1],
+            c=labels, cmap='tab10', alpha=0.6, s=50
+        )
+        plt.colorbar(scatter, ax=ax, label='Class')
+    else:
+        ax.scatter(
+            reduced[:, 0], reduced[:, 1],
+            alpha=0.6, s=50
+        )
+
+    ax.set_xlabel(f'{method.upper()} Component 1')
+    ax.set_ylabel(f'{method.upper()} Component 2')
+    ax.set_title(f'Embedding Visualization ({method.upper()})')
+    ax.grid(True, alpha=0.3)
+
+    return fig
+```
+
+---
+
+## Step 2: Working with Pretrained Models
+
+Now let's load and explore a simple pretrained model.
+
+### Demo: Load and Inspect a Model
+
+```{python}
+# Load a lightweight model for demonstration
+from geogfm.utils.terratorch_utils import load_pretrained_model, get_model_info
+
+# For this demo, we'll work with a simpler backbone
+# In practice, you would use models like 'prithvi_100m' or 'clay_v1'
+try:
+    # Try to load a simple model (adjust model name based on availability)
+    model = load_pretrained_model(
+        model_name='prithvi_eo_v1_100m',
+        task='embedding',
+        device=str(device)
+    )
+
+    model_info = get_model_info(model)
+
+    print("Model loaded successfully")
+    print(f"Total parameters: {model_info['total_parameters']:,}")
+    print(f"Trainable parameters: {model_info['trainable_parameters']:,}")
+    print(f"Model type: {model_info['model_type']}")
+
+except Exception as e:
+    print(f"Note: Full TerraTorch models require specific installation")
+    print(f"Error: {e}")
+    print("\nCreating a simple demonstration model instead...")
+
+    # Create a simple demonstration model
+    class SimpleFeatureExtractor(nn.Module):
+        def __init__(self, in_channels=6, embed_dim=256):
+            super().__init__()
+            self.encoder = nn.Sequential(
+                nn.Conv2d(in_channels, 64, kernel_size=3, padding=1),
+                nn.ReLU(),
+                nn.MaxPool2d(2),
+                nn.Conv2d(64, 128, kernel_size=3, padding=1),
+                nn.ReLU(),
+                nn.MaxPool2d(2),
+                nn.Conv2d(128, embed_dim, kernel_size=3, padding=1),
+                nn.AdaptiveAvgPool2d(1)
+            )
+
+        def forward(self, x):
+            x = self.encoder(x)
+            return x.squeeze(-1).squeeze(-1)
+
+    model = SimpleFeatureExtractor().to(device)
+    model_info = get_model_info(model)
+
+    print("Demo model created")
+    print(f"Total parameters: {model_info['total_parameters']:,}")
+```
+
+### Demo: Extract Features from Sample Data
+
+```{python}
+# Create synthetic satellite imagery for demonstration
+def create_sample_patches(n_samples=100, n_bands=6, size=64):
+    """Create synthetic satellite image patches."""
+    patches = torch.randn(n_samples, n_bands, size, size)
+
+    # Simulate different land cover types
+    labels = torch.randint(0, 5, (n_samples,))
+
+    # Add some structure based on class
+    for i in range(n_samples):
+        if labels[i] == 0:  # Water
+            patches[i, 3:, :, :] *= 0.3  # Lower NIR
+        elif labels[i] == 1:  # Vegetation
+            patches[i, 3:, :, :] *= 2.0  # Higher NIR
+        elif labels[i] == 2:  # Urban
+            patches[i] *= 0.8  # Moderate reflectance
+        elif labels[i] == 3:  # Bare soil
+            patches[i, 0, :, :] *= 1.5  # Higher red
+        else:  # Forest
+            patches[i, 3:, :, :] *= 2.5  # Very high NIR
+
+    # Normalize to reasonable range
+    patches = torch.clamp(patches, 0, 1)
+
+    return patches, labels
+
+# Create sample data
+sample_patches, sample_labels = create_sample_patches(n_samples=200)
+
+print(f"Created {len(sample_patches)} sample patches")
+print(f"Patch shape: {sample_patches[0].shape}")
+print(f"Labels shape: {sample_labels.shape}")
+print(f"Classes: {torch.unique(sample_labels).tolist()}")
+```
+
+### Demo: Feature Extraction
+
+```{python}
+from geogfm.utils.terratorch_utils import extract_features
+
+# Extract features from all patches
+all_features = []
+batch_size = 32
+
+model.eval()
+with torch.no_grad():
+    for i in range(0, len(sample_patches), batch_size):
+        batch = sample_patches[i:i+batch_size].to(device)
+        features = extract_features(model, batch, device=str(device))
+        all_features.append(features.cpu())
+
+embeddings = torch.cat(all_features, dim=0).numpy()
+
+print(f"Extracted embeddings shape: {embeddings.shape}")
+print(f"Embedding dimension: {embeddings.shape[1]}")
+```
+
+### Demo: Visualize Embeddings
+
+```{python}
+from geogfm.utils.terratorch_utils import visualize_embeddings
+
+# Convert labels to numpy
+labels_np = sample_labels.numpy()
+
+# Visualize with PCA
+fig = visualize_embeddings(
+    embeddings,
+    labels=labels_np,
+    method='pca',
+    n_components=2
+)
+plt.tight_layout()
+plt.show()
+
+print("Feature embeddings visualized using PCA")
+print("Points with similar colors represent similar land cover types")
+```
+
+---
+
+## Step 3: Simple Classification Task
+
+Let's fine-tune a model on our sample data.
+
+### Training Utilities → `geogfm/training/simple_trainer.py`
+
+```{python}
+#| tangle: geogfm/training/simple_trainer.py
+"""Simple training utilities for classification tasks."""
+
+import torch
+import torch.nn as nn
+from torch.utils.data import Dataset, DataLoader
+from typing import Dict, Optional, Tuple
+import numpy as np
+
+
+class SimpleDataset(Dataset):
+    """Simple dataset for image patches and labels."""
+
+    def __init__(self, images: torch.Tensor, labels: torch.Tensor):
+        self.images = images
+        self.labels = labels
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        return self.images[idx], self.labels[idx]
+
+
+def train_classifier(
+    model: nn.Module,
+    train_loader: DataLoader,
+    val_loader: Optional[DataLoader] = None,
+    n_epochs: int = 10,
+    lr: float = 1e-4,
+    device: str = "cpu"
+) -> Dict:
+    """
+    Train a classifier.
+
+    Args:
+        model: Model to train
+        train_loader: Training data loader
+        val_loader: Validation data loader
+        n_epochs: Number of epochs
+        lr: Learning rate
+        device: Device to use
+
+    Returns:
+        Training history
+    """
+    model = model.to(device)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+
+    history = {
+        'train_loss': [],
+        'train_acc': [],
+        'val_loss': [],
+        'val_acc': []
+    }
+
+    for epoch in range(n_epochs):
+        # Training
+        model.train()
+        train_loss = 0.0
+        train_correct = 0
+        train_total = 0
+
+        for images, labels in train_loader:
+            images, labels = images.to(device), labels.to(device)
+
+            optimizer.zero_grad()
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            train_loss += loss.item()
+            _, predicted = outputs.max(1)
+            train_total += labels.size(0)
+            train_correct += predicted.eq(labels).sum().item()
+
+        train_loss /= len(train_loader)
+        train_acc = train_correct / train_total
+
+        history['train_loss'].append(train_loss)
+        history['train_acc'].append(train_acc)
+
+        # Validation
+        if val_loader is not None:
+            model.eval()
+            val_loss = 0.0
+            val_correct = 0
+            val_total = 0
+
+            with torch.no_grad():
+                for images, labels in val_loader:
+                    images, labels = images.to(device), labels.to(device)
+                    outputs = model(images)
+                    loss = criterion(outputs, labels)
+
+                    val_loss += loss.item()
+                    _, predicted = outputs.max(1)
+                    val_total += labels.size(0)
+                    val_correct += predicted.eq(labels).sum().item()
+
+            val_loss /= len(val_loader)
+            val_acc = val_correct / val_total
+
+            history['val_loss'].append(val_loss)
+            history['val_acc'].append(val_acc)
+
+        if (epoch + 1) % 5 == 0:
+            print(f"Epoch {epoch+1}/{n_epochs}: "
+                  f"Train Loss={train_loss:.4f}, Train Acc={train_acc:.3f}")
+            if val_loader is not None:
+                print(f"  Val Loss={val_loss:.4f}, Val Acc={val_acc:.3f}")
+
+    return history
+
+
+def evaluate_model(
+    model: nn.Module,
+    test_loader: DataLoader,
+    device: str = "cpu"
+) -> Tuple[float, float]:
+    """
+    Evaluate a model.
+
+    Args:
+        model: Model to evaluate
+        test_loader: Test data loader
+        device: Device to use
+
+    Returns:
+        Test loss and accuracy
+    """
+    model.eval()
+    model = model.to(device)
+    criterion = nn.CrossEntropyLoss()
+
+    test_loss = 0.0
+    test_correct = 0
+    test_total = 0
+
+    with torch.no_grad():
+        for images, labels in test_loader:
+            images, labels = images.to(device), labels.to(device)
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+
+            test_loss += loss.item()
+            _, predicted = outputs.max(1)
+            test_total += labels.size(0)
+            test_correct += predicted.eq(labels).sum().item()
+
+    test_loss /= len(test_loader)
+    test_acc = test_correct / test_total
+
+    return test_loss, test_acc
+```
+
+### Demo: Train a Simple Classifier
+
+```{python}
+from geogfm.training.simple_trainer import SimpleDataset, train_classifier, evaluate_model
+from sklearn.model_selection import train_test_split
+
+# Split data
+train_idx, val_idx = train_test_split(
+    np.arange(len(sample_patches)),
+    test_size=0.2,
+    random_state=42,
+    stratify=sample_labels.numpy()
+)
+
+train_images = sample_patches[train_idx]
+train_labels = sample_labels[train_idx]
+val_images = sample_patches[val_idx]
+val_labels = sample_labels[val_idx]
+
+# Create datasets
+train_dataset = SimpleDataset(train_images, train_labels)
+val_dataset = SimpleDataset(val_images, val_labels)
+
+# Create data loaders
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+
+print(f"Training set: {len(train_dataset)} samples")
+print(f"Validation set: {len(val_dataset)} samples")
+
+# Create a simple classifier
+class SimpleClassifier(nn.Module):
+    def __init__(self, feature_extractor, num_classes=5):
+        super().__init__()
+        self.features = feature_extractor
+        self.classifier = nn.Linear(256, num_classes)
+
+    def forward(self, x):
+        features = self.features(x)
+        return self.classifier(features)
+
+classifier = SimpleClassifier(model, num_classes=5).to(device)
+
+print(f"\nTraining classifier...")
+history = train_classifier(
+    classifier,
+    train_loader,
+    val_loader,
+    n_epochs=15,
+    lr=1e-3,
+    device=str(device)
+)
+
+print("\nTraining complete!")
+```
+
+### Demo: Visualize Training Progress
+
+```{python}
+# Plot training history
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
+
+epochs = range(1, len(history['train_loss']) + 1)
+
+ax1.plot(epochs, history['train_loss'], label='Train Loss')
+ax1.plot(epochs, history['val_loss'], label='Val Loss')
+ax1.set_xlabel('Epoch')
+ax1.set_ylabel('Loss')
+ax1.set_title('Training and Validation Loss')
+ax1.legend()
+ax1.grid(True, alpha=0.3)
+
+ax2.plot(epochs, history['train_acc'], label='Train Accuracy')
+ax2.plot(epochs, history['val_acc'], label='Val Accuracy')
+ax2.set_xlabel('Epoch')
+ax2.set_ylabel('Accuracy')
+ax2.set_title('Training and Validation Accuracy')
+ax2.legend()
+ax2.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+print(f"Final validation accuracy: {history['val_acc'][-1]:.3f}")
+```
+
+---
+
+## Step 4: Model Comparison
+
+Let's compare different approaches to understand trade-offs.
+
+### Demo: Compare Feature Extraction vs. End-to-End Training
+
+```{python}
+# Compare frozen features vs. fine-tuned model
+
+# Approach 1: Frozen feature extractor
+frozen_model = SimpleClassifier(model, num_classes=5).to(device)
+for param in frozen_model.features.parameters():
+    param.requires_grad = False
+
+print("Training with frozen features...")
+frozen_history = train_classifier(
+    frozen_model,
+    train_loader,
+    val_loader,
+    n_epochs=10,
+    lr=1e-3,
+    device=str(device)
+)
+
+# Approach 2: End-to-end fine-tuning (we already have this from before)
+print("\nComparing approaches:")
+print(f"Frozen features - Final val acc: {frozen_history['val_acc'][-1]:.3f}")
+print(f"Fine-tuned model - Final val acc: {history['val_acc'][-1]:.3f}")
+
+# Visualize comparison
+fig, ax = plt.subplots(figsize=(10, 6))
+
+ax.plot(range(1, len(frozen_history['val_acc']) + 1),
+        frozen_history['val_acc'],
+        label='Frozen Features', marker='o')
+ax.plot(range(1, len(history['val_acc']) + 1),
+        history['val_acc'],
+        label='Fine-tuned', marker='s')
+
+ax.set_xlabel('Epoch')
+ax.set_ylabel('Validation Accuracy')
+ax.set_title('Comparison: Frozen vs. Fine-tuned Features')
+ax.legend()
+ax.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Step 5: Real-World Application
+
+Let's apply our trained model to make predictions on new data.
+
+### Demo: Inference on New Patches
+
+```{python}
+# Create some "new" test patches
+test_patches, test_labels = create_sample_patches(n_samples=50)
+
+print(f"Test set: {len(test_patches)} patches")
+
+# Make predictions
+classifier.eval()
+all_preds = []
+all_probs = []
+
+with torch.no_grad():
+    for i in range(0, len(test_patches), 32):
+        batch = test_patches[i:i+32].to(device)
+        outputs = classifier(batch)
+        probs = torch.softmax(outputs, dim=1)
+        preds = outputs.argmax(dim=1)
+
+        all_preds.append(preds.cpu())
+        all_probs.append(probs.cpu())
+
+predictions = torch.cat(all_preds).numpy()
+probabilities = torch.cat(all_probs).numpy()
+
+# Calculate accuracy
+accuracy = (predictions == test_labels.numpy()).mean()
+print(f"\nTest accuracy: {accuracy:.3f}")
+
+# Show confidence distribution
+plt.figure(figsize=(10, 6))
+max_probs = probabilities.max(axis=1)
+plt.hist(max_probs, bins=30, edgecolor='black', alpha=0.7)
+plt.xlabel('Maximum Prediction Probability')
+plt.ylabel('Frequency')
+plt.title('Prediction Confidence Distribution')
+plt.axvline(max_probs.mean(), color='red', linestyle='--',
+            label=f'Mean: {max_probs.mean():.3f}')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+```
+
+### Demo: Visualize Predictions
+
+```{python}
+# Visualize some predictions
+class_names = ['Water', 'Vegetation', 'Urban', 'Bare Soil', 'Forest']
+
+fig, axes = plt.subplots(2, 5, figsize=(15, 6))
+axes = axes.ravel()
+
+for idx in range(10):
+    # Get RGB bands (assuming first 3 channels)
+    img = test_patches[idx, :3].numpy().transpose(1, 2, 0)
+    img = np.clip(img, 0, 1)
+
+    true_label = test_labels[idx].item()
+    pred_label = predictions[idx]
+    confidence = probabilities[idx, pred_label]
+
+    axes[idx].imshow(img)
+    axes[idx].axis('off')
+
+    color = 'green' if true_label == pred_label else 'red'
+    title = f"True: {class_names[true_label]}\n"
+    title += f"Pred: {class_names[pred_label]} ({confidence:.2f})"
+    axes[idx].set_title(title, color=color, fontsize=9)
+
+plt.suptitle('Sample Predictions (Green=Correct, Red=Incorrect)', fontsize=14)
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Conclusion
+
+You've successfully worked with geospatial foundation models using TerraTorch!
+
+### What You Accomplished
+
+1. **Model Loading**: Loaded and inspected pretrained models
+2. **Feature Extraction**: Extracted embeddings from satellite imagery
+3. **Transfer Learning**: Fine-tuned models for classification
+4. **Model Comparison**: Compared different training approaches
+5. **Inference**: Applied models to make predictions on new data
+
+### Key Takeaways
+
+- **Pretrained models** provide powerful feature representations
+- **Transfer learning** is more efficient than training from scratch
+- **Feature extraction** vs. **fine-tuning** offer different trade-offs
+- **Model comparison** helps identify the best approach for your task
+- **TerraTorch** simplifies working with geospatial foundation models
+
+### Performance Summary
+
+```{python}
+print("Training Summary")
+print("=" * 50)
+print(f"Model type: {type(classifier).__name__}")
+print(f"Training samples: {len(train_dataset)}")
+print(f"Validation samples: {len(val_dataset)}")
+print(f"Test samples: {len(test_patches)}")
+print(f"\nFinal Results:")
+print(f"Validation accuracy: {history['val_acc'][-1]:.3f}")
+print(f"Test accuracy: {accuracy:.3f}")
+print(f"Average confidence: {max_probs.mean():.3f}")
+```
+
+### Next Week Preview
+
+In **Week 4**, we'll explore:
+
+- Multi-modal foundation models (optical + radar)
+- Temporal modeling with satellite time series
+- Advanced fine-tuning strategies
+- Scaling to larger datasets
+
+Your understanding of foundation models provides the perfect foundation for these advanced topics!
+
+## Resources
+
+- [TerraTorch Documentation](https://github.com/IBM/terratorch)
+- [Prithvi Model](https://huggingface.co/ibm-nasa-geospatial/Prithvi-100M)
+- [Clay Foundation Model](https://clay-foundation.github.io/)
+- [TorchGeo Documentation](https://torchgeo.readthedocs.io/)
