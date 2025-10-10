@@ -58,21 +58,20 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
-import rasterio
-from rasterio.plot import show
-
-try:
-    import terratorch
-    from terratorch.models import PrithviModelFactory, get_model
-    print(f"TerraTorch version: {terratorch.__version__}")
-except ImportError:
-    print("TerraTorch not installed. Install with: pip install terratorch")
-    raise
-
 print(f"PyTorch version: {torch.__version__}")
 print(f"CUDA available: {torch.cuda.is_available()}")
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Using device: {device}")
+
+# Check for TerraTorch (optional for this demo)
+try:
+    import terratorch
+    print(f"TerraTorch version: {terratorch.__version__}")
+    TERRATORCH_AVAILABLE = True
+except ImportError:
+    print("TerraTorch not installed (optional for this demo)")
+    print("To install: pip install terratorch")
+    TERRATORCH_AVAILABLE = False
 ```
 
 ### Model Utilities → `geogfm/utils/terratorch_utils.py`
@@ -191,7 +190,10 @@ def prepare_satellite_image(
     Returns:
         Tensor of shape (1, C, H, W)
     """
-    import rasterio
+    try:
+        import rasterio
+    except ImportError:
+        raise ImportError("rasterio required for image loading. Install with: pip install rasterio")
 
     with rasterio.open(image_path) as src:
         if target_bands is None:

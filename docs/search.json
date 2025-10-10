@@ -1684,7 +1684,7 @@
     "href": "cheatsheets.html#terratorch-for-geospatial-ai",
     "title": "Cheatsheets",
     "section": "🌎 TerraTorch for Geospatial AI",
-    "text": "🌎 TerraTorch for Geospatial AI\n\nTerraTorch Workflows\nTerraTorch Model Zoo"
+    "text": "🌎 TerraTorch for Geospatial AI\n\nModular GFM Architecture in TerraTorch\nTerraTorch Workflows\nTerraTorch Model Zoo"
   },
   {
     "objectID": "cheatsheets.html#foundation-models-huggingface",
