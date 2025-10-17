@@ -20,11 +20,11 @@ By the end of this session, you will be able to:
 
 1. Load benchmark datasets using TorchGeo
 2. Build foundation models using TerraTorch's EncoderDecoderFactory
-3. Evaluate zero-shot performance and understand transfer learning
-4. Implement few-shot learning with prototype networks
-5. Use linear probing for efficient model adaptation
-6. Train models using explicit PyTorch loops
-7. Compare data efficiency across different training regimes
+3. Train models using explicit PyTorch loops
+4. Evaluate performance manually and compare to benchmarks
+5. Debug model behavior by inspecting intermediate values
+6. Compare architectures by swapping backbones
+7. Understand classification vs. segmentation architectures
 :::
 
 :::{.callout-note}
@@ -75,25 +75,24 @@ EuroSAT is a land use classification dataset based on Sentinel-2 imagery.
 
 **Dataset Statistics:**
 
-- **Total images:** ~27,000
+- **Total images:** 27,000
 - **Image size:** 64×64 pixels
 - **Bands:** 13 (all Sentinel-2 bands)
 - **Resolution:** 10m, 20m, 60m (resampled to uniform grid)
-- **Classes:** 10 land use categories (original dataset)
+- **Classes:** 10 land use categories
 
-**Note:** The TorchGeo version may have 9 classes. The code dynamically adapts to the actual number of classes in `train_dataset.classes`.
+**Land Use Classes:**
 
-**Typical Land Use Classes:**
-
-1. AnnualCrop
+1. Annual Crop
 2. Forest
-3. HerbaceousVegetation
+3. Herbaceous Vegetation
 4. Highway
 5. Industrial
 6. Pasture
-7. PermanentCrop
+7. Permanent Crop
 8. Residential
-9. River (may be merged with SeaLake in some versions)
+9. River
+10. SeaLake
 
 **Published Benchmarks:**
 
@@ -117,21 +116,6 @@ from pathlib import Path
 import logging
 
 logger = logging.getLogger(__name__)
-# Set logging level to INFO
-logger.setLevel(logging.INFO)
-
-# Clear any existing handlers to prevent duplication
-logger.handlers.clear()
-
-# Add handler for Jupyter notebook output
-handler = logging.StreamHandler()
-handler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-
-# Prevent messages from propagating to root logger
-logger.propagate = False
 
 # Set random seeds for reproducibility
 torch.manual_seed(42)
@@ -210,42 +194,28 @@ This standardization means the same code works for any TorchGeo dataset.
 Let's visualize samples from each class to understand what we're working with.
 
 ```{python}
-# Get one sample from each class efficiently using random sampling
-import random
-
+# Get one sample from each class
+# We'll build a mapping from class index (int) to sample image
 samples_per_class = {}
-num_classes = len(train_dataset.classes)
-dataset_size = len(train_dataset)
-
-# Random sampling is much faster than sequential scan
-# Sample more indices than classes to ensure we find all classes quickly
-random_indices = random.sample(range(dataset_size), min(dataset_size, num_classes * 10))
-
-logger.info(f"Sampling representative images (one per class)...")
-for idx in random_indices:
+for idx in range(len(train_dataset)):
     sample = train_dataset[idx]
     image = sample["image"]
+    # Get integer class label (regardless of tensor/scalar type)
     label = sample["label"]
+    # Handle both 0-dim tensor and int
     class_idx = int(label) if hasattr(label, "item") else label
 
     if class_idx not in samples_per_class:
         samples_per_class[class_idx] = image
 
-    # Stop once we have all classes
-    if set(samples_per_class.keys()) == set(range(num_classes)):
-        logger.info(f"Found all {num_classes} classes in {len(samples_per_class)} samples")
+    if len(samples_per_class) == len(train_dataset.classes):
         break
 
 # Create RGB composite for visualization
 # EuroSAT bands: [B01, B02, B03, B04, B05, B06, B07, B08, B8A, B09, B10, B11, B12]
 # RGB = B04 (Red), B03 (Green), B02 (Blue) = indices [3, 2, 1]
 
-# Dynamic grid based on actual number of classes found
-n_samples = len(samples_per_class)
-n_cols = 5
-n_rows = int(np.ceil(n_samples / n_cols))
-
-fig, axes = plt.subplots(n_rows, n_cols, figsize=(15, 3*n_rows))
+fig, axes = plt.subplots(2, 5, figsize=(15, 6))
 axes = axes.ravel()
 
 for idx, (label, image) in enumerate(samples_per_class.items()):
@@ -261,25 +231,13 @@ for idx, (label, image) in enumerate(samples_per_class.items()):
     axes[idx].set_title(train_dataset.classes[label])
     axes[idx].axis('off')
 
-# Hide any unused subplots
-for idx in range(n_samples, len(axes)):
-    axes[idx].axis('off')
-
 plt.tight_layout()
 plt.show()
 
-# Print band information and data range
+# Print band information
 logger.info(f"\nImage shape: {image.shape}")
 logger.info(f"Bands: 13 Sentinel-2 bands")
 logger.info(f"Spatial size: 64×64 pixels")
-logger.info(f"")
-logger.info(f"Raw EuroSAT data range:")
-logger.info(f"  Min value: {image.min():.2f}")
-logger.info(f"  Max value: {image.max():.2f}")
-logger.info(f"  Mean value: {image.mean():.2f}")
-logger.info(f"")
-logger.info(f"This confirms EuroSAT is NOT pre-normalized!")
-logger.info(f"Typical Sentinel-2 range: 0-10000 (surface reflectance × 10000)")
 ```
 
 :::{.callout-tip}
@@ -288,7 +246,6 @@ logger.info(f"Typical Sentinel-2 range: 0-10000 (surface reflectance × 10000)")
 **Challenge:** Prithvi expects 6 bands, EuroSAT has 13 bands.
 
 **Solution:** Select the 6 bands Prithvi was trained on:
-
 - B02 (Blue) - 10m
 - B03 (Green) - 10m
 - B04 (Red) - 10m
@@ -302,13 +259,6 @@ EuroSAT indices: [1, 2, 3, 7, 11, 12]
 ### Step 3: Create Data Transforms
 
 We need to select the correct bands and normalize the data for Prithvi.
-
-**Critical Understanding:**
-
-- **EuroSAT raw data**: Sentinel-2 surface reflectance values (typically 0-10000+)
-- **Prithvi expects**: Normalized values in range [0, 1]
-- **Why this matters**: Without normalization, the model gets completely out-of-distribution inputs
-- **Result without normalization**: Zero-shot accuracy ~10% (random guessing)
 
 ```{python}
 #| tangle: geogfm/training/eurosat_utils.py
@@ -378,7 +328,7 @@ from torchvision import transforms
 # Compose transforms
 transform = transforms.Compose([
     select_prithvi_bands,
-    normalize_prithvi  # Critical for Prithvi - expects [0, 1] normalized inputs
+    # normalize_prithvi
 ])
 
 # Apply transforms to datasets
@@ -406,8 +356,6 @@ sample_img, sample_label = train_dataset_transformed[0]
 logger.info(f"Transformed image shape: {sample_img.shape}")
 logger.info(f"Expected: (6, 64, 64)")
 logger.info(f"Label: {sample_label} ({train_dataset.classes[sample_label]})")
-logger.info(f"Value range: [{sample_img.min():.4f}, {sample_img.max():.4f}]")
-logger.info(f"Expected range: [0, 1] after normalization")
 ```
 
 ### Step 4: Create DataLoaders
@@ -451,47 +399,20 @@ logger.info(f"Batch on device will be: {images.to(device).device}")
 ### Step 5: Build the Model
 
 TerraTorch's `EncoderDecoderFactory` makes it simple to build models.
-**How `build_model` Works**
-
-The `build_model` method from `EncoderDecoderFactory` creates a flexible model by combining a backbone (encoder) with a task-specific decoder head. For classification, the decoder will produce logits of shape `[batch_size, num_classes]`. This method is highly customizable and is central to TerraTorch's architectural flexibility.
-
-**Key arguments to `build_model`:**
-
-- `task`: The type of task (`"classification"`, `"segmentation"`, `"regression"`, etc.)
-- `backbone`: The encoder backbone to use (e.g., `"prithvi_eo_v1_100"`, `"prithvi_eo_v2_300"`, `"satmae"`, `"clay"`, `"timm_resnet50"`)
-- `decoder`: The decoder architecture to attach. For classification, `"FCNDecoder"` is a typical choice; for segmentation, you might use `"SegmentationDecoder"` or others suitable for the task.
-- `num_classes`: The number of output classes for classification (or channels for other tasks)
-
-**Further arguments** (advanced):
-
-- `pretrained`: If `True`, will use pretrained weights for the backbone where available.
-- `in_channels`: Number of input channels; must match your data (EuroSAT uses 6 bands).
-- `freeze_encoder`: If `True`, the backbone weights will not be updated during training.
-- `decoder_kwargs`: Dictionary of extra arguments for fine-tuning decoder behavior.
-
-For official documentation and a full list of arguments, see:  
-[https://terratorch.readthedocs.io/en/latest/api/terratorch.models.html#terratorch.models.EncoderDecoderFactory.build_model](https://terratorch.readthedocs.io/en/latest/api/terratorch.models.html#terratorch.models.EncoderDecoderFactory.build_model)
-
 
 ```{python}
 from terratorch.models import EncoderDecoderFactory
-import warnings
 
 # Create model factory
 model_factory = EncoderDecoderFactory()
 
 # Build classification model with Prithvi backbone
-num_classes = len(train_dataset.classes)
-
-# Suppress expected TerraTorch decoder compatibility warning
-with warnings.catch_warnings():
-    warnings.filterwarnings("ignore", message=".*includes_head.*")
-    model = model_factory.build_model(
-        task="classification",
-        backbone="prithvi_eo_v1_100",  # 100M parameter Prithvi
-        decoder="FCNDecoder",           # Simple fully-convolutional decoder
-        num_classes=num_classes         # Based on actual dataset
-    )
+model = model_factory.build_model(
+    task="classification",
+    backbone="prithvi_eo_v1_100",  # 100M parameter Prithvi
+    decoder="FCNDecoder",           # Simple fully-convolutional decoder
+    num_classes=10                  # EuroSAT has 10 classes
+)
 
 # Move model to device
 model = model.to(device)
@@ -510,494 +431,19 @@ logger.info(f"Model on device: {next(model.parameters()).device}")
 ## Understanding the Architecture
 
 **Encoder (Backbone):**
-
 - `prithvi_eo_v1_100` - Vision Transformer pretrained on HLS imagery
 - Extracts spatial features from 6-band input
 - Parameters frozen or fine-tuned depending on task
 
 **Decoder (Head):**
-
 - `FCNDecoder` - Fully Convolutional Network
 - Aggregates encoder features
-- Produces class logits (num_classes outputs)
+- Produces class logits (10 outputs for 10 classes)
 
 **Alternative backbones:** `prithvi_eo_v2_300`, `satmae`, `scalemae`, `clay`, `timm_resnet50`
 :::
 
-## Part 3: Zero-Shot Inference - Baseline Performance
-
-Before training the model, let's evaluate what the pretrained Prithvi backbone already knows. This establishes a baseline and demonstrates the power of transfer learning.
-
-### Understanding Zero-Shot Inference
-
-**Zero-shot inference** means using a model without any task-specific training:
-
-- The Prithvi backbone was pretrained on massive HLS satellite imagery
-- It learned general geospatial features (vegetation patterns, water bodies, urban structures)
-- But it has never seen EuroSAT or these specific land use classes
-- The classification head is randomly initialized
-
-### Step 6: Zero-Shot Evaluation
-
-Let's evaluate the model using the same representative images we visualized earlier - one sample from each class.
-
-```{python}
-# Use the same representative samples from Step 2
-# Transform them to 6 bands + normalize
-zero_shot_images = []
-zero_shot_labels = []
-
-logger.info("Preparing representative samples for zero-shot evaluation...")
-for class_idx, image in samples_per_class.items():
-    # Apply transforms (band selection + normalization)
-    sample = {'image': image, 'label': class_idx}
-    transformed = transform(sample)
-    zero_shot_images.append(transformed['image'])
-    zero_shot_labels.append(transformed['label'])
-
-# Stack into batch
-zero_shot_images = torch.stack(zero_shot_images).to(device)
-zero_shot_labels = torch.tensor(zero_shot_labels).to(device)
-
-logger.info(f"Zero-shot evaluation batch: {zero_shot_images.shape}")
-logger.info(f"One sample per class ({len(train_dataset.classes)} total)")
-logger.info(f"")
-
-# Set model to evaluation mode
-model.eval()
-
-# Calculate zero-shot performance
-logger.info("Evaluating zero-shot performance...")
-logger.info("=" * 60)
-
-with torch.no_grad():
-    outputs = model(zero_shot_images)
-    if hasattr(outputs, 'output'):
-        outputs = outputs.output
-
-    # Get predictions
-    _, predicted = outputs.max(1)
-
-correct = predicted.eq(zero_shot_labels).sum().item()
-total = len(zero_shot_labels)
-zero_shot_accuracy = correct / total
-
-logger.info(f"Zero-Shot Accuracy: {zero_shot_accuracy:.4f} ({zero_shot_accuracy*100:.2f}%)")
-logger.info(f"Random Baseline: {1.0/len(train_dataset.classes):.4f} ({100.0/len(train_dataset.classes):.2f}%)")
-logger.info(f"Correct: {correct}/{total} samples")
-logger.info(f"")
-logger.info("Per-Class Zero-Shot Results:")
-logger.info("-" * 60)
-
-for idx in range(len(zero_shot_labels)):
-    true_label = zero_shot_labels[idx].item()
-    pred_label = predicted[idx].item()
-    class_name = train_dataset.classes[true_label]
-    pred_name = train_dataset.classes[pred_label]
-    correct_mark = "✓" if true_label == pred_label else "✗"
-    logger.info(f"  {correct_mark} {class_name:20s} → {pred_name}")
-```
-
-:::{.callout-note}
-## Interpreting Zero-Shot Results
-
-**Expected performance (1 sample per class):**
-
-- Random guessing: ~11% (1 correct out of 9 classes)
-- Zero-shot Prithvi: 11-44% (1-4 correct out of 9)
-- Performance varies dramatically by class
-
-**Classes Prithvi might recognize:**
-
-- **Likely correct**: Forest, SeaLake (strong visual signatures, common in HLS training)
-- **Sometimes correct**: Pasture, HerbaceousVegetation (agricultural patterns)
-- **Rarely correct**: Highway, Industrial, Residential (fine-grained urban distinctions)
-
-**Why?** Prithvi learned general geospatial features during pretraining on HLS imagery. Natural land cover classes with distinct spectral signatures are easier to recognize than specific urban subtypes.
-:::
-
-### Step 7: Visualize Zero-Shot Predictions
-
-Let's visualize the zero-shot predictions on the same representative images:
-
-```{python}
-# Visualize zero-shot predictions
-logger.info("Visualizing zero-shot predictions...")
-
-num_vis = len(samples_per_class)
-n_cols = 5
-n_rows = int(np.ceil(num_vis / n_cols))
-
-fig, axes = plt.subplots(n_rows, n_cols, figsize=(15, 3*n_rows))
-axes = axes.ravel()
-
-# Already have predictions from Step 6
-for idx, (class_idx, image) in enumerate(samples_per_class.items()):
-    true_label = class_idx
-    pred_label = predicted[idx].item()
-
-    # Create RGB visualization from original 13-band image
-    rgb = image[[3, 2, 1], :, :].numpy()  # Red, Green, Blue
-    rgb = np.transpose(rgb, (1, 2, 0))
-
-    # Normalize for display
-    p2, p98 = np.percentile(rgb, (2, 98))
-    rgb_norm = np.clip((rgb - p2) / (p98 - p2), 0, 1)
-
-    # Plot
-    axes[idx].imshow(rgb_norm)
-
-    # Color code: green if correct, red if wrong
-    color = 'green' if pred_label == true_label else 'red'
-    axes[idx].set_title(
-        f"True: {train_dataset.classes[true_label]}\n"
-        f"Pred: {train_dataset.classes[pred_label]}",
-        color=color,
-        fontsize=10
-    )
-    axes[idx].axis('off')
-
-# Hide any unused subplots
-for idx in range(num_vis, len(axes)):
-    axes[idx].axis('off')
-
-plt.suptitle("Zero-Shot Predictions (Before Training)", fontsize=14, y=0.995)
-plt.tight_layout()
-plt.show()
-
-logger.info(f"Green titles = correct prediction | Red titles = incorrect prediction")
-```
-
-:::{.callout-tip}
-## Zero-Shot Performance Analysis
-
-**What to look for:**
-
-1. **Correct predictions**: Classes the model identifies without training
-2. **Systematic errors**: Consistent misclassifications reveal what Prithvi confuses
-3. **Transfer learning potential**: Better than random = useful pretrained features
-
-**Common patterns:**
-
-- Natural land cover (forest, water) often recognized
-- Urban classes frequently confused with each other
-- Agricultural subtypes hard to distinguish without fine-tuning
-:::
-
-## Part 4: Few-Shot Learning - Learning from Limited Data
-
-Zero-shot performance is limited by the randomly initialized decoder. But what if we had just a few examples per class? Let's explore two few-shot approaches that demonstrate the power of foundation models with minimal data.
-
-### Helper: Create Few-Shot Datasets
-
-First, let's create a helper function to sample K examples per class from the training set.
-
-```{python}
-from torch.utils.data import Subset
-
-def create_few_shot_dataset(dataset, k_shot=5, seed=42):
-    """
-    Create a dataset with k examples per class.
-
-    Parameters
-    ----------
-    dataset : Dataset
-        Source dataset
-    k_shot : int
-        Number of examples per class
-    seed : int
-        Random seed for reproducibility
-
-    Returns
-    -------
-    Subset
-        Subset with k examples per class
-    """
-    np.random.seed(seed)
-    random.seed(seed)
-
-    num_classes = len(dataset.classes)
-    samples_per_class = {i: [] for i in range(num_classes)}
-
-    # Random sampling to find k examples per class
-    random_indices = random.sample(range(len(dataset)), min(len(dataset), num_classes * k_shot * 10))
-
-    for idx in random_indices:
-        sample = dataset[idx]
-        label = sample['label']
-        label_idx = int(label) if hasattr(label, 'item') else label
-
-        if len(samples_per_class[label_idx]) < k_shot:
-            samples_per_class[label_idx].append(idx)
-
-        # Stop when we have k examples for all classes
-        if all(len(v) == k_shot for v in samples_per_class.values()):
-            break
-
-    # Flatten to single list of indices
-    indices = [idx for class_indices in samples_per_class.values() for idx in class_indices]
-
-    return Subset(dataset, indices), samples_per_class
-
-logger.info("Few-shot dataset helper created")
-```
-
-### Step 6a: Prototype Networks - No Training Required
-
-Prototype networks use the model's output representations to classify by finding the nearest prototype (mean representation per class). We'll use the model's logits (pre-softmax outputs) as feature representations.
-
-**Key idea**: Even with a randomly initialized decoder, the model's output space should show some structure that we can exploit with a few labeled examples.
-
-```{python}
-# Create 5-shot support set
-k_shot = 5
-few_shot_subset, few_shot_indices = create_few_shot_dataset(train_dataset, k_shot=k_shot)
-
-logger.info(f"Created {k_shot}-shot dataset:")
-logger.info(f"Total samples: {len(few_shot_subset)} ({k_shot} per class × {len(train_dataset.classes)} classes)")
-logger.info("")
-
-# Extract features from backbone for support set
-model.eval()
-support_features = []
-support_labels = []
-
-logger.info("Extracting features from Prithvi backbone...")
-with torch.no_grad():
-    for class_idx, indices in few_shot_indices.items():
-        class_features = []
-        for idx in indices:
-            sample = train_dataset[idx]
-            # Apply transforms
-            transformed = transform(sample)
-            image = transformed['image'].unsqueeze(0).to(device)
-
-            # Extract features from backbone
-            # Use model forward pass and extract features before final classification
-            outputs = model(image)
-            if hasattr(outputs, 'output'):
-                features = outputs.output
-            else:
-                features = outputs
-
-            # Features are already pooled to (batch, num_classes) by FCNDecoder
-            # Use these as feature representations
-            features = features.squeeze(0)  # Remove batch dimension
-
-            class_features.append(features)
-
-        # Compute prototype (mean of support features)
-        prototype = torch.stack(class_features).mean(dim=0)
-        support_features.append(prototype)
-        support_labels.append(class_idx)
-
-support_features = torch.stack(support_features)  # (num_classes, feature_dim)
-support_labels = torch.tensor(support_labels).to(device)
-
-logger.info(f"Extracted prototypes: {support_features.shape}")
-logger.info("")
-
-# Classify test samples by nearest prototype
-logger.info("Classifying with prototype networks...")
-test_features = []
-test_labels = []
-
-# Use same representative samples as zero-shot
-for class_idx, image in samples_per_class.items():
-    sample = {'image': image, 'label': class_idx}
-    transformed = transform(sample)
-    image_tensor = transformed['image'].unsqueeze(0).to(device)
-
-    with torch.no_grad():
-        # Extract features
-        outputs = model(image_tensor)
-        if hasattr(outputs, 'output'):
-            features = outputs.output
-        else:
-            features = outputs
-
-        features = features.squeeze(0)  # Remove batch dimension
-
-        test_features.append(features)
-        test_labels.append(class_idx)
-
-test_features = torch.stack(test_features)
-test_labels = torch.tensor(test_labels).to(device)
-
-# Compute distances to prototypes (cosine similarity)
-test_features_norm = torch.nn.functional.normalize(test_features, dim=-1)
-support_features_norm = torch.nn.functional.normalize(support_features, dim=-1)
-
-similarities = torch.mm(test_features_norm, support_features_norm.t())  # (test, classes)
-proto_predictions = similarities.argmax(dim=1)
-
-# Calculate accuracy
-proto_correct = proto_predictions.eq(test_labels).sum().item()
-proto_accuracy = proto_correct / len(test_labels)
-
-logger.info(f"Prototype Network Results ({k_shot}-shot)")
-logger.info("=" * 60)
-logger.info(f"Accuracy: {proto_accuracy:.4f} ({proto_accuracy*100:.2f}%)")
-logger.info(f"Zero-shot (Step 6): {zero_shot_accuracy:.4f} ({zero_shot_accuracy*100:.2f}%)")
-logger.info(f"Random Baseline: {1.0/len(train_dataset.classes):.4f} ({100.0/len(train_dataset.classes):.2f}%)")
-logger.info(f"Correct: {proto_correct}/{len(test_labels)} samples")
-logger.info("")
-logger.info("Per-Class Prototype Results:")
-logger.info("-" * 60)
-
-for idx in range(len(test_labels)):
-    true_label = test_labels[idx].item()
-    pred_label = proto_predictions[idx].item()
-    class_name = train_dataset.classes[true_label]
-    pred_name = train_dataset.classes[pred_label]
-    correct_mark = "✓" if true_label == pred_label else "✗"
-    logger.info(f"  {correct_mark} {class_name:20s} → {pred_name}")
-```
-
-:::{.callout-note}
-## Understanding Prototype Networks
-
-**How it works:**
-
-1. Pass K examples per class through the model to get output representations (logits)
-2. Compute prototype (mean logits) for each class
-3. Classify new samples by finding nearest prototype using cosine similarity
-
-**Why it's better than zero-shot:**
-
-- Uses a few labeled examples to establish class centroids in output space
-- No training required - just forward passes and averaging
-- Expected performance: 30-50% (vs 11% zero-shot)
-
-**Key insight**: Even with a randomly initialized decoder, the output space has enough structure from the Prithvi backbone that averaging a few examples per class creates meaningful prototypes.
-:::
-
-### Step 6b: Linear Probing - Fast Adaptation
-
-Linear probing freezes the backbone and trains only the decoder head with few examples. This is much faster than full fine-tuning.
-
-```{python}
-# Create fresh model for linear probing
-linear_probe_model = model_factory.build_model(
-    task="classification",
-    backbone="prithvi_eo_v1_100",
-    decoder="FCNDecoder",
-    num_classes=num_classes
-)
-linear_probe_model = linear_probe_model.to(device)
-
-# Freeze backbone completely
-logger.info("Freezing Prithvi backbone...")
-for name, param in linear_probe_model.named_parameters():
-    if 'encoder' in name or 'backbone' in name or 'model.model' in name:
-        param.requires_grad = False
-
-trainable = sum(p.numel() for p in linear_probe_model.parameters() if p.requires_grad)
-total = sum(p.numel() for p in linear_probe_model.parameters())
-logger.info(f"Trainable parameters: {trainable:,} / {total:,} ({100*trainable/total:.1f}%)")
-logger.info("")
-
-# Try different k-shot settings
-k_shots = [1, 5, 10]
-linear_probe_results = {}
-
-for k in k_shots:
-    logger.info(f"Linear Probing: {k}-shot")
-    logger.info("=" * 60)
-
-    # Create k-shot dataset
-    few_shot_subset, _ = create_few_shot_dataset(train_dataset, k_shot=k)
-    few_shot_transformed = TransformedDataset(few_shot_subset, transform)
-    few_shot_loader = DataLoader(few_shot_transformed, batch_size=min(32, len(few_shot_transformed)), shuffle=True)
-
-    # Reset decoder weights
-    linear_probe_model = model_factory.build_model(
-        task="classification",
-        backbone="prithvi_eo_v1_100",
-        decoder="FCNDecoder",
-        num_classes=num_classes
-    )
-    linear_probe_model = linear_probe_model.to(device)
-
-    # Freeze backbone
-    for name, param in linear_probe_model.named_parameters():
-        if 'encoder' in name or 'backbone' in name or 'model.model' in name:
-            param.requires_grad = False
-
-    # Train decoder only
-    probe_optimizer = torch.optim.Adam(
-        [p for p in linear_probe_model.parameters() if p.requires_grad],
-        lr=1e-3  # Higher LR since only training head
-    )
-    probe_criterion = nn.CrossEntropyLoss()
-
-    # Train for more epochs on small dataset
-    epochs = 50
-    linear_probe_model.train()
-
-    for epoch in range(epochs):
-        for images, labels in few_shot_loader:
-            images = images.to(device)
-            labels = labels.to(device)
-
-            probe_optimizer.zero_grad()
-            outputs = linear_probe_model(images)
-            if hasattr(outputs, 'output'):
-                outputs = outputs.output
-
-            loss = probe_criterion(outputs, labels)
-            loss.backward()
-            probe_optimizer.step()
-
-    # Evaluate on same test samples
-    linear_probe_model.eval()
-    with torch.no_grad():
-        outputs = linear_probe_model(zero_shot_images)
-        if hasattr(outputs, 'output'):
-            outputs = outputs.output
-        _, linear_predictions = outputs.max(1)
-
-    linear_correct = linear_predictions.eq(zero_shot_labels).sum().item()
-    linear_accuracy = linear_correct / len(zero_shot_labels)
-    linear_probe_results[k] = linear_accuracy
-
-    logger.info(f"{k}-shot Accuracy: {linear_accuracy:.4f} ({linear_accuracy*100:.2f}%)")
-    logger.info(f"Correct: {linear_correct}/{len(zero_shot_labels)} samples")
-    logger.info("")
-
-# Summary comparison
-logger.info("Data Efficiency Comparison")
-logger.info("=" * 60)
-logger.info(f"Zero-shot (0 examples):     {zero_shot_accuracy:.4f} ({zero_shot_accuracy*100:.2f}%)")
-logger.info(f"Prototypes ({k_shot}-shot): {proto_accuracy:.4f} ({proto_accuracy*100:.2f}%)")
-for k, acc in linear_probe_results.items():
-    logger.info(f"Linear Probe ({k}-shot):    {acc:.4f} ({acc*100:.2f}%)")
-logger.info(f"Random Baseline:            {1.0/len(train_dataset.classes):.4f} ({100.0/len(train_dataset.classes):.2f}%)")
-```
-
-:::{.callout-note}
-## Understanding Linear Probing
-
-**How it works:**
-
-1. Freeze pretrained backbone (no updates to 100M parameters)
-2. Train only decoder head (~10K parameters)
-3. Use few examples per class
-
-**Why it's efficient:**
-
-- Much faster than full fine-tuning (seconds vs minutes)
-- Less prone to overfitting with few examples
-- Expected performance: 1-shot (30%), 5-shot (60%), 10-shot (75%)
-
-**Key insight**: Foundation model features are so good that you can achieve strong performance by just learning a simple mapping (linear layer) from features to classes.
-:::
-
-## Part 5: Full Fine-Tuning - Maximum Performance
-
-Now we'll (briefly!) train the model and compare performance to the zero-shot baseline.
-
-### Step 8: Define Loss Function
+### Step 6: Define Loss Function
 
 The loss function is used to train the model. It is a measure of how good the model is at predicting the correct class. We use the `CrossEntropyLoss` loss function for classification tasks.
 
@@ -1109,7 +555,6 @@ def train_one_epoch(model, train_loader, criterion, optimizer, device):
 
 
 **Validation Loop: Step-by-Step**
-
 1. **Set model to evaluation mode**: This disables/dropouts and sets batch normalization to use running statistics.
 2. **Disable gradients**: Turn off gradient computation to reduce memory and computation cost.
 3. **Iterate over validation batches**: For each batch in the validation data:
@@ -1179,7 +624,6 @@ def validate(model, val_loader, criterion, device):
 
 
 **Key Differences between Training and Validation Loops**:
-
 - **Parameter updates**: Only the training loop updates parameters via backpropagation and optimizer steps; the validation loop does not.
 - **Model mode**: The training loop uses `model.train()`; the validation loop uses `model.eval()`.
 - **Gradient calculation**: Gradients are computed (and accumulated) in training, but turned off in validation (using `torch.no_grad()`).
@@ -1187,7 +631,7 @@ def validate(model, val_loader, criterion, device):
 
 By writing out these loops explicitly, we gain transparency: it's much easier to spot bugs, add logging, customize behavior, and truly understand every step of model training.
 
-### Step 7: Develop a Training Loop the Model
+### Step 7: Train the Model
 
 Let's put it all together in the `train_model` function. This function:
 
@@ -1455,12 +899,17 @@ for label_idx, acc in sorted(test_results['per_class_accuracy'].items()):
 :::{.callout-note}
 ## Expected Performance
 
-With only a limited number of epochs of training, you should see:
+With 15 epochs of training, you should see:
 
 - **Overall accuracy: 80-95%**
-- Some improvement in accuracy on distinct classes (Forest, Water)
-- Some improvement in accuracy on similar classes (Annual vs Permanent Crop)
+- Higher accuracy on distinct classes (Forest, Water)
+- Lower accuracy on similar classes (Annual vs Permanent Crop)
 
+For comparison to published benchmarks:
+
+- ResNet-50: ~98%
+- Our Prithvi model (15 epochs): 80-95%
+- Our Prithvi model (100 epochs): 95-98% (expected)
 :::
 
 ### Step 11: Visualize Predictions
@@ -1558,6 +1007,186 @@ visualize_predictions(
 )
 ```
 
+## Part 3: Segmentation Architecture
+
+Classification assigns one label per image. Segmentation assigns one label per **pixel**.
+
+### Understanding the Difference
+
+```
+Classification:
+┌─────────────┐
+│   Image     │  →  Model  →  [0.1, 0.7, 0.2]  →  Class 1 (Forest)
+│  (64×64×6)  │
+└─────────────┘
+
+Segmentation:
+┌─────────────┐
+│   Image     │  →  Model  →  Pixel Map       →  Per-pixel labels
+│  (64×64×6)  │              (64×64×num_classes)  (64×64)
+└─────────────┘
+```
+
+**Key Architectural Differences:**
+
+| Aspect | Classification | Segmentation |
+|--------|---------------|--------------|
+| Output | Single vector | Spatial map |
+| Decoder | Global pooling + FC | Upsampling layers |
+| Loss | CrossEntropy on logits | CrossEntropy per pixel |
+| Use case | Land use type | Land cover map |
+
+### Build Segmentation Model
+
+```{python}
+# Build segmentation model with same backbone
+seg_model = model_factory.build_model(
+    task="segmentation",
+    backbone="prithvi_eo_v1_100",
+    decoder="UperNetDecoder",  # U-Net style decoder
+    num_classes=10  # Same classes, but per-pixel
+)
+
+# Note: UperNet decoder has MPS compatibility issues with adaptive pooling
+# Use CPU for segmentation demo (acceptable for inference-only demo)
+seg_device = torch.device('cpu') if str(device) == 'mps' else device
+
+if str(device) == 'mps':
+    logger.info("Note: Using CPU for segmentation model (MPS has adaptive pooling limitations)")
+
+seg_model = seg_model.to(seg_device)
+
+logger.info(f"Segmentation Model")
+logger.info(f"Backbone: Prithvi-100M (shared with classification)")
+logger.info(f"Decoder: UperNetDecoder")
+logger.info(f"Device: {seg_device}")
+logger.info(f"Parameters: {sum(p.numel() for p in seg_model.parameters()):,}")
+```
+
+:::{.callout-note}
+## Decoder Options
+
+**FCNDecoder** (Classification):
+
+- Global average pooling
+- Fully connected layers
+- Output: (batch, num_classes)
+
+**UNetDecoder** (Segmentation):
+
+- Encoder-decoder with skip connections
+- Upsampling layers
+- Output: (batch, num_classes, height, width)
+
+**UperNetDecoder** (Segmentation):
+
+- Pyramid pooling
+- Multi-scale features
+- Output: (batch, num_classes, height, width)
+:::
+
+:::{.callout-warning}
+## MPS Compatibility Note
+
+**Issue:** UperNetDecoder uses `AdaptiveAvgPool2d` which has limitations on Apple Silicon (MPS).
+
+**Workaround:** We use CPU for segmentation inference demo. This is acceptable for:
+
+- Inference-only demonstrations
+- Small batches
+- Educational purposes
+
+**For production:** Use CUDA GPUs or switch to UNetDecoder which has better MPS support.
+
+**Reference:** [PyTorch Issue #96056](https://github.com/pytorch/pytorch/issues/96056)
+:::
+
+### Inference Demo
+
+For this session, we'll run inference only (no training) to demonstrate the architecture.
+
+```{python}
+# Get a batch from test set
+test_images, test_labels = next(iter(test_loader))
+test_images = test_images.to(seg_device)  # Use seg_device (may be CPU)
+
+# Run inference
+seg_model.eval()
+with torch.no_grad():
+    seg_outputs = seg_model(test_images)
+    if hasattr(seg_outputs, 'output'):
+        seg_outputs = seg_outputs.output
+
+logger.info(f"Input shape: {test_images.shape}")
+logger.info(f"Output shape: {seg_outputs.shape}")
+logger.info(f"Output interpretation: (batch=32, classes=10, height=64, width=64)")
+logger.info(f"")
+logger.info(f"Each pixel gets a 10-class probability distribution")
+
+# Convert to class predictions
+seg_predictions = seg_outputs.argmax(dim=1)
+logger.info(f"Prediction shape: {seg_predictions.shape}")
+logger.info(f"Each pixel is assigned to one of 10 classes")
+```
+
+### Visualize Segmentation Output
+
+```{python}
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Visualize a few samples
+num_vis = 4
+fig, axes = plt.subplots(num_vis, 2, figsize=(8, num_vis*3))
+
+for i in range(num_vis):
+    # RGB visualization
+    img = test_images[i].cpu()
+    rgb = img[[2, 1, 0], :, :].numpy()
+    rgb = np.transpose(rgb, (1, 2, 0))
+    rgb_min, rgb_max = rgb.min(), rgb.max()
+    if rgb_max > rgb_min:
+        rgb_norm = (rgb - rgb_min) / (rgb_max - rgb_min)
+    else:
+        rgb_norm = rgb
+
+    axes[i, 0].imshow(rgb_norm)
+    axes[i, 0].set_title(f"Sample {i+1}: Input Image")
+    axes[i, 0].axis('off')
+
+    # Segmentation map
+    seg_map = seg_predictions[i].cpu().numpy()
+    im = axes[i, 1].imshow(seg_map, cmap='tab10', vmin=0, vmax=9)
+    axes[i, 1].set_title(f"Sample {i+1}: Predicted Segmentation")
+    axes[i, 1].axis('off')
+
+plt.colorbar(im, ax=axes[:, 1].ravel().tolist(), label='Class ID', fraction=0.046)
+plt.tight_layout()
+plt.show()
+
+logger.info("Note: Model is untrained, so predictions are random.")
+logger.info("Training would require pixel-wise labels (not available in EuroSAT).")
+logger.info("See Week 3b for full segmentation training on appropriate datasets.")
+```
+
+:::{.callout-tip}
+## Segmentation Training
+
+To properly train a segmentation model, you would need:
+
+1. **Pixel-wise labels** - EuroSAT only has image-level labels
+2. **Appropriate dataset** - Use ChesapeakeCVPR, LandCoverAI, or similar
+3. **Segmentation loss** - CrossEntropyLoss per pixel
+4. **Different metrics** - IoU, Dice coefficient, pixel accuracy
+
+**For your projects:** Use TorchGeo segmentation datasets like:
+
+- `ChesapeakeCVPR` - Land cover segmentation
+- `LandCoverAI` - High-resolution land cover
+- `SpaceNet` - Building footprint segmentation
+:::
+
+
 ## Key Takeaways
 
 ### What You Learned
@@ -1568,26 +1197,23 @@ visualize_predictions(
    - TerraTorch for foundation models
    - No custom data loading needed
 
-2. **Progressive Transfer Learning Approaches**
+2. **Benchmark Best Practices**
 
-   - **Zero-shot (0 examples)**: ~11% - Random decoder, backbone features only
-   - **Prototype Networks (5 examples/class)**: ~30-50% - No training, just output space averaging
-   - **Linear Probing (1-10 examples/class)**: ~30-75% - Train decoder only, backbone frozen
-   - **Full Fine-tuning (thousands of examples)**: ~80-95% - Train entire model
+   - Real ground truth labels
+   - Standardized train/val/test splits
+   - Comparable to published results
 
-3. **Data Efficiency of Foundation Models**
-
-   - Pretrained features enable learning from minimal data
-   - 5-10 examples per class can achieve 60-75% accuracy
-   - Huge reduction in labeling effort vs training from scratch
-   - Foundation models make few-shot learning practical
-
-4. **Explicit Training Loops**
+3. **Explicit Training Loops**
 
    - Full visibility into training process
    - Easy to debug and modify
    - Understand every step
-   - Compare training regimes side-by-side
+
+4. **Architecture Comparison**
+
+   - Classification vs. segmentation
+   - Different backbones
+   - Performance vs. computational tradeoffs
 
 ### Next Steps
 
@@ -1603,25 +1229,21 @@ visualize_predictions(
 
 - Different TorchGeo datasets (BigEarthNet, Sen12MS, etc.)
 - Different backbones (SatMAE, ScaleMAE, Clay)
-- Different k-shot settings (try 3-shot, 20-shot, 50-shot)
-- Compare prototype networks vs linear probing
-- Longer training runs for full fine-tuning (50-100 epochs)
+- Different tasks (segmentation on Chesapeake, etc.)
+- Longer training runs (50-100 epochs)
 
 ## Resources
 
 ### Documentation
-
 - [TorchGeo Docs](https://torchgeo.readthedocs.io/)
 - [TerraTorch GitHub](https://github.com/IBM/terratorch)
 - [Prithvi Models](https://huggingface.co/ibm-nasa-geospatial)
 
 ### Datasets
-
 - [EuroSAT Paper](https://ieeexplore.ieee.org/document/8736785)
 - [TorchGeo Datasets](https://torchgeo.readthedocs.io/en/stable/api/datasets.html)
 
 ### Models
-
 - [TerraTorch Model Zoo](https://github.com/IBM/terratorch/blob/main/MODEL_ZOO.md)
 - [Prithvi Paper](https://arxiv.org/abs/2310.18660)
 
@@ -1630,14 +1252,12 @@ visualize_predictions(
 
 **Try these modifications:**
 
-1. **Few-Shot Variations**: Compare different K values (1, 3, 5, 10, 20, 50)
-2. **Distance Metrics**: Try Euclidean distance instead of cosine similarity for prototypes
-3. **Feature Visualization**: Use t-SNE or UMAP to visualize Prithvi feature clusters
-4. **Data Augmentation**: Add random flips, rotations for few-shot training
-5. **Learning Rate Scheduling**: Use ReduceLROnPlateau or CosineAnnealingLR
-6. **Ensemble**: Combine prototype networks + linear probing predictions
-7. **Cross-Dataset Transfer**: Train on EuroSAT, test on BigEarthNet
-8. **Export**: Save model weights and load for inference
+1. **Data Augmentation**: Add random flips, rotations, color jitter
+2. **Learning Rate Scheduling**: Use ReduceLROnPlateau or CosineAnnealingLR
+3. **Fine-tuning**: Unfreeze backbone layers for full training
+4. **Ensemble**: Combine predictions from multiple backbones
+5. **Export**: Save model weights and load for inference
+6. **Deployment**: Create a simple inference API
 
 All of these build on the foundation you learned today.
 :::
@@ -1648,30 +1268,25 @@ All of these build on the foundation you learned today.
 **Common Issues:**
 
 **"RuntimeError: CUDA out of memory"**
-
 - Reduce batch size
 - Use smaller model
 - Use gradient checkpointing
 
 **"ImportError: No module named 'terratorch'"**
-
 - Install: `pip install terratorch`
 - Verify: `python -c "import terratorch; print(terratorch.__version__)"`
 
 **"Download failed"**
-
 - Check internet connection
 - Manually download EuroSAT from source
 - Set download=False and point to existing data
 
 **"Model output shape mismatch"**
-
 - Verify band selection (6 bands for Prithvi)
 - Check num_classes matches dataset
 - Ensure transforms applied correctly
 
 **Low accuracy (<50%)**
-
 - Verify labels are correct
 - Check data normalization
 - Increase training epochs
