@@ -5,6 +5,9 @@ docs/.DS_Store
 example_course/
 LLMS-from-scratch/
 
+# Chapter data
+book/chapters/data
+
 # Python
 __pycache__/
 *.py[cod]
