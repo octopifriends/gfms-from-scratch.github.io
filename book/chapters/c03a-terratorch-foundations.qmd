@@ -473,7 +473,7 @@ The optimizer is used to update the model's parameters. We use the `Adam` optimi
 #| tangle: geogfm/training/simple_trainer.py
 #| mode: append
 
-optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 ```
 
 
