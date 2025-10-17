@@ -1,3 +1,6 @@
+.DS_Store
+docs/.DS_Store
+
 # Example course materials (template only)
 example_course/
 LLMS-from-scratch/
