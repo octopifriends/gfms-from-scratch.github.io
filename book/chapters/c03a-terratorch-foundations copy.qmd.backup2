@@ -1,0 +1,1294 @@
+---
+title: "Week 3a: TerraTorch Foundations"
+subtitle: "Traditional PyTorch approach with TorchGeo and TerraTorch"
+jupyter: geoai
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+---
+
+## Introduction
+
+This session introduces foundation model workflows using TorchGeo and TerraTorch. You'll learn to work with benchmark datasets, build production-ready models, and understand the fundamentals of geospatial deep learning with explicit PyTorch training loops.
+
+:::{.callout-tip}
+## Learning Objectives
+
+By the end of this session, you will be able to:
+
+1. Load benchmark datasets using TorchGeo
+2. Build foundation models using TerraTorch's EncoderDecoderFactory
+3. Train models using explicit PyTorch loops
+4. Evaluate performance manually and compare to benchmarks
+5. Debug model behavior by inspecting intermediate values
+6. Compare architectures by swapping backbones
+7. Understand classification vs. segmentation architectures
+:::
+
+:::{.callout-note}
+
+## Why This Approach?
+
+
+- Traditional PyTorch training loops (see every step)
+- Manual metric calculation (understand the math)
+- Explicit device management (visible `.to(device)`)
+- Debuggable workflows (inspect intermediate values)
+
+:::
+
+## Part 1: The TorchGeo/TerraTorch Ecosystem
+
+### The Library Stack
+
+```
+┌─────────────────────────────────────┐
+│   Your Project Code                 │
+├─────────────────────────────────────┤
+│   TerraTorch (Model Factory)        │ ← Foundation models
+├─────────────────────────────────────┤
+│   TorchGeo (Dataset Handling)       │ ← Geospatial data
+├─────────────────────────────────────┤
+│   PyTorch (Deep Learning)           │ ← Core framework
+└─────────────────────────────────────┘
+```
+
+**TorchGeo** provides:
+
+- Benchmark datasets (EuroSAT, BigEarthNet, etc.)
+- Geospatial data transforms
+- Samplers for efficient loading
+- Plotting and visualization utilities
+
+**TerraTorch** provides:
+
+- Pre-trained foundation models (Prithvi, SatMAE, etc.)
+- Model factory for easy configuration
+- Encoder-decoder architectures
+- Task-specific heads
+
+### The EuroSAT Benchmark
+
+EuroSAT is a land use classification dataset based on Sentinel-2 imagery.
+
+**Dataset Statistics:**
+
+- **Total images:** 27,000
+- **Image size:** 64×64 pixels
+- **Bands:** 13 (all Sentinel-2 bands)
+- **Resolution:** 10m, 20m, 60m (resampled to uniform grid)
+- **Classes:** 10 land use categories
+
+**Land Use Classes:**
+
+1. Annual Crop
+2. Forest
+3. Herbaceous Vegetation
+4. Highway
+5. Industrial
+6. Pasture
+7. Permanent Crop
+8. Residential
+9. River
+10. SeaLake
+
+**Published Benchmarks:**
+
+- ResNet-50: ~98% accuracy
+- VGG-16: ~97% accuracy
+- AlexNet: ~94% accuracy
+
+**Citation:**
+
+> Helber, P., Bischke, B., Dengel, A., & Borth, D. (2019). EuroSAT: A novel dataset and deep learning benchmark for land use and land cover classification. *IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing*, 12(7), 2217-2226.
+
+### Setup and Installation
+
+```{python}
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader
+import numpy as np
+import matplotlib.pyplot as plt
+from pathlib import Path
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Set random seeds for reproducibility
+torch.manual_seed(42)
+np.random.seed(42)
+
+# Device selection
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+    logger.info(f"Using CUDA GPU: {torch.cuda.get_device_name(0)}")
+elif torch.backends.mps.is_available():
+    device = torch.device('mps')
+    logger.info("Using Apple Silicon MPS")
+else:
+    device = torch.device('cpu')
+    logger.info("Using CPU (training will be slower)")
+
+logger.info(f"PyTorch version: {torch.__version__}")
+```
+
+## Part 2: Classification with EuroSAT
+
+### Step 1: Load the Dataset
+
+TorchGeo makes loading benchmark datasets simple and standardized.
+
+```{python}
+from torchgeo.datasets import EuroSAT
+
+# Define data directory
+data_dir = Path("data")
+data_dir.mkdir(exist_ok=True)
+
+# Load EuroSAT dataset with all bands
+# First time will download ~90MB dataset
+logger.info("Loading EuroSAT dataset...")
+train_dataset = EuroSAT(
+    root=str(data_dir),
+    split="train",
+    download=True
+)
+
+val_dataset = EuroSAT(
+    root=str(data_dir),
+    split="val",
+    download=True
+)
+
+test_dataset = EuroSAT(
+    root=str(data_dir),
+    split="test",
+    download=True
+)
+
+logger.info(f"Training samples: {len(train_dataset)}")
+logger.info(f"Validation samples: {len(val_dataset)}")
+logger.info(f"Test samples: {len(test_dataset)}")
+logger.info(f"Number of classes: {len(train_dataset.classes)}")
+logger.info(f"Classes: {train_dataset.classes}")
+```
+
+:::{.callout-note}
+## Understanding the Dataset Object
+
+The `train_dataset` is a PyTorch `Dataset` object with:
+
+- `__len__()` - Returns number of samples
+- `__getitem__(idx)` - Returns (image, label) tuple
+- `.classes` - List of class names
+- `.split` - Current split (train/val/test)
+
+This standardization means the same code works for any TorchGeo dataset.
+:::
+
+### Step 2: Explore the Data
+
+Let's visualize samples from each class to understand what we're working with.
+
+```{python}
+# Get one sample from each class
+# We'll build a mapping from class index (int) to sample image
+samples_per_class = {}
+for idx in range(len(train_dataset)):
+    sample = train_dataset[idx]
+    image = sample["image"]
+    # Get integer class label (regardless of tensor/scalar type)
+    label = sample["label"]
+    # Handle both 0-dim tensor and int
+    class_idx = int(label) if hasattr(label, "item") else label
+
+    if class_idx not in samples_per_class:
+        samples_per_class[class_idx] = image
+
+    if len(samples_per_class) == len(train_dataset.classes):
+        break
+
+# Create RGB composite for visualization
+# EuroSAT bands: [B01, B02, B03, B04, B05, B06, B07, B08, B8A, B09, B10, B11, B12]
+# RGB = B04 (Red), B03 (Green), B02 (Blue) = indices [3, 2, 1]
+
+fig, axes = plt.subplots(2, 5, figsize=(15, 6))
+axes = axes.ravel()
+
+for idx, (label, image) in enumerate(samples_per_class.items()):
+    # Extract RGB bands
+    rgb = image[[3, 2, 1], :, :].numpy()  # Red, Green, Blue
+    rgb = np.transpose(rgb, (1, 2, 0))  # (H, W, C)
+
+    # Normalize for display (using percentile stretch)
+    p2, p98 = np.percentile(rgb, (2, 98))
+    rgb_norm = np.clip((rgb - p2) / (p98 - p2), 0, 1)
+
+    axes[idx].imshow(rgb_norm)
+    axes[idx].set_title(train_dataset.classes[label])
+    axes[idx].axis('off')
+
+plt.tight_layout()
+plt.show()
+
+# Print band information
+logger.info(f"\nImage shape: {image.shape}")
+logger.info(f"Bands: 13 Sentinel-2 bands")
+logger.info(f"Spatial size: 64×64 pixels")
+```
+
+:::{.callout-tip}
+## Band Selection Strategy
+
+**Challenge:** Prithvi expects 6 bands, EuroSAT has 13 bands.
+
+**Solution:** Select the 6 bands Prithvi was trained on:
+- B02 (Blue) - 10m
+- B03 (Green) - 10m
+- B04 (Red) - 10m
+- B08 (NIR) - 10m
+- B11 (SWIR1) - 20m
+- B12 (SWIR2) - 20m
+
+EuroSAT indices: [1, 2, 3, 7, 11, 12]
+:::
+
+### Step 3: Create Data Transforms
+
+We need to select the correct bands and normalize the data for Prithvi.
+
+```{python}
+#| tangle: geogfm/training/eurosat_utils.py
+import torch
+
+def select_prithvi_bands(sample):
+    """
+    Select the 6 bands Prithvi was trained on from EuroSAT's 13 bands.
+
+    Parameters
+    ----------
+    sample : dict
+        TorchGeo sample with 'image' and 'label' keys
+
+    Returns
+    -------
+    dict
+        Sample with 6-band image
+    """
+    # EuroSAT band order: [B01, B02, B03, B04, B05, B06, B07, B08, B8A, B09, B10, B11, B12]
+    # Prithvi bands: [B02, B03, B04, B08, B11, B12]
+    # Indices: [1, 2, 3, 7, 11, 12]
+
+    image = sample['image']
+    selected_bands = image[[1, 2, 3, 7, 11, 12], :, :]
+
+    return {
+        'image': selected_bands,
+        'label': sample['label']
+    }
+
+def normalize_prithvi(sample):
+    """
+    Normalize imagery for Prithvi using per-sample normalization.
+
+    In production, you would want to use global statistics from the training set.
+    For this demo, we use per-sample percentile normalization.
+
+    Parameters
+    ----------
+    sample : dict
+        Sample with 'image' and 'label'
+
+    Returns
+    -------
+    dict
+        Sample with normalized image
+    """
+    image = sample['image']
+
+    # Normalize each band independently using 2nd-98th percentile
+    normalized = torch.zeros_like(image)
+    for c in range(image.shape[0]):
+        band = image[c]
+        p2, p98 = torch.quantile(band, torch.tensor([0.02, 0.98]))
+        normalized[c] = torch.clamp((band - p2) / (p98 - p2 + 1e-8), 0, 1)
+
+    return {
+        'image': normalized,
+        'label': sample['label']
+    }
+```
+
+```{python}
+from torchvision import transforms
+
+# Compose transforms
+transform = transforms.Compose([
+    select_prithvi_bands,
+    # normalize_prithvi
+])
+
+# Apply transforms to datasets
+class TransformedDataset(torch.utils.data.Dataset):
+    """Wrapper to apply transforms to TorchGeo datasets."""
+    def __init__(self, dataset, transform=None):
+        self.dataset = dataset
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.dataset)
+
+    def __getitem__(self, idx):
+        sample = self.dataset[idx]
+        if self.transform:
+            sample = self.transform(sample)
+        return sample['image'], sample['label']
+
+train_dataset_transformed = TransformedDataset(train_dataset, transform)
+val_dataset_transformed = TransformedDataset(val_dataset, transform)
+test_dataset_transformed = TransformedDataset(test_dataset, transform)
+
+# Test the transformation
+sample_img, sample_label = train_dataset_transformed[0]
+logger.info(f"Transformed image shape: {sample_img.shape}")
+logger.info(f"Expected: (6, 64, 64)")
+logger.info(f"Label: {sample_label} ({train_dataset.classes[sample_label]})")
+```
+
+### Step 4: Create DataLoaders
+
+DataLoaders handle batching, shuffling, and parallel data loading.
+
+```{python}
+# Create DataLoaders
+train_loader = DataLoader(
+    train_dataset_transformed,
+    batch_size=32,
+    shuffle=True,
+    num_workers=0  # Set to 0 for Windows, 4+ for Linux/Mac
+)
+
+val_loader = DataLoader(
+    val_dataset_transformed,
+    batch_size=32,
+    shuffle=False,
+    num_workers=0
+)
+
+test_loader = DataLoader(
+    test_dataset_transformed,
+    batch_size=32,
+    shuffle=False,
+    num_workers=0
+)
+
+logger.info(f"Training batches: {len(train_loader)}")
+logger.info(f"Validation batches: {len(val_loader)}")
+logger.info(f"Test batches: {len(test_loader)}")
+
+# Test a batch
+images, labels = next(iter(train_loader))
+logger.info(f"\nBatch shape: {images.shape}")
+logger.info(f"Labels shape: {labels.shape}")
+logger.info(f"Batch on device will be: {images.to(device).device}")
+```
+
+### Step 5: Build the Model
+
+TerraTorch's `EncoderDecoderFactory` makes it simple to build models.
+
+```{python}
+from terratorch.models import EncoderDecoderFactory
+
+# Create model factory
+model_factory = EncoderDecoderFactory()
+
+# Build classification model with Prithvi backbone
+model = model_factory.build_model(
+    task="classification",
+    backbone="prithvi_eo_v1_100",  # 100M parameter Prithvi
+    decoder="FCNDecoder",           # Simple fully-convolutional decoder
+    num_classes=10                  # EuroSAT has 10 classes
+)
+
+# Move model to device
+model = model.to(device)
+
+# Count parameters
+total_params = sum(p.numel() for p in model.parameters())
+trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+logger.info(f"Model loaded: Prithvi-100M with FCN decoder")
+logger.info(f"Total parameters: {total_params:,}")
+logger.info(f"Trainable parameters: {trainable_params:,}")
+logger.info(f"Model on device: {next(model.parameters()).device}")
+```
+
+:::{.callout-note}
+## Understanding the Architecture
+
+**Encoder (Backbone):**
+- `prithvi_eo_v1_100` - Vision Transformer pretrained on HLS imagery
+- Extracts spatial features from 6-band input
+- Parameters frozen or fine-tuned depending on task
+
+**Decoder (Head):**
+- `FCNDecoder` - Fully Convolutional Network
+- Aggregates encoder features
+- Produces class logits (10 outputs for 10 classes)
+
+**Alternative backbones:** `prithvi_eo_v2_300`, `satmae`, `scalemae`, `clay`, `timm_resnet50`
+:::
+
+### Step 6: Define Loss Function
+
+The loss function is used to train the model. It is a measure of how good the model is at predicting the correct class. We use the `CrossEntropyLoss` loss function for classification tasks.
+
+```{python}
+#| tangle: geogfm/training/simple_trainer.py
+
+criterion = nn.CrossEntropyLoss()
+```
+
+### Step 7: Define Optimizer
+
+The optimizer is used to update the model's parameters. We use the `Adam` optimizer for classification tasks. It is a [stochastic gradient descent](https://en.wikipedia.org/wiki/Stochastic_gradient_descent) optimizer that is a popular optimizer for deep learning.
+
+```{python}
+#| tangle: geogfm/training/simple_trainer.py
+#| mode: append
+
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+```
+
+
+### Step 6: Define Training Loop
+
+Let's break down what happens during training and validation of a deep learning model:
+
+**Training Loop: Step-by-Step**
+
+1. **Set model to training mode**: This enables layers like dropout and batch normalization to behave appropriately during training.
+2. **Iterate over training batches**: For each batch in the training data:
+   - **Move data to the device** (CPU or GPU).
+   - **Zero (reset) the gradients** from the previous step.
+   - **Forward pass**: Input images are passed through the model to produce predictions.
+   - **Compute the loss**: The loss function compares predictions to ground-truth labels.
+   - **Backward pass**: Compute gradients of the loss with respect to each parameter.
+   - **Optimizer step**: Update parameters by taking a step in the direction that reduces the loss.
+   - **Track statistics**: Optionally record loss and accuracy for reporting.
+
+
+```{python}
+#| tangle: geogfm/training/simple_trainer.py
+import torch
+import torch.nn as nn
+
+def train_one_epoch(model, train_loader, criterion, optimizer, device):
+    """
+    Train for one epoch.
+
+    Parameters
+    ----------
+    model : nn.Module
+        The model to train
+    train_loader : DataLoader
+        Training data loader
+    criterion : nn.Module
+        Loss function
+    optimizer : torch.optim.Optimizer
+        Optimizer for parameter updates
+    device : torch.device
+        Device to run on
+
+    Returns
+    -------
+    tuple
+        (average_loss, accuracy)
+    """
+    model.train() # Set model to training mode
+
+    running_loss = 0.0 # Running loss
+    correct = 0 # Correct predictions
+    total = 0 # Total predictions
+
+    for images, labels in train_loader:
+        # Move data to device
+        images = images.to(device) # Move data to device
+        labels = labels.to(device) # Move data to device
+
+        # Zero gradients
+        optimizer.zero_grad()
+
+        # Forward pass
+        outputs = model(images)
+
+        # TerraTorch models return ModelOutput object
+        # Extract the tensor
+        if hasattr(outputs, 'output'):
+            outputs = outputs.output # Extract tensor from ModelOutput
+
+        # Compute loss
+        loss = criterion(outputs, labels) 
+
+        # Backward pass
+        loss.backward()
+
+        # Update parameters
+        optimizer.step()
+
+        # Track metrics
+        running_loss += loss.item() # Add loss to running loss
+        _, predicted = outputs.max(1) # Get predicted class
+        total += labels.size(0) # Add number of labels to total
+        # Add number of correct predictions to total
+        correct += predicted.eq(labels).sum().item()
+
+    epoch_loss = running_loss / len(train_loader) # Calculate average loss
+    epoch_acc = correct / total # Calculate average accuracy
+
+    return epoch_loss, epoch_acc
+```
+
+
+**Validation Loop: Step-by-Step**
+1. **Set model to evaluation mode**: This disables/dropouts and sets batch normalization to use running statistics.
+2. **Disable gradients**: Turn off gradient computation to reduce memory and computation cost.
+3. **Iterate over validation batches**: For each batch in the validation data:
+   - **Move data to the device**.
+   - **Forward pass**: Pass images through the model to get predictions.
+   - **Compute the loss**: Evaluate how well predictions match ground-truth labels.
+   - **Track statistics**: Record loss and accuracy, just as in training.
+
+```{python}
+#| tangle: geogfm/training/simple_trainer.py
+#| mode: append
+
+def validate(model, val_loader, criterion, device):
+    """
+    Validate the model.
+
+    Parameters
+    ----------
+    model : nn.Module
+        The model to validate
+    val_loader : DataLoader
+        Validation data loader
+    criterion : nn.Module
+        Loss function
+    device : torch.device
+        Device to run on
+
+    Returns
+    -------
+    tuple
+        (average_loss, accuracy)
+    """
+    model.eval() # Set model to evaluation mode
+
+    running_loss = 0.0 # Running loss
+    correct = 0 # Correct predictions
+    total = 0 # Total predictions
+
+    with torch.no_grad():
+        for images, labels in val_loader:
+            # Move data to device
+            images = images.to(device) # Move data to device
+            labels = labels.to(device) # Move data to device
+
+            # Forward pass
+            outputs = model(images)
+
+            # Extract tensor from ModelOutput
+            if hasattr(outputs, 'output'):
+                outputs = outputs.output # Extract tensor from ModelOutput
+
+            # Compute loss
+            loss = criterion(outputs, labels) # Compute loss
+
+            # Track metrics
+            running_loss += loss.item() # Add loss to running loss
+            _, predicted = outputs.max(1) # Get predicted class
+            total += labels.size(0) # Add number of labels to total
+            # Add number of correct predictions to total
+            correct += predicted.eq(labels).sum().item()
+
+    epoch_loss = running_loss / len(val_loader) # Calculate average loss
+    epoch_acc = correct / total # Calculate average accuracy
+
+    return epoch_loss, epoch_acc
+```
+
+
+**Key Differences between Training and Validation Loops**:
+- **Parameter updates**: Only the training loop updates parameters via backpropagation and optimizer steps; the validation loop does not.
+- **Model mode**: The training loop uses `model.train()`; the validation loop uses `model.eval()`.
+- **Gradient calculation**: Gradients are computed (and accumulated) in training, but turned off in validation (using `torch.no_grad()`).
+- **Purpose**: Training optimizes the model's weights, while validation evaluates the model's current performance without influencing parameters.
+
+By writing out these loops explicitly, we gain transparency: it's much easier to spot bugs, add logging, customize behavior, and truly understand every step of model training.
+
+### Step 7: Train the Model
+
+Let's put it all together in the `train_model` function. This function:
+
+- Implements both the training and validation loops. 
+- Sets up the training and validation data loaders, and the optimizer. 
+- Records the training and validation loss and accuracy for each epoch. 
+- Prints the progress every 5 epochs. 
+- Returns the training history (loss and accuracy for each epoch).
+
+```{python}
+#| tangle: geogfm/training/simple_trainer.py
+#| mode: append
+
+def train_model(
+    model, # Model to train
+    train_loader, 
+    val_loader, # Validation data
+    device=None, # Device to use for training 
+    epochs=15, # Number of epochs
+    lr=1e-4, # Learning rate
+    criterion=None, # Loss function
+    optimizer=None, # Optimizer
+):
+    """
+    Full training loop.
+
+    Parameters
+    ----------
+    model : nn.Module
+        Model to train
+    train_loader : DataLoader
+        Training data
+    val_loader : DataLoader
+        Validation data
+    epochs : int
+        Number of epochs, default is 15
+    lr : float
+        Learning rate, default is 1e-4
+    device : torch.device
+        Device to use
+    criterion : nn.Module
+        Loss function, default is CrossEntropyLoss
+    optimizer : torch.optim.Optimizer
+        Optimizer, default is Adam
+
+    Returns
+    -------
+    dict
+        Training history with losses and accuracies
+    """
+    # Setup training
+    if criterion is None:
+        logger.info("Using default loss function: CrossEntropyLoss")
+        criterion = nn.CrossEntropyLoss()
+    if optimizer is None:
+        logger.info("Using default optimizer: Adam")
+        optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    if device is None:
+        logger.info("Using default device: cpu")
+        device = 'cpu'
+
+    history = {
+        'train_loss': [],  # Training loss
+        'train_acc': [],  # Training accuracy
+        'val_loss': [],  # Validation loss
+        'val_acc': []  # Validation accuracy
+    }
+
+    logger.info(f"Training for {epochs} epochs...")
+    logger.info(f"Device: {device}")
+    logger.info(f"Learning rate: {lr}")
+    logger.info(f"")
+
+    for epoch in range(epochs):
+        # Train
+        train_loss, train_acc = train_one_epoch(
+            model, train_loader, criterion, optimizer, device
+        )
+
+        # Validate
+        val_loss, val_acc = validate(
+            model, val_loader, criterion, device
+        )
+
+        # Record history
+        history['train_loss'].append(train_loss)
+        history['train_acc'].append(train_acc)
+        history['val_loss'].append(val_loss)
+        history['val_acc'].append(val_acc)
+
+        # Print progress every 5 epochs
+        if (epoch + 1) % 5 == 0 or epoch == 0:
+            logger.info(f"Epoch {epoch+1}/{epochs}")
+            logger.info(f"  Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.4f}")
+            logger.info(f"  Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}")
+            logger.info(f"")
+
+    return history
+```
+
+### Step 8: Train the Model
+
+    Before we train the model, let's set up some key training parameters. This is just for demonstration purposes. In practice, you would want to use a larger number of epochs and a smaller learning rate.
+
+- `EPOCHS`: The number of complete passes through the training dataset. For demonstration, we'll use 15 epochs. Increasing this can lead to better results, but takes longer.
+- `LEARNING_RATE`: This controls how much the model weights are updated during training. A smaller value (like `1e-4`) means smaller, more stable updates—generally safer for fine-tuning.
+- We'll use these values in the training loop to show how the model gradually learns and improves over time.
+
+Each epoch is a complete pass through the training dataset, and the model is updated based on the loss and accuracy. One EPOCH will take longer than one batch, because it will process all the training data.
+
+```{python}
+# Training configuration
+EPOCHS = 5
+LEARNING_RATE = 1e-4
+
+# Train the model
+history = train_model(
+    model=model,
+    train_loader=train_loader,
+    val_loader=val_loader,
+    epochs=EPOCHS,
+    lr=LEARNING_RATE,
+    device=device, 
+    criterion=criterion, # Our CrossEntropyLoss loss function
+    optimizer=optimizer # Our Adam optimizer
+)
+
+logger.info("Training complete!")
+```
+
+:::{.callout-tip}
+## Training Tips
+
+**For better accuracy (production):**
+
+- Increase epochs to 50-100
+- Add learning rate scheduling
+- Use data augmentation (random flips, rotations)
+- Fine-tune the entire model (unfreeze backbone)
+
+**For faster training:**
+
+- Reduce batch size if GPU memory limited
+- Use mixed precision (torch.cuda.amp)
+- Freeze backbone layers (only train decoder)
+:::
+
+### Step 9: Visualize Training Progress
+
+```{python}
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
+
+epochs_range = range(1, EPOCHS + 1)
+
+# Plot loss
+ax1.plot(epochs_range, history['train_loss'], label='Train', marker='o')
+ax1.plot(epochs_range, history['val_loss'], label='Validation', marker='s')
+ax1.set_xlabel('Epoch')
+ax1.set_ylabel('Loss')
+ax1.set_title('Training and Validation Loss')
+ax1.legend()
+ax1.grid(alpha=0.3)
+
+# Plot accuracy
+ax2.plot(epochs_range, history['train_acc'], label='Train', marker='o')
+ax2.plot(epochs_range, history['val_acc'], label='Validation', marker='s')
+ax2.set_xlabel('Epoch')
+ax2.set_ylabel('Accuracy')
+ax2.set_title('Training and Validation Accuracy')
+ax2.legend()
+ax2.grid(alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+logger.info(f"Final Training Accuracy: {history['train_acc'][-1]:.4f}")
+logger.info(f"Final Validation Accuracy: {history['val_acc'][-1]:.4f}")
+```
+
+### Step 10: Evaluate on Test Set
+
+```{python}
+#| tangle: geogfm/training/simple_trainer.py
+#| mode: append
+
+def evaluate_model(model, test_loader, device):
+    """
+    Evaluate model on test set.
+
+    Parameters
+    ----------
+    model : nn.Module
+        Trained model
+    test_loader : DataLoader
+        Test data
+    device : torch.device
+        Device to use
+
+    Returns
+    -------
+    dict
+        Test metrics including accuracy and per-class accuracy
+    """
+    model.eval()
+
+    correct = 0
+    total = 0
+    class_correct = {}
+    class_total = {}
+
+    with torch.no_grad():
+        for images, labels in test_loader:
+            images = images.to(device)
+            labels = labels.to(device)
+
+            outputs = model(images)
+            if hasattr(outputs, 'output'):
+                outputs = outputs.output
+
+            _, predicted = outputs.max(1)
+            total += labels.size(0)
+            correct += predicted.eq(labels).sum().item()
+
+            # Per-class accuracy
+            for label, pred in zip(labels, predicted):
+                label_item = label.item()
+                if label_item not in class_correct:
+                    class_correct[label_item] = 0
+                    class_total[label_item] = 0
+
+                class_total[label_item] += 1
+                if label == pred:
+                    class_correct[label_item] += 1
+
+    overall_acc = correct / total
+
+    # Compute per-class accuracies
+    per_class_acc = {}
+    for label_idx in class_correct.keys():
+        per_class_acc[label_idx] = class_correct[label_idx] / class_total[label_idx]
+
+    return {
+        'overall_accuracy': overall_acc,
+        'per_class_accuracy': per_class_acc,
+        'total_samples': total
+    }
+```
+
+```{python}
+# Evaluate on test set
+test_results = evaluate_model(model, test_loader, device)
+
+logger.info(f"Test Set Evaluation")
+logger.info(f"=" * 50)
+logger.info(f"Overall Accuracy: {test_results['overall_accuracy']:.4f}")
+logger.info(f"Total Test Samples: {test_results['total_samples']}")
+logger.info(f"Per-Class Accuracy:")
+logger.info(f"-" * 50)
+
+for label_idx, acc in sorted(test_results['per_class_accuracy'].items()):
+    class_name = train_dataset.classes[label_idx]
+    logger.info(f"  {class_name:20s}: {acc:.4f}")
+```
+
+:::{.callout-note}
+## Expected Performance
+
+With 15 epochs of training, you should see:
+
+- **Overall accuracy: 80-95%**
+- Higher accuracy on distinct classes (Forest, Water)
+- Lower accuracy on similar classes (Annual vs Permanent Crop)
+
+For comparison to published benchmarks:
+
+- ResNet-50: ~98%
+- Our Prithvi model (15 epochs): 80-95%
+- Our Prithvi model (100 epochs): 95-98% (expected)
+:::
+
+### Step 11: Visualize Predictions
+
+Let's see what the model is predicting.
+
+```{python}
+#| tangle: geogfm/training/simple_trainer.py
+#| mode: append
+
+def visualize_predictions(model, dataset, class_names, device, num_samples=9):
+    """
+    Visualize model predictions on random samples.
+
+    Parameters
+    ----------
+    model : nn.Module
+        Trained model
+    dataset : Dataset
+        Dataset to sample from
+    class_names : list
+        List of class names
+    device : torch.device
+        Device to use
+    num_samples : int
+        Number of samples to visualize
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    model.eval()
+
+    # Get random samples
+    indices = np.random.choice(len(dataset), num_samples, replace=False)
+
+    # Create subplot grid
+    rows = int(np.sqrt(num_samples))
+    cols = int(np.ceil(num_samples / rows))
+
+    fig, axes = plt.subplots(rows, cols, figsize=(3*cols, 3*rows))
+    if num_samples == 1:
+        axes = [axes]
+    else:
+        axes = axes.ravel()
+
+    with torch.no_grad():
+        for idx, sample_idx in enumerate(indices):
+            image, true_label = dataset[sample_idx]
+
+            # Get prediction
+            image_batch = image.unsqueeze(0).to(device)
+            output = model(image_batch)
+            if hasattr(output, 'output'):
+                output = output.output
+
+            _, predicted = output.max(1)
+            pred_label = predicted.item()
+
+            # Create RGB visualization from first 3 bands
+            rgb = image[[2, 1, 0], :, :].numpy()  # Assuming bands 2,1,0 are R,G,B-like
+            rgb = np.transpose(rgb, (1, 2, 0))
+
+            # Normalize for display
+            rgb_min, rgb_max = rgb.min(), rgb.max()
+            if rgb_max > rgb_min:
+                rgb_norm = (rgb - rgb_min) / (rgb_max - rgb_min)
+            else:
+                rgb_norm = rgb
+
+            # Plot
+            axes[idx].imshow(rgb_norm)
+
+            # Color code: green if correct, red if wrong
+            color = 'green' if pred_label == true_label else 'red'
+            axes[idx].set_title(
+                f"True: {class_names[true_label]}\n"
+                f"Pred: {class_names[pred_label]}",
+                color=color,
+                fontsize=9
+            )
+            axes[idx].axis('off')
+
+    plt.tight_layout()
+    plt.show()
+```
+
+```{python}
+# Visualize predictions
+visualize_predictions(
+    model=model,
+    dataset=test_dataset_transformed,
+    class_names=train_dataset.classes,
+    device=device,
+    num_samples=9
+)
+```
+
+## Part 3: Segmentation Architecture
+
+Classification assigns one label per image. Segmentation assigns one label per **pixel**.
+
+### Understanding the Difference
+
+```
+Classification:
+┌─────────────┐
+│   Image     │  →  Model  →  [0.1, 0.7, 0.2]  →  Class 1 (Forest)
+│  (64×64×6)  │
+└─────────────┘
+
+Segmentation:
+┌─────────────┐
+│   Image     │  →  Model  →  Pixel Map       →  Per-pixel labels
+│  (64×64×6)  │              (64×64×num_classes)  (64×64)
+└─────────────┘
+```
+
+**Key Architectural Differences:**
+
+| Aspect | Classification | Segmentation |
+|--------|---------------|--------------|
+| Output | Single vector | Spatial map |
+| Decoder | Global pooling + FC | Upsampling layers |
+| Loss | CrossEntropy on logits | CrossEntropy per pixel |
+| Use case | Land use type | Land cover map |
+
+### Build Segmentation Model
+
+```{python}
+# Build segmentation model with same backbone
+seg_model = model_factory.build_model(
+    task="segmentation",
+    backbone="prithvi_eo_v1_100",
+    decoder="UperNetDecoder",  # U-Net style decoder
+    num_classes=10  # Same classes, but per-pixel
+)
+
+# Note: UperNet decoder has MPS compatibility issues with adaptive pooling
+# Use CPU for segmentation demo (acceptable for inference-only demo)
+seg_device = torch.device('cpu') if str(device) == 'mps' else device
+
+if str(device) == 'mps':
+    logger.info("Note: Using CPU for segmentation model (MPS has adaptive pooling limitations)")
+
+seg_model = seg_model.to(seg_device)
+
+logger.info(f"Segmentation Model")
+logger.info(f"Backbone: Prithvi-100M (shared with classification)")
+logger.info(f"Decoder: UperNetDecoder")
+logger.info(f"Device: {seg_device}")
+logger.info(f"Parameters: {sum(p.numel() for p in seg_model.parameters()):,}")
+```
+
+:::{.callout-note}
+## Decoder Options
+
+**FCNDecoder** (Classification):
+
+- Global average pooling
+- Fully connected layers
+- Output: (batch, num_classes)
+
+**UNetDecoder** (Segmentation):
+
+- Encoder-decoder with skip connections
+- Upsampling layers
+- Output: (batch, num_classes, height, width)
+
+**UperNetDecoder** (Segmentation):
+
+- Pyramid pooling
+- Multi-scale features
+- Output: (batch, num_classes, height, width)
+:::
+
+:::{.callout-warning}
+## MPS Compatibility Note
+
+**Issue:** UperNetDecoder uses `AdaptiveAvgPool2d` which has limitations on Apple Silicon (MPS).
+
+**Workaround:** We use CPU for segmentation inference demo. This is acceptable for:
+
+- Inference-only demonstrations
+- Small batches
+- Educational purposes
+
+**For production:** Use CUDA GPUs or switch to UNetDecoder which has better MPS support.
+
+**Reference:** [PyTorch Issue #96056](https://github.com/pytorch/pytorch/issues/96056)
+:::
+
+### Inference Demo
+
+For this session, we'll run inference only (no training) to demonstrate the architecture.
+
+```{python}
+# Get a batch from test set
+test_images, test_labels = next(iter(test_loader))
+test_images = test_images.to(seg_device)  # Use seg_device (may be CPU)
+
+# Run inference
+seg_model.eval()
+with torch.no_grad():
+    seg_outputs = seg_model(test_images)
+    if hasattr(seg_outputs, 'output'):
+        seg_outputs = seg_outputs.output
+
+logger.info(f"Input shape: {test_images.shape}")
+logger.info(f"Output shape: {seg_outputs.shape}")
+logger.info(f"Output interpretation: (batch=32, classes=10, height=64, width=64)")
+logger.info(f"")
+logger.info(f"Each pixel gets a 10-class probability distribution")
+
+# Convert to class predictions
+seg_predictions = seg_outputs.argmax(dim=1)
+logger.info(f"Prediction shape: {seg_predictions.shape}")
+logger.info(f"Each pixel is assigned to one of 10 classes")
+```
+
+### Visualize Segmentation Output
+
+```{python}
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Visualize a few samples
+num_vis = 4
+fig, axes = plt.subplots(num_vis, 2, figsize=(8, num_vis*3))
+
+for i in range(num_vis):
+    # RGB visualization
+    img = test_images[i].cpu()
+    rgb = img[[2, 1, 0], :, :].numpy()
+    rgb = np.transpose(rgb, (1, 2, 0))
+    rgb_min, rgb_max = rgb.min(), rgb.max()
+    if rgb_max > rgb_min:
+        rgb_norm = (rgb - rgb_min) / (rgb_max - rgb_min)
+    else:
+        rgb_norm = rgb
+
+    axes[i, 0].imshow(rgb_norm)
+    axes[i, 0].set_title(f"Sample {i+1}: Input Image")
+    axes[i, 0].axis('off')
+
+    # Segmentation map
+    seg_map = seg_predictions[i].cpu().numpy()
+    im = axes[i, 1].imshow(seg_map, cmap='tab10', vmin=0, vmax=9)
+    axes[i, 1].set_title(f"Sample {i+1}: Predicted Segmentation")
+    axes[i, 1].axis('off')
+
+plt.colorbar(im, ax=axes[:, 1].ravel().tolist(), label='Class ID', fraction=0.046)
+plt.tight_layout()
+plt.show()
+
+logger.info("Note: Model is untrained, so predictions are random.")
+logger.info("Training would require pixel-wise labels (not available in EuroSAT).")
+logger.info("See Week 3b for full segmentation training on appropriate datasets.")
+```
+
+:::{.callout-tip}
+## Segmentation Training
+
+To properly train a segmentation model, you would need:
+
+1. **Pixel-wise labels** - EuroSAT only has image-level labels
+2. **Appropriate dataset** - Use ChesapeakeCVPR, LandCoverAI, or similar
+3. **Segmentation loss** - CrossEntropyLoss per pixel
+4. **Different metrics** - IoU, Dice coefficient, pixel accuracy
+
+**For your projects:** Use TorchGeo segmentation datasets like:
+
+- `ChesapeakeCVPR` - Land cover segmentation
+- `LandCoverAI` - High-resolution land cover
+- `SpaceNet` - Building footprint segmentation
+:::
+
+
+## Key Takeaways
+
+### What You Learned
+
+1. **Library-Native Workflows**
+
+   - TorchGeo for standardized datasets
+   - TerraTorch for foundation models
+   - No custom data loading needed
+
+2. **Benchmark Best Practices**
+
+   - Real ground truth labels
+   - Standardized train/val/test splits
+   - Comparable to published results
+
+3. **Explicit Training Loops**
+
+   - Full visibility into training process
+   - Easy to debug and modify
+   - Understand every step
+
+4. **Architecture Comparison**
+
+   - Classification vs. segmentation
+   - Different backbones
+   - Performance vs. computational tradeoffs
+
+### Next Steps
+
+**Week 3b will introduce:**
+
+- PyTorch Lightning for automation
+- TerraTorch Tasks interface
+- Experiment tracking and logging
+- Multi-GPU training
+- Production deployment patterns
+
+**For now, practice with:**
+
+- Different TorchGeo datasets (BigEarthNet, Sen12MS, etc.)
+- Different backbones (SatMAE, ScaleMAE, Clay)
+- Different tasks (segmentation on Chesapeake, etc.)
+- Longer training runs (50-100 epochs)
+
+## Resources
+
+### Documentation
+- [TorchGeo Docs](https://torchgeo.readthedocs.io/)
+- [TerraTorch GitHub](https://github.com/IBM/terratorch)
+- [Prithvi Models](https://huggingface.co/ibm-nasa-geospatial)
+
+### Datasets
+- [EuroSAT Paper](https://ieeexplore.ieee.org/document/8736785)
+- [TorchGeo Datasets](https://torchgeo.readthedocs.io/en/stable/api/datasets.html)
+
+### Models
+- [TerraTorch Model Zoo](https://github.com/IBM/terratorch/blob/main/MODEL_ZOO.md)
+- [Prithvi Paper](https://arxiv.org/abs/2310.18660)
+
+:::{.callout-tip}
+## Extension Ideas
+
+**Try these modifications:**
+
+1. **Data Augmentation**: Add random flips, rotations, color jitter
+2. **Learning Rate Scheduling**: Use ReduceLROnPlateau or CosineAnnealingLR
+3. **Fine-tuning**: Unfreeze backbone layers for full training
+4. **Ensemble**: Combine predictions from multiple backbones
+5. **Export**: Save model weights and load for inference
+6. **Deployment**: Create a simple inference API
+
+All of these build on the foundation you learned today.
+:::
+
+:::{.callout-warning}
+## Troubleshooting
+
+**Common Issues:**
+
+**"RuntimeError: CUDA out of memory"**
+- Reduce batch size
+- Use smaller model
+- Use gradient checkpointing
+
+**"ImportError: No module named 'terratorch'"**
+- Install: `pip install terratorch`
+- Verify: `python -c "import terratorch; print(terratorch.__version__)"`
+
+**"Download failed"**
+- Check internet connection
+- Manually download EuroSAT from source
+- Set download=False and point to existing data
+
+**"Model output shape mismatch"**
+- Verify band selection (6 bands for Prithvi)
+- Check num_classes matches dataset
+- Ensure transforms applied correctly
+
+**Low accuracy (<50%)**
+- Verify labels are correct
+- Check data normalization
+- Increase training epochs
+- Try different learning rate
+:::

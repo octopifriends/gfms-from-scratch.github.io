@@ -7,30 +7,17 @@ format:
     toc: true
     toc-depth: 3
     code-fold: false
+    number-sections: true
 ---
 
 ## Introduction
 
 This week we'll build production-ready preprocessing pipelines that can handle multiple Sentinel-2 scenes efficiently. You'll learn to process entire datasets, not just single scenes, with cloud masking, reprojection, and mosaicking.
 
-## Prerequisites
-
-Before starting this session, ensure you have:
-
-- Completed Week 1: Geospatial Data Foundations
-- Activated the `geoAI` conda environment
-- Access to UCSB AI Sandbox or local environment with 8GB+ RAM
-- Basic familiarity with xarray and rasterio from Week 1
 
 :::{.callout-note}
-## Optional NetCDF4 Installation
-For optimal performance saving data cubes, install netCDF4:
-```bash
-conda install netcdf4
-# or
-mamba install netcdf4
-```
-If netCDF4 is unavailable, the code will automatically fallback to scipy or zarr formats.
+## Data Storage Format
+This session saves data cubes in NetCDF format using the scipy engine, which is available by default in the conda environment. No additional installation is required.
 :::
 
 :::{.callout-warning}
@@ -107,17 +94,17 @@ required_packages = [
 ]
 env_status = verify_environment(required_packages)
 
-# Set up study area - Central Valley, California (agriculture focus)
-central_valley_bbox = [-121.5, 36.5, -120.0, 38.0]  # [west, south, east, north]
+# Set up study area - Santa Barbara, California (coastal urban/natural interface)
+santa_barbara_bbox = [-120.2, 34.3, -119.5, 34.6]  # [west, south, east, north]
 
 # Define longer time range for trend analysis
 start_date = "2024-06-01"
 end_date = "2024-09-01"
 max_cloud_cover = 15  # More restrictive for cleaner mosaics
 
-print(f"🗺️ Study Area: Central Valley, California")
-print(f"📅 Time Range: {start_date} to {end_date}")
-print(f"☁️ Max Cloud Cover: {max_cloud_cover}%")
+print(f"Study Area: Santa Barbara, California")
+print(f"Time Range: {start_date} to {end_date}")
+print(f"Max Cloud Cover: {max_cloud_cover}%")
 ```
 
 ### Search for Multiple Scenes
@@ -127,15 +114,15 @@ print(f"☁️ Max Cloud Cover: {max_cloud_cover}%")
 auth_status = setup_planetary_computer_auth()
 
 # Search for scenes using our enhanced search function
-print("🔍 Searching for multiple Sentinel-2 scenes...")
+print("Searching for multiple Sentinel-2 scenes...")
 items = search_sentinel2_scenes(
-    bbox=central_valley_bbox,
+    bbox=santa_barbara_bbox,
     date_range=f"{start_date}/{end_date}",
     cloud_cover_max=max_cloud_cover,
     limit=50
 )
 
-print(f"📸 Found {len(items)} scenes")
+print(f"Found {len(items)} scenes")
 
 # Organize scenes by date and tile
 scene_info = []
@@ -155,17 +142,17 @@ for item in items:
 
 # Convert to DataFrame for easier analysis
 scenes_df = pd.DataFrame(scene_info)
-print(f"\n📊 Scene Distribution:")
-print(f"   Unique dates: {scenes_df['date'].nunique()}")
-print(f"   Unique tiles: {scenes_df['tile'].nunique()}")
-print(f"   Date range: {scenes_df['date'].min()} to {scenes_df['date'].max()}")
+print(f"\nScene Distribution:")
+print(f"  Unique dates: {scenes_df['date'].nunique()}")
+print(f"  Unique tiles: {scenes_df['tile'].nunique()}")
+print(f"  Date range: {scenes_df['date'].min()} to {scenes_df['date'].max()}")
 
 # Show scenes by tile
-print(f"\n🗂️ Scenes by Tile:")
+print(f"\nScenes by Tile:")
 tile_counts = scenes_df.groupby('tile').size().sort_values(ascending=False)
 for tile, count in tile_counts.head().items():
     avg_cloud = scenes_df[scenes_df['tile'] == tile]['cloud_cover'].mean()
-    print(f"   {tile}: {count} scenes (avg cloud: {avg_cloud:.1f}%)")
+    print(f"  {tile}: {count} scenes (avg cloud: {avg_cloud:.1f}%)")
 ```
 
 ### Visualize Scene Coverage
@@ -173,19 +160,19 @@ for tile, count in tile_counts.head().items():
 ```{python}
 # Create map showing all scene footprints
 m = folium.Map(
-    location=[37.25, -120.75],  # Center of Central Valley
-    zoom_start=8,
+    location=[34.45, -119.85],  # Center of Santa Barbara
+    zoom_start=10,
     tiles='OpenStreetMap'
 )
 
 # Add study area boundary
 folium.Rectangle(
-    bounds=[[central_valley_bbox[1], central_valley_bbox[0]],
-            [central_valley_bbox[3], central_valley_bbox[2]]],
+    bounds=[[santa_barbara_bbox[1], santa_barbara_bbox[0]],
+            [santa_barbara_bbox[3], santa_barbara_bbox[2]]],
     color='red',
     fill=False,
     weight=3,
-    popup="Study Area: Central Valley"
+    popup="Study Area: Santa Barbara"
 ).add_to(m)
 
 # Add scene footprints colored by date
@@ -213,7 +200,7 @@ for i, date in enumerate(unique_dates[:5]):  # Show first 5 dates
         ).add_to(m)
 
 folium.LayerControl().add_to(m)
-print("🗺️ Scene coverage map created")
+print("Scene coverage map created")
 m
 ```
 
@@ -246,25 +233,26 @@ scl_classes = {
 good_pixel_classes = [4, 5, 6]  # Vegetation, not vegetated, water
 cloud_classes = [3, 8, 9, 10]   # Cloud shadows, clouds, cirrus
 
-print("🌥️ Scene Classification Layer (SCL) Classes:")
+print("Scene Classification Layer (SCL) Classes:")
 for class_id, description in scl_classes.items():
-    marker = "✓" if class_id in good_pixel_classes else "❌" if class_id in cloud_classes else "⚠️"
-    print(f"   {marker} {class_id}: {description}")
+    marker = "✓" if class_id in good_pixel_classes else "✗" if class_id in cloud_classes else "·"
+    print(f"  {marker} {class_id}: {description}")
 
-print(f"\n✅ Good pixels for analysis: {good_pixel_classes}")
-print(f"☁️ Cloud/shadow pixels to mask: {cloud_classes}")
+print(f"\nGood pixels for analysis: {good_pixel_classes}")
+print(f"Cloud/shadow pixels to mask: {cloud_classes}")
 ```
 
-## Week 2 Function Library
+### Week 2 Function Library
 
-Before we begin the hands-on workflow, let's define all the core functions we'll use throughout this chapter. These functions build on the Week 1 foundations and will be exported to our `geogfm.c02` module:
+The following functions will be tangled into the `geogfm.c02` module, making them reusable across your projects. Each function builds on Week 1 foundations to create a complete preprocessing workflow.
+
+#### Module Setup and Imports
 
 ```{python}
-#| filename: geogfm/c02.py
-# Tangled from c02-spatial-temporal-attention-mechanisms.qmd
-
+# | tangle: geogfm/c02.py
 """Week 2: Advanced preprocessing functions for Sentinel-2 data."""
 
+import logging
 import numpy as np
 import pandas as pd
 import xarray as xr
@@ -273,6 +261,17 @@ from pathlib import Path
 from functools import partial
 from concurrent.futures import ThreadPoolExecutor
 from geogfm.c01 import load_sentinel2_bands, setup_planetary_computer_auth, search_sentinel2_scenes
+
+# Configure logger for minimal output
+logger = logging.getLogger(__name__)
+```
+
+#### Function 1: Cloud Mask Creation
+
+This function creates a binary mask from the Scene Classification Layer, identifying which pixels are cloud-free.
+
+```{python}
+# | tangle: geogfm/c02.py
 
 def create_cloud_mask(scl_data, good_classes: List[int]) -> np.ndarray:
     """
@@ -295,11 +294,19 @@ def create_cloud_mask(scl_data, good_classes: List[int]) -> np.ndarray:
         scl_values = scl_data
 
     return np.isin(scl_values, good_classes)
+```
+
+#### Function 2: Apply Cloud Mask to Bands
+
+This function applies the cloud mask to all spectral bands, handling resolution mismatches and creating analysis-ready masked data.
+
+```{python}
+# | tangle: geogfm/c02.py
 
 def apply_cloud_mask(band_data: Dict[str, Union[np.ndarray, xr.DataArray]],
-                    scl_data: Union[np.ndarray, xr.DataArray],
-                    good_pixel_classes: List[int],
-                    target_resolution: int = 20) -> Tuple[Dict[str, xr.DataArray], float]:
+                     scl_data: Union[np.ndarray, xr.DataArray],
+                     good_pixel_classes: List[int],
+                     target_resolution: int = 20) -> Tuple[Dict[str, xr.DataArray], float]:
     """
     Apply SCL-based cloud masking to spectral bands.
 
@@ -313,7 +320,7 @@ def apply_cloud_mask(band_data: Dict[str, Union[np.ndarray, xr.DataArray]],
         masked_data: Dictionary with masked bands
         valid_pixel_fraction: Fraction of valid pixels
     """
-    import rioxarray
+    from scipy.ndimage import zoom
 
     # Get SCL data and ensure it's at target resolution
     scl_array = scl_data
@@ -345,38 +352,23 @@ def apply_cloud_mask(band_data: Dict[str, Union[np.ndarray, xr.DataArray]],
 
             # Resample band to match SCL resolution if needed
             if band_values.shape != target_shape:
-                print(f"Resampling {band_name} from {band_values.shape} to {target_shape}")
+                # Calculate zoom factors for each dimension
+                zoom_factors = (
+                    target_shape[0] / band_values.shape[0],
+                    target_shape[1] / band_values.shape[1]
+                )
 
-                # Try rioxarray resampling if CRS is available
-                resampled_successfully = False
-                if hasattr(band_array, 'rio'):
-                    try:
-                        # Check if CRS is available
-                        if band_array.rio.crs is not None:
-                            resampled = band_array.rio.reproject(
-                                band_array.rio.crs,
-                                resolution=target_resolution
-                            )
-                            band_values = resampled.values
-                            resampled_successfully = True
-                        else:
-                            print(f"No CRS found for {band_name}, using fallback resampling")
-                    except Exception as e:
-                        print(f"rioxarray resampling failed for {band_name}: {e}")
-
-                # Fallback: simple decimation for 2x downsampling (10m -> 20m)
-                if not resampled_successfully:
-                    if band_values.shape[0] == target_shape[0] * 2 and band_values.shape[1] == target_shape[1] * 2:
-                        # Perfect 2x downsampling case (e.g., 10m -> 20m)
-                        band_values = band_values[::2, ::2]
-                        print(f"Used 2x decimation for {band_name}")
-                    else:
-                        print(f"Warning: Cannot resample {band_name} - incompatible shapes")
-                        continue
+                # Use scipy zoom for robust resampling
+                try:
+                    band_values = zoom(band_values, zoom_factors, order=1)
+                    logger.debug(f"Resampled {band_name} from {band_values.shape} to {target_shape}")
+                except Exception as e:
+                    logger.warning(f"Failed to resample {band_name}: {e}")
+                    continue
 
             # Ensure shapes match after resampling
             if band_values.shape != target_shape:
-                print(f"Warning: Shape mismatch for {band_name}: {band_values.shape} vs {target_shape}")
+                logger.warning(f"Shape mismatch for {band_name}: {band_values.shape} vs {target_shape}")
                 continue
 
             # Mask invalid pixels with NaN
@@ -418,8 +410,16 @@ def apply_cloud_mask(band_data: Dict[str, Union[np.ndarray, xr.DataArray]],
         masked_data['cloud_mask'] = xr.DataArray(good_pixels, dims=dims)
 
     return masked_data, valid_pixel_fraction
+```
 
-def load_scene_with_cloudmask(item, target_crs: str = 'EPSG:32610',
+#### Function 3: Load Scene with Cloud Masking
+
+This high-level function combines data loading and cloud masking into a single operation.
+
+```{python}
+# | tangle: geogfm/c02.py
+
+def load_scene_with_cloudmask(item, target_crs: str = 'EPSG:32611',
                               target_resolution: int = 20,
                               good_pixel_classes: List[int] = [4, 5, 6],
                               subset_bbox: Optional[List[float]] = None) -> Tuple[Optional[Dict[str, xr.DataArray]], float]:
@@ -442,12 +442,12 @@ def load_scene_with_cloudmask(item, target_crs: str = 'EPSG:32610',
         band_data = load_sentinel2_bands(
             item,
             bands=['B04', 'B03', 'B02', 'B08', 'SCL'],
-            subset_bbox=subset_bbox,  # Enable spatial subsetting
+            subset_bbox=subset_bbox,
             max_retries=3
         )
 
         if not band_data or 'SCL' not in band_data:
-            print(f"⚠️ No data or missing SCL for scene {item.id}")
+            logger.warning(f"No data or missing SCL for scene {item.id}")
             return None, 0
 
         # Apply cloud masking using SCL with target resolution
@@ -458,14 +458,22 @@ def load_scene_with_cloudmask(item, target_crs: str = 'EPSG:32610',
         return masked_data, valid_fraction
 
     except Exception as e:
-        print(f"❌ Error loading scene {item.id}: {str(e)}")
+        logger.error(f"Error loading scene {item.id}: {str(e)}")
         return None, 0
+```
 
-def process_single_scene(item, target_crs: str = 'EPSG:32610',
-                        target_resolution: int = 20,
-                        min_valid_fraction: float = 0.1,  # Lowered threshold for demonstration
-                        good_pixel_classes: List[int] = [4, 5, 6],
-                        subset_bbox: Optional[List[float]] = None) -> Optional[Dict]:
+#### Function 4: Process Single Scene
+
+This function adds validation logic to filter out scenes with insufficient valid pixels.
+
+```{python}
+# | tangle: geogfm/c02.py
+
+def process_single_scene(item, target_crs: str = 'EPSG:32611',
+                         target_resolution: int = 20,
+                         min_valid_fraction: float = 0.3,
+                         good_pixel_classes: List[int] = [4, 5, 6],
+                         subset_bbox: Optional[List[float]] = None) -> Optional[Dict]:
     """
     Process a single scene with validation.
 
@@ -480,7 +488,6 @@ def process_single_scene(item, target_crs: str = 'EPSG:32610',
     Returns:
         Scene data dictionary or None if invalid
     """
-    print(f"Processing {item.id[:50]}...")
     data, valid_frac = load_scene_with_cloudmask(
         item, target_crs=target_crs, target_resolution=target_resolution,
         good_pixel_classes=good_pixel_classes, subset_bbox=subset_bbox
@@ -495,15 +502,23 @@ def process_single_scene(item, target_crs: str = 'EPSG:32610',
             'item': item
         }
     else:
-        print(f"⚠️ Skipped {item.id[:30]} (valid fraction: {valid_frac:.1%})")
+        logger.info(f"Skipped {item.id[:30]} (valid fraction: {valid_frac:.1%})")
         return None
+```
+
+#### Function 5: Batch Process Scenes
+
+This function enables parallel processing of multiple scenes using Python's ThreadPoolExecutor.
+
+```{python}
+# | tangle: geogfm/c02.py
 
 def process_scene_batch(scene_items: List, max_workers: int = 4,
-                       target_crs: str = 'EPSG:32610',
-                       target_resolution: int = 20,
-                       min_valid_fraction: float = 0.1,  # Lowered threshold for demonstration
-                       good_pixel_classes: List[int] = [4, 5, 6],
-                       subset_bbox: Optional[List[float]] = None) -> List[Dict]:
+                        target_crs: str = 'EPSG:32611',
+                        target_resolution: int = 20,
+                        min_valid_fraction: float = 0.3,
+                        good_pixel_classes: List[int] = [4, 5, 6],
+                        subset_bbox: Optional[List[float]] = None) -> List[Dict]:
     """
     Process multiple scenes in parallel with cloud masking and reprojection.
 
@@ -511,13 +526,15 @@ def process_scene_batch(scene_items: List, max_workers: int = 4,
         scene_items: List of STAC items
         max_workers: Number of parallel workers
         target_crs: Target coordinate reference system
+        target_resolution: Target resolution in meters
         min_valid_fraction: Minimum valid pixel fraction
         good_pixel_classes: List of SCL values considered valid
+        subset_bbox: Optional spatial subset
 
     Returns:
         processed_scenes: List of processed scene data
     """
-    print(f"🔄 Processing {len(scene_items)} scenes with {max_workers} workers...")
+    logger.info(f"Processing {len(scene_items)} scenes with {max_workers} workers")
 
     # Use partial to pass additional parameters
     process_func = partial(
@@ -525,7 +542,8 @@ def process_scene_batch(scene_items: List, max_workers: int = 4,
         target_crs=target_crs,
         target_resolution=target_resolution,
         min_valid_fraction=min_valid_fraction,
-        good_pixel_classes=good_pixel_classes
+        good_pixel_classes=good_pixel_classes,
+        subset_bbox=subset_bbox
     )
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -534,8 +552,16 @@ def process_scene_batch(scene_items: List, max_workers: int = 4,
     # Filter successful results
     processed_scenes = [result for result in results if result is not None]
 
-    print(f"✅ Successfully processed {len(processed_scenes)} scenes")
+    logger.info(f"Successfully processed {len(processed_scenes)} scenes")
     return processed_scenes
+```
+
+#### Function 6: Create Temporal Mosaic
+
+This function combines multiple scenes into a single composite using median, mean, or max statistics.
+
+```{python}
+# | tangle: geogfm/c02.py
 
 def create_temporal_mosaic(processed_scenes, method: str = 'median'):
     """
@@ -549,20 +575,31 @@ def create_temporal_mosaic(processed_scenes, method: str = 'median'):
         mosaic_data: Temporal composite as xarray Dataset
     """
     if not processed_scenes:
-        print("❌ No scenes to mosaic")
+        logger.warning("No scenes to mosaic")
         return None
-
-    print(f"🧩 Creating temporal mosaic using {method} method...")
 
     # Group data by band
     bands = ['red', 'green', 'blue', 'nir']
     band_stacks = {}
     dates = []
 
+    # Find minimum common shape across all scenes
+    min_shape = None
+    for scene in processed_scenes:
+        scene_shape = scene['data']['red'].shape
+        if min_shape is None:
+            min_shape = scene_shape
+        else:
+            min_shape = tuple(min(a, b) for a, b in zip(min_shape, scene_shape))
+
     for band in bands:
         band_data = []
         for scene in processed_scenes:
-            band_data.append(scene['data'][band])
+            # Trim to common shape to handle slight size mismatches
+            band_array = scene['data'][band]
+            if band_array.shape != min_shape:
+                band_array = band_array[:min_shape[0], :min_shape[1]]
+            band_data.append(band_array)
             if band == 'red':  # Only collect dates once
                 dates.append(scene['date'])
 
@@ -586,11 +623,16 @@ def create_temporal_mosaic(processed_scenes, method: str = 'median'):
     mosaic_data.attrs['n_scenes'] = len(processed_scenes)
     mosaic_data.attrs['date_range'] = f"{min(dates)} to {max(dates)}"
 
-    print(f"✅ Mosaic created from {len(processed_scenes)} scenes")
-    print(f"📏 Mosaic shape: {mosaic_data['red'].shape}")
-    print(f"📅 Date range: {mosaic_data.attrs['date_range']}")
-
+    logger.info(f"Mosaic created from {len(processed_scenes)} scenes using {method}")
     return mosaic_data
+```
+
+#### Function 7: Build Temporal Data Cube
+
+This function creates analysis-ready data cubes with time series support and vegetation indices.
+
+```{python}
+# | tangle: geogfm/c02.py
 
 def build_temporal_datacube(processed_scenes, chunk_size='auto'):
     """
@@ -606,14 +648,21 @@ def build_temporal_datacube(processed_scenes, chunk_size='auto'):
     if not processed_scenes:
         return None
 
-    print("📊 Building temporal data cube...")
-
     # Sort scenes by date
     processed_scenes.sort(key=lambda x: x['date'])
 
     # Extract dates and data
     dates = [pd.to_datetime(scene['date']) for scene in processed_scenes]
     bands = ['red', 'green', 'blue', 'nir']
+
+    # Find minimum common shape across all scenes
+    min_shape = None
+    for scene in processed_scenes:
+        scene_shape = scene['data']['red'].shape
+        if min_shape is None:
+            min_shape = scene_shape
+        else:
+            min_shape = tuple(min(a, b) for a, b in zip(min_shape, scene_shape))
 
     # Build data arrays for each band
     band_cubes = {}
@@ -622,7 +671,11 @@ def build_temporal_datacube(processed_scenes, chunk_size='auto'):
         # Stack all scenes for this band
         band_data = []
         for scene in processed_scenes:
-            band_data.append(scene['data'][band])
+            # Trim to common shape to handle slight size mismatches
+            band_array = scene['data'][band]
+            if band_array.shape != min_shape:
+                band_array = band_array[:min_shape[0], :min_shape[1]]
+            band_data.append(band_array)
 
         # Create temporal stack
         band_cube = xr.concat(band_data, dim='time')
@@ -649,7 +702,6 @@ def build_temporal_datacube(processed_scenes, chunk_size='auto'):
     datacube = xr.Dataset(band_cubes)
 
     # Add derived indices
-    print("🧮 Computing vegetation indices...")
     datacube['ndvi'] = ((datacube['nir'] - datacube['red']) /
                         (datacube['nir'] + datacube['red'] + 1e-8))
 
@@ -667,19 +719,23 @@ def build_temporal_datacube(processed_scenes, chunk_size='auto'):
         'resolution': 'Variable (depends on original scene resolution)'
     })
 
-    print(f"✅ Data cube created:")
-    print(f"   Shape: {datacube['red'].shape}")
-    print(f"   Time steps: {len(dates)}")
-    print(f"   Variables: {list(datacube.data_vars)}")
-
+    logger.info(f"Data cube created: {datacube['red'].shape}, {len(dates)} time steps")
     return datacube
+```
+
+#### Class: Sentinel2Preprocessor
+
+This class provides a complete preprocessing pipeline with scene search, processing, and data cube creation capabilities.
+
+```{python}
+# | tangle: geogfm/c02.py
 
 class Sentinel2Preprocessor:
     """
     Scalable Sentinel-2 preprocessing pipeline using geogfm functions.
     """
 
-    def __init__(self, output_dir: str = "preprocessed_data", target_crs: str = 'EPSG:32610',
+    def __init__(self, output_dir: str = "preprocessed_data", target_crs: str = 'EPSG:32611',
                  target_resolution: int = 20, max_cloud_cover: float = 15,
                  good_pixel_classes: List[int] = [4, 5, 6]):
         self.output_dir = Path(output_dir)
@@ -692,14 +748,8 @@ class Sentinel2Preprocessor:
         # Set up authentication once during initialization
         setup_planetary_computer_auth()
 
-        print(f"🔧 Preprocessing pipeline initialized")
-        print(f"   Output directory: {self.output_dir}")
-        print(f"   Target CRS: {self.target_crs}")
-        print(f"   Target resolution: {self.target_resolution}m")
-        print(f"   Max cloud cover: {self.max_cloud_cover}%")
-
     def search_scenes(self, bbox: List[float], start_date: str, end_date: str,
-                     limit: int = 100) -> List:
+                      limit: int = 100) -> List:
         """Search for Sentinel-2 scenes using geogfm standardized function."""
         # Ensure authentication is set up
         setup_planetary_computer_auth()
@@ -713,17 +763,16 @@ class Sentinel2Preprocessor:
             limit=limit
         )
 
-        print(f"🔍 Found {len(items)} scenes")
+        logger.info(f"Found {len(items)} scenes")
         return items
 
-    def process_scene(self, item, save_individual: bool = True) -> Optional[Dict]:
+    def process_scene(self, item, save_individual: bool = True, subset_bbox: Optional[List[float]] = None) -> Optional[Dict]:
         """Process a single scene with cloud masking using geogfm functions."""
         scene_id = item.id
         output_path = self.output_dir / f"{scene_id}_processed.nc"
 
         # Skip if already processed
         if output_path.exists():
-            print(f"⏭️ Skipping {scene_id} (already processed)")
             if save_individual:
                 return str(output_path)
             else:
@@ -732,11 +781,10 @@ class Sentinel2Preprocessor:
 
         # Process scene using our enhanced function
         data, valid_frac = load_scene_with_cloudmask(
-            item, self.target_crs, self.target_resolution, self.good_pixel_classes
+            item, self.target_crs, self.target_resolution, self.good_pixel_classes, subset_bbox
         )
 
-        # Reduce minimum valid fraction threshold for demonstration
-        if data and valid_frac > 0.1:  # Accept scenes with >10% valid pixels
+        if data and valid_frac > 0.3:
             if save_individual:
                 try:
                     # Convert to xarray Dataset
@@ -750,27 +798,20 @@ class Sentinel2Preprocessor:
                         'processing_resolution': self.target_resolution
                     })
 
-                    # Save to NetCDF with compression and engine fallback
-                    try:
-                        encoding = {var: {'zlib': True, 'complevel': 4} for var in scene_ds.data_vars}
-                        scene_ds.to_netcdf(output_path, engine='netcdf4', encoding=encoding)
-                        print(f"💾 Saved: {output_path.name} (netCDF4)")
-                    except ImportError:
-                        print(f"⚠️ netCDF4 not available, using scipy for {scene_id}...")
-                        scene_ds.to_netcdf(output_path, engine='scipy')
-                        print(f"💾 Saved: {output_path.name} (scipy)")
+                    # Save to NetCDF using scipy engine (no netcdf4 required)
+                    scene_ds.to_netcdf(output_path, engine='scipy')
                 except Exception as e:
-                    print(f"⚠️ Save error for {scene_id}: {str(e)[:50]}")
+                    logger.error(f"Save error for {scene_id}: {str(e)[:50]}")
 
             return data
         else:
-            print(f"❌ Skipped {scene_id} (valid fraction: {valid_frac:.1%})")
+            logger.info(f"Skipped {scene_id} (valid fraction: {valid_frac:.1%})")
             return None
 
     def create_time_series_cube(self, processed_data_list, cube_name: str = "datacube"):
         """Create and save temporal data cube."""
         if not processed_data_list:
-            print("❌ No data to create cube")
+            logger.warning("No data to create cube")
             return None
 
         cube_path = self.output_dir / f"{cube_name}.nc"
@@ -781,12 +822,23 @@ class Sentinel2Preprocessor:
 
         for data in processed_data_list:
             if data:
-                # Handle both dictionary format and xarray Dataset format
+                # Handle dictionary format, string file path, or xarray Dataset
                 if isinstance(data, dict):
                     # Dictionary format from fresh processing
                     for band in band_stacks.keys():
                         if band in data:
                             band_stacks[band].append(data[band])
+                elif isinstance(data, str):
+                    # File path - load the file first
+                    loaded_ds = xr.open_dataset(data)
+                    for band in band_stacks.keys():
+                        if band in loaded_ds.data_vars:
+                            band_data = loaded_ds[band]
+                            if 'time' in band_data.dims and band_data.dims['time'] > 1:
+                                band_data = band_data.isel(time=0)
+                            elif 'time' in band_data.dims:
+                                band_data = band_data.squeeze('time')
+                            band_stacks[band].append(band_data)
                 else:
                     # xarray Dataset from loaded file - extract individual bands
                     for band in band_stacks.keys():
@@ -804,47 +856,37 @@ class Sentinel2Preprocessor:
 
         # Create dataset
         cube_data = {}
-        print(f"📊 Processing bands: {list(band_stacks.keys())}")
 
         for band, stack in band_stacks.items():
             if stack:
-                print(f"   {band}: {len(stack)} scenes")
                 # Check that all scenes have this band
                 if len(stack) == len(processed_data_list):
                     try:
                         cube_data[band] = xr.concat(stack, dim='time')
                     except Exception as e:
-                        print(f"⚠️ Failed to concatenate {band}: {e}")
+                        logger.error(f"Failed to concatenate {band}: {e}")
                 else:
-                    print(f"⚠️ {band} missing from some scenes ({len(stack)}/{len(processed_data_list)})")
+                    logger.warning(f"{band} missing from some scenes ({len(stack)}/{len(processed_data_list)})")
 
         if cube_data:
             try:
                 datacube = xr.Dataset(cube_data)
             except Exception as e:
-                print(f"❌ Failed to create dataset: {e}")
-                print(f"Available bands: {list(cube_data.keys())}")
+                logger.error(f"Failed to create dataset: {e}")
                 return None
 
             # Add vegetation indices
             datacube['ndvi'] = ((datacube['nir'] - datacube['red']) /
-                               (datacube['nir'] + datacube['red'] + 1e-8))
+                                (datacube['nir'] + datacube['red'] + 1e-8))
 
-            # Save cube with fallback engines
+            # Save cube using scipy engine (no netcdf4 required)
             try:
-                datacube.to_netcdf(cube_path, engine='netcdf4')
-                print(f"📦 Data cube saved: {cube_path} (netCDF4)")
-            except ImportError:
-                print("⚠️ netCDF4 not available, using scipy engine...")
-                try:
-                    datacube.to_netcdf(cube_path, engine='scipy')
-                    print(f"📦 Data cube saved: {cube_path} (scipy)")
-                except Exception:
-                    print("⚠️ NetCDF save failed, saving as Zarr...")
-                    zarr_path = cube_path.with_suffix('.zarr')
-                    datacube.to_zarr(zarr_path)
-                    print(f"📦 Data cube saved: {zarr_path} (zarr)")
+                datacube.to_netcdf(cube_path, engine='scipy')
+            except Exception:
+                zarr_path = cube_path.with_suffix('.zarr')
+                datacube.to_zarr(zarr_path)
 
+            logger.info(f"Data cube saved: {cube_path}")
             return datacube
 
         return None
@@ -858,11 +900,13 @@ Now let's test our cloud masking functions with a real scene. We'll use spatial 
 ## Spatial Subsetting for Faster Processing
 
 Processing full Sentinel-2 scenes can be slow and memory-intensive. Each full scene:
+
 - **Size**: ~100MB+ per scene when loaded
 - **Dimensions**: ~10,000 × 10,000 pixels at 10m resolution
 - **Processing time**: Several minutes per scene
 
 Using spatial subsets:
+
 - **Size**: ~1-5MB per subset
 - **Dimensions**: ~500 × 500 to 2,000 × 2,000 pixels
 - **Processing time**: Seconds per subset
@@ -871,58 +915,36 @@ Using spatial subsets:
 :::
 
 ```{python}
-# Define some useful preset subsets for different use cases
+# Define a useful subset for demonstration
+santa_barbara_coastal = [-120.0, 34.35, -119.7, 34.5]  # ~20km × 15km coastal area
 
-# Central Valley subsets (agriculture focus)
-small_farm_area = [-121.0, 37.0, -120.8, 37.2]     # ~20km × 20km
-medium_valley = [-121.2, 36.8, -120.6, 37.4]       # ~40km × 40km
-large_valley = [-121.5, 36.5, -120.0, 38.0]        # Full study area
-
-# Urban area subsets
-sacramento_metro = [-121.6, 38.4, -121.3, 38.7]    # Sacramento urban area
-fresno_area = [-119.9, 36.6, -119.6, 36.9]         # Fresno urban/ag mix
-
-print("📍 Available subset presets:")
-print(f"Small farm area: {small_farm_area} (~400MB data)")
-print(f"Medium valley: {medium_valley} (~1.6GB data)")
-print(f"Large valley: {large_valley} (full study area)")
-print(f"Sacramento metro: {sacramento_metro} (~urban focus)")
-print(f"Fresno area: {fresno_area} (~urban/ag mix)")
+print(f"Using subset: {santa_barbara_coastal}")
 ```
 
 ```{python}
 # Test with one scene
 test_item = scenes_df.iloc[0]['item']
-print(f"🧪 Testing cloud masking with scene: {test_item.id}")
+print(f"Testing cloud masking with scene: {test_item.id}")
 
 # Define good pixel classes for this demonstration
 good_pixel_classes = [4, 5, 6]  # Vegetation, not vegetated, water
 
-# Define a smaller subset for faster processing (optional)
-# This is a small area within Central Valley for demonstration
-fast_subset = [-121.0, 37.0, -120.8, 37.2]  # Small 20km x 20km area
-
-print(f"\n🎯 Processing options:")
-print(f"1. Full scene: ~100MB+ download, slow processing")
-print(f"2. Subset area: ~1-5MB download, fast processing")
-print(f"\n🚀 Using fast subset for demonstration...")
-
 # Test our enhanced cloud masking function with spatial subset
 masked_data, valid_fraction = load_scene_with_cloudmask(
     test_item,
-    target_crs='EPSG:32610',
+    target_crs='EPSG:32611',  # UTM Zone 11N for Santa Barbara
     target_resolution=20,  # Resample to 20m to match SCL
     good_pixel_classes=good_pixel_classes,
-    subset_bbox=fast_subset  # Use subset for faster processing
+    subset_bbox=santa_barbara_coastal  # Use subset for faster processing
 )
 
 if masked_data:
-    print(f"✅ Scene loaded successfully")
-    print(f"📏 Data shape: {masked_data['red'].shape}")
-    print(f"📊 Valid pixels: {valid_fraction:.1%}")
-    print(f"☁️ Cloudy pixels: {1-valid_fraction:.1%}")
+    print(f"Scene loaded successfully")
+    print(f"Data shape: {masked_data['red'].shape}")
+    print(f"Valid pixels: {valid_fraction:.1%}")
+    print(f"Cloudy pixels: {1-valid_fraction:.1%}")
 else:
-    print("❌ Failed to load scene")
+    print("Failed to load scene")
 ```
 
 ### Visualize Cloud Masking Results
@@ -996,7 +1018,7 @@ if masked_data:
     plt.tight_layout()
     plt.show()
 
-    print("🎨 Cloud masking visualization complete")
+    print("Cloud masking visualization complete")
 ```
 
 :::{.callout-note}
@@ -1005,6 +1027,7 @@ if masked_data:
 The SCL is automatically generated during Sentinel-2 Level 2A processing using machine learning algorithms trained on expert-labeled data.
 
 **Key Advantages**:
+
 - **Automated cloud detection**: No manual threshold setting needed
 - **Multiple cloud types**: Distinguishes dense clouds, thin cirrus, and shadows
 - **Consistent classification**: Same algorithm across all Sentinel-2 scenes globally
@@ -1020,42 +1043,50 @@ The SCL is automatically generated during Sentinel-2 Level 2A processing using m
 
 When working with multiple scenes, we need to ensure they're all in the same coordinate system and can be combined seamlessly.
 
+:::{.callout-tip}
+## Speed Optimization for Interactive Learning
+
+The following cells use a very small spatial subset (~5km × 5km, ~250×250 pixels at 20m) to process in seconds instead of minutes. This allows for rapid iteration and testing during class.
+
+**For your projects**: Scale up the spatial extent and number of scenes once you've tested your workflow with this fast subset.
+:::
+
 ### Batch Process Multiple Scenes
 
 ```{python}
-# Now let's test the batch processing functions we defined earlier
-
 # Select subset of scenes for processing (to manage computational load)
-selected_scenes = scenes_df.head(5)['item'].tolist()  # Process first 5 scenes
+selected_scenes = scenes_df.head(3)['item'].tolist()  # Process 3 scenes for fast demo
 
-# Define processing options
-print("\n📎 Processing Options:")
-print("Option A: Full scenes (slower, ~100MB+ per scene)")
-print("Option B: Spatial subset (faster, ~1-5MB per scene)")
-print("\n🚀 Using spatial subset for faster demonstration...")
+# Use even smaller spatial subset for faster demonstration
+# This tiny area (~5km × 5km) processes in seconds instead of minutes
+fast_subset = [-119.85, 34.40, -119.80, 34.45]  # Tiny subset near UCSB
 
-# Use the same fast subset as before
-fast_subset = [-121.0, 37.0, -120.8, 37.2]  # Small area for fast processing
+print(f"Processing {len(selected_scenes)} scenes with small spatial subset for speed")
+print(f"Subset area: ~5km × 5km around UCSB campus")
 
 processed_scenes = process_scene_batch(
     selected_scenes,
     max_workers=2,
     min_valid_fraction=0.1,  # Lower threshold to include more scenes
-    subset_bbox=fast_subset  # Enable fast processing with subset
+    subset_bbox=fast_subset
 )
 
 # Show processing results
 if processed_scenes:
-    print(f"\n📊 Processing Summary:")
+    print(f"\nProcessing Summary:")
     for scene in processed_scenes:
-        print(f"   {scene['date']}: {scene['valid_fraction']:.1%} valid pixels")
+        print(f"  {scene['date']}: {scene['valid_fraction']:.1%} valid pixels")
 ```
 
 ### Create Temporal Mosaic
 
-```{python}
-# Create temporal mosaic using the function we defined earlier
+:::{.callout-note}
+## Spatial Alignment
 
+When processing spatial subsets, scenes may have slightly different dimensions (e.g., 284×285 vs 285×284 pixels) due to coordinate transformation rounding. The mosaic functions handle this by trimming arrays to a common minimum shape. For projects requiring pixel-perfect alignment (e.g., change detection), see the [Spatial Alignment Strategies](../extras/resources/spatial-alignment-strategies.md) guide.
+:::
+
+```{python}
 # Create median composite
 mosaic = create_temporal_mosaic(processed_scenes, method='median')
 
@@ -1083,12 +1114,11 @@ if mosaic:
     axes[1].axis('off')
     plt.colorbar(ndvi_plot, ax=axes[1], shrink=0.8)
 
-    # Data availability (how many scenes contributed to each pixel)
-    # This would require tracking per-pixel contributions
+    # Data availability
     axes[2].text(0.1, 0.5, f"Scenes used: {mosaic.attrs['n_scenes']}\n"
                            f"Method: {mosaic.attrs['method']}\n"
                            f"Date range: {mosaic.attrs['date_range']}\n"
-                           f"Coverage: Central Valley, CA",
+                           f"Coverage: Santa Barbara, CA",
                 transform=axes[2].transAxes, fontsize=12, verticalalignment='center')
     axes[2].set_title('Mosaic Info')
     axes[2].axis('off')
@@ -1096,7 +1126,7 @@ if mosaic:
     plt.tight_layout()
     plt.show()
 
-    print("🎨 Temporal mosaic visualization complete")
+    print("Temporal mosaic visualization complete")
 ```
 
 ---
@@ -1108,13 +1138,11 @@ Now let's create analysis-ready data cubes that can be used for time series anal
 ### Build Temporal Data Cube
 
 ```{python}
-# Build temporal data cube using the function we defined earlier
-
 # Build the data cube
 datacube = build_temporal_datacube(processed_scenes)
 
 if datacube:
-    print(f"\n📦 Data Cube Summary:")
+    print(f"\nData Cube Summary:")
     print(datacube)
 ```
 
@@ -1131,9 +1159,9 @@ if datacube:
         center_x_idx = datacube.dims[x_dim] // 2
         # Extract time series at center point using integer indexing
         point_ts = datacube.isel({y_dim: center_y_idx, x_dim: center_x_idx})
-        print(f"📍 Using spatial dimensions: {y_dim}={center_y_idx}, {x_dim}={center_x_idx}")
+        print(f"Using spatial dimensions: {y_dim}={center_y_idx}, {x_dim}={center_x_idx}")
     else:
-        print("⚠️ Cannot determine spatial dimensions for time series analysis")
+        print("Cannot determine spatial dimensions for time series analysis")
         point_ts = None
 
     # Create time series plots only if we have valid point data
@@ -1170,10 +1198,10 @@ if datacube:
         plt.tight_layout()
         plt.show()
 
-        print("📈 Time series analysis complete")
+        print("Time series analysis complete")
         print(f"Sample location indices: y={center_y_idx}, x={center_x_idx}")
     else:
-        print("⚠️ Skipping time series plots due to dimension issues")
+        print("Skipping time series plots due to dimension issues")
 ```
 
 ---
@@ -1182,43 +1210,38 @@ if datacube:
 
 Finally, let's create a reproducible workflow that can handle larger datasets efficiently.
 
-### Preprocessing Pipeline Class
-
-Now let's use the preprocessing pipeline class we defined earlier.
-
-### Initialize and Test the Preprocessing Pipeline
-
-Now let's create an instance of our preprocessing pipeline:
+### Initialize Preprocessing Pipeline
 
 ```{python}
 # Initialize preprocessor
 preprocessor = Sentinel2Preprocessor(
     output_dir="week2_preprocessed",
-    target_crs='EPSG:32610',  # UTM Zone 10N for California
+    target_crs='EPSG:32611',  # UTM Zone 11N for Santa Barbara
     target_resolution=20
 )
 
-print("✅ Preprocessing pipeline ready")
+print("Preprocessing pipeline ready")
 ```
 
 ### Run Complete Preprocessing Workflow
 
 ```{python}
-# Define workflow parameters with subset options
+# Define workflow parameters - use tiny subset for fast demo
+tiny_demo_subset = [-119.85, 34.40, -119.80, 34.45]  # Same 5km × 5km area as previous demos
+
 workflow_params = {
-    'bbox': central_valley_bbox,
+    'bbox': tiny_demo_subset,  # Use small subset for speed
     'start_date': "2024-07-01",
     'end_date': "2024-08-15",
-    'max_scenes': 5,  # Limit for demonstration
-    'subset_bbox': small_farm_area  # Use fast subset for demo
+    'max_scenes': 3  # Process just 2-3 scenes for fast demo
 }
 
-print(f"🚀 Starting complete preprocessing workflow...")
-print(f"   Area: Central Valley, CA")
-print(f"   Period: {workflow_params['start_date']} to {workflow_params['end_date']}")
-print(f"   Subset: {workflow_params['subset_bbox']} (for faster processing)")
+print(f"Starting preprocessing workflow...")
+print(f"  Area: ~5km × 5km subset near UCSB")
+print(f"  Period: {workflow_params['start_date']} to {workflow_params['end_date']}")
+print(f"  Note: Using small subset for fast demonstration")
 
-# Step 1: Search for scenes
+# Search for scenes
 workflow_items = preprocessor.search_scenes(
     workflow_params['bbox'],
     workflow_params['start_date'],
@@ -1226,111 +1249,30 @@ workflow_items = preprocessor.search_scenes(
     limit=workflow_params['max_scenes']
 )
 
-# Clean up any existing files for fresh processing
-import glob
-existing_files = glob.glob(str(preprocessor.output_dir / "*.nc"))
-if existing_files:
-    print(f"🗑️ Cleaning up {len(existing_files)} existing processed files for fresh processing...")
-    for file_path in existing_files:
-        try:
-            Path(file_path).unlink()
-        except:
-            pass
+# Process scenes - limit to 2 for even faster execution
+processed_data = []
+for item in workflow_items[:2]:  # Process just 2 for fast demo
+    result = preprocessor.process_scene(item, save_individual=True, subset_bbox=tiny_demo_subset)
+    if result:
+        processed_data.append(result)
 
-# Step 2: Process scenes with spatial subset (demonstration with simulated data)
-print("📝 For demonstration purposes, we'll create a simplified data cube")
-print("   In practice, you would process real Sentinel-2 scenes as shown above")
-print("   Real processing may encounter network issues or incomplete band availability")
-print("   This simulation ensures consistent results for educational purposes")
-
-# Create a simple demonstration data cube with consistent dimensions
-import numpy as np
-import pandas as pd
-
-# Simulate 3 time steps of a small area (20x20 pixels)
-n_time = 3
-height, width = 20, 20
-dates = pd.date_range('2024-07-01', periods=n_time, freq='10D')
-
-# Create simulated spectral data
-np.random.seed(42)  # For reproducible demonstration
-demo_data = {}
-
-for i, date in enumerate(dates):
-    # Simulate realistic spectral values (scaled 0-1)
-    red = np.random.uniform(0.1, 0.3, (height, width))
-    green = np.random.uniform(0.1, 0.4, (height, width))
-    blue = np.random.uniform(0.1, 0.5, (height, width))
-    nir = np.random.uniform(0.3, 0.8, (height, width))
-
-    # Add some spatial pattern (vegetation gradient)
-    y, x = np.ogrid[:height, :width]
-    vegetation_pattern = np.exp(-((y-height//2)**2 + (x-width//2)**2) / (height*width/4))
-
-    # Enhance NIR in vegetated areas
-    nir = nir + 0.3 * vegetation_pattern
-
-    # Create xarray DataArrays
-    coords = {'y': range(height), 'x': range(width)}
-    scene_data = {
-        'red': xr.DataArray(red, coords=coords, dims=['y', 'x']),
-        'green': xr.DataArray(green, coords=coords, dims=['y', 'x']),
-        'blue': xr.DataArray(blue, coords=coords, dims=['y', 'x']),
-        'nir': xr.DataArray(nir, coords=coords, dims=['y', 'x'])
-    }
-
-    demo_data[date.strftime('%Y-%m-%d')] = scene_data
-
-print(f"📊 Created demonstration data cube with {len(demo_data)} time steps")
-print(f"   Spatial dimensions: {height} × {width} pixels")
-print(f"   Spectral bands: red, green, blue, nir")
-
-# Step 3: Create temporal data cube from demonstration data
-print("🧩 Building temporal data cube...")
-band_stacks = {band: [] for band in ['red', 'green', 'blue', 'nir']}
-
-for date_str, scene_data in demo_data.items():
-    for band in band_stacks.keys():
-        band_stacks[band].append(scene_data[band])
-
-# Stack along time dimension
-cube_data = {}
-for band, stack in band_stacks.items():
-    cube_data[band] = xr.concat(stack, dim='time')
-    cube_data[band] = cube_data[band].assign_coords(time=dates)
-
-# Create final datacube
-final_cube = xr.Dataset(cube_data)
-
-# Add vegetation indices
-final_cube['ndvi'] = ((final_cube['nir'] - final_cube['red']) /
-                      (final_cube['nir'] + final_cube['red'] + 1e-8))
-
-final_cube['evi'] = (2.5 * (final_cube['nir'] - final_cube['red']) /
-                     (final_cube['nir'] + 6 * final_cube['red'] - 7.5 * final_cube['blue'] + 1))
-
-# Add metadata
-final_cube.attrs.update({
-    'title': 'Demonstration Sentinel-2 Data Cube',
-    'description': 'Simulated cloud-masked, reprojected temporal stack',
-    'n_scenes': len(demo_data),
-    'time_range': f"{dates[0].strftime('%Y-%m-%d')} to {dates[-1].strftime('%Y-%m-%d')}",
-    'demo': True
-})
-
-print(f"\n🎉 Demonstration workflow completed successfully!")
-print(f"   Time steps: {len(dates)}")
-print(f"   Data cube shape: {final_cube['red'].shape}")
-print(f"   Variables: {list(final_cube.data_vars)}")
+# Create data cube
+if processed_data:
+    datacube = preprocessor.create_time_series_cube(processed_data, cube_name="demo_datacube")
+    if datacube:
+        print(f"\nWorkflow completed successfully!")
+        print(f"  Time steps: {len(datacube.time)}")
+        print(f"  Data cube shape: {datacube['red'].shape}")
+        print(f"  Variables: {list(datacube.data_vars)}")
 ```
 
-### Create Processing Summary Report
+### Processing Summary Report
 
 ```{python}
 # Generate processing summary
 output_files = list(preprocessor.output_dir.glob("*.nc"))
 
-print(f"\n📋 Processing Summary Report")
+print(f"\nProcessing Summary Report")
 print(f"=" * 50)
 print(f"Output Directory: {preprocessor.output_dir}")
 print(f"Total Files Created: {len(output_files)}")
@@ -1339,29 +1281,19 @@ print(f"  - Target CRS: {preprocessor.target_crs}")
 print(f"  - Target Resolution: {preprocessor.target_resolution}m")
 print(f"  - Max Cloud Cover: {preprocessor.max_cloud_cover}%")
 
-print(f"\n📁 Output Files:")
+print(f"\nOutput Files:")
 for file_path in sorted(output_files):
     file_size = file_path.stat().st_size / (1024*1024)  # MB
     print(f"  {file_path.name} ({file_size:.1f} MB)")
 
-# Check if final_cube was created successfully
-try:
-    if final_cube:
-        print(f"\n📊 Final Data Cube Statistics:")
-        print(f"  Shape: {final_cube.dims}")
-        print(f"  Variables: {list(final_cube.data_vars)}")
-        print(f"  Memory usage: ~{final_cube.nbytes / (1024**2):.1f} MB")
-except NameError:
-    print(f"\n📊 Final Data Cube: Not created (no valid data processed)")
-
-print(f"\n🚀 Ready for Week 3: Machine Learning on Remote Sensing!")
+print(f"\nReady for Week 3: Machine Learning on Remote Sensing!")
 ```
 
 ---
 
 ## Conclusion
 
-🎉 **Excellent work!** You've built a production-ready preprocessing pipeline for Sentinel-2 imagery.
+Excellent work! You've built a production-ready preprocessing pipeline for Sentinel-2 imagery.
 
 ### What You Accomplished:
 
@@ -1385,12 +1317,14 @@ print(f"\n🚀 Ready for Week 3: Machine Learning on Remote Sensing!")
 ## Performance Benefits of Spatial Subsetting
 
 **Without subsetting (full scenes)**:
+
 - Download: ~100MB+ per scene
 - Processing: 2-5 minutes per scene
 - Memory: 1-2GB RAM required
 - Storage: 500MB+ per processed scene
 
 **With spatial subsetting (20km × 20km)**:
+
 - Download: ~1-5MB per subset
 - Processing: 10-30 seconds per subset
 - Memory: 100-200MB RAM required
@@ -1404,16 +1338,19 @@ print(f"\n🚀 Ready for Week 3: Machine Learning on Remote Sensing!")
 ## Troubleshooting Common Issues
 
 **Low valid pixel fractions**: If scenes have <30% valid pixels due to clouds:
+
 - Lower the `min_valid_fraction` threshold (e.g., 0.1 instead of 0.3)
 - Try different time periods with less cloud cover
 - Use larger spatial subsets to increase the chance of finding clear pixels
 
-**Missing netCDF4 errors**: If you see "No module named 'netCDF4'":
-- Install with: `conda install netcdf4` or `mamba install netcdf4`
-- The code will automatically fallback to scipy or zarr formats
-- This doesn't affect functionality, just file format
+**NetCDF file format**: The code uses scipy engine for NetCDF files:
+
+- No additional installation required (scipy is in the base environment)
+- If scipy fails, the code automatically falls back to zarr format
+- Both formats work identically for loading and analysis
 
 **Memory issues**: If processing fails due to memory:
+
 - Use smaller spatial subsets
 - Process fewer scenes at once
 - Reduce the number of parallel workers (`max_workers=1`)
@@ -1426,6 +1363,7 @@ Building on Week 1's single-scene analysis, this week scales to production workf
 ### Next Week Preview:
 
 In **Week 3: Fine-tuning Foundation Models**, we'll use your preprocessed data to **train specialized models on land cover patches**:
+
 - Extract training patches from your data cubes
 - Create labeled datasets for supervised learning
 - Build and train convolutional neural networks

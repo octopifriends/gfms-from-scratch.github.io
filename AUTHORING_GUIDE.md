@@ -123,12 +123,27 @@ This helps students understand what files they're building.
 - **Executable examples** that actually work
 - **Fixed random seeds** for reproducible outputs
 - **Relative paths** (`../../data/sample.tif`)
+- **Production-ready code** - students should be able to use code directly in projects
+- **Minimal print statements** - only for essential output verification
+- **Clean function signatures** - avoid unnecessary parameters or validation blocks
+- **Reusable design** - non-opinionated code that doesn't impose constraints
 
 ### Avoid ❌
 - **Huge code blocks** - break them up
 - **Absolute paths** (`/Users/yourname/...`)
 - **Time-dependent content** - no "today" or "this week"
 - **Installation commands** in code blocks - use environment setup instead
+- **Emojis** - NEVER use emojis in code, comments, docstrings, or output
+- **Excessive print statements** - no "Loading...", "Processing...", "Done!" messages
+- **Unnecessary validation** - skip complex error handling in demo code
+- **Verbose parameters** - no `verbose=True` or `debug=True` flags
+- **Status messages** - avoid progress indicators or status updates
+- **"Code chrome"** - any ornamentation that distracts from functionality
+
+### Code Quality Philosophy
+**See [.claude/PRODUCTION_READY_CODE_PHILOSOPHY.md](.claude/PRODUCTION_READY_CODE_PHILOSOPHY.md) for complete guidelines.**
+
+Key principle: Write code students can copy directly into their projects without refactoring. Focus on clean, minimal, reusable implementations.
 
 ### Reproducible Code Pattern
 ```python

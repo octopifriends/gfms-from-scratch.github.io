@@ -1,0 +1,146 @@
+---
+title: "Choosing TerraTorch GFM Modules: Practical Examples and Modular Architecture"
+subtitle: "From Project Needs to Model Assembly"
+author: "GeoAI Course Team"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+---
+
+# Modular GFM Design: Matching Projects to TerraTorch Components
+
+## Quick Examples: Project-Driven Component Choices
+
+- **Land Cover Segmentation (Satellite Imagery):**
+
+  - **Backbone:** Prithvi (ViT-based, strong on global features)
+  - **Neck:** ViTToConv or SelectiveNeck (reshape ViT token sequences to spatial maps)
+  - **Decoder:** UPerNet (multi-scale spatial fusion)
+  - **Head:** SegmentationHead
+
+- **Crop Type Classification (Scene-Level Labels):**
+
+  - **Backbone:** Clay (ViT with wavelength encoding)
+  - **Neck:** Identity or SelectiveNeck
+  - **Decoder:** IdentityDecoder
+  - **Head:** ClassificationHead
+
+- **Object Detection (Buildings/Roads):**
+
+  - **Backbone:** ResNet or Swin (good for local and multi-scale features)
+  - **Neck:** FPNNeck (yields pyramid of features)
+  - **Decoder:** Detection-specific (uses ROI pooling)
+  - **Head:** DetectionHead
+
+- **Temporal Change Detection:**
+
+  - **Backbone:** Prithvi-EO-2.0 (handles time series, with temporal encoding)
+  - **Neck:** ViTToConv/SelectiveNeck
+  - **Decoder:** UPerNet
+  - **Head:** Segmentation or Regression Head, depending on task
+
+---
+
+## TerraTorch Model Anatomy (One-Liner Summary):
+
+1. **Backbone** – feature extractor
+2. **Neck** – adapts/reshapes features
+3. **Decoder** – prepares task-relevant outputs
+4. **Head** – projects onto the prediction space
+
+---
+
+```{mermaid}
+flowchart LR
+    A["Input Image"] --> B["Backbone"]
+    B --> C["Neck"]
+    C --> D["Decoder"]
+    D --> E["Head"]
+    E --> F["Output"]
+```
+
+---
+
+## 1. Backbone: Feature Extractor
+
+- **ViT (e.g., Prithvi, Clay):** Splits image into patches, encodes global context. Preferred if your data varies spectrally or needs temporal awareness (see *dynamic wavelength encoding*, *temporal encoding*).
+- **ResNet:** Classic convolutional backbone for local detail; often used for detection and segmentation where spatial accuracy is key.
+- **Swin:** Combines transformations and CNN-style multiscale hierarchy.
+
+**GFM tricks:**
+- *Dynamic wavelength encoding* (DOFA, Clay): handles variable bands by embedding their wavelengths, great for multi-sensor work.
+- *Temporal encoding* (Prithvi-EO-2.0): injects time info, vital for time series and seasonal tasks.
+
+---
+
+## 2. Neck: Adapter
+
+Bridges backbone output and decoder input. Typical necks:
+
+- **ViTToConvNeck / SelectiveNeck:** Converts ViT token sequences to spatial feature maps (essential if using ViT with UPerNet or CNN decoders).
+- **FPNNeck:** Aggregates multi-scale features for pyramid decoders (ResNet/Swin → FPN for detection, segmentation).
+- **IdentityNeck:** Pass-through (when backbone output already fits decoder).
+
+---
+
+## 3. Decoder: Task-Specific Processing
+
+- **UPerNet:** Multi-scale and context fusion for high-res segmentation.
+- **FCN:** Lightweight, for simpler semantic segmentation.
+- **IdentityDecoder:** For classification tasks where spatial output isn't needed.
+- **MAEDecoder:** Used only for *pretraining* with masked input reconstruction—produces no final predictions.
+
+---
+
+## 4. Head: Prediction Layer
+
+- **SegmentationHead:** Pixel/class map (e.g., land cover mapping). Expects (B, C, H, W).
+- **ClassificationHead:** Scene-level label. Use with decoders or backbones returning single feature vectors.
+- **RegressionHead:** Continuous maps (e.g., elevation). Use with dense or pooled features.
+- **DetectionHead:** Bboxes and labels per object; input is pooled region features.
+
+---
+
+## Example: Model Assembly for Semantic Segmentation
+
+```python
+class LandCoverSegmenter(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.backbone = PrithviBackbone(weights='prithvi-eo-2.0', in_channels=6, num_frames=3)
+        self.neck = ViTToConvNeck(embed_dim=1024, output_dims=[256, 512, 1024, 2048], layer_indices=[5,11,17,23])
+        self.decoder = UPerNetDecoder(in_channels=[256,512,1024,2048], out_channels=256)
+        self.head = SegmentationHead(256, num_classes=10)
+    def forward(self, x):
+        feats = self.backbone(x)
+        feats = self.neck(feats)
+        feats = self.decoder(feats)
+        return self.head(feats)
+```
+
+## Best Practices
+
+- **Mix-and-match:** Swap any module as long as input/output shapes agree.
+- **ViT output is sequence:** Needs a neck to yield spatial features for dense tasks.
+- **Pre-trained backbones:** Freeze/freeze-most layers for small labeled datasets.
+- **Choose components to match:** Imaging modality, spatial vs. global task, need for spectral/temporal flexibility.
+
+---
+
+## Quick Reference Table
+
+| Project Type           | Backbone      | Neck           | Decoder        | Head                |
+|------------------------|--------------|----------------|---------------|---------------------|
+| Segmentation           | Prithvi      | ViTToConv      | UPerNet        | SegmentationHead    |
+| Classification         | Clay         | Selective/Id   | Identity       | ClassificationHead  |
+| Detection              | Swin/ResNet  | FPN            | ROI Decoder    | DetectionHead       |
+| Time Series Regression | Prithvi-EO   | ViTToConv      | UPerNet/FCN    | RegressionHead      |
+| Multiband (hyperspectral) | Clay/DOFA | Selective      | UPerNet        | SegmentationHead    |
+
+---
+
+This modular approach in TerraTorch means you always have the right toolkit for your geospatial machine learning challenge—just select the combo that fits your data and your task.
+
+For more technical and code-level details, check the [TerraTorch Model Zoo](extras/cheatsheets/terratorch_model_zoo.qmd) and each class's docstring.

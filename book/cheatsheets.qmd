@@ -12,9 +12,10 @@ format:
 
 - [Week 01: Import Cheatsheet](extras/cheatsheets/week01_imports.qmd) - Using the tangled c01.py module
 
-## 💻 HPC Installation and setup
+## 💻 HPC Installation and Setup
 
 - [Setting up HPC Access](extras/grit-hpc-setup.qmd)
+- [Git & SSH Setup on HPC](extras/cheatsheets/git_ssh_hpc.qmd)
 
 ## 🌍 Geospatial Data Fundamentals
 
@@ -27,6 +28,12 @@ format:
 - [PyTorch Tensors & GPU Operations](extras/cheatsheets/pytorch_tensors.qmd)
 - [TorchGeo Datasets & Transforms](extras/cheatsheets/torchgeo_basics.qmd)
 - [Data Loading for Satellite Imagery](extras/cheatsheets/dataloader_satellite.qmd)
+
+## 🌎 TerraTorch for Geospatial AI
+
+- [Modular GFM Architecture in TerraTorch](extras/cheatsheets/modular_gfm_architecture.qmd)
+- [TerraTorch Workflows](extras/examples/terratorch_workflows.qmd)
+- [TerraTorch Model Zoo](extras/cheatsheets/terratorch_model_zoo.qmd)
 
 ## 🤗 Foundation Models & HuggingFace
 
