@@ -11,6 +11,9 @@ from pathlib import Path
 import time
 import logging
 
+import matplotlib.pyplot as plt
+
+
 # Core geospatial libraries
 import rasterio
 from rasterio.windows import from_bounds
